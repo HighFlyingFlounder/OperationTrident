@@ -58,10 +58,8 @@ public class RegPanel : PanelBase
         //连接服务器
         if (NetMgr.srvConn.status != Connection.Status.Connected)
         {
-            string host = "127.0.0.1";
-            int port = 1234;
             NetMgr.srvConn.proto = new ProtocolBytes();
-            if (!NetMgr.srvConn.Connect(host, port))
+            if (!NetMgr.srvConn.Connect(GameMgr.instance.host, GameMgr.instance.port))
                 PanelMgr.instance.OpenPanel<TipPanel>("", "连接服务器失败!");
         }
         //发送
