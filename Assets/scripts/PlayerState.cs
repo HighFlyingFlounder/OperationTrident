@@ -35,6 +35,15 @@ public class PlayerState : MonoBehaviour {
         {
             Debug.Log("GameOver!!!");
         }
+
+    }
+
+    public void SendHitRock()
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        proto.AddString("HitRock");
+        //
+        NetMgr.srvConn.Send(proto);
     }
 
     private void OnTriggerEnter(Collider other)

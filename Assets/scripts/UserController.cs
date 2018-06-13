@@ -55,6 +55,7 @@ public class UserController : MonoBehaviour
     }
 
     public Camera cam;
+    public GameObject model;
     public MovementSettings movementSettings;
     private MouseLook mouseLook;
     public GameObject RunParticle;
@@ -62,6 +63,7 @@ public class UserController : MonoBehaviour
     private float t = 0.0f;//计时器,在喷射系统从零开始加速时使用
 
     public Rigidbody m_RigidBody;
+    private Animator m_Animator;
     private float m_YRotation;
 
     public Vector3 Velocity
@@ -78,6 +80,7 @@ public class UserController : MonoBehaviour
     private void Start()
     {
         m_RigidBody = GetComponent<Rigidbody>();
+        m_Animator = model.GetComponent<Animator>();
         mouseLook.Init(transform, cam.transform);
     }
 
@@ -89,6 +92,19 @@ public class UserController : MonoBehaviour
     
     private void FixedUpdate()
     {
+        if (movementSettings.isRun)
+        {
+            RunParticle.active = true;
+        }
+        else
+        {
+            RunParticle.active = false;
+        }
+        Vector3 ViewPortPos = cam.WorldToViewportPoint(model.transform.position);
+        m_Animator.SetFloat("Vertical", 20 * (2 * ViewPortPos.y - 1.0f));
+        m_Animator.SetFloat("Horizontal", 20 * (2 * ViewPortPos.x - 1.0f));
+        m_Animator.SetBool("isPushed", movementSettings.isPushed);
+
         //网络同步
         if (ctrlType == CtrlType.net)
         {
@@ -129,15 +145,6 @@ public class UserController : MonoBehaviour
             }
             movementSettings.isRun = false;
         }
-        if (movementSettings.isRun)
-        {
-            RunParticle.active = true;
-        }
-        else
-        {
-            RunParticle.active = false;
-        }
-
     }
 
     private Vector2 GetInput()//api

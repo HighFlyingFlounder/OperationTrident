@@ -7,7 +7,7 @@ public class TargetTracker : MonoBehaviour {
     public Camera Cam;
     public float SpeedPar;
     private Rigidbody m_RigidBody;
-    private Animator m_Animator;
+    
     private GameObject Flyer;
 
     private void Awake()
@@ -18,7 +18,7 @@ public class TargetTracker : MonoBehaviour {
     // Use this for initialization
     void Start () {
         m_RigidBody = GetComponent<Rigidbody>();
-        m_Animator = GetComponent<Animator>();
+        
     }
 	
 	void FixedUpdate () {
@@ -34,10 +34,5 @@ public class TargetTracker : MonoBehaviour {
         Move = Move.normalized;
         m_RigidBody.velocity = Move * Speed;
 
-        Vector3 ViewPortPos = Cam.WorldToViewportPoint(this.transform.position);
-
-        m_Animator.SetFloat("Vertical", 3 * (2 * ViewPortPos.y - 1.0f + 0.3f));
-        m_Animator.SetFloat("Horizontal", 3 * (2 * ViewPortPos.x - 1.0f));
-        m_Animator.SetBool("isPushed", Flyer.GetComponent<UserController>().movementSettings.isPushed);
     }
 }
