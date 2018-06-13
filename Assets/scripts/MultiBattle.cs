@@ -46,7 +46,7 @@ public class MultiBattle : MonoBehaviour
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
-        // NetMgr.srvConn.msgDist.AddListener ("UpdateUnitInfo", RecvUpdateUnitInfo);
+        NetMgr.srvConn.msgDist.AddListener ("UpdateUnitInfo", RecvUpdateUnitInfo);
         // NetMgr.srvConn.msgDist.AddListener ("Shooting", RecvShooting);
         // NetMgr.srvConn.msgDist.AddListener ("Hit", RecvHit);
         // NetMgr.srvConn.msgDist.AddListener ("Fail", RecvFail);
@@ -81,23 +81,24 @@ public class MultiBattle : MonoBehaviour
         UserController bt = new UserController();
         bt = playerObj.GetComponent<UserController>();
 
-        //加到List中的是各个玩家的PlayerController脚本
+        //加到List中的是各个玩家的UserController脚本
 
         list.Add(id, bt);
         //玩家处理
 
-        // if (id == GameMgr.instance.id)
-        // {
-        //     bt.ctrlType = Player.CtrlType.player;
-        //     //CameraFollow cf = Camera.main.gameObject.GetComponent<CameraFollow>();
-        //     //GameObject target = bt.gameObject;
-        //     //cf.SetTarget(target);
-        // }
-        // else
-        // {
-        //     bt.ctrlType = Player.CtrlType.net;
-        //     bt.InitNetCtrl();  //初始化网络同步
-        // }
+        if (id == GameMgr.instance.id)
+        {
+            bt.ctrlType = UserController.CtrlType.player;
+            //CameraFollow cf = Camera.main.gameObject.GetComponent<CameraFollow>();
+            //GameObject target = bt.gameObject;
+            //cf.SetTarget(target);
+        }
+        else
+        {
+            bt.ctrlType = UserController.CtrlType.net;
+            playerObj.transform.Find("Camera").gameObject.SetActive(false);
+            //bt.InitNetCtrl();  //初始化网络同步
+        }
     }
 
 
@@ -116,18 +117,21 @@ public class MultiBattle : MonoBehaviour
         nRot.x = proto.GetFloat(start, ref start);
         nRot.y = proto.GetFloat(start, ref start);
         nRot.z = proto.GetFloat(start, ref start);
+
+        int isRun = proto.GetInt(start, ref start);
+        int isPushed = proto.GetInt(start, ref start);
         //处理
         Debug.Log("RecvUpdateUnitInfo " + id);
-        // if (!list.ContainsKey(id))
-        // {
-        //     Debug.Log("RecvUpdateUnitInfo bt == null ");
-        //     return;
-        // }
-        //PlayerController bt = list[id];
+        if (!list.ContainsKey(id))
+        {
+            Debug.Log("RecvUpdateUnitInfo bt == null ");
+            return;
+        }
+        UserController bt = list[id];
         if (id == GameMgr.instance.id)
             return;
 
-        //bt.NetUpdateUnitInfo(nPos,nRot);
+        bt.NetUpdateUnitInfo(nPos,nRot,isRun,isPushed);
         // bt.tank.NetForecastInfo(nPos, nRot);
         // bt.tank.NetTurretTarget(turretY, gunX); //稍后实现
     }
@@ -143,7 +147,7 @@ public class MultiBattle : MonoBehaviour
          PanelMgr.instance.OpenPanel<WinPanel>("", 0);
 
         //取消监听
-        // NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
+        NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
         // NetMgr.srvConn.msgDist.DelListener("Shooting", RecvShooting);
         // NetMgr.srvConn.msgDist.DelListener("Hit", RecvHit);
         // NetMgr.srvConn.msgDist.AddListener ("Fail", RecvFail);

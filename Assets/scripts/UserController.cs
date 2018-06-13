@@ -5,6 +5,15 @@ using UnityStandardAssets.CrossPlatformInput;
 [RequireComponent(typeof(Rigidbody))]
 public class UserController : MonoBehaviour
 {
+    //操控类型
+    public enum CtrlType
+    {
+        none,
+        player,
+        computer,
+        net,
+    }
+    public CtrlType ctrlType = CtrlType.player;
 
     public class MovementSettings
     {
@@ -75,11 +84,18 @@ public class UserController : MonoBehaviour
 
     private void Update()
     {
-        RotateView();
+        
     }
     
     private void FixedUpdate()
     {
+        //网络同步
+        if (ctrlType == CtrlType.net)
+        {
+            //NetUpdate();
+            return;
+        }
+        //玩家操控
         //正常飞行情况下
         if (!movementSettings.isPushed)
         {
@@ -103,6 +119,8 @@ public class UserController : MonoBehaviour
         //被推开的情况下，不受任何控制
         else
         {
+            RotateView();
+
             t -= 0.01f;
             t = Mathf.Clamp(t, 0f, 1f);//计时器在清零后恢复控制
             if (t == 0f)
@@ -124,13 +142,14 @@ public class UserController : MonoBehaviour
 
     private Vector2 GetInput()//api
     {
-
+        RotateView();
         Vector2 input = new Vector2
         {
             x = CrossPlatformInputManager.GetAxis("Horizontal"),
             y = CrossPlatformInputManager.GetAxis("Vertical")
         };
         movementSettings.UpdateDesiredTargetSpeed(input);
+        SendUnitInfo();
         return input;
     }
 
@@ -143,6 +162,34 @@ public class UserController : MonoBehaviour
         float oldYRotation = transform.eulerAngles.y;
 
         mouseLook.LookRotation(transform, cam.transform);
+    }
+
+    public void NetUpdateUnitInfo(Vector3 pos,Vector3 rot,int _isRun, int _isPushed)
+    {
+        transform.position = pos;
+        transform.eulerAngles = rot;
+        movementSettings.isRun = _isRun == 1 ? true : false;
+        movementSettings.isPushed = _isPushed == 1 ? true : false;
+    }
+
+    public void SendUnitInfo()
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        proto.AddString("UpdateUnitInfo");
+        //位置和旋转
+        Vector3 pos = transform.position;
+        Vector3 rot = transform.eulerAngles;
+        proto.AddFloat(pos.x);
+        proto.AddFloat(pos.y);
+        proto.AddFloat(pos.z);
+
+        proto.AddFloat(rot.x);
+        proto.AddFloat(rot.y);
+        proto.AddFloat(rot.z);
+        //is running & is pushed
+        proto.AddInt(movementSettings.isRun?1 : 0);
+        proto.AddInt(movementSettings.isPushed ? 1 : 0);
+        NetMgr.srvConn.Send(proto);
     }
 
 }
