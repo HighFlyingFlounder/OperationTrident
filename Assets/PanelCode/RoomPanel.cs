@@ -67,7 +67,7 @@ public class RoomPanel : PanelBase
         for (i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
-            int team = proto.GetInt(start, ref start);
+            //int team = proto.GetInt(start, ref start);
             int win = proto.GetInt(start, ref start);
             int fail = proto.GetInt(start, ref start);
             int isOwner = proto.GetInt(start, ref start);
@@ -75,7 +75,7 @@ public class RoomPanel : PanelBase
             Transform trans = prefabs[i];
             Text text = trans.Find("Text").GetComponent<Text>();
             string str = "名字：" + id + "\r\n";
-            str += "阵营：" + (team == 1 ? "红" : "蓝") + "\r\n";
+            //str += "阵营：" + (team == 1 ? "红" : "蓝") + "\r\n";
             str += "胜利：" + win.ToString() + "   ";
             str += "失败：" + fail.ToString() + "\r\n";
             if (id == GameMgr.instance.id)
@@ -84,10 +84,10 @@ public class RoomPanel : PanelBase
                 str += "【房主】";
             text.text = str;
 
-            if (team == 1)
-                trans.GetComponent<Image>().color = Color.red;
-            else
-                trans.GetComponent<Image>().color = Color.blue;
+            // if (team == 1)
+            //     trans.GetComponent<Image>().color = Color.red;
+            // else
+            //     trans.GetComponent<Image>().color = Color.blue;
         }
 
         for (; i < 6; i++)
