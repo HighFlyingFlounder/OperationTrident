@@ -33,7 +33,16 @@ public class PlayerState : MonoBehaviour {
         }
         if (Hp == 0f)
         {
-            Manager.instance.GameOver = true;
+            Debug.Log("GameOver!!!");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "End")
+        {
+            Flyer.GetComponent<UserController>().enabled = false;
+            Flyer.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
         }
     }
 }
