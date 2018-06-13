@@ -96,7 +96,7 @@ public class MultiBattle : MonoBehaviour
         else
         {
             bt.ctrlType = UserController.CtrlType.net;
-            playerObj.transform.Find("Camera").gameObject.SetActive(false);
+            playerObj.transform.Find("Camera").gameObject.GetComponent <Camera>().enabled = false;
             //bt.InitNetCtrl();  //初始化网络同步
         }
     }

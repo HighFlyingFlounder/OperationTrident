@@ -22,7 +22,7 @@ public class UserController : MonoBehaviour
         public float HorizontalSpeed = 4.0f;
         public float VerticalSpeed = 4.0f;
         */
-        public float Speed = 10f;
+        public float Speed = 1.0f;
         public float RunMultiplier = 2.0f;
         public KeyCode RunKey = KeyCode.LeftShift;
         public bool isRun = false;

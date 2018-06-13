@@ -10,12 +10,15 @@ public class TargetTracker : MonoBehaviour {
     private Animator m_Animator;
     private GameObject Flyer;
 
+    private void Awake()
+    {
+        Flyer = transform.parent.gameObject;
+        Target = Flyer.transform.Find("Camera/Target").gameObject;
+    }
     // Use this for initialization
     void Start () {
-        Target = GameObject.Find("Target");
         m_RigidBody = GetComponent<Rigidbody>();
         m_Animator = GetComponent<Animator>();
-        Flyer = transform.parent.gameObject;
     }
 	
 	void FixedUpdate () {
