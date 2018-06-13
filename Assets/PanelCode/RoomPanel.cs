@@ -153,7 +153,7 @@ public class RoomPanel : PanelBase
     public void RecvFight(ProtocolBase protocol)
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
-        //MultiBattle.instance.StartBattle(proto);
+        MultiBattle.instance.StartBattle(proto);
         Close();
     }
 

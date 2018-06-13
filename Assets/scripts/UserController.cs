@@ -1,0 +1,148 @@
+﻿using System;
+using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
+
+[RequireComponent(typeof(Rigidbody))]
+public class UserController : MonoBehaviour
+{
+
+    public class MovementSettings
+    {
+        //都是一个速度感觉直接用一个变量算了= =
+        /*public float ForwardSpeed = 4.0f;
+        public float HorizontalSpeed = 4.0f;
+        public float VerticalSpeed = 4.0f;
+        */
+        public float Speed = 10f;
+        public float RunMultiplier = 2.0f;
+        public KeyCode RunKey = KeyCode.LeftShift;
+        public bool isRun = false;
+        public bool isPushed = false;
+        
+        public float CurrentTargetSpeed = 10.0f;
+
+        public void UpdateDesiredTargetSpeed(Vector2 input)
+        {
+            if (Input.GetKeyDown(RunKey))
+            {
+                isRun = true;
+            }
+            if (Input.GetKeyUp(RunKey))
+            {
+                isRun = false;
+            }
+            if (input == Vector2.zero) return;
+            if (input.x > 0 || input.x < 0)
+            {
+                //horizontal
+                CurrentTargetSpeed = /*Horizontal*/Speed * (isRun ? RunMultiplier : 1.0f);
+            }
+            if (input.y > 0 || input.y < 0)
+            {
+                //vertical
+                CurrentTargetSpeed = /*Vertical*/Speed * (isRun ? RunMultiplier : 1.0f);
+            }
+        }
+    }
+
+    public Camera cam;
+    public MovementSettings movementSettings;
+    private MouseLook mouseLook;
+    public GameObject RunParticle;
+    private float hp = 100f;
+    private float t = 0.0f;//计时器,在喷射系统从零开始加速时使用
+
+    public Rigidbody m_RigidBody;
+    private float m_YRotation;
+
+    public Vector3 Velocity
+    {
+        get { return m_RigidBody.velocity; }
+    }
+
+    private void Awake()
+    {
+        mouseLook = new MouseLook();
+        movementSettings = new MovementSettings();
+    }
+
+    private void Start()
+    {
+        m_RigidBody = GetComponent<Rigidbody>();
+        mouseLook.Init(transform, cam.transform);
+    }
+
+
+    private void Update()
+    {
+        RotateView();
+    }
+    
+    private void FixedUpdate()
+    {
+        //正常飞行情况下
+        if (!movementSettings.isPushed)
+        {
+            t += 0.01f;
+            t = Mathf.Clamp(t, 0f, 1f);
+            m_RigidBody.velocity = cam.transform.forward * movementSettings.CurrentTargetSpeed * t;
+
+            Vector2 input = GetInput();
+
+            if (Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon)
+            {
+                // always move along the camera forward as it is the direction that it being aimed at
+                Vector3 desiredMove = cam.transform.up * input.y + cam.transform.right * input.x;
+                desiredMove = desiredMove.normalized;
+
+                desiredMove.x = desiredMove.x * movementSettings.CurrentTargetSpeed;
+                desiredMove.y = desiredMove.y * movementSettings.CurrentTargetSpeed;
+                m_RigidBody.AddForce(desiredMove, ForceMode.Impulse);
+            }
+        }
+        //被推开的情况下，不受任何控制
+        else
+        {
+            t -= 0.01f;
+            t = Mathf.Clamp(t, 0f, 1f);//计时器在清零后恢复控制
+            if (t == 0f)
+            {
+                movementSettings.isPushed = false;
+            }
+            movementSettings.isRun = false;
+        }
+        if (movementSettings.isRun)
+        {
+            RunParticle.active = true;
+        }
+        else
+        {
+            RunParticle.active = false;
+        }
+
+    }
+
+    private Vector2 GetInput()//api
+    {
+
+        Vector2 input = new Vector2
+        {
+            x = CrossPlatformInputManager.GetAxis("Horizontal"),
+            y = CrossPlatformInputManager.GetAxis("Vertical")
+        };
+        movementSettings.UpdateDesiredTargetSpeed(input);
+        return input;
+    }
+
+    private void RotateView()
+    {
+        //avoids the mouse looking if the game is effectively paused
+        if (Mathf.Abs(Time.timeScale) < float.Epsilon) return;
+
+        // get the rotation before it's changed
+        float oldYRotation = transform.eulerAngles.y;
+
+        mouseLook.LookRotation(transform, cam.transform);
+    }
+
+}
