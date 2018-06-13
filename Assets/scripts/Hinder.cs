@@ -2,16 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hinder : MonoBehaviour {
+public class Hinder : MonoBehaviour
+{
     public float radius = 10f;   //定义一个要添加爆炸力的半径
     public float power = 4500f;   //定义一个爆炸力
     public GameObject explosion;
     public GameObject stone;
     public float tumble = 1.0f;
 
-    void Boom()
+    public void Boom()
     {
         //在陨石的位置实例化出爆炸
+        if (gameObject == null)
+        {
+            Debug.Log("Null");
+            return;
+        }
+
         Destroy(gameObject);
         Instantiate(explosion, transform.position, transform.rotation);
         Instantiate(stone, transform.position, transform.rotation);
@@ -43,9 +50,19 @@ public class Hinder : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.tag == "Player")
+        if (other.collider.tag == "Player" && other.collider.gameObject.GetComponent<UserController>().ctrlType == UserController.CtrlType.player)
         {
+            SendHitRock();
             Boom();
         }
+    }
+
+    public void SendHitRock()
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        proto.AddString("HitRock");
+        //
+        proto.AddString(this.name);
+        NetMgr.srvConn.Send(proto);
     }
 }

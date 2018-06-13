@@ -10,12 +10,19 @@ public class MultiBattle : MonoBehaviour
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
     public Dictionary<string, UserController> list = new Dictionary<string, UserController>();
+    public Dictionary<string, Hinder> rock_list = new Dictionary<string, Hinder>();
+
+    private GameObject[]rocks;
 
     // Use this for initialization
     void Start()
     {
         //单例模式
         instance = this;
+        //获得所有陨石的句柄
+        rocks = GameObject.FindGameObjectsWithTag("Hinder");
+        foreach (GameObject rock in rocks)
+            rock_list.Add(rock.name, rock.GetComponent<Hinder>());
     }
 
     //清理场景
@@ -46,8 +53,8 @@ public class MultiBattle : MonoBehaviour
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
-        NetMgr.srvConn.msgDist.AddListener ("UpdateUnitInfo", RecvUpdateUnitInfo);
-        // NetMgr.srvConn.msgDist.AddListener ("Shooting", RecvShooting);
+        NetMgr.srvConn.msgDist.AddListener("UpdateUnitInfo", RecvUpdateUnitInfo);
+        NetMgr.srvConn.msgDist.AddListener("HitRock", RecvHitRock);
         // NetMgr.srvConn.msgDist.AddListener ("Hit", RecvHit);
         // NetMgr.srvConn.msgDist.AddListener ("Fail", RecvFail);
     }
@@ -96,7 +103,7 @@ public class MultiBattle : MonoBehaviour
         else
         {
             bt.ctrlType = UserController.CtrlType.net;
-            playerObj.transform.Find("Camera").gameObject.GetComponent <Camera>().enabled = false;
+            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
             //bt.InitNetCtrl();  //初始化网络同步
         }
     }
@@ -131,9 +138,21 @@ public class MultiBattle : MonoBehaviour
         if (id == GameMgr.instance.id)
             return;
 
-        bt.NetUpdateUnitInfo(nPos,nRot,isRun,isPushed);
+        bt.NetUpdateUnitInfo(nPos, nRot, isRun, isPushed);
         // bt.tank.NetForecastInfo(nPos, nRot);
         // bt.tank.NetTurretTarget(turretY, gunX); //稍后实现
+    }
+
+    public void RecvHitRock(ProtocolBase protocol)
+    {
+        //解析协议
+        int start = 0;
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        string protoName = proto.GetString(start, ref start);
+        string rock_name = proto.GetString(start, ref start);
+
+        Hinder ht = rock_list[rock_name];
+        ht.Boom();
     }
 
     //有玩家撞击陨石死亡，全队失败
@@ -144,7 +163,7 @@ public class MultiBattle : MonoBehaviour
         ProtocolBytes proto = (ProtocolBytes)protocol;
         string protoName = proto.GetString(start, ref start);
         //弹出失败面板
-         PanelMgr.instance.OpenPanel<WinPanel>("", 0);
+        PanelMgr.instance.OpenPanel<WinPanel>("", 0);
 
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
