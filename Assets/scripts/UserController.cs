@@ -24,13 +24,13 @@ public class UserController : MonoBehaviour
         public float HorizontalSpeed = 4.0f;
         public float VerticalSpeed = 4.0f;
         */
-        public float Speed = 2.0f;
+        public float Speed = 8.0f;
         public float RunMultiplier = 2.0f;
         public KeyCode RunKey = KeyCode.LeftShift;
         public bool isRun = false;
         public bool isPushed = false;
-        
-        public float CurrentTargetSpeed = 2.0f;
+
+        public float CurrentTargetSpeed = 8.0f;
 
         public void UpdateDesiredTargetSpeed(Vector2 input)
         {
@@ -89,9 +89,9 @@ public class UserController : MonoBehaviour
 
     private void Update()
     {
-        
+
     }
-    
+
     private void FixedUpdate()
     {
         if (movementSettings.isRun)
@@ -148,12 +148,23 @@ public class UserController : MonoBehaviour
             }
             movementSettings.isRun = false;
         }
+
+
+        if (transform.position.x > 1900f || transform.position.x < 0f || transform.position.y > 300f || transform.position.y < -300f || transform.position.z > 200f || transform.position.z < -200f)
+        {
+            float x = Mathf.Clamp(transform.position.x, 0f, 1900f);
+            float y = Mathf.Clamp(transform.position.y, -300f, 300f);
+            float z = Mathf.Clamp(transform.position.z, -200f, 200f);
+            transform.position = new Vector3(x, y, z);
+        }
+
         //网络同步
         if (Time.time - lastSendInfoTime > 0.1f)
         {
             SendUnitInfo();
             lastSendInfoTime = Time.time;
         }
+
     }
 
     private Vector2 GetInput()//api
@@ -179,7 +190,7 @@ public class UserController : MonoBehaviour
         mouseLook.LookRotation(transform, cam.transform);
     }
 
-    public void NetUpdateUnitInfo(Vector3 pos,Vector3 rot,int _isRun, int _isPushed)
+    public void NetUpdateUnitInfo(Vector3 pos, Vector3 rot, int _isRun, int _isPushed)
     {
         transform.position = pos;
         transform.eulerAngles = rot;
@@ -202,7 +213,7 @@ public class UserController : MonoBehaviour
         proto.AddFloat(rot.y);
         proto.AddFloat(rot.z);
         //is running & is pushed
-        proto.AddInt(movementSettings.isRun?1 : 0);
+        proto.AddInt(movementSettings.isRun ? 1 : 0);
         proto.AddInt(movementSettings.isPushed ? 1 : 0);
         NetMgr.srvConn.Send(proto);
     }
