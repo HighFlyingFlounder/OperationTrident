@@ -8,6 +8,8 @@ namespace OperationTrident.Room1
 {
     public class RayShooter : MonoBehaviour
     {
+        [SerializeField]
+        private float distanceQuota = 1.0f;
 
         // 附加在这个东西上的摄像机
         private Camera camera;
@@ -60,18 +62,32 @@ namespace OperationTrident.Room1
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                    if (Vector3.Distance(this.transform.position,hitObject.transform.position)>distanceQuota)
+                    {
+                        return;
+                    }
                     OperationTrident.Room1.KeyScript target = 
                         hitObject.GetComponent<OperationTrident.Room1.KeyScript>();
                     if (target != null)   //检查对象上是否有KeyScript组件
                     {
-                        Messenger.Broadcast(GameEvent.KEY_GOT);
+                        Messenger<int>.Broadcast(GameEvent.KEY_GOT,target.ThisId);
+                        return;
                     }
                     DoorScript target1 =
                         hitObject.GetComponent<DoorScript>();
                     if (target1 != null)
                     {
-                        Messenger.Broadcast(GameEvent.DOOR_OPEN);
+                        Messenger<int>.Broadcast(GameEvent.DOOR_OPEN,target1.ThisId);
+                        return;
                     }
+                    InteractiveThing target2 =
+                        hitObject.GetComponent<InteractiveThing>();
+                    if (target2 != null)
+                    {
+                        Messenger.Broadcast(GameEvent.CROPSE_TRY);
+                        return;
+                    }
+
 
                 }
             }

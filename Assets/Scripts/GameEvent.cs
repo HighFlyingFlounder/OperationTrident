@@ -10,5 +10,7 @@ namespace OperationTrident.Room1
     {
         public const String KEY_GOT = "KEY_GOT";
         public const String DOOR_OPEN = "DOOR_OPEN";
+        public const String C4_GOT = "C4_GOT";
+        public const String CROPSE_TRY = "CROPSE_TRY";
     }
 }

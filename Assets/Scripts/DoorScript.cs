@@ -7,6 +7,19 @@ namespace OperationTrident.Room1
 {
     public class DoorScript : MonoBehaviour
     {
+        // 标识三扇门的ID
+        private static int totalId = 0;
+
+        private int thisId;
+
+        public int ThisId
+        {
+            get
+            {
+                return thisId;
+            }
+        }
+
         // 门被打开的速度
         public float openSpeed = 0.01f;
 
@@ -25,6 +38,7 @@ namespace OperationTrident.Room1
         {
             isOpen = false;
             canBeDestroy = false;
+            thisId = totalId++;
         }
 
         // Update is called once per frame
