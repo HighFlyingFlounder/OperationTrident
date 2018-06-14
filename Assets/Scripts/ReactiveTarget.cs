@@ -8,6 +8,15 @@ namespace OperationTrident.Room1
     {
         // 是否死亡
         private bool dead;
+
+        public bool Dead
+        {
+            get
+            {
+                return dead;
+            }
+        }
+
         // Use this for initialization
         void Start()
         {

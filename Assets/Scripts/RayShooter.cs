@@ -8,6 +8,7 @@ namespace OperationTrident.Room1
 {
     public class RayShooter : MonoBehaviour
     {
+        // 判断能否够到物体的距离
         [SerializeField]
         private float distanceQuota = 1.0f;
 

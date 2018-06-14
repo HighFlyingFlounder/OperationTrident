@@ -50,17 +50,17 @@ namespace OperationTrident.Room1
         // 场景中的物体数（指的是可交互的物品）
         private const int gameObjectCount = 4;
 
-        // 场景中的敌人链表
-        [SerializeField]
-        private List<Vector3> enemyCreateList;
+        //// 场景中的敌人链表
+        //[SerializeField]
+        //private List<Vector3> enemyCreateList;
 
-        // 敌人机器人的预设
-        [SerializeField]
-        private GameObject enemyPrefab;
-        // 场景中所有敌人的链表
-        private List<GameObject> enemysList;
-        // 场景生成敌人的速度(多少秒产生一个)
-        public float enemyCreateSpeed;
+        //// 敌人机器人的预设
+        //[SerializeField]
+        //private GameObject enemyPrefab;
+        //// 场景中所有敌人的链表
+        //private List<GameObject> enemysList;
+        //// 场景生成敌人的速度(多少秒产生一个)
+        //public float enemyCreateSpeed;
 
         /*
             房间内会有防守机器人，进入后会启动预设机器人，玩家需要尽可能击毁机器人。
@@ -69,7 +69,6 @@ namespace OperationTrident.Room1
             过了SubROOM1后，任务目标更新为SubROOM2，玩家需前往寻找钥匙。
             两个SubROOM都过了之后，任务目标更新为SubROOM3前的必需品。
             取得必需品，任务目标更新为开门。进入SubROOM3后取得OK的ID卡。
-            取得OK的ID卡后，房间的警报会响起，同时会涌入较多的机器人，玩家需清理出一条道路逃离房间。
         */
         // 场景的状态。
         public enum Room1State { Initing, FindingKey1, FindingKey2, TryingToOpenRoom, FindingNeeded, FindingIDCard, EscapingRoom};
@@ -102,7 +101,7 @@ namespace OperationTrident.Room1
             // 场景状态初始
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
-            enemysList = new List<GameObject>();
+            //enemysList = new List<GameObject>();
         }
 
         // Update is called once per frame
@@ -113,7 +112,7 @@ namespace OperationTrident.Room1
                 // 场景的初始状态
                 case Room1State.Initing:
                     InitAllGameObject();
-                    StartCoroutine(EnemyCreateRountine());
+                    //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
                     break;
                 // 玩家正在找第一个钥匙
@@ -168,25 +167,25 @@ namespace OperationTrident.Room1
             door2.transform.localScale = new Vector3(3.0f, door2.transform.localScale.y, door2.transform.localScale.z);
         }
 
-        // 产生敌人的协程
-        IEnumerator EnemyCreateRountine()
-        {
-            // 这里暂时是每时每刻都生成？@！#￥
-            while (true)
-            {
-                enemyCreate();
-                yield return new WaitForSeconds(enemyCreateSpeed);
-            }
-        }
+        //// 产生敌人的协程
+        //IEnumerator EnemyCreateRountine()
+        //{
+        //    // 这里暂时是每时每刻都生成？@！#￥
+        //    while (true)
+        //    {
+        //        enemyCreate();
+        //        yield return new WaitForSeconds(enemyCreateSpeed);
+        //    }
+        //}
 
-        // 敌人产生
-        private void enemyCreate()
-        {
-            GameObject nowEnemy = Instantiate(enemyPrefab) as GameObject;
-            nowEnemy.transform.localPosition = enemyCreateList[UnityEngine.Random.Range(0,enemyCreateList.Count-1)];
-            enemysList.Add(nowEnemy);
+        //// 敌人产生
+        //private void enemyCreate()
+        //{
+        //    GameObject nowEnemy = Instantiate(enemyPrefab) as GameObject;
+        //    nowEnemy.transform.localPosition = enemyCreateList[UnityEngine.Random.Range(0,enemyCreateList.Count-1)];
+        //    enemysList.Add(nowEnemy);
 
-        }
+        //}
 
         // 改进后的函数，所有钥匙的事件分ID处理
         private void OnKeyGot(int id)

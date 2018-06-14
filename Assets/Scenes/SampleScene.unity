@@ -261,6 +261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 555158578}
   - component: {fileID: 555158577}
+  - component: {fileID: 555158579}
   m_Layer: 0
   m_Name: Scene Controller
   m_TagString: Untagged
@@ -290,18 +291,6 @@ MonoBehaviour:
   DoorStartPosition: {x: -7.04771, y: 1.345, z: 25.848}
   Door1Position: {x: -58.706, y: 1.394, z: 9.44}
   Door2Position: {x: -58.12, y: 2.05, z: 74.87}
-  enemyCreateList:
-  - {x: -25.7, y: 2.63, z: 22.43}
-  - {x: -24.13, y: 2, z: 9.62}
-  - {x: -25.217, y: 2.033, z: 6.261}
-  - {x: -26.523, y: 5.744, z: 11.886}
-  - {x: -26.523, y: 5.744, z: 0.05}
-  - {x: 9.908, y: 1.39, z: 7.25}
-  - {x: 9.908, y: 1.39, z: 10.642}
-  - {x: 6.039, y: 1.39, z: 26.17}
-  enemyPrefab: {fileID: 1425528485773788, guid: b873fb90c76e879439de609bbad9797e,
-    type: 2}
-  enemyCreateSpeed: 3
   state: 0
 --- !u!4 &555158578
 Transform:
@@ -310,12 +299,31 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 555158576}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -34.961, y: 1.32, z: 76.99}
+  m_LocalPosition: {x: -27.1, y: 5.784, z: 13.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &555158579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 555158576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09628a3a41459640955204b4e4cf54a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyCreateList:
+  - {x: -50.95, y: 2.755, z: 21}
+  - {x: -27.1, y: 2.755, z: 8.858}
+  - {x: -27.1, y: 5.784, z: 13.2}
+  enemyPrefab: {fileID: 1425528485773788, guid: b873fb90c76e879439de609bbad9797e,
+    type: 2}
+  enemyCreateSpeed: 4
+  enemyMaxNum: 10
 --- !u!1 &1064734054 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100002, guid: ab7e80c5c03fb62418e2a3c6ef88b090, type: 3}
