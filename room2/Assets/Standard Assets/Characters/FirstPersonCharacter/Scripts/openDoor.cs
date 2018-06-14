@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class openDoor : MonoBehaviour {
+public class openDoor : MonoBehaviour
+{
     [SerializeField]
     public Vector3 dPos;
 
@@ -48,7 +49,7 @@ public class openDoor : MonoBehaviour {
         float total = 0.8f;
         while (time < total)
         {
-            transform.localPosition = Vector3.Lerp(initPos,endPos, time / total);
+            transform.localPosition = Vector3.Lerp(initPos, endPos, time / total);
             time += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }

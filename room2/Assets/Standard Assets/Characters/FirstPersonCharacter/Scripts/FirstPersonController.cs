@@ -150,7 +150,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_NextStep = m_StepCycle + .5f;
         }
 
-        
+
         private void LateUpdate()
         {
             /*
@@ -183,7 +183,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 ele.GetComponent<elevator>().closeDoor();
             }
         }
-        
+
 
         private void FixedUpdate()
         {
