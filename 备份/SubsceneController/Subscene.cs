@@ -48,12 +48,6 @@ namespace Room5Battle
         {
         }
 
-        //@brief  有一些每个子场景通用的更新逻辑
-        virtual public void onUpdate()
-        {
-
-        }
-
         //@brief 善后工作
         virtual public void onSubsceneDestory()
         {

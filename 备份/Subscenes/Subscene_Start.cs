@@ -29,17 +29,6 @@ namespace Room5Battle
             Debug.Log("Entering Subscene:start");
         }
 
-        public override void onUpdate()
-        {
-            //摄像机中心发出的射线
-            Ray viewRay = Camera.main.ScreenPointToRay(new Vector3(0, 0, 0));
-            RaycastHit hitInfo;
-            if(Physics.Raycast(viewRay,10.0f,out hitInfo))
-            {
-
-            }
-        }
-
         //@brief 善后工作
         public override void onSubsceneDestory()
         {

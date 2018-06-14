@@ -16,7 +16,7 @@ namespace Room5Battle
         //@brief 返回下一个子场景
         public override int GetNextSubscene()
         {
-            return null;
+            return c_InvalidStateId;
         }
 
         //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑

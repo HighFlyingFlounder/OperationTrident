@@ -90,28 +90,23 @@ namespace Room5Battle
             Subscene sub = ((mapToSubState[currentStateId]) as Subscene);
 
             //Debug.Log(mapToSubState.Count);
-            if (sub != null)
+            if (sub != null && sub.isTransitionTriggered())
             {
-                //每帧通用更新?
-                sub.onUpdate();
-                if (sub.isTransitionTriggered())
-                {
-                    Debug.Log(currentStateId);
-                    //执行善后工作
-                    sub.onSubsceneDestory();
-                    //不再执行update操作控制逻辑
-                    sub.enabled = false;
+                Debug.Log(currentStateId);
+                //执行善后工作
+                 sub.onSubsceneDestory();
+                 //不再执行update操作控制逻辑
+                 sub.enabled = false;
 
-                    previousStateId = currentStateId;
+                 previousStateId = currentStateId;
 
-                    //更换subscene
-                    currentStateId = sub.GetNextSubscene();
-                    //不要忘记设置enable
-                    ((mapToSubState[currentStateId]) as Subscene).enabled = true;
-                    ((mapToSubState[currentStateId]) as Subscene).onSubsceneInit();
-                }
-            }
-        }
+                 //更换subscene
+                 currentStateId = sub.GetNextSubscene();
+                 //不要忘记设置enable
+                 ((mapToSubState[currentStateId]) as Subscene).enabled = true;
+                 ((mapToSubState[currentStateId]) as Subscene).onSubsceneInit();
+             }
+          }
 
         ///获取上一个状态
         public int getPreviousSubscene

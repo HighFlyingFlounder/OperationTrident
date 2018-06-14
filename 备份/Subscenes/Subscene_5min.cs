@@ -14,7 +14,7 @@ namespace Room5Battle
         //@brief 返回下一个子场景
         public override int GetNextSubscene()
         {
-            return (int)Room5_Subscenes.GameState.;
+            return (int)GameState.COUNTING_DOWN_3MIN;
         }
 
         //@brief 善后工作
