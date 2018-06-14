@@ -151,6 +151,8 @@ public class MultiBattle : MonoBehaviour
         string protoName = proto.GetString(start, ref start);
         string rock_name = proto.GetString(start, ref start);
 
+        if (rock_list[rock_name] == null)
+            return;
         Hinder ht = rock_list[rock_name];
         ht.Boom();
     }

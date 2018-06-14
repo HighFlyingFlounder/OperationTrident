@@ -13,11 +13,6 @@ public class Hinder : MonoBehaviour
     public void Boom()
     {
         //在陨石的位置实例化出爆炸
-        if (gameObject == null)
-        {
-            Debug.Log("Null");
-            return;
-        }
 
         Destroy(gameObject);
         Instantiate(explosion, transform.position, transform.rotation);
@@ -50,7 +45,7 @@ public class Hinder : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.tag == "Player" && other.collider.gameObject.GetComponent<UserController>().ctrlType == UserController.CtrlType.player)
+        if (other.collider.tag == "Player" && other.collider.transform.parent.GetComponent<UserController>().ctrlType == UserController.CtrlType.player)
         {
             SendHitRock();
             Boom();

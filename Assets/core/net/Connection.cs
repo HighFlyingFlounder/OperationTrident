@@ -109,7 +109,7 @@ public class Connection
             return;
         //处理消息
         ProtocolBase protocol = proto.Decode(readBuff, sizeof(Int32), msgLength);
-        Debug.Log("收到消息 " + protocol.GetDesc());
+        //Debug.Log("收到消息 " + protocol.GetDesc());
         lock (msgDist.msgList)
         {
             msgDist.msgList.Add(protocol);
@@ -138,7 +138,7 @@ public class Connection
 
         byte[] sendbuff = length.Concat(b).ToArray();
         socket.Send(sendbuff);
-        Debug.Log("发送消息 " + protocol.GetDesc());
+        //Debug.Log("发送消息 " + protocol.GetDesc());
         return true;
     }
 
