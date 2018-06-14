@@ -145,6 +145,15 @@ public class UserController : MonoBehaviour
             }
             movementSettings.isRun = false;
         }
+
+        if(transform.position.x>1900f||transform.position.x<0f|| transform.position.y > 300f || transform.position.y < -300f || transform.position.z > 200f || transform.position.z < -200f)
+        {
+            float x = Mathf.Clamp(transform.position.x, 0f, 1900f);
+            float y = Mathf.Clamp(transform.position.y, -300f, 300f);
+            float z = Mathf.Clamp(transform.position.z, -200f, 200f);
+            transform.position = new Vector3(x, y, z);
+        }
+        
     }
 
     private Vector2 GetInput()//api
