@@ -105,6 +105,7 @@ public class MultiBattle : MonoBehaviour
         {
             bt.ctrlType = UserController.CtrlType.net;
             playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
             //bt.InitNetCtrl();  //初始化网络同步
         }
     }
@@ -168,6 +169,9 @@ public class MultiBattle : MonoBehaviour
         int isWin = proto.GetInt(start, ref start);
         //弹出胜负面板
         PanelMgr.instance.OpenPanel<WinPanel>("", isWin);
+        list[GameMgr.instance.id].gameObject.SetActive(false);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
         NetMgr.srvConn.msgDist.DelListener("HitRock", RecvHitRock);

@@ -20,7 +20,7 @@ public class PlayerState : MonoBehaviour {
     {
         if (other.collider.tag == "Hinder")
         {
-            ChangeHp(-10.0f);
+            ChangeHp(-40.0f);
             Vector3 Force = this.transform.position - other.transform.position;
             //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
             Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
@@ -33,10 +33,8 @@ public class PlayerState : MonoBehaviour {
         }
         if (Hp == 0f)
         {
+            this.GetComponent<Collider>().enabled = false;
             SendDead();
-            Flyer.SetActive(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
         }
     }
 
@@ -55,6 +53,7 @@ public class PlayerState : MonoBehaviour {
     public void SendDead()
     {
         ProtocolBytes proto = new ProtocolBytes();
+        Debug.Log("dead");
         proto.AddString("Dead");
         NetMgr.srvConn.Send(proto);
     }
