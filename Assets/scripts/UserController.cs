@@ -22,13 +22,13 @@ public class UserController : MonoBehaviour
         public float HorizontalSpeed = 4.0f;
         public float VerticalSpeed = 4.0f;
         */
-        public float Speed = 2.0f;
+        public float Speed = 8.0f;
         public float RunMultiplier = 2.0f;
         public KeyCode RunKey = KeyCode.LeftShift;
         public bool isRun = false;
         public bool isPushed = false;
         
-        public float CurrentTargetSpeed = 2.0f;
+        public float CurrentTargetSpeed = 8.0f;
 
         public void UpdateDesiredTargetSpeed(Vector2 input)
         {

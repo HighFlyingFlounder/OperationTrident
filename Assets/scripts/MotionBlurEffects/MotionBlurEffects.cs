@@ -33,8 +33,8 @@ public class MotionBlurEffects : MonoBehaviour
     public static float ChangeValue3;
     public static float ChangeValue4;
     public static float ChangeValue5;
-    //private KeyCode RunKey = KeyCode.LeftShift;
     private bool isRun = false;
+    public float Par = 2.0f;
     private GameObject Flyer;
     #endregion
 
@@ -152,7 +152,7 @@ public class MotionBlurEffects : MonoBehaviour
                 t2 = 0f;
                 t1 += Time.deltaTime;
                 t1 = t1 > 1.0f ? 1.0f : t1;
-                Intensity = Mathf.Lerp(Intensity, ChangeValue * 3.0f, t1);
+                Intensity = Mathf.Lerp(Intensity, ChangeValue * Par, t1);
             }
             else
             {
