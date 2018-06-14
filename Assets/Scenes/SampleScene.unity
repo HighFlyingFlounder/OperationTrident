@@ -252,6 +252,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceQuota: 3
+  shootingSpeed: 50
+  jitterFactorX: 1
+  jitterFactorY: 0.5
+--- !u!114 &551941098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 551941092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a9281e51a00e24dabfac231bd64fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  missionLabelOffset: 2
 --- !u!1 &555158576
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,13 +300,12 @@ MonoBehaviour:
     type: 2}
   DoorPrefab: {fileID: 1934030854212372, guid: c82d15dbbbd866a41b2c79635257a4cf, type: 2}
   cropse: {fileID: 1729479369}
-  Key1Position: {x: -15.842, y: 1.1, z: 29.765}
-  Key2Position: {x: -52.58, y: 1.1, z: -2.91}
+  Key1Position: {x: -15.842, y: 1.075, z: 29.765}
+  Key2Position: {x: -52.58, y: 1.075, z: -2.91}
   IDCardPosition: {x: -34.961, y: 1.32, z: 76.99}
   DoorStartPosition: {x: -7.04771, y: 1.345, z: 25.848}
-  Door1Position: {x: -58.706, y: 1.394, z: 9.44}
+  Door1Position: {x: -58.706, y: 1.349, z: 9.44}
   Door2Position: {x: -58.12, y: 2.05, z: 74.87}
-  state: 0
 --- !u!4 &555158578
 Transform:
   m_ObjectHideFlags: 0

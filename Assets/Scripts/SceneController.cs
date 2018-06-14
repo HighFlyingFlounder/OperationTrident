@@ -38,17 +38,28 @@ namespace OperationTrident.Room1
         private GameObject door2;
 
         // 场景中一些物品出现的位置
-        public Vector3 Key1Position; //= new Vector3(-15.842f, 1.075f, 29.765f);
-        public Vector3 Key2Position; //= new Vector3(-52.58f, 1.075f, -2.91f);
-        // public Vector3 CropsePosition;  暂时不需要这个了
-        public Vector3 IDCardPosition; // = new Vector3(-34.961f, 1.32f, 76.99f);
+        [SerializeField]
+        private Vector3 Key1Position; //= new Vector3(-15.842f, 1.075f, 29.765f);
+        [SerializeField]
+        private Vector3 Key2Position; //= new Vector3(-52.58f, 1.075f, -2.91f);
+                                      // public Vector3 CropsePosition;  暂时不需要这个了
+        [SerializeField]
+        private Vector3 IDCardPosition; // = new Vector3(-34.961f, 1.32f, 76.99f);
 
-        public Vector3 DoorStartPosition; // = new Vector3(-7.04771f, 1.345f, 25.848f);
-        public Vector3 Door1Position; // = new Vector3(-58.706f, 1.394f, 9.44f); 开门的话向X轴负半轴移动
-        public Vector3 Door2Position; // = new Vectir3(-58.12f, 2.05f, 74.87f); 初始化时Scale的x值要变成3. 开门也是向x轴负半轴移动
+        [SerializeField]
+        private Vector3 DoorStartPosition; // = new Vector3(-7.04771f, 1.345f, 25.848f);
+        [SerializeField]
+        private Vector3 Door1Position; // = new Vector3(-58.706f, 1.394f, 9.44f); 开门的话向X轴负半轴移动
+        [SerializeField]
+        private Vector3 Door2Position; // = new Vectir3(-58.12f, 2.05f, 74.87f); 初始化时Scale的x值要变成3. 开门也是向x轴负半轴移动
+
+        public static Vector3 Key1WorldPosition;
+        public static Vector3 Key2WorldPosition;
+        public static Vector3 CropseWorldPosition;
+        public static Vector3 IDCardWorldPosition;
 
         // 场景中的物体数（指的是可交互的物品）
-        private const int gameObjectCount = 4;
+        private const int gameObjectCount = 7;
 
         //// 场景中的敌人链表
         //[SerializeField]
@@ -73,7 +84,7 @@ namespace OperationTrident.Room1
         // 场景的状态。
         public enum Room1State { Initing, FindingKey1, FindingKey2, TryingToOpenRoom, FindingNeeded, FindingIDCard, EscapingRoom};
 
-        public Room1State state;
+        public static Room1State state;
 
         private void Awake()
         {
@@ -101,6 +112,7 @@ namespace OperationTrident.Room1
             // 场景状态初始
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
+
             //enemysList = new List<GameObject>();
         }
 
@@ -112,12 +124,16 @@ namespace OperationTrident.Room1
                 // 场景的初始状态
                 case Room1State.Initing:
                     InitAllGameObject();
+                    Key1WorldPosition = key1.transform.position;
+                    Key2WorldPosition = key2.transform.position;
+                    CropseWorldPosition = cropse.transform.position;
+                    IDCardWorldPosition = IDCard.transform.position;
                     //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
-                    
+
                     break;
                 // 玩家正在找第二个钥匙
                 case Room1State.FindingKey2:
@@ -262,6 +278,8 @@ namespace OperationTrident.Room1
                 state = Room1State.FindingIDCard;
             }
         }
+
+
 
         //// 第一个key拿到了！
         //private void OnKey1Got()
