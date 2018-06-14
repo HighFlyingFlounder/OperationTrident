@@ -60,6 +60,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
+        /*
         //指向的元素
         protected UnityEngine.Object obj_ = null;
 
@@ -67,6 +68,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool isOverItem = false;
 
         public GameObject ele;
+        */
+
 
         // Use this for initialization
         private void Start()
@@ -165,23 +168,24 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     }
                 }
             }
-            */
+            
             if (Input.inputString.Contains("q"))
             {
-                ele.GetComponent<elevator>().goUp();
+                ele.GetComponent<Elevator>().goUp();
             }
             else if (Input.inputString.Contains("e"))
             {
-                ele.GetComponent<elevator>().goDown();
+                ele.GetComponent<Elevator>().goDown();
             }
             else if (Input.inputString.Contains("z"))
             {
-                ele.GetComponent<elevator>().openDoor();
+                ele.GetComponent<Elevator>().openDoor();
             }
             else if (Input.inputString.Contains("c"))
             {
-                ele.GetComponent<elevator>().closeDoor();
+                ele.GetComponent<Elevator>().closeDoor();
             }
+            */
         }
 
 

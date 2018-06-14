@@ -17,97 +17,102 @@ using UnityEngine;
 /// 3：在Update的时候，SubStateController会询问当前SubState是否转移，然后做出反应。
 /// 假如需要转移，则会调用SubState的onSubStateExit执行善后工作，然后进行转移
 /// </summary>
-public class SubsceneController : MonoBehaviour
+namespace room2Battle
 {
-    ///所有SubState的句柄
-    protected Hashtable mapToSubState = new Hashtable();
-
-    ///当前状态
-    protected string currentSubScene = null;
-
-    //上一个状态
-    protected string previousSubScene = null;
-
-    ///是否设置最初状态
-    protected bool mInitialized = false;
-
-    ///@brief 为状态机添加子状态，以及子状态对应的subStateController
-    ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
-    ///@param substate 是子状态的名称，对应的脚本应该提前挂载到StateController中
-    public bool addSubscene(string name, string subSceneClassName)
+    public class SubsceneController : MonoBehaviour
     {
-        if (!mapToSubState.ContainsKey(name))
+        ///所有SubState的句柄
+        protected Dictionary<string,Subscene> mapToSubState = new Dictionary<string,Subscene>();
+
+        ///当前状态
+        protected string currentSubScene = null;
+
+        //上一个状态
+        protected string previousSubScene = null;
+
+        ///是否设置最初状态
+        protected bool mInitialized = false;
+
+        ///@brief 为状态机添加子状态，以及子状态对应的subStateController
+        ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
+        ///@param substate 是子状态的名称，对应的脚本应该提前挂载到StateController中
+        public bool addSubscene(string name, string subSceneClassName)
         {
-            //这里一定要注意要将subState冻结掉，不然一堆substate会出事
-            ((GetComponent(subSceneClassName)) as Subscene).enabled = false;
-            mapToSubState.Add(name, (GetComponent(subSceneClassName)));
-            return true;
+            if (!mapToSubState.ContainsKey(name))
+            {
+                //这里一定要注意要将subState冻结掉，不然一堆substate会出事
+                ((GetComponent(subSceneClassName)) as Subscene).enabled = false;
+                mapToSubState.Add(name, (GetComponent(subSceneClassName) as Subscene));
+                return true;
+            }
+            else
+                return false;
         }
-        else
-            return false;
-    }
 
 
-    ///@brief 为状态机选择最初始的子状态，以及子状态对应的subStateController，只能设置一次
-    ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
-    ///@param substate 是子状态的名称，对应的脚本应该提前挂载到StateController中
-    public void setInitialSubState(string name, string subState)
-    {
-        if (!mInitialized)
+        ///@brief 为状态机选择最初始的子状态，以及子状态对应的subStateController，只能设置一次
+        ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
+        public void setInitialSubScene(string name)
         {
-            mInitialized = true;
-            currentSubScene = name;
+            if (!mInitialized)
+            {
+                mInitialized = true;
+                currentSubScene = name;
+                ((mapToSubState[currentSubScene]) as Subscene).enabled = true;
+                ((mapToSubState[currentSubScene]) as Subscene).onSubsceneInit();
+            }
+        }
+
+
+        ///@brief 设置当前子状态,建议一般不要调用，除非是从头再来
+        ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
+        public void setCurrentSubScene(string name)
+        {
+            if (currentSubScene != null)
+            {
+                ((mapToSubState[currentSubScene]) as Subscene).enabled = false;
+            }
+            if (name != null)
+            {
+                previousSubScene = currentSubScene;
+                currentSubScene = name;
+            }
             ((mapToSubState[currentSubScene]) as Subscene).enabled = true;
             ((mapToSubState[currentSubScene]) as Subscene).onSubsceneInit();
         }
-    }
 
-
-    ///@brief 设置当前子状态,建议一般不要调用，除非是从头再来
-    ///@param name是子状态的名称，例如进入房间1，进入boss房间，钥匙获取战
-    ///@param substate 是子状态的名称，对应的脚本应该提前挂载到StateController中
-    public void setCurrentSubState(string name, string subState)
-    {
-        if (currentSubScene != null)
+        ///@brief update函数负责不断查询当前状态是否转移，因为在初始时所有的子状态脚本都被添加到了状态管理器上，并且将enable设置为false
+        public void Update()
         {
-            ((mapToSubState[currentSubScene]) as Subscene).enabled = false;
+            Subscene sub = ((mapToSubState[currentSubScene]) as Subscene);
+            //Debug.Log(mapToSubState.Count);
+            if (sub != null && sub.isTransitionTriggered())
+            {
+                Debug.Log(currentSubScene);
+                //执行善后工作
+                sub.onSubsceneDestory();
+                //不再执行update操作控制逻辑
+                sub.enabled = false;
+
+                previousSubScene = currentSubScene;
+
+                //更换subscene
+                currentSubScene = sub.GetNextSubscene();
+                //不要忘记设置enable
+                if ( (mapToSubState[currentSubScene]) ) {
+                    ((mapToSubState[currentSubScene]) as Subscene).enabled = true;
+                    ((mapToSubState[currentSubScene]) as Subscene).onSubsceneInit();
+                }
+            }
         }
-        if (name != null)
+
+        ///获取上一个状态
+        public string previousSubscene
         {
-            previousSubScene = currentSubScene;
-            currentSubScene = name;
-        }
-        ((mapToSubState[currentSubScene]) as Subscene).enabled = true;
-        ((mapToSubState[currentSubScene]) as Subscene).onSubsceneInit();
-    }
-
-    ///@brief update函数负责不断查询当前状态是否转移，因为在初始时所有的子状态脚本都被添加到了状态管理器上，并且将enable设置为false
-    public void Update()
-    {
-        Subscene sub = ((mapToSubState[currentSubScene]) as Subscene);
-        //Debug.Log(mapToSubState.Count);
-        if (sub != null && sub.isTransitionTriggered())
-        {
-            Debug.Log(currentSubScene);
-            //执行善后工作
-            sub.onSubsceneDestory();
-            //不再执行update操作控制逻辑
-            sub.enabled = false;
-
-            previousSubScene = currentSubScene;
-
-            //更换subscene
-            currentSubScene = sub.GetNextSubscene();
-            //不要忘记设置enable
-            ((mapToSubState[currentSubScene]) as Subscene).enabled = true;
-            ((mapToSubState[currentSubScene]) as Subscene).onSubsceneInit();
-        }
-    }
-
-    ///获取上一个状态
-    public string previousSubscene {
-        get {
-            return previousSubScene;
+            get
+            {
+                return previousSubScene;
+            }
         }
     }
 }

@@ -21,30 +21,38 @@ using UnityEngine;
 ///  3: 通过GetNextSubState告知SubStateController转移的下一个状态
 ///  4: 通过onSubStateExit实现一些善后工作，例如敌人物体的消除等
 /// </summary>
-public class Subscene : MonoBehaviour { 
-    //============================================
-    //=====   每一个子场景都至少实现以下接口  ======
-    //============================================
-
-    //@brief 返回此子场景是否将被转移
-    virtual public bool isTransitionTriggered()
+namespace room2Battle
+{
+    public class Subscene : MonoBehaviour
     {
-        return true;
-    }
+        //============================================
+        //=====   每一个子场景都至少实现以下接口  ======
+        //============================================
 
-    //@brief 返回下一个子场景
-    virtual public string GetNextSubscene()
-    {
-        return null;
-    }
+        //@brief 返回此子场景是否将被转移
+        virtual public bool isTransitionTriggered()
+        {
+            return true;
+        }
 
-    //@brief 善后工作
-    virtual public void onSubsceneDestory()
-    {
-    }
+        //@brief 返回下一个子场景
+        virtual public string GetNextSubscene()
+        {
+            return null;
+        }
 
-    //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑
-    virtual public void onSubsceneInit()
-    {
+        //@brief 善后工作
+        virtual public void onSubsceneDestory()
+        {
+        }
+
+        //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑
+        virtual public void onSubsceneInit()
+        {
+        }
+
+        virtual public void notify(int i)
+        {
+        }
     }
 }
