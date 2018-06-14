@@ -92,7 +92,7 @@ namespace Room5Battle
 
             if (sub != null && sub.isTransitionTriggered())
             {
-                Debug.Log(currentStateId);
+                //](currentStateId);
                 //执行善后工作
                  sub.onSubsceneDestory();
                  //不再执行update操作控制逻辑

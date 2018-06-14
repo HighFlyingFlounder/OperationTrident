@@ -4,17 +4,21 @@ using UnityEngine;
 
 namespace Room5Battle
 {
-    public class Subscene_5min : Subscene {
+    public class Subscene_CountDown : Subscene
+    {
+        //五分钟 300s
+        private float m_CountDownTime = 300.0f;
 
         public override bool isTransitionTriggered()
         {
-            return false;
+            //时间倒数完毕
+            return m_CountDownTime<0.0f;
         }
 
         //@brief 返回下一个子场景
         public override int GetNextSubscene()
         {
-            return (int)GameState.COUNTING_DOWN_3MIN;
+            return (int)GameState.ESCAPING;
         }
 
         //@brief 善后工作
@@ -38,7 +42,7 @@ namespace Room5Battle
 
         private void Update()
         {
-            
+            m_CountDownTime -= Time.deltaTime;
         }
     }
 }

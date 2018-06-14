@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Room5Battle
 {
     //第一次进入房间后，
-    public class Subscene_3min : Subscene
+    public class Subscene_Escape : Subscene
     {
 
         public override bool isTransitionTriggered()

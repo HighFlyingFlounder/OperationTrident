@@ -29,7 +29,7 @@ namespace Room5Battle
         //============================================
         //=====   每一个子场景都至少实现以下接口  ======
         //============================================
-        public const int c_InvalidStateId = -1;
+        public const int c_InvalidStateId = -6666666;
 
         //@brief 返回此子场景是否将被转移
         virtual public bool isTransitionTriggered()

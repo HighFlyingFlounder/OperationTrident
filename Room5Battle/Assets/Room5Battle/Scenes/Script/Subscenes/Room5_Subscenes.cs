@@ -7,9 +7,7 @@ namespace Room5Battle
     public enum GameState
     {
         START,//玩家刚进，有少量敌人生成，,准备开始冷却托卡马克之心
-        COUNTING_DOWN_5MIN,//核心开始冷却,倒计时,开始生成新的敌人
-        COUNTING_DOWN_3MIN,
-        COUNTING_DOWN_1MIN,
+        COUNTING_DOWN,//核心开始冷却,倒计时,开始生成新的敌人
         ESCAPING
     }
 
@@ -21,8 +19,8 @@ namespace Room5Battle
         void Start()
         {
             m_SubsceneController.addSubscene((int)GameState.START, "Subscene_Start");
-            m_SubsceneController.addSubscene((int)GameState.COUNTING_DOWN_5MIN, "Subscene_5min");
-            m_SubsceneController.addSubscene((int)GameState.COUNTING_DOWN_3MIN, "Subscene_3min");
+            m_SubsceneController.addSubscene((int)GameState.COUNTING_DOWN, "Subscene_CountDown");
+            m_SubsceneController.addSubscene((int)GameState.ESCAPING, "Subscene_Escape");
 
             m_SubsceneController.setInitialSubscene((int)GameState.START);
         }
