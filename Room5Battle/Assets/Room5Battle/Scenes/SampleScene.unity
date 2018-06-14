@@ -420,34 +420,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 30, y: 0, z: 20}
---- !u!1 &953965993
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 953965994}
-  m_Layer: 0
-  m_Name: Room5_SceneController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &953965994
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 953965993}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.254585, y: -12.5, z: 12.764839}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &995435322
 Prefab:
   m_ObjectHideFlags: 0
@@ -527,7 +499,7 @@ GameObject:
   - component: {fileID: 1069875043}
   m_Layer: 0
   m_Name: "\u63A7\u5236\u53F0"
-  m_TagString: Untagged
+  m_TagString: ControlPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -599,34 +571,95 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1325994020
+--- !u!1 &1444193826
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1325994021}
+  - component: {fileID: 1444193827}
+  - component: {fileID: 1444193828}
+  - component: {fileID: 1444193831}
+  - component: {fileID: 1444193830}
+  - component: {fileID: 1444193829}
+  - component: {fileID: 1444193832}
   m_Layer: 0
-  m_Name: GUI
+  m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1325994021
+--- !u!4 &1444193827
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1325994020}
+  m_GameObject: {fileID: 1444193826}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.09819, y: -8.132545, z: 28.697496}
+  m_LocalPosition: {x: -16.396, y: 1.356, z: 20.981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1444193828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1444193826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abd8c27b4943eed4cb0831c3a4e2f16d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SubsceneController: {fileID: 1444193832}
+--- !u!114 &1444193829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1444193826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eef4aeeb4afbf44996c4c0e62354494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1444193830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1444193826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0112b72439544d49ba548be85835331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1444193831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1444193826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e27cfc64f4eaa9d489c5fc200dc3b859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1444193832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1444193826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7bdddcb8cd6dd43bdcbbce02cabbac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1631393616 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100002, guid: d5f8824428afce84e9e697155ec84005, type: 3}
