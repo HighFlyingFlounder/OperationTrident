@@ -52,7 +52,7 @@ public class WinPanel : PanelBase
     public void OnCloseClick()
     {
         //Battle.instance.ClearBattle();
-        PanelMgr.instance.OpenPanel<TitlePanel>("");
+        PanelMgr.instance.OpenPanel<RoomListPanel>("");
         Close();
     }
 }

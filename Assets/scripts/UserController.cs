@@ -135,7 +135,8 @@ public class UserController : MonoBehaviour
         //被推开的情况下，不受任何控制
         else
         {
-            RotateView();
+            //RotateView();
+            Vector2 input = GetInput();
 
             t -= 0.01f;
             t = Mathf.Clamp(t, 0f, 1f);//计时器在清零后恢复控制

@@ -44,7 +44,10 @@ public class PlayerState : MonoBehaviour {
         if (other.tag == "End")
         {
             Flyer.GetComponent<UserController>().enabled = false;
-            Flyer.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+            Flyer.GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f);
+            Flyer.transform.position = other.transform.position;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
