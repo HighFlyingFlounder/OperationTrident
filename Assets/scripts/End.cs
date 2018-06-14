@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class End : MonoBehaviour {
+public class End : MonoBehaviour
+{
     public int total_player = 4;//默认是四个玩家
     private int finished_player = 0;
-    private bool called_panel = false;
+    private bool isWin = false;
     private void Start()
     {
         finished_player = 0;
@@ -13,7 +14,7 @@ public class End : MonoBehaviour {
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
             finished_player++;
             SendSpaceArriveEnd();
@@ -22,10 +23,9 @@ public class End : MonoBehaviour {
 
     private void Update()
     {
-        if (finished_player == total_player && !called_panel)
+        if (finished_player == total_player && !isWin)
         {
-            PanelMgr.instance.OpenPanel<WinPanel>("", 1);
-            called_panel = true;
+            //更新四个玩家是否到达的信息
         }
     }
 
@@ -51,6 +51,6 @@ public class End : MonoBehaviour {
 
     private void OnDestroy()
     {
-        NetMgr.srvConn.msgDist.DelListener("SpaceArriveEnd", RecvSpaceArriveEnd);
+
     }
 }

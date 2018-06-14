@@ -26,13 +26,13 @@ public class MultiBattle : MonoBehaviour
     }
 
     //清理场景
-    // public void ClearBattle()
-    // {
-    //     list.Clear();
-    //     GameObject[] tanks = GameObject.FindGameObjectsWithTag("Tank");
-    //     for (int i = 0; i < tanks.Length; i++)
-    //         Destroy(tanks[i]);
-    // }
+     public void ClearBattle()
+    {
+        list.Clear();
+        GameObject[] flyers = GameObject.FindGameObjectsWithTag("flyer");
+        for (int i = 0; i < flyers.Length; i++)
+            Destroy(flyers[i]);
+    }
 
     //开始战斗
     public void StartBattle(ProtocolBytes proto)
@@ -45,7 +45,7 @@ public class MultiBattle : MonoBehaviour
         //坦克总数
         int count = proto.GetInt(start, ref start);
         //清理场景
-        //ClearBattle();
+        ClearBattle();
         //每一个玩家
         for (int i = 0; i < count; i++)
         {
@@ -53,10 +53,11 @@ public class MultiBattle : MonoBehaviour
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
+        foreach (GameObject rock in rocks)
+            rock.SetActive(true);
         NetMgr.srvConn.msgDist.AddListener("UpdateUnitInfo", RecvUpdateUnitInfo);
         NetMgr.srvConn.msgDist.AddListener("HitRock", RecvHitRock);
-        // NetMgr.srvConn.msgDist.AddListener ("Hit", RecvHit);
-        // NetMgr.srvConn.msgDist.AddListener ("Fail", RecvFail);
+        NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
     }
 
 
@@ -149,29 +150,28 @@ public class MultiBattle : MonoBehaviour
         int start = 0;
         ProtocolBytes proto = (ProtocolBytes)protocol;
         string protoName = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
         string rock_name = proto.GetString(start, ref start);
 
-        if (rock_list[rock_name] == null)
+        if (id == GameMgr.instance.id)
             return;
         Hinder ht = rock_list[rock_name];
         ht.Boom();
     }
 
-    //有玩家撞击陨石死亡，全队失败
-    public void RecvFail(ProtocolBase protocol)
+    public void RecvResult(ProtocolBase protocol)
     {
         //解析协议
         int start = 0;
         ProtocolBytes proto = (ProtocolBytes)protocol;
         string protoName = proto.GetString(start, ref start);
-        //弹出失败面板
-        PanelMgr.instance.OpenPanel<WinPanel>("", 0);
-
+        int isWin = proto.GetInt(start, ref start);
+        //弹出胜负面板
+        PanelMgr.instance.OpenPanel<WinPanel>("", isWin);
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
-        // NetMgr.srvConn.msgDist.DelListener("Shooting", RecvShooting);
-        // NetMgr.srvConn.msgDist.DelListener("Hit", RecvHit);
-        // NetMgr.srvConn.msgDist.AddListener ("Fail", RecvFail);
+        NetMgr.srvConn.msgDist.DelListener("HitRock", RecvHitRock);
+        NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
     }
 }
 

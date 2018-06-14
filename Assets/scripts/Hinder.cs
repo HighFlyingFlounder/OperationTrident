@@ -14,7 +14,7 @@ public class Hinder : MonoBehaviour
     {
         //在陨石的位置实例化出爆炸
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
         Instantiate(explosion, transform.position, transform.rotation);
         Instantiate(stone, transform.position, transform.rotation);
         Instantiate(stone, transform.position + new Vector3(1f, 1f, 1f), transform.rotation);

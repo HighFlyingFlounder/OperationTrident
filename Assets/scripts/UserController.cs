@@ -14,6 +14,8 @@ public class UserController : MonoBehaviour
         net,
     }
     public CtrlType ctrlType = CtrlType.player;
+    //网络同步
+    private float lastSendInfoTime = float.MinValue;
 
     public class MovementSettings
     {
@@ -146,6 +148,12 @@ public class UserController : MonoBehaviour
             }
             movementSettings.isRun = false;
         }
+        //网络同步
+        if (Time.time - lastSendInfoTime > 0.1f)
+        {
+            SendUnitInfo();
+            lastSendInfoTime = Time.time;
+        }
     }
 
     private Vector2 GetInput()//api
@@ -157,7 +165,6 @@ public class UserController : MonoBehaviour
             y = CrossPlatformInputManager.GetAxis("Vertical")
         };
         movementSettings.UpdateDesiredTargetSpeed(input);
-        SendUnitInfo();
         return input;
     }
 

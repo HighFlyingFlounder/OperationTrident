@@ -33,10 +33,11 @@ public class PlayerState : MonoBehaviour {
         }
         if (Hp == 0f)
         {
-            Debug.Log("GameOver!!!");
+            SendDead();
+            Flyer.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-        
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,5 +50,12 @@ public class PlayerState : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
+    }
+
+    public void SendDead()
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        proto.AddString("Dead");
+        NetMgr.srvConn.Send(proto);
     }
 }

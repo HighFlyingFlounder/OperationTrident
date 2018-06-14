@@ -39,20 +39,20 @@ public class WinPanel : PanelBase
         if (isWin)
         {
             failImage.enabled = false;
-            text.text = "祖国和人民感谢你！";
+            text.text = "Mission Complete！";
         }
         else
         {
             winImage.enabled = false;
-            text.text = "祖国和人民对你很失望";
+            text.text = "Mission Fail！";
         }
     }
     #endregion
 
     public void OnCloseClick()
     {
-        //Battle.instance.ClearBattle();
-        PanelMgr.instance.OpenPanel<RoomListPanel>("");
+        MultiBattle.instance.ClearBattle();
+        PanelMgr.instance.OpenPanel<RoomPanel>("");
         Close();
     }
 }
