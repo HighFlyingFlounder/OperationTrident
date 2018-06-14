@@ -77,13 +77,17 @@ namespace OperationTrident.Room1
         private void Awake()
         {
             // 增加第一个key的侦听器
-            Messenger.AddListener(GameEvent.KEY1_GOT, onKey1Got);
+            Messenger.AddListener(GameEvent.KEY_GOT, OnKey1Got);
+            // 增加第一个door的侦听器
+            Messenger.AddListener(GameEvent.DOOR_OPEN, OnDoor1Open);
         }
 
         private void Destroy()
         {
             // 删除第一个key的侦听器
-            Messenger.RemoveListener(GameEvent.KEY1_GOT, onKey1Got);
+            Messenger.RemoveListener(GameEvent.KEY_GOT, OnKey1Got);
+            // 删除第一个door的侦听器
+            Messenger.RemoveListener(GameEvent.DOOR_OPEN, OnDoor1Open);
         }
 
         // Use this for initialization
@@ -166,7 +170,7 @@ namespace OperationTrident.Room1
         }
 
         // 第一个key拿到了！
-        private void onKey1Got()
+        private void OnKey1Got()
         {
             Destroy(key1);
             //OpenDoor1();
@@ -174,11 +178,11 @@ namespace OperationTrident.Room1
         }
 
         // 尝试把门1打开
-        private void OpenDoor1()
+        private void OnDoor1Open()
         {
             if (state == Room1State.FindingKey2)
             {
-                
+                door1.GetComponent<DoorScript>().OpenAndDestroy();
             }
         }
     }

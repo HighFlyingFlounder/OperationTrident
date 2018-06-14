@@ -282,10 +282,13 @@ MonoBehaviour:
   CropsePrefab: {fileID: 0}
   IDCardPrefab: {fileID: 1891970328740356, guid: 40939c20c9916024d94d194aa6f1f197,
     type: 2}
+  DoorPrefab: {fileID: 1934030854212372, guid: c82d15dbbbd866a41b2c79635257a4cf, type: 2}
   Key1Position: {x: -15.842, y: 1.1, z: 29.765}
   Key2Position: {x: -52.58, y: 1.1, z: -2.91}
   CropsePosition: {x: 0, y: 0, z: 0}
   IDCardPosition: {x: -34.961, y: 1.32, z: 76.99}
+  Door1Position: {x: -58.706, y: 1.394, z: 9.44}
+  Door2Position: {x: -58.12, y: 2.05, z: 74.87}
   enemyCreateList:
   - {x: -25.7, y: 2.63, z: 22.43}
   - {x: -24.13, y: 2, z: 9.62}

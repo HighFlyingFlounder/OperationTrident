@@ -64,12 +64,13 @@ namespace OperationTrident.Room1
                         hitObject.GetComponent<OperationTrident.Room1.KeyScript>();
                     if (target != null)   //检查对象上是否有KeyScript组件
                     {
-                        Messenger.Broadcast(GameEvent.KEY1_GOT);
-                        //Messenger.Broadcast(GameEvent.ENEMY_HIT);
+                        Messenger.Broadcast(GameEvent.KEY_GOT);
                     }
-                    else
+                    DoorScript target1 =
+                        hitObject.GetComponent<DoorScript>();
+                    if (target1 != null)
                     {
-                        
+                        Messenger.Broadcast(GameEvent.DOOR_OPEN);
                     }
 
                 }
