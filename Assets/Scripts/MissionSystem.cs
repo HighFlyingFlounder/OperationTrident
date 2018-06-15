@@ -19,6 +19,9 @@ namespace OperationTrident.Room1
 
         bool display = true;
 
+        // 目标的世界坐标
+        private Vector3 targetWorldPosition;
+
         private float nowDistance;
         // Use this for initialization
         void Start()
@@ -29,38 +32,38 @@ namespace OperationTrident.Room1
         // Update is called once per frame
         void Update()
         {
-            Vector3 worldPosition=new Vector3();
+            targetWorldPosition=new Vector3();
             switch (SceneController.state) {
                 case SceneController.Room1State.FindingKey1:
-                    worldPosition = SceneController.Key1WorldPosition;
+                    targetWorldPosition = SceneController.Key1WorldPosition;
                     break;
                 case SceneController.Room1State.FindingKey2:
-                    worldPosition = SceneController.Key2WorldPosition;
+                    targetWorldPosition = SceneController.Key2WorldPosition;
                     break;
                 case SceneController.Room1State.TryingToOpenRoom:
-                    worldPosition = SceneController.IDCardWorldPosition;
+                    targetWorldPosition = SceneController.IDCardWorldPosition;
                     break;
                 case SceneController.Room1State.FindingNeeded:
-                    worldPosition = SceneController.CropseWorldPosition;
+                    targetWorldPosition = SceneController.CropseWorldPosition;
                     break;
                 case SceneController.Room1State.FindingIDCard:
-                    worldPosition = SceneController.IDCardWorldPosition;
+                    targetWorldPosition = SceneController.IDCardWorldPosition;
                     break;
                 case SceneController.Room1State.EscapingRoom:
                     // TODO: 逃跑的时候任务目标是啥
                     break;
             }
-            nowDistance = Vector3.Distance(worldPosition,
+            nowDistance = Vector3.Distance(targetWorldPosition,
                      GetComponentInParent<Transform>().position);
             Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
             Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2 = worldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
+            Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
             if (Vector3.Dot(direction1, direction2) <= 0) display = false;
             else display = true;
-            worldPosition = new Vector3(worldPosition.x, worldPosition.y + missionLabelOffset, worldPosition.z);
-            UIPosition = camera.WorldToScreenPoint(worldPosition);
+            targetWorldPosition = new Vector3(targetWorldPosition.x, targetWorldPosition.y + missionLabelOffset, targetWorldPosition.z);
+            //UIPosition = camera.WorldToScreenPoint(targetWorldPosition);
         }
 
         //onGUI在每帧被渲染之后执行
@@ -73,11 +76,12 @@ namespace OperationTrident.Room1
             float posY = UIPosition.y - size / 4;
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.blueColor);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
             //GUIStyle style = new GUIStyle();
             // 指定颜色
             //style.normal.textColor = new Color(144.0f/255.0f, 144.0f / 255.0f, 144.0f / 255.0f);
-            GUI.Label(new Rect(posX, camera.pixelHeight-posY, size, size), (int)nowDistance+"m", style);
-
+            //GUI.Label(new Rect(posX, camera.pixelHeight-posY, size, size), (int)nowDistance+"m", style);
+            GUI.Label(rect, (int)nowDistance + "m", style);
         }
     }
 }

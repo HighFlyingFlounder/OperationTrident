@@ -243,5 +243,22 @@ namespace OperationTrident.Util
         {
             return GUIUtility.ScreenToGUIRect(screenRect);
         }
+
+        // 根据具体的字的大小修正一下GUI的位置，最后的bool值决定是否解决颠倒效应，如果要解决颠倒效应，必须传入相机的pixelHeight
+        public static Rect GetFixedRectDueToFontSize(Vector2 guiPosition, int fontSize = defaultFontSize, bool fixedTopDown = false, int cameraPixelHeight=0)
+        {
+            // 就算你设置了要解决颠倒效应，你也要传一个相机的高给我啊
+            if ((!fixedTopDown) || cameraPixelHeight == 0)
+                return new Rect(guiPosition.x - fontSize / 4, guiPosition.y - fontSize / 4, fontSize, fontSize);
+            else
+                return new Rect(guiPosition.x - fontSize / 4, cameraPixelHeight - (guiPosition.y - fontSize / 4), fontSize, fontSize);
+        }
+        
+        // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect
+        public static Rect GetFixedRectDirectlyFromWorldPosition(Vector3 worldPosition,Camera camera,int fontSize = defaultFontSize)
+        {
+            Vector3 guiPosition = camera.WorldToScreenPoint(worldPosition);
+            return GetFixedRectDueToFontSize(new Vector2(guiPosition.x, guiPosition.y),fontSize,true,camera.pixelHeight);
+        }
     }
 }
