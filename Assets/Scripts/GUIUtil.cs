@@ -8,21 +8,71 @@ namespace OperationTrident.Util
 {
     public static class GUIUtil
     {
-        public readonly static Vector3 black = new Vector3(0.0f, 0.0f, 0.0f);// 完全黑
-        public readonly static Vector3 grey = new Vector3(0.5f, 0.5f, 0.5f);// 中间灰
-        public readonly static Vector3 white = new Vector3(1.0f, 1.0f, 1.0f);// 完全白
-        public readonly static Vector3 blue = new Vector3(0.0f, 0.0f, 1.0f);// 完全蓝
-        public readonly static Vector3 red = new Vector3(1.0f, 0.0f, 0.0f);// 完全红
-        public readonly static Vector3 green = new Vector3(0.0f, 1.0f, 0.0f);// 完全绿
-        public readonly static Vector3 seaBlue = new Vector3(0.0f, 0.5f, 1.0f);// 深一点的蓝
-        public readonly static Vector3 skyBlue = new Vector3(0.0f, 1.0f, 1.0f);// 浅一点的蓝
-        public readonly static Vector3 deepPurple = new Vector3(0.5f, 0.0f, 1.0f);// 深一点的紫
-        public readonly static Vector3 brightPurple = new Vector3(1.0f, 0.0f, 1.0f);// 亮一点的紫
-        public readonly static Vector3 pink = new Vector3(1.0f, 0.0f, 0.5f);// 粉色
-        public readonly static Vector3 orange = new Vector3(1.0f, 0.5f, 0.0f);// 橙色
-        public readonly static Vector3 yellow = new Vector3(1.0f, 1.0f, 0.0f);// 黄色
-        public readonly static Vector3 brightGreen = new Vector3(0.5f, 1.0f, 0.0f);// 亮一点的绿色
-        public readonly static Vector3 deepGreen = new Vector3(0.0f, 1.0f, 0.5f);// 深一点的绿色
+        public readonly static Vector3 blackVec = new Vector3(0.0f, 0.0f, 0.0f);// 完全黑
+        public readonly static Vector3 greyVec = new Vector3(0.5f, 0.5f, 0.5f);// 中间灰
+        public readonly static Vector3 whiteVec = new Vector3(1.0f, 1.0f, 1.0f);// 完全白
+        public readonly static Vector3 blueVec = new Vector3(0.0f, 0.0f, 1.0f);// 完全蓝
+        public readonly static Vector3 redVec = new Vector3(1.0f, 0.0f, 0.0f);// 完全红
+        public readonly static Vector3 greenVec = new Vector3(0.0f, 1.0f, 0.0f);// 完全绿
+        public readonly static Vector3 seaBlueVec = new Vector3(0.0f, 0.5f, 1.0f);// 深一点的蓝
+        public readonly static Vector3 skyBlueVec = new Vector3(0.0f, 1.0f, 1.0f);// 浅一点的蓝
+        public readonly static Vector3 deepPurpleVec = new Vector3(0.5f, 0.0f, 1.0f);// 深一点的紫
+        public readonly static Vector3 brightPurpleVec = new Vector3(1.0f, 0.0f, 1.0f);// 亮一点的紫
+        public readonly static Vector3 pinkVec = new Vector3(1.0f, 0.0f, 0.5f);// 粉色
+        public readonly static Vector3 orangeVec = new Vector3(1.0f, 0.5f, 0.0f);// 橙色
+        public readonly static Vector3 yellowVec = new Vector3(1.0f, 1.0f, 0.0f);// 黄色
+        public readonly static Vector3 brightGreenVec = new Vector3(0.5f, 1.0f, 0.0f);// 亮一点的绿色
+        public readonly static Vector3 deepGreenVec = new Vector3(0.0f, 1.0f, 0.5f);// 深一点的绿色
+
+        public readonly static Color blackColor = GetColorFromVector3(blackVec);
+        public readonly static Color greyColor = GetColorFromVector3(greyVec);
+        public readonly static Color whiteColor = GetColorFromVector3(whiteVec);
+        public readonly static Color blueColor = GetColorFromVector3(blueVec);
+        public readonly static Color redColor = GetColorFromVector3(redVec);
+        public readonly static Color greenColor = GetColorFromVector3(greenVec);
+        public readonly static Color seaBlueColor = GetColorFromVector3(seaBlueVec);
+        public readonly static Color skyBlueColor = GetColorFromVector3(skyBlueVec);
+        public readonly static Color deepPurpleColor = GetColorFromVector3(deepPurpleVec);
+        public readonly static Color brightPurpleColor = GetColorFromVector3(brightPurpleVec);
+        public readonly static Color pinkColor = GetColorFromVector3(pinkVec);
+        public readonly static Color orangeColor = GetColorFromVector3(orangeVec);
+        public readonly static Color yellowColor = GetColorFromVector3(yellowVec);
+        public readonly static Color brightGreenColor = GetColorFromVector3(brightGreenVec);
+        public readonly static Color deepGreenColor = GetColorFromVector3(deepGreenVec);
+
+        // 默认的字体大小
+        private const int defaultFontSize = 12;
+
+        // 默认的字体对齐
+        private const TextAlignment defaultAlignment = TextAlignment.Center;
+
+        private const TextAnchor defaultAnchor = TextAnchor.MiddleCenter;
+
+        public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
+
+        public static int FontSize
+        {
+            get
+            {
+                return defaultFontSize;
+            }
+        }
+
+        public static TextAlignment DefaultAlignment
+        {
+            get
+            {
+                return defaultAlignment;
+            }
+        }
+
+        public static TextAnchor DefaultAnchor
+        {
+            get
+            {
+                return defaultAnchor;
+            }
+        }
 
         // 混合两个颜色
         public static Vector3 MixTwoColor(Vector3 colorA, Vector3 colorB)
@@ -85,12 +135,61 @@ namespace OperationTrident.Util
             return new Color(vec.x, vec.y, vec.z, vec.w);
         }
 
+        // 得到默认的字体样式（全默认,颜色黑色）
+        public static GUIStyle GetDefaultTextStyle()
+        {
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = blackColor;
+            style.fontStyle = FontStyle.Normal;
+            style.font = microsoftYaHei;
+            style.alignment = defaultAnchor;
+            return style;
+        }
+
+        // 得到默认的字体样式（颜色自己指定）
         public static GUIStyle GetDefaultTextStyle(Vector3 color)
         {
             GUIStyle style = new GUIStyle();
             style.normal.textColor = GetColorFromVector3(color);
-
+            style.fontStyle = FontStyle.Normal;
+            style.font = microsoftYaHei;
+            style.alignment = defaultAnchor;
             return style;
+        }
+
+        // 得到默认的字体样式（颜色自己指定）
+        public static GUIStyle GetDefaultTextStyle(Color color)
+        {
+            GUIStyle style = new GUIStyle();
+            style.normal.textColor = color;
+            style.fontStyle = FontStyle.Normal;
+            style.font = microsoftYaHei;
+            style.alignment = defaultAnchor;
+            return style;
+        }
+
+        // 从GUI的位置转到屏幕坐标
+        public static Vector2 GUIPositionToScreenPoint(Vector2 guiPoint)
+        {
+            return GUIUtility.GUIToScreenPoint(guiPoint);
+        }
+
+        // 从指定点以指定比例缩放GUI
+        public static void ScaleGUIAroundPivot(Vector2 scale,Vector2 pivot)
+        {
+            GUIUtility.ScaleAroundPivot(scale, pivot);
+        }
+
+        // 从屏幕坐标到GUI点
+        public static Vector2 ScreenPointToGUIPositon(Vector2 screenPoint)
+        {
+            return GUIUtility.ScreenToGUIPoint(screenPoint);
+        }
+
+        // 从屏幕矩形转到GUI的矩形
+        public static Rect ScreenRectToGUIRect(Rect screenRect)
+        {
+            return GUIUtility.ScreenToGUIRect(screenRect);
         }
     }
 }

@@ -277,6 +277,7 @@ GameObject:
   - component: {fileID: 555158578}
   - component: {fileID: 555158577}
   - component: {fileID: 555158579}
+  - component: {fileID: 555158580}
   m_Layer: 0
   m_Name: Scene Controller
   m_TagString: Untagged
@@ -341,6 +342,17 @@ MonoBehaviour:
   enemyCreateSpeed: 10
   enemyMaxNum: 8
   nowEnemyNum: 0
+--- !u!114 &555158580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 555158576}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6202c4e2596a674da944c6f5fabdd04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1064734054 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100002, guid: ab7e80c5c03fb62418e2a3c6ef88b090, type: 3}

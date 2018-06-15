@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
 namespace OperationTrident.Room1
 {
@@ -60,10 +61,11 @@ namespace OperationTrident.Room1
             float posX = UIPosition.x - size / 4;
             float posY = UIPosition.y - size / 4;
 
-            GUIStyle style = new GUIStyle();
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.yellowColor);
+            //GUIStyle style = new GUIStyle();
             // 指定颜色
-            style.normal.textColor = new Color(144.0f/255.0f, 144.0f / 255.0f, 144.0f / 255.0f);
-            GUI.Label(new Rect(posX, camera.pixelHeight-posY, size, size), (int)nowDistance+"m", style);
+            //style.normal.textColor = new Color(144.0f/255.0f, 144.0f / 255.0f, 144.0f / 255.0f);
+            GUI.Label(new Rect(posX, camera.pixelHeight-posY, size, size), (int)nowDistance+"m"+"\n单纯试一下字体啊", style);
 
         }
     }
