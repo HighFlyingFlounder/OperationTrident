@@ -4,24 +4,28 @@ using UnityEngine;
 public class inDark : MonoBehaviour
 {
     #region Variables  
+    [SerializeField]
     public Shader nightVisionShader;
-
+    [SerializeField]
     public float contrast = 2.0f;
+    [SerializeField]
     public float brightness = 1.0f;
+    [SerializeField]
     public Color nightVisionColor = Color.white;
 
+    [SerializeField]
     public Texture2D vignetteTexture;
-
-    public Texture2D scanLineTexture;
-    public float scanLineTileAmount = 4.0f;
-
+    [SerializeField]
     public Texture2D nightVisionNoise;
+    [SerializeField]
     public float noiseXSpeed = 100.0f;
+    [SerializeField]
     public float noiseYSpeed = 100.0f;
-
+    [SerializeField]
     public float distortion = 0.2f;
+    [SerializeField]
     public float scale = 0.8f;
-
+    [SerializeField]
     private float randomValue = 0.0f;
     private Material curMaterial;
     #endregion
@@ -71,12 +75,6 @@ public class inDark : MonoBehaviour
                 material.SetTexture("_VignetteTex", vignetteTexture);
             }
 
-            if (scanLineTexture)
-            {
-                material.SetTexture("_ScanLineTileTex", scanLineTexture);
-                material.SetFloat("_ScanLineTileAmount", scanLineTileAmount);
-            }
-
             if (nightVisionNoise)
             {
                 material.SetTexture("_NoiseTex", nightVisionNoise);
@@ -94,8 +92,8 @@ public class inDark : MonoBehaviour
 
     void Update()
     {
-        contrast = Mathf.Clamp(contrast, 0f, 4f);
-        brightness = Mathf.Clamp(brightness, 0f, 2f);
+        //contrast = Mathf.Clamp(contrast, 0f, 4f);
+        //brightness = Mathf.Clamp(brightness, 0f, 2f);
         randomValue = Random.Range(-1f, 1f);
         distortion = Mathf.Clamp(distortion, -1f, 1f);
         scale = Mathf.Clamp(scale, 0f, 3f);

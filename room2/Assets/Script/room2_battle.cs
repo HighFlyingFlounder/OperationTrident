@@ -29,8 +29,16 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
-           
+            Debug.Log(director.isActiveAndEnabled);
+            director.Play();
+        }
 
+        void Update()
+        {
+            if (director.time > director.duration)
+            {
+                director.Stop();
+            }
         }
 
     }

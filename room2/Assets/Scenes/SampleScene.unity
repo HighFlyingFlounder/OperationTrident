@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.21
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -281,7 +281,7 @@ Light:
   m_GameObject: {fileID: 170076733}
   m_Enabled: 1
   serializedVersion: 8
-  m_Type: 2
+  m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 0
   m_Range: 10
@@ -316,7 +316,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 170076733}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0.72, y: 2.47, z: -0.66}
+  m_LocalPosition: {x: 8.2, y: 23.7, z: -10.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -419,8 +419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cb51a58e18e314283e8a93d5bb5b27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefabs: {fileID: 1339328970737070, guid: aa1cd200460493d4f88d00e8c3152c90,
-    type: 2}
   players:
   - {fileID: 2070185180}
   playerInitPos: {fileID: 2094771015}
@@ -468,6 +466,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f473e9bb2f35444986e42373327afaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mCamera: {fileID: 613322870}
+  director: {fileID: 1518452393}
 --- !u!1 &307675738
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,6 +778,32 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 674223789}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &784918786 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100002, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 2}
+  m_PrefabInternal: {fileID: 1718395567}
+--- !u!114 &784918791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 784918786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 480db80b09d6dd242a3b86b03d4c7e19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nightVisionShader: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
+  contrast: 6.71
+  brightness: 0
+  nightVisionColor: {r: 0.56287825, g: 0.8584906, b: 0.59613794, a: 1}
+  vignetteTexture: {fileID: 2800000, guid: c24260efd816cfa42b580e509a2a06a4, type: 3}
+  nightVisionNoise: {fileID: 2800000, guid: 5d2f458585e497c408667b4eab0c411d, type: 3}
+  noiseXSpeed: 159.6
+  noiseYSpeed: 111.7
+  distortion: -1
+  scale: 1.16
+  randomValue: 0
 --- !u!1 &1073126217 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100000, guid: 51dbc6a569ae92c4982d5845d0d64aa1, type: 3}
@@ -815,7 +841,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!320 &1518452393
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -825,7 +851,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -846,7 +872,9 @@ PlayableDirector:
     value: {fileID: 1765461053}
   - key: {fileID: 114623921493908004, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
     value: {fileID: 613322866}
-  - key: {fileID: 114352205851442042, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
+  - key: {fileID: 0}
+    value: {fileID: 2070185180}
+  - key: {fileID: 114224521293524900, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
     value: {fileID: 2070185180}
   m_ExposedReferences:
     m_References: []
@@ -1175,7 +1203,7 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: 114623921493908004, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
     value: {fileID: 0}
-  - key: {fileID: 114352205851442042, guid: d2278fe8ddee0fb409ee407cabc97bf6, type: 2}
+  - key: {fileID: 0}
     value: {fileID: 0}
   m_ExposedReferences:
     m_References: []

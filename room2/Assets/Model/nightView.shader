@@ -8,8 +8,6 @@
 	    _distortion("distortion",Float) = 0.2
 		_scale("scale",Float) = 0.8
 		_VignetteTex("Vignette Texture", 2D) = "white"{}
-		_ScanLineTileTex("Scan Line Tile Texture", 2D) = "white"{}
-		_ScanLineTileAmount("Scan Line Tile Amount", Float) = 4.0
 		_NoiseTex("Noise Texture", 2D) = "white" {}
 		_NoiseXSpeed("Noise X Speed", Float) = 100.0
 		_NoiseYSpeed("Noise Y Speed",Float) = 100.0
@@ -28,7 +26,6 @@
 			#include "UnityCG.cginc"
 
 		uniform sampler2D _MainTex;
-		uniform sampler2D _ScanLineTileTex;
 		uniform sampler2D _NoiseTex;
 		uniform sampler2D _VignetteTex;
 		fixed _Contrast;
@@ -38,7 +35,6 @@
 		fixed _scale;
 		fixed _NoiseYSpeed;
 		fixed _NoiseXSpeed;
-		fixed _ScanLineTileAmount;
 		fixed4 _NightVisionColor;
 
 		struct Input {
@@ -63,9 +59,6 @@
 			fixed4 renderTex = tex2D(_MainTex, distortedUV);
 			fixed4 vignetteTex = tex2D(_VignetteTex, distortedUV);
 
-			half2 scanLinesUV = half2(i.uv.x * _ScanLineTileAmount, i.uv.y *_ScanLineTileAmount);
-			fixed4 scanLineTex = tex2D(_ScanLineTileTex, scanLinesUV);
-
 			//噪声贴图,使用sin函数？
 			half2 noiseUV = half2(i.uv.x + (_RandomValue * _SinTime.z *_NoiseXSpeed), i.uv.y + (_Time.x * _NoiseYSpeed));
 			fixed noiseTex = tex2D(_NoiseTex, noiseUV);
@@ -77,7 +70,7 @@
 
 			finalColor = pow(finalColor, _Contrast);
 			finalColor *= vignetteTex;
-			finalColor *= scanLineTex * noiseTex;
+			finalColor *= noiseTex;
 
 			return finalColor;
 		}

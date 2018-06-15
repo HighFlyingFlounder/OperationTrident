@@ -19,8 +19,6 @@ namespace room2Battle
                 Vector3 dir = other.transform.forward;
                 if (Vector3.Dot(transform.forward, dir) < 0.0f)
                     door.openDoor();
-                else
-                    Debug.Log("not in front");
             }
         }
 

@@ -81,16 +81,18 @@ namespace room2Battle {
         {
             //通过摄像机的蓝色轴（即Z轴），射向对应物体，判断标签
             RaycastHit hit;
-            if (Physics.Raycast(mCamera.transform.position, mCamera.transform.forward,out hit,2.0f))
+            if (Physics.Raycast(mCamera.transform.position, mCamera.transform.forward,out hit))
             {
                 //获取物体
                 GameObject obj = hit.transform.gameObject;
                 //判断标签
                 if (obj.tag == "switch")
                 {
-                    UnityEngine.Debug.Log(obj.ToString());
-                    //开始计时
-                    isFocus = true;
+                    if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 5.0f)
+                    {
+                        //开始计时
+                        isFocus = true;
+                    }
                 }
                 else
                 {
@@ -137,14 +139,11 @@ namespace room2Battle {
                         span = System.TimeSpan.Zero;
                         startTiming = true;
                     }
-
-                    Debug.Log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     System.DateTime after = System.DateTime.Now;
                     span = after.Subtract(sw);
                     if (span.TotalSeconds >= 5.0f)
                     {
                         isSwitchOpen = true;
-                        Debug.Log("========================");
                     }
                 }
                 else
