@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4488709, g: 0.49893647, b: 0.57570416, a: 1}
+  m_IndirectSpecularColor: {r: 0.44283545, g: 0.49199384, b: 0.5717585, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -282,9 +282,9 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 0
-  m_Range: 10
+  m_Range: 17.33
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -302,7 +302,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_Lightmapping: 1
+  m_Lightmapping: 2
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
@@ -315,13 +315,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 170076733}
-  m_LocalRotation: {x: 0.11591367, y: -0.8475124, z: 0.34990698, w: 0.38190547}
-  m_LocalPosition: {x: 8.2, y: 13.85, z: 9.5}
+  m_LocalRotation: {x: 0.35398337, y: -0.60988885, z: 0.35825154, w: 0.61187184}
+  m_LocalPosition: {x: 0, y: 11.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 42.972004, y: -129.29901, z: 5.552}
+  m_LocalEulerAnglesHint: {x: 60.479004, y: -89.365005, z: 0.771}
 --- !u!1001 &267282392
 Prefab:
   m_ObjectHideFlags: 0
@@ -452,6 +452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefabs: {fileID: 1339328970737070, guid: aa1cd200460493d4f88d00e8c3152c90,
     type: 2}
+  light: {fileID: 170076734}
   enemyInitPositions:
   - {fileID: 1574952954}
   playerControl: {fileID: 784918786}

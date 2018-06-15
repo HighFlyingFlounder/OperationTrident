@@ -15,6 +15,9 @@ namespace room2Battle {
         protected int maxEnemyNum = 20;
 
         [SerializeField]
+        protected Light light;
+
+        [SerializeField]
         protected Transform[] enemyInitPositions;
 
         [SerializeField]
@@ -68,7 +71,7 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
-            
+            light.intensity = 0.0f;
         }
 
         public override void notify(int i)
@@ -146,6 +149,7 @@ namespace room2Battle {
                     span = after.Subtract(sw);
                     if (span.TotalSeconds >= 5.0f)
                     {
+                        light.intensity = 0.6f;
                         isSwitchOpen = true;
                     }
                 }
