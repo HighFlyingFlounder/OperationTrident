@@ -24,6 +24,8 @@ ExportedObj/
 *.pdb
 *.opendb
 
+./Room5Battle/Temp/
+
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta
