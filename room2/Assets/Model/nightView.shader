@@ -11,6 +11,8 @@
 		_NoiseTex("Noise Texture", 2D) = "white" {}
 		_NoiseXSpeed("Noise X Speed", Float) = 100.0
 		_NoiseYSpeed("Noise Y Speed",Float) = 100.0
+		_Threshold("Threshold for determine intensty",Float) = 0.2
+		_Threshold2("Threshold for determine intensty",Float) = 0.8
 
 	}
 		SubShader{
@@ -35,7 +37,10 @@
 		fixed _scale;
 		fixed _NoiseYSpeed;
 		fixed _NoiseXSpeed;
+		fixed _Threshold;
+		fixed _Threshold2;
 		fixed4 _NightVisionColor;
+		
 
 		struct Input {
 			float2 uv_MainTex;
@@ -55,7 +60,8 @@
 		fixed4 frag(v2f_img i) : COLOR
 		{
 			//桶型畸变算出的新uv
-			half2 distortedUV = barrelDistortion(i.uv);
+			//half2 distortedUV = barrelDistortion(i.uv);
+			half2 distortedUV = i.uv;
 			fixed4 renderTex = tex2D(_MainTex, distortedUV);
 			fixed4 vignetteTex = tex2D(_VignetteTex, distortedUV);
 
@@ -63,14 +69,26 @@
 			half2 noiseUV = half2(i.uv.x + (_RandomValue * _SinTime.z *_NoiseXSpeed), i.uv.y + (_Time.x * _NoiseYSpeed));
 			fixed noiseTex = tex2D(_NoiseTex, noiseUV);
 
-			//混合颜色
+			//得到灰度图
 			fixed lum = dot(fixed3(0.299, 0.587, 0.114), renderTex.rgb);
 			lum += _Brightness; // 补光
-			fixed4 finalColor = (lum * 2) + _NightVisionColor;
+			//fixed4 finalColor = (lum * 2) + _NightVisionColor;
+			fixed factor;
+			if (lum > _Threshold)
+			{
+				factor = lerp(_Threshold2, 1, (lum - _Threshold) / (1.0 - _Threshold));
+			}
+			else
+			{
+				factor = lerp(0, _Threshold2, lum / _Threshold);
+			}
+			
+			fixed4 light_ = fixed4(1.0f, 1.0, 1.0, 1.0);
+			fixed4 finalColor = factor * light_;
 
 			finalColor = pow(finalColor, _Contrast);
 			finalColor *= vignetteTex;
-			finalColor *= noiseTex;
+			finalColor *=  noiseTex;
 
 			return finalColor;
 		}

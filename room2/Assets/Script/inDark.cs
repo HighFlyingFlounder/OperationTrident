@@ -27,6 +27,13 @@ public class inDark : MonoBehaviour
     public float scale = 0.8f;
     [SerializeField]
     private float randomValue = 0.0f;
+
+
+    [SerializeField]
+    private float throshold2 = 0.8f;
+    [SerializeField]
+    private float throshold = 0.2f;
+
     private Material curMaterial;
     #endregion
 
@@ -69,6 +76,8 @@ public class inDark : MonoBehaviour
             material.SetFloat("_RandomValue", randomValue);
             material.SetFloat("_distortion", distortion);
             material.SetFloat("_scale", scale);
+            material.SetFloat("_Threshold", throshold);
+            material.SetFloat("_Threshold2", throshold2);
 
             if (vignetteTexture)
             {
@@ -97,6 +106,8 @@ public class inDark : MonoBehaviour
         randomValue = Random.Range(-1f, 1f);
         distortion = Mathf.Clamp(distortion, -1f, 1f);
         scale = Mathf.Clamp(scale, 0f, 3f);
+        throshold = Mathf.Clamp(throshold, 0.0000001f, 0.9999999f);
+        throshold2 = Mathf.Clamp(throshold2, 0.0000001f, 0.9999999f);
     }
 
     void OnDisable()

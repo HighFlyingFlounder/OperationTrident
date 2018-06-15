@@ -17,6 +17,9 @@ namespace room2Battle {
         [SerializeField]
         protected Transform[] enemyInitPositions;
 
+        [SerializeField]
+        protected GameObject playerControl;
+
         //钥匙
         [SerializeField]
         protected GameObject key;
@@ -153,6 +156,13 @@ namespace room2Battle {
                     sw = System.DateTime.Now;
                     span = System.TimeSpan.Zero;
                 }
+            }
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                inDark dark = playerControl.GetComponent<inDark>();
+                Debug.Log(dark);
+                dark.gameObject.SetActive(true);
             }
         }
 
