@@ -249,16 +249,26 @@ namespace OperationTrident.Util
         {
             // 就算你设置了要解决颠倒效应，你也要传一个相机的高给我啊
             if ((!fixedTopDown) || cameraPixelHeight == 0)
-                return new Rect(guiPosition.x - fontSize / 4, guiPosition.y - fontSize / 4, fontSize, fontSize);
+                return new Rect(guiPosition.x - fontSize / 4,
+                    guiPosition.y - fontSize / 4,
+                    fontSize, 
+                    fontSize);
             else
-                return new Rect(guiPosition.x - fontSize / 4, cameraPixelHeight - (guiPosition.y - fontSize / 4), fontSize, fontSize);
+                return new Rect(guiPosition.x - fontSize / 4, 
+                    cameraPixelHeight - (guiPosition.y - fontSize / 4), 
+                    fontSize,
+                    fontSize);
         }
         
         // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect (主要是方便任务系统？也可能用在别的地方)
         public static Rect GetFixedRectDirectlyFromWorldPosition(Vector3 worldPosition,Camera camera,int fontSize = defaultFontSize)
         {
             Vector3 guiPosition = camera.WorldToScreenPoint(worldPosition);
-            return GetFixedRectDueToFontSize(new Vector2(guiPosition.x, guiPosition.y),fontSize,true,camera.pixelHeight);
+            return GetFixedRectDueToFontSize(
+                new Vector2(guiPosition.x, guiPosition.y),
+                fontSize,
+                true,
+                camera.pixelHeight);
         }
     }
 }

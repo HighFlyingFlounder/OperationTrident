@@ -1,8 +1,9 @@
-﻿using OperationTrident.EventSystem;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using OperationTrident.EventSystem;
+using OperationTrident.Util;
 
 namespace OperationTrident.Room1
 {
@@ -16,8 +17,9 @@ namespace OperationTrident.Room1
         public float shootingSpeed = 10.0f;
         // 辅助射速系统，判断能不能开枪
         private bool canShoot = true;
-        
 
+        // 是否开启后坐力
+        public bool jitterOn = true;
         // 后坐力：枪在X轴上的随机抖动factor
         public float jitterFactorX = 1.0f;
         public float jitterFactorY = 0.2f;
@@ -69,11 +71,15 @@ namespace OperationTrident.Room1
                     }
 
                 }
-                // 镜头随机的抖动！！
-                float rotationX = camera.transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
-                float rotationY = camera.transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
-                float rotationZ = camera.transform.localEulerAngles.z;
-                camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
+                // 是否开启镜头抖动
+                if (jitterOn)
+                {
+                    // 镜头随机的抖动！！
+                    float rotationX = camera.transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
+                    float rotationY = camera.transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
+                    float rotationZ = camera.transform.localEulerAngles.z;
+                    camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
+                }
             }
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
@@ -119,22 +125,25 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            int size = 12;
-            float posX = camera.pixelWidth / 2 - size / 4;
-            float posY = camera.pixelHeight / 2 - size / 4;
+            float posX = camera.pixelWidth / 2;
+            float posY = camera.pixelHeight / 2; ;
+
+            // 红色的准心
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.redColor);
+            Rect rect = GUIUtil.GetFixedRectDueToFontSize(new Vector2(posX, posY), 12);
+
             // 准心！！！
-            GUI.Label(new Rect(posX, posY, size, size), "*");
-
-
+            GUI.Label(rect, "*", style);
         }
 
         //协程，随着时间推移逐步执行
         private IEnumerator SphereIndicator(Vector3 pos)
         {
-            // 创建一个新的球体
+            // 创建一个新的球体,当做是打击点
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = pos;
             sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            // 这个球体不会碰撞嘻嘻
             sphere.GetComponent<Collider>().enabled = false;
 
             yield return new WaitForSeconds(1);   //yield：协程在何处暂停

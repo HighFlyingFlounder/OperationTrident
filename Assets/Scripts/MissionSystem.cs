@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using System;
 
 namespace OperationTrident.Room1
 {
@@ -17,7 +18,11 @@ namespace OperationTrident.Room1
         // 任务系统！！！的显示字符串的位置
         private Vector3 UIPosition;
 
-        bool display = true;
+        // 是否显示（任务点)，背对着的时候不显示
+        private bool toDisplayTheMissionPoint = true;
+
+        // 显示任务目标更新
+        private bool toDisplayNewMission;
 
         // 目标的世界坐标
         private Vector3 targetWorldPosition;
@@ -27,6 +32,7 @@ namespace OperationTrident.Room1
         void Start()
         {
             camera = GetComponent<Camera>();
+            toDisplayNewMission = true;
         }
 
         // Update is called once per frame
@@ -35,6 +41,11 @@ namespace OperationTrident.Room1
             targetWorldPosition=new Vector3();
             switch (SceneController.state) {
                 case SceneController.Room1State.FindingKey1:
+                    if (toDisplayNewMission)
+                    {
+                        DisplayNewMission();
+                        toDisplayNewMission = false;
+                    }
                     targetWorldPosition = SceneController.Key1WorldPosition;
                     break;
                 case SceneController.Room1State.FindingKey2:
@@ -60,23 +71,26 @@ namespace OperationTrident.Room1
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
-            if (Vector3.Dot(direction1, direction2) <= 0) display = false;
-            else display = true;
+            if (Vector3.Dot(direction1, direction2) <= 0) toDisplayTheMissionPoint = false;
+            else toDisplayTheMissionPoint = true;
             targetWorldPosition = new Vector3(targetWorldPosition.x, targetWorldPosition.y + missionLabelOffset, targetWorldPosition.z);
             //UIPosition = camera.WorldToScreenPoint(targetWorldPosition);
+        }
+
+        private void DisplayNewMission()
+        {
+            //TODO:
+            return;
         }
 
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            if (!display) return;
+            if (!toDisplayTheMissionPoint) return;
 
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.blueColor);
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
-            //GUIStyle style = new GUIStyle();
             // 指定颜色
-            //style.normal.textColor = new Color(144.0f/255.0f, 144.0f / 255.0f, 144.0f / 255.0f);
-            //GUI.Label(new Rect(posX, camera.pixelHeight-posY, size, size), (int)nowDistance+"m", style);
             GUI.Label(rect, (int)nowDistance + "m", style);
         }
     }

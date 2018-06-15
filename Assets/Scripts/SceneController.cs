@@ -60,19 +60,6 @@ namespace OperationTrident.Room1
 
         // 场景中的物体数（指的是可交互的物品）
         private const int gameObjectCount = 7;
-
-        //// 场景中的敌人链表
-        //[SerializeField]
-        //private List<Vector3> enemyCreateList;
-
-        //// 敌人机器人的预设
-        //[SerializeField]
-        //private GameObject enemyPrefab;
-        //// 场景中所有敌人的链表
-        //private List<GameObject> enemysList;
-        //// 场景生成敌人的速度(多少秒产生一个)
-        //public float enemyCreateSpeed;
-
         /*
             房间内会有防守机器人，进入后会启动预设机器人，玩家需要尽可能击毁机器人。
             房间共有3个ID卡地点，玩家需要每个地点都走一遍，找出可用的ID卡。在第三个ID位置前会有一个必需要拿的物体，玩家需先过去get到才能开门。
@@ -183,26 +170,6 @@ namespace OperationTrident.Room1
             door2.transform.localScale = new Vector3(3.0f, door2.transform.localScale.y, door2.transform.localScale.z);
         }
 
-        //// 产生敌人的协程
-        //IEnumerator EnemyCreateRountine()
-        //{
-        //    // 这里暂时是每时每刻都生成？@！#￥
-        //    while (true)
-        //    {
-        //        enemyCreate();
-        //        yield return new WaitForSeconds(enemyCreateSpeed);
-        //    }
-        //}
-
-        //// 敌人产生
-        //private void enemyCreate()
-        //{
-        //    GameObject nowEnemy = Instantiate(enemyPrefab) as GameObject;
-        //    nowEnemy.transform.localPosition = enemyCreateList[UnityEngine.Random.Range(0,enemyCreateList.Count-1)];
-        //    enemysList.Add(nowEnemy);
-
-        //}
-
         // 改进后的函数，所有钥匙的事件分ID处理
         private void OnKeyGot(int id)
         {
@@ -244,14 +211,14 @@ namespace OperationTrident.Room1
                 case 0:
                     if (state == Room1State.FindingKey1)
                     {
-                        doorStart.GetComponent<DoorScript>().OpenAndDestroy();
+                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(2.5f,DoorScript.DoorOpenDirection.ZPositive);
                     }
                     break;
                 // 第二扇门
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        door1.GetComponent<DoorScript>().OpenAndDestroy();
+                        door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XNegative);
                     }
                     break;
                 // 第三扇门
@@ -263,7 +230,7 @@ namespace OperationTrident.Room1
                     }
                     else if (state == Room1State.FindingIDCard)
                     {
-                        door2.GetComponent<DoorScript>().OpenAndDestroy();
+                        door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
                     }
                     break;
             }

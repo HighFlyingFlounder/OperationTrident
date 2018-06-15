@@ -12,6 +12,9 @@ namespace OperationTrident.Room1
 
         private int thisId;
 
+        // 门持续开多久
+        private float openSecond;
+
         public int ThisId
         {
             get
@@ -22,6 +25,11 @@ namespace OperationTrident.Room1
 
         // 门被打开的速度
         public float openSpeed = 0.01f;
+
+        // 门移动的方向
+        public enum DoorOpenDirection { XPositive,XNegative, YPositive,YNegative,ZPositive,ZNegative};
+
+        private DoorOpenDirection direction;
 
         // 门是否被打开
         bool isOpen;
@@ -48,26 +56,57 @@ namespace OperationTrident.Room1
             // 如果门被打开而且没被销毁，那么就慢慢的往右移
             if (isOpen && !canBeDestroy)
             {
+                switch (direction)
+                {
+                    case DoorOpenDirection.XNegative:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x - openSpeed,
+                            this.transform.localPosition.y,
+                            this.transform.localPosition.z);
+                        break;
+                    case DoorOpenDirection.XPositive:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x + openSpeed,
+                            this.transform.localPosition.y,
+                            this.transform.localPosition.z);
+                        break;
+                    case DoorOpenDirection.YNegative:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
+                            this.transform.localPosition.y - openSpeed,
+                            this.transform.localPosition.z);
+                        break;
+                    case DoorOpenDirection.YPositive:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
+                            this.transform.localPosition.y + openSpeed,
+                            this.transform.localPosition.z);
+                        break;
+                    case DoorOpenDirection.ZNegative:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
+                            this.transform.localPosition.y,
+                            this.transform.localPosition.z - openSpeed);
+                        break;
+                    case DoorOpenDirection.ZPositive:
+                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
+                            this.transform.localPosition.y,
+                            this.transform.localPosition.z + openSpeed);
+                        break;
+                }
 
-                this.transform.localPosition = new Vector3(
-                    this.transform.localPosition.x - openSpeed,
-                    this.transform.localPosition.y,
-                    this.transform.localPosition.z);
             }
             if (canBeDestroy) Destroy(this);
         }
 
 
-        // 外界调用，可以把这个门搞定
-        public void OpenAndDestroy()
+        // 外界调用，可以把这个门搞定。传入参数：门要开多少秒，门想哪开
+        public void OpenAndDestroy(float _openSecond,DoorOpenDirection _direction)
         {
             isOpen = true;
+            direction = _direction;
+            openSecond = _openSecond;
             StartCoroutine(WaitForDestroy());
         }
 
         IEnumerator WaitForDestroy()
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(openSecond);
             canBeDestroy = true;
         }
     }

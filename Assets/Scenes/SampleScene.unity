@@ -253,6 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceQuota: 3
   shootingSpeed: 50
+  jitterOn: 0
   jitterFactorX: 1
   jitterFactorY: 0.5
 --- !u!114 &551941098
