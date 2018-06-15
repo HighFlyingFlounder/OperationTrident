@@ -54,9 +54,9 @@ public class WinPanel : PanelBase
     {
         if (SceneManager.GetActiveScene().name == "SpaceFight")
         {
+            PanelMgr.instance.OpenPanel<RoomPanel>("");
             SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
-            //PanelMgr.instance.OpenPanel<RoomPanel>("");
-            PanelMgr.instance.OpenPanel<LoginPanel>("");
+            //PanelMgr.instance.OpenPanel<LoginPanel>("");
         }
         Close();
     }

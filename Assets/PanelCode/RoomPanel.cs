@@ -153,11 +153,9 @@ public class RoomPanel : PanelBase
 
     public void RecvFight(ProtocolBase protocol)
     {
+        Debug.Log("RecvFight GameMgr.instance.id" + GameMgr.instance.id);
         MultiBattle.fight_protocal = (ProtocolBytes)protocol;
-        if (SceneManager.GetActiveScene().name == "GameHall")
-        {
-            SceneManager.LoadScene("SpaceFight", LoadSceneMode.Single);
-        }
+        SceneManager.LoadScene("SpaceFight", LoadSceneMode.Single);
         Close();
     }
 

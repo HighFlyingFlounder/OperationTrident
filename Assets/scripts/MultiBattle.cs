@@ -54,6 +54,7 @@ public class MultiBattle : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
+            Debug.Log("id = " +id);
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
@@ -98,6 +99,7 @@ public class MultiBattle : MonoBehaviour
         list.Add(id, bt);
         //玩家处理
 
+        Debug.Log("GameMgr.instance.id = " + GameMgr.instance.id);
         if (id == GameMgr.instance.id)
         {
             bt.ctrlType = UserController.CtrlType.player;

@@ -1,25 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Root : MonoBehaviour {
-    private static bool created = false;
-    public static Root instance = null;
+public class Root : MonoBehaviour
+{
     // Use this for initialization
     void Awake()
     {
-        if(instance != null)
-        {
-            GameObject.Destroy(this.gameObject);
-            return;
-        }
-        instance = this;
-        if (!created)
-        {
-            DontDestroyOnLoad(this.gameObject);
-            created = true;
-        }
+        DontDestroyOnLoad(this.gameObject);
     }
-    void Start () //切换场景时，该object不会再调用Start了
+    void Start() //切换场景时，该object不会再调用Start了
     {
         Application.runInBackground = true;
         PanelMgr.instance.OpenPanel<LoginPanel>("");
