@@ -107,20 +107,60 @@ namespace OperationTrident.Util
             return toReturn;
         }
 
-        // 淡化颜色，传入一个淡化的参数（意味着会变得更加明亮！）
-        public static Vector3 FadeAColor(Vector3 color, float factor)
+        // 变得不透明，传入一个参数，单位还是1/256
+        public static Vector4 transparentLessColor(Vector4 color,float factor)
         {
-            return new Vector3(Math.Max(color.x + factor, 1.0f)
-                , Math.Max(color.y + factor, 1.0f)
-                , Math.Max(color.z + factor, 1.0f));
+            return new Vector4(color.x, color.y, color.z, Math.Min(color.w + factor / 256.0f, 1.0f));
         }
 
-        // 增强颜色，传入一个增强的参数（意味着会变得更加黑暗！）
+        // 变得不透明，传入一个参数，单位还是1/256
+        public static Vector4 transparentLessColor(Color color, float factor)
+        {
+            return new Vector4(color.r, color.g, color.b, Math.Min(color.a + factor / 256.0f, 1.0f));
+        }
+
+        // 变得透明，传入一个参数，单位还是1/256
+        public static Vector4 transparentMoreColor(Vector4 color, float factor)
+        {
+            return new Vector4(color.x, color.y, color.z, Math.Max(color.w - factor / 256.0f, 0.0f));
+        }
+
+        // 变得透明，传入一个参数，单位还是1/256
+        public static Vector4 transparentMoreColor(Color color, float factor)
+        {
+            return new Vector4(color.r, color.g, color.b, Math.Max(color.a - factor / 256.0f, 0.0f));
+        }
+
+        // 淡化颜色，传入一个淡化的参数（意味着会变得更加明亮！）factor的每个单位代表着1/256
+        public static Vector3 FadeAColor(Vector3 color, float factor)
+        {
+            return new Vector3(Math.Min(color.x + factor/256.0f, 1.0f)
+                , Math.Min(color.y + factor / 256.0f, 1.0f)
+                , Math.Min(color.z + factor / 256.0f, 1.0f));
+        }
+
+        // 淡化颜色，传入一个淡化的参数（意味着会变得更加明亮！）factor的每个单位代表着1/256
+        public static Color FadeAColor(Color color,float factor)
+        {
+            return new Color(Math.Min(color.r + factor / 256.0f, 1.0f)
+                , Math.Min(color.g + factor / 256.0f, 1.0f)
+                , Math.Min(color.b + factor / 256.0f, 1.0f));
+        }
+
+        // 增强颜色，传入一个增强的参数（意味着会变得更加黑暗！）factor的每个单位代表着1/256
         public static Vector3 DeepAColor(Vector3 color, float factor)
         {
-            return new Vector3(Math.Min(color.x - factor, 0.0f)
-                , Math.Min(color.y - factor, 0.0f)
-                , Math.Min(color.z - factor, 0.0f));
+            return new Vector3(Math.Max(color.x - factor / 256.0f, 0.0f)
+                , Math.Max(color.y - factor / 256.0f, 0.0f)
+                , Math.Max(color.z - factor / 256.0f, 0.0f));
+        }
+
+        // 增强颜色，传入一个增强的参数（意味着会变得更加黑暗！）factor的每个单位代表着1/256
+        public static Vector3 DeepAColor(Color color, float factor)
+        {
+            return new Vector3(Math.Max(color.r - factor / 256.0f, 0.0f)
+                , Math.Max(color.g - factor / 256.0f, 0.0f)
+                , Math.Max(color.b - factor / 256.0f, 0.0f));
         }
 
         // 从Vector3构造一个颜色
@@ -133,6 +173,18 @@ namespace OperationTrident.Util
         public static Color GetColorFromVector4(Vector4 vec)
         {
             return new Color(vec.x, vec.y, vec.z, vec.w);
+        }
+
+        // 从颜色中获得Vector3
+        public static Vector3 GetVector3FromColor(Color color)
+        {
+            return new Vector3(color.r, color.g, color.b);
+        }
+
+        // 从颜色中获得Vector4
+        public static Vector4 GetVector4FromColor(Color color)
+        {
+            return new Vector4(color.r, color.g, color.b, color.a);
         }
 
         // 得到默认的字体样式（全默认,颜色黑色）
