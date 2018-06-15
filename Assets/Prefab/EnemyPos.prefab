@@ -54,6 +54,6 @@ MonoBehaviour:
   CreateObject: {fileID: 1678822668127206, guid: 7ae32114bf1edd944804b20a27e586c3,
     type: 2}
   number: 10
-  speed: 0
+  speed: 1
   time: 0
-  isStart: 1
+  isStart: 0

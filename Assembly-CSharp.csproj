@@ -58,7 +58,9 @@
     <Compile Include="Assets\Scripts\Button.cs" />
     <Compile Include="Assets\Scripts\Create.cs" />
     <Compile Include="Assets\Scripts\GameEvent.cs" />
+    <Compile Include="Assets\Scripts\GUIUtil.cs" />
     <Compile Include="Assets\Scripts\Messenger.cs" />
+    <Compile Include="Assets\Scripts\MissionSystem.cs" />
     <Compile Include="Assets\Scripts\RayShooter.cs" />
     <Compile Include="Assets\Scripts\ReactiveTarget.cs" />
     <Compile Include="Assets\Scripts\SceneController.cs" />

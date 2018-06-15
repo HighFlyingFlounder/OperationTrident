@@ -7,24 +7,22 @@ namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour
     {
         [SerializeField]
-        //敌人出生点
-        public List<GameObject> EnemyPos = new List<GameObject>();
         //电梯开关的预设
         public GameObject buttonPre;
-        //button的位置
-        public Vector3 ButtonPosition;
         //持续时间
         public int time;
 
         //状态
-        private enum ElevatorState { Initing, FindingButton, Start_Fighting ,Fighting, End };
-        private ElevatorState state;
+        public enum ElevatorState { Initing, FindingButton, Start_Fighting ,Fighting, End };
+        public static ElevatorState state;
 
         //开始战斗的时间
         private float s_time;
 
         //按钮
         private GameObject button;
+        //button的位置
+        public static Vector3 ButtonPosition;
 
         // Use this for initialization
         void Start()
@@ -41,7 +39,8 @@ namespace OperationTrident.Elevator {
                 case ElevatorState.Initing:
                     //初始化BUTTON
                     button = GameObject.Instantiate(buttonPre);
-                    button.transform.localPosition = ButtonPosition;
+                    button.transform.localPosition = new Vector3(0, 2, 0);
+                    ButtonPosition = button.transform.localPosition;
 
                     state = ElevatorState.FindingButton;
                     break;

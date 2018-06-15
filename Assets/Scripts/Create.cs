@@ -29,11 +29,6 @@ namespace OperationTrident.Elevator
         void Start() {
             //一秒执行一次
             coroutine = WaitAndPrint(speed);
-
-            number = 10;
-            speed = 1;
-            time = 0;
-            isStart = false;
             list = new List<GameObject>();
         }
 

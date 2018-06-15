@@ -45,7 +45,6 @@ namespace OperationTrident.Elevator
                     else
                     {
                         StartCoroutine(SphereIndicator(hit.point));//响应击中
-                        Debug.Log(point);
                     }
 
                 }
