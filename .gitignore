@@ -24,12 +24,6 @@ ExportedObj/
 *.pdb
 *.opendb
 
-# Asset Files
-*.fbx
-*.jpg
-*.png
-*.3ds
-*.obj
 ./Room5Battle/Temp/
 
 # Unity3D generated meta files

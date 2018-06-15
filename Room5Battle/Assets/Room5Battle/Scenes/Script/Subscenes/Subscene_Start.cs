@@ -17,7 +17,7 @@ namespace Room5Battle
         private bool m_isPressingKeyF=false;
         private float m_ControlPanelKeyFPressingTime = 0.0f;
 
-        private const float c_RequiredKeyFPressingTime = 10.0f;
+        private const float c_RequiredKeyFPressingTime = 1.0f;
 
         public override bool isTransitionTriggered()
         {
@@ -42,9 +42,9 @@ namespace Room5Battle
             Debug.Log("Leaving Subscene:start");
         }
 
-        /***************************************************
-         *                     Subscene's controller
-         * *************************************************/
+        /***************************************************************
+         *                            Subscene's controller
+         * **************************************************************/
         private void  Update()
         {
             //摄像机中心发出的射线
@@ -92,38 +92,37 @@ namespace Room5Battle
 
         private void OnGUI()
         {
+            //提示按住F
+            GUIStyle textStyle = new GUIStyle();
+            textStyle.fontSize = 24;
+            textStyle.normal.textColor = new Color(0.3f, 0.3f, 0.3f);
+            textStyle.alignment = TextAnchor.MiddleCenter;
+
             if (m_isLookingAtControlPanel)
             {
-                GUIStyle textStyle = new GUIStyle();
-                textStyle.fontSize = 32;
-                textStyle.normal.textColor = new Color(0.4f, 0.4f, 0.4f);
-                textStyle.alignment = TextAnchor.MiddleCenter;
+                //显示按F的进度条
+                if (m_isPressingKeyF)
+                {
+                    float halfW = Camera.main.pixelWidth / 2;
+                    float halfH = Camera.main.pixelHeight / 2;
+                    Rect rect1 = new Rect(halfW, halfH, 30.0f, 20.0f);
+                    GUI.Label(rect1, "正在启动冷却程序...", textStyle);
 
-                float halfW = Camera.main.pixelWidth / 2;
-                float halfH = Camera.main.pixelHeight / 2;
-                Rect rect1 = new Rect(halfW, halfH, 30.0f, 20.0f);
-                GUI.Label(rect1, "按住F启动冷却程序", textStyle);
-            }
-
-            //显示按F的进度条
-            if(m_isLookingAtControlPanel && m_isPressingKeyF)
-            {
-                GUIStyle textStyle = new GUIStyle();
-                textStyle.fontSize = 32;
-                textStyle.normal.textColor = new Color(0.3f, 0.3f, 0.3f);
-                textStyle.alignment = TextAnchor.MiddleCenter;
-
-                float halfW = Camera.main.pixelWidth / 2;
-                float halfH = Camera.main.pixelHeight / 2;
-                Rect rect1 = new Rect(halfW, halfH, 30.0f, 20.0f);
-                GUI.Label(rect1, "正在启动冷却程序....", textStyle);
-
-                float barWidth = 100.0f;
-                Rect rect2 = new Rect(halfW, halfH+30.0f, 50.0f, 20.0f);
-                rect2.xMin = halfW - barWidth/2;
-                rect2.xMax = rect2.xMin + barWidth * (m_ControlPanelKeyFPressingTime / c_RequiredKeyFPressingTime);
-                rect2.height = 30.0f;
-                GUI.DrawTexture(rect2, mTexturePureGrey);
+                    float barWidth = 200.0f;
+                    Rect rect2 = new Rect(halfW, halfH + 30.0f, 50.0f, 20.0f);
+                    rect2.xMin = halfW - barWidth / 2;
+                    rect2.xMax = rect2.xMin + barWidth * (m_ControlPanelKeyFPressingTime / c_RequiredKeyFPressingTime);
+                    rect2.yMin = halfH + 30.0f;
+                    rect2.yMax = halfH + 40.0f;
+                    GUI.DrawTexture(rect2, mTexturePureGrey);
+                }
+                else
+                {
+                    float halfW = Camera.main.pixelWidth / 2;
+                    float halfH = Camera.main.pixelHeight / 2;
+                    Rect rect1 = new Rect(halfW, halfH+100.0f, 30.0f, 20.0f);
+                    GUI.Label(rect1, "按住F启动冷却程序", textStyle);
+                }
             }
         }
 
