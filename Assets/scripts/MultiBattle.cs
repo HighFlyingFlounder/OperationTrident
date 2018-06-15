@@ -6,6 +6,8 @@ public class MultiBattle : MonoBehaviour
 {
     //单例
     public static MultiBattle instance;
+    //Start Game所需的协议信息
+    public static ProtocolBytes fight_protocal;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
@@ -23,6 +25,8 @@ public class MultiBattle : MonoBehaviour
         rocks = GameObject.FindGameObjectsWithTag("Hinder");
         foreach (GameObject rock in rocks)
             rock_list.Add(rock.name, rock.GetComponent<Hinder>());
+
+        StartBattle(fight_protocal);
     }
 
     //清理场景
