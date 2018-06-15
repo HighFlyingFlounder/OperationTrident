@@ -34,3 +34,13 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Audios
+*.wav
+*.wave
+*.mp3
+*.mid
+*.midi
+Assets/Audios
+
+Assets/Standard Assets
