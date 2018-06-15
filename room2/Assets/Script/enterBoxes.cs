@@ -13,11 +13,17 @@ namespace room2Battle
         [SerializeField]
         protected string subsceneName;
 
+        [SerializeField]
+        protected int message1;
+
+        [SerializeField]
+        protected string tags;
+
         void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "Player")
+            if (other.tag == tags)
             {
-                (subsceneCotrol.GetComponent(subsceneName) as Subscene).notify(1); 
+                (subsceneCotrol.GetComponent(subsceneName) as Subscene).notify(message1); 
             }
         }
        

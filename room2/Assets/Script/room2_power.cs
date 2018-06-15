@@ -5,6 +5,17 @@ using UnityEngine;
 namespace room2Battle {
     //能源房大战
     public class room2_power :  Subscene{
+        [SerializeField]
+        protected GameObject enemyPrefabs;
+
+        protected ArrayList enemyList = new ArrayList();
+
+        protected int currentEnemyNum = 0;
+
+        protected int maxEnemyNum = 20;
+
+        [SerializeField]
+        protected Transform[] enemyInitPositions;
 
         //钥匙
         [SerializeField]
@@ -23,6 +34,8 @@ namespace room2Battle {
 
         protected bool isSwitchOpen = false;
 
+        protected bool isIntoSecondFloor = false;
+
         //获取相机句柄
         void Start()
         {
@@ -31,7 +44,7 @@ namespace room2Battle {
 
         public override bool isTransitionTriggered()
         {
-            return false;
+            return isIntoSecondFloor && isSwitchOpen;
         }
 
         public override string GetNextSubscene()
@@ -41,7 +54,13 @@ namespace room2Battle {
 
         public override void onSubsceneDestory()
         {
-            
+            foreach (GameObject obj in enemyList)
+            {
+                if (obj != null)
+                {
+                    Destroy(obj);
+                }
+            }
         }
 
         public override void onSubsceneInit()
@@ -51,13 +70,18 @@ namespace room2Battle {
 
         public override void notify(int i)
         {
+            if (i == 1)
+            {
+                isIntoSecondFloor = true;
+                Debug.Log("player into floor2");
+            }
         }
 
         void Update()
         {
             //通过摄像机的蓝色轴（即Z轴），射向对应物体，判断标签
             RaycastHit hit;
-            if (Physics.Raycast(mCamera.transform.position, mCamera.transform.forward, out hit))
+            if (Physics.Raycast(mCamera.transform.position, mCamera.transform.forward,out hit,2.0f))
             {
                 //获取物体
                 GameObject obj = hit.transform.gameObject;
@@ -76,6 +100,24 @@ namespace room2Battle {
                     {
                         span = System.TimeSpan.Zero;
                         startTiming = false;
+                    }
+                }
+            }
+
+            //生成敌人
+            if (enemyList.Count < maxEnemyNum)
+            {
+                GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
+                enemyList.Add(obj);
+            }
+            else
+            {
+                for (int i = 0; i < enemyList.Count; ++i)
+                {
+                    if (enemyList[i] == null)
+                    {
+                        enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
+                        break;
                     }
                 }
             }
@@ -128,9 +170,13 @@ namespace room2Battle {
                     else
                         GUI.Label(new Rect(posX, posY, 100, 100), "干的漂亮");
                 }
-                else
+                else if (!isSwitchOpen)
                 {
                     GUI.Label(new Rect(posX, posY, 100, 100), "按住F");
+                }
+                else
+                {
+                    GUI.Label(new Rect(posX, posY, 100, 100), "");
                 }
             }
         }

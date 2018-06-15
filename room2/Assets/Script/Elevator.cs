@@ -16,9 +16,18 @@ namespace room2Battle
 
         //prefab中的左右门
         [SerializeField]
-        public GameObject leftdoor;
-        public GameObject rightdoor;
+        protected GameObject leftdoor;
 
+        [SerializeField]
+        protected GameObject rightdoor;
+
+        [SerializeField]
+        protected BoxCollider front;
+
+        [SerializeField]
+        protected enterElevator inside;
+
+        protected Camera mCamera;
 
         //电梯门是否开启
         bool isOpen = false;
@@ -28,6 +37,9 @@ namespace room2Battle
 
         //关闭电梯
         protected bool isShutDown = false;
+
+        //为了让玩家只上一层楼，可删
+        protected bool ban = false;
 
         //@brief 公共接口，启用协程上升
         public void goUp()
@@ -41,17 +53,16 @@ namespace room2Battle
         //@brief 启用协程关门，上升，开门
         IEnumerator goUpImpl()
         {
-            if (isOpen)
+            
+            while (isOpen)
             {
                 closeDoor();
+                yield return new WaitForSeconds(1.0f);
             }
-            isMoving = true;
-
-            //等待固定时间，保证开启时间足够
-            yield return new WaitForSeconds(1.2f);
             float time = 0.0f;
             float total = 1.0f;
 
+            isMoving = true;
             Vector3 pos = transform.position + upFactor;
             Vector3 init = transform.position;
 
@@ -84,13 +95,13 @@ namespace room2Battle
         //@brief 实现原理和goUpImpl一样
         IEnumerator goDownImpl()
         {
-            if (isOpen)
+            while (isOpen)
             {
                 closeDoor();
+                yield return new WaitForSeconds(1.0f);
             }
-            isMoving = true;
 
-            yield return new WaitForSeconds(1.2f);
+            isMoving = true;
 
             float time = 0.0f;
             float total = 1.0f;
@@ -114,38 +125,85 @@ namespace room2Battle
         //@brief 调用门的脚本，其内部是一个协程
         public void openDoor()
         {
-            if (!isMoving && !isShutDown)
+            if (!isMoving && !isOpen)
             {
                 leftdoor.GetComponent<elevatorDoor>().openTheDoor();
                 rightdoor.GetComponent<elevatorDoor>().openTheDoor();
-                isOpen = true;
+                //isOpen = true;
             }
         }
 
         //@brief 调用门的脚本，其内部是一个协程
         public void closeDoor()
         {
-            if (!isMoving && !isShutDown)
+            if (!isMoving && isOpen)
             {
                 rightdoor.GetComponent<elevatorDoor>().closeTheDoor();
                 leftdoor.GetComponent<elevatorDoor>().closeTheDoor();
-                isOpen = false;
+                //isOpen = false;
             }
         }
 
-        //@brief player进来自动上升
-        void OnTriggerEnter(Collider other)
-        {
-            if (other.tag == "Player")
-                goUp();
-        }
-
+        
+        //关掉电梯
         public bool shutDown {
             get {
                 return isShutDown;
             }
             set {
                 isShutDown = value;
+            }
+        }
+
+        void Start()
+        {
+            mCamera = Camera.main;
+        }
+
+        void Update()
+        {
+            isOpen = leftdoor.GetComponent<elevatorDoor>().getDoorStat;
+        }
+
+        public void disableAutoOpenDoor()
+        {
+            front.enabled = false;
+        }
+
+        void OnGUI()
+        {
+            float posX = mCamera.pixelWidth / 2 - 50;
+            float posY = mCamera.pixelHeight / 2 - 50;
+            if (inside.isEnter && !isMoving && !isShutDown && !ban)
+            {
+                GUI.Label(new Rect(posX, posY, 100, 100), "按F上楼，按E开门");
+            }
+            else  
+            {
+                GUI.Label(new Rect(posX, posY, 100, 100), "");    
+            }
+        }
+
+        void LateUpdate()
+        {
+            
+            if (inside.isEnter)
+            {
+                if (!isShutDown && !isMoving)
+                {     
+                    if (Input.GetKeyDown(KeyCode.F))
+                    {
+                        if (!ban)
+                        {
+                            ban = true;
+                            goUp();
+                        }   
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        openDoor();
+                    }
+                }
             }
         }
     }

@@ -34,6 +34,8 @@ namespace room2Battle
 
         protected bool isEnter = false;
 
+        protected bool enterElevator = false;
+
         //摆放玩家位置，初始化敌人
         public override void onSubsceneInit()
         {
@@ -69,6 +71,7 @@ namespace room2Battle
             if (i == 1)
             {
                 isEnter = true;
+                elevator.disableAutoOpenDoor();
                 elevator.shutDown = true;
             }
         }

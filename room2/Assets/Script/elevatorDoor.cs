@@ -25,6 +25,12 @@ namespace room2Battle
             isInteractive = true;
         }
         */
+        public bool getDoorStat {
+            get {
+                return isOpen;
+            }
+        }
+
 
         //@brief 计算位置
         void Start()
