@@ -45,8 +45,9 @@ namespace Room5Battle
             if (!mapToSubState.ContainsKey(stateId))
             {
                 //这里一定要注意要将subState冻结掉，不然一堆substate会出事
-                ((GetComponent(subSceneClassName)) as Subscene).enabled = false;
-                mapToSubState.Add(stateId, (GetComponent(subSceneClassName) as Subscene));
+                Subscene sub = ((GetComponent(subSceneClassName)) as Subscene);
+                sub.enabled = false;
+                mapToSubState.Add(stateId, sub);
                 return true;
             }
             else
@@ -89,10 +90,9 @@ namespace Room5Battle
         {
             Subscene sub = ((mapToSubState[currentStateId]) as Subscene);
 
-            //Debug.Log(mapToSubState.Count);
             if (sub != null && sub.isTransitionTriggered())
             {
-                Debug.Log(currentStateId);
+                //](currentStateId);
                 //执行善后工作
                  sub.onSubsceneDestory();
                  //不再执行update操作控制逻辑
