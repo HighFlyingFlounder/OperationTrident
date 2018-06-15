@@ -7,7 +7,7 @@ namespace Room5Battle
     public class Subscene_CountDown : Subscene
     {
         //五分钟 300s
-        private float m_CountDownTime = 10.0f;
+        private float m_CountDownTime = 15.0f;
 
         //敌人的prefab
         [SerializeField]
@@ -38,6 +38,7 @@ namespace Room5Battle
         public override void onSubsceneInit()
         {
             StartCoroutine(spawnEnemies1());
+            StartCoroutine(spawnEnemies2());
         }
 
         /***************************************************
@@ -59,17 +60,16 @@ namespace Room5Battle
         //生成第一波敌人
         private IEnumerator spawnEnemies1()
         {
-            yield return new WaitForSeconds(3.0f);
-            for(int i=0;i<4;++i)
-                EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[0]);
+            yield return new WaitForSeconds(5.0f);
+            for(int i=0;i<4;++i) EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
 
         //生成第二波敌人
         private IEnumerator spawnEnemies2()
         {
-            yield return new WaitForSeconds(6.0f);
+            yield return new WaitForSeconds(10.0f);
             for (int i = 0; i < 4; ++i)
-                EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1, m_EnemyGenPos[0]);
+                EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1, m_EnemyGenPos[i]);
         }
 
         /***************************************************
