@@ -254,7 +254,7 @@ namespace OperationTrident.Util
                 return new Rect(guiPosition.x - fontSize / 4, cameraPixelHeight - (guiPosition.y - fontSize / 4), fontSize, fontSize);
         }
         
-        // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect
+        // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect (主要是方便任务系统？也可能用在别的地方)
         public static Rect GetFixedRectDirectlyFromWorldPosition(Vector3 worldPosition,Camera camera,int fontSize = defaultFontSize)
         {
             Vector3 guiPosition = camera.WorldToScreenPoint(worldPosition);

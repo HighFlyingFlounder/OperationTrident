@@ -71,10 +71,6 @@ namespace OperationTrident.Room1
         {
             if (!display) return;
 
-            int size = 12;
-            float posX = UIPosition.x - size / 4;
-            float posY = UIPosition.y - size / 4;
-
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.blueColor);
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
             //GUIStyle style = new GUIStyle();
