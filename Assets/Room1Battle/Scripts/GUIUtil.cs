@@ -40,17 +40,22 @@ namespace OperationTrident.Util
         public readonly static Color brightGreenColor = GetColorFromVector3(brightGreenVec);
         public readonly static Color deepGreenColor = GetColorFromVector3(deepGreenVec);
 
+        public readonly static Color subtitleNormalColor = GetPureColor(200.0f / 256.0f);
+
         // 默认的字体大小
         private const int defaultFontSize = 12;
 
         // 默认的字体对齐
         private const TextAlignment defaultAlignment = TextAlignment.Center;
-
         private const TextAnchor defaultAnchor = TextAnchor.MiddleCenter;
 
+        // 字幕在屏幕的哪里：按比例算
+        private const float subtitlePosition = 3.0f / 4.0f;
+
+        // 微软雅黑
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
 
-        public static int FontSize
+        public static int DefaultFontSize
         {
             get
             {
@@ -74,6 +79,12 @@ namespace OperationTrident.Util
             }
         }
 
+        // 传入参数获得一种纯色  越接近0越黑，越接近1越白
+        public static Color GetPureColor(float factor)
+        {
+            return GetColorFromVector3(new Vector3(factor, factor, factor));
+        }
+
         // 混合两个颜色
         public static Vector3 MixTwoColor(Vector3 colorA, Vector3 colorB)
         {
@@ -81,7 +92,7 @@ namespace OperationTrident.Util
         }
 
         // 从一个字符串里面构造颜色向量 格式"48 3F 1F"
-        public static Vector3 GetColorFromString(string a)
+        public static Vector3 GetColorVec3FromString(string a)
         {
             try
             {
@@ -92,6 +103,12 @@ namespace OperationTrident.Util
             {
                 throw e;
             }
+        }
+
+        // 从一个字符串里面构造颜色向量
+        public static Color GetColorFromString(string a)
+        {
+            return GetColorFromVector3(GetColorVec3FromString(a));
         }
 
         // 从字符串中构造一个int数组
@@ -190,33 +207,30 @@ namespace OperationTrident.Util
         // 得到默认的字体样式（全默认,颜色黑色）
         public static GUIStyle GetDefaultTextStyle()
         {
-            GUIStyle style = new GUIStyle();
-            style.normal.textColor = blackColor;
-            style.fontStyle = FontStyle.Normal;
-            style.font = microsoftYaHei;
-            style.alignment = defaultAnchor;
-            return style;
+            return GetDefaultTextStyle(blackColor);
         }
 
         // 得到默认的字体样式（颜色自己指定）
         public static GUIStyle GetDefaultTextStyle(Vector3 color)
         {
-            GUIStyle style = new GUIStyle();
-            style.normal.textColor = GetColorFromVector3(color);
-            style.fontStyle = FontStyle.Normal;
-            style.font = microsoftYaHei;
-            style.alignment = defaultAnchor;
-            return style;
+            return GetDefaultTextStyle(GetColorFromVector3(color), defaultFontSize);
         }
 
         // 得到默认的字体样式（颜色自己指定）
         public static GUIStyle GetDefaultTextStyle(Color color)
+        {
+            return GetDefaultTextStyle(color, defaultFontSize);
+        }
+
+        // 得到指定大小的默认字体样式
+        public static GUIStyle GetDefaultTextStyle(Color color,int fontSize)
         {
             GUIStyle style = new GUIStyle();
             style.normal.textColor = color;
             style.fontStyle = FontStyle.Normal;
             style.font = microsoftYaHei;
             style.alignment = defaultAnchor;
+            style.fontSize = fontSize;
             return style;
         }
 
@@ -269,6 +283,30 @@ namespace OperationTrident.Util
                 fontSize,
                 true,
                 camera.pixelHeight);
+        }
+
+        // 直接调字幕，显示在默认的位置。注意一定要在OnGUI()中调用该函数！！！
+        public static void DisplaySubtitleInDefaultPosition(string subtitle,Camera camera)
+        {
+            DisplaySubtitleInDefaultPosition(subtitle, camera, DefaultFontSize);
+        }
+
+        // 以指定大小的字体显示默认位置的字幕
+        public static void DisplaySubtitleInDefaultPosition(string subtitle,Camera camera,int fontSize)
+        {
+            GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
+            GUI.Label(
+                new Rect(
+                    new Vector2(0.0f, camera.pixelHeight * subtitlePosition),
+                    new Vector2(camera.pixelWidth, DefaultFontSize)
+                    ), subtitle, style);
+        }
+
+        // 在指定位置显示内容
+        public static void DisplaySubtitleInGivenPosition(string subtitle,Rect positionRect,int fontSize)
+        {
+            GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
+            GUI.Label(positionRect, subtitle, style);
         }
     }
 }

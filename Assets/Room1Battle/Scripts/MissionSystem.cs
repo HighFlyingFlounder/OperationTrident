@@ -86,6 +86,7 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
+            GUIUtil.DisplaySubtitleInDefaultPosition("试一下", camera);
             if (!toDisplayTheMissionPoint) return;
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
