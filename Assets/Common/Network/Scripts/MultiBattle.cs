@@ -6,29 +6,29 @@ public class MultiBattle : MonoBehaviour
 {
     //单例
     public static MultiBattle instance;
+    //Start Game所需的协议信息
+    public static ProtocolBytes fight_protocal;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
     public Dictionary<string, UserController> list = new Dictionary<string, UserController>();
     public Dictionary<string, Hinder> rock_list = new Dictionary<string, Hinder>();
 
-    private GameObject[]rocks;
+    private GameObject[] rocks;
 
     // Use this for initialization
     void Start()
     {
         //单例模式
         instance = this;
-        //获得所有陨石的句柄
-        rocks = GameObject.FindGameObjectsWithTag("Hinder");
-        foreach (GameObject rock in rocks)
-            rock_list.Add(rock.name, rock.GetComponent<Hinder>());
+
     }
 
     //清理场景
-     public void ClearBattle()
+    public void ClearBattle()
     {
         list.Clear();
+        rock_list.Clear();
         GameObject[] flyers = GameObject.FindGameObjectsWithTag("flyer");
         for (int i = 0; i < flyers.Length; i++)
             Destroy(flyers[i]);
@@ -42,6 +42,10 @@ public class MultiBattle : MonoBehaviour
         string protoName = proto.GetString(start, ref start);
         if (protoName != "Fight")
             return;
+        //获得所有陨石的句柄
+        rocks = GameObject.FindGameObjectsWithTag("Hinder");
+        foreach (GameObject rock in rocks)
+            rock_list.Add(rock.name, rock.GetComponent<Hinder>());
         //坦克总数
         int count = proto.GetInt(start, ref start);
         //清理场景
@@ -50,6 +54,7 @@ public class MultiBattle : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
+            Debug.Log("id = " + id);
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
@@ -94,6 +99,7 @@ public class MultiBattle : MonoBehaviour
         list.Add(id, bt);
         //玩家处理
 
+        Debug.Log("GameMgr.instance.id = " + GameMgr.instance.id);
         if (id == GameMgr.instance.id)
         {
             bt.ctrlType = UserController.CtrlType.player;
