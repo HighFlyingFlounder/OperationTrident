@@ -24,6 +24,18 @@ namespace OperationTrident.Room1
         // 显示任务目标更新
         private bool toDisplayNewMission;
 
+        private string[] missionContents = {
+            "找到打开Room2门的钥匙",
+            "找到打开Room3门的钥匙",
+            "尝试打开Room3门，取得ID卡",
+            "门打不开！找找有什么可以利用的",
+            "取得ID卡",
+            "逃离房间"
+        };
+
+        // 任务目标的内容
+        private string missionContent;
+
         // 目标的世界坐标
         private Vector3 targetWorldPosition;
 
@@ -33,6 +45,7 @@ namespace OperationTrident.Room1
         {
             camera = GetComponent<Camera>();
             toDisplayNewMission = true;
+            missionContent = String.Empty;
         }
 
         // Update is called once per frame
@@ -43,24 +56,49 @@ namespace OperationTrident.Room1
                 case SceneController.Room1State.FindingKey1:
                     if (toDisplayNewMission)
                     {
-                        DisplayNewMission();
+                        missionContent = missionContents[1];
                         toDisplayNewMission = false;
                     }
                     targetWorldPosition = SceneController.Key1WorldPosition;
                     break;
                 case SceneController.Room1State.FindingKey2:
+                    if (toDisplayNewMission)
+                    {
+                        missionContent = missionContents[1];
+                        toDisplayNewMission = false;
+                    }
                     targetWorldPosition = SceneController.Key2WorldPosition;
                     break;
                 case SceneController.Room1State.TryingToOpenRoom:
+                    if (toDisplayNewMission)
+                    {
+                        missionContent = missionContents[1];
+                        toDisplayNewMission = false;
+                    }
                     targetWorldPosition = SceneController.IDCardWorldPosition;
                     break;
                 case SceneController.Room1State.FindingNeeded:
+                    if (toDisplayNewMission)
+                    {
+                        missionContent = missionContents[1];
+                        toDisplayNewMission = false;
+                    }
                     targetWorldPosition = SceneController.CropseWorldPosition;
                     break;
                 case SceneController.Room1State.FindingIDCard:
+                    if (toDisplayNewMission)
+                    {
+                        missionContent = missionContents[1];
+                        toDisplayNewMission = false;
+                    }
                     targetWorldPosition = SceneController.IDCardWorldPosition;
                     break;
                 case SceneController.Room1State.EscapingRoom:
+                    if (toDisplayNewMission)
+                    {
+                        missionContent = missionContents[1];
+                        toDisplayNewMission = false;
+                    }
                     // TODO: 逃跑的时候任务目标是啥
                     break;
             }
@@ -86,8 +124,12 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            GUIUtil.DisplaySubtitleInDefaultPosition("试一下", camera);
-            if (!toDisplayTheMissionPoint) return;
+            // 显示任务目标
+
+            if (missionContent != String.Empty)
+            {
+                GUIUtil.DisplayMissionTargetDefault(missionContent, camera, false);
+            }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
