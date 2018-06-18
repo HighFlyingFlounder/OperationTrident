@@ -1,0 +1,5 @@
+//Author:鸡哥
+就是Room2的"夜视仪"/"深度感应器"，把DepthSensorEffect.cs挂上要搞的Camera上，然后把这文件夹下的Shader和贴图挂上DepthSensorEffect.cs。为了方便和减少耦合，这个特效用了Post Processing。
+PS:理论上可以大优化，因为不需要任何光照参与而只需要Z-buffer。但是如果物体需要遍历换shader的话就有点麻烦了
+PPS：camera有个SetReplacementShader可以批量地使用替补shader来渲染拥有相应tag的物体，但是这玩意是个坑，网上没人成功的。
+PPPS：因为“波”是view space发出的，所以其实并没有实现多普勒效应2333333（波扩散圆心应该是world space的）
