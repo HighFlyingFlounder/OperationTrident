@@ -1,0 +1,2 @@
+//Author:鸡哥
+这个是Asset Store上下载的比较官方的后处理套餐Post Processing Stack，把PostProcessingBehaviour.cs挂上camera，然后配置好post processing profile，就能用起了。这个PPS把很多常见的后处理特效封装做成了一个uber shader并且按顺序摆好了，which means一个pass就可以同时实现多种后处理特效，例如Bloom，Color Grading，Vignette，Motion Blur等，在profile里打打勾，改改参数，舒服。
