@@ -51,7 +51,7 @@ namespace OperationTrident.Util
         private const TextAnchor defaultAnchor = TextAnchor.MiddleCenter;
 
         // 字幕在屏幕的哪里：按比例算
-        private const float subtitlePosition = 3.0f / 4.0f;
+        private const float defaultSubtitleRatioHeight = 4.0f / 5.0f;
 
         // 微软雅黑
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
@@ -77,6 +77,14 @@ namespace OperationTrident.Util
             get
             {
                 return defaultAnchor;
+            }
+        }
+
+        public static float DefaultSubtitleRatioHeight
+        {
+            get
+            {
+                return defaultSubtitleRatioHeight;
             }
         }
 
@@ -302,7 +310,7 @@ namespace OperationTrident.Util
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
             GUI.Label(
                 new Rect(
-                    new Vector2(0.0f, camera.pixelHeight * subtitlePosition),
+                    new Vector2(0.0f, camera.pixelHeight * defaultSubtitleRatioHeight),
                     new Vector2(camera.pixelWidth, DefaultFontSize)
                     ), subtitle, style);
         }
@@ -342,5 +350,113 @@ namespace OperationTrident.Util
                         GetDefaultTextStyle(missionContentNormalCor));
             }
         }
+
+        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera,
+            int fontSize = defaultFontSize, float subtitleRatioHeight = defaultSubtitleRatioHeight)
+        {
+            List<ColorTempMemory> colors;
+            // 先进行文法编译
+            string theTrueSubtitle = SubtitleParser.ParseALine(subtitle, out colors);
+            // 四种颜色的GUIStyle
+            GUIStyle styleYellow = GetDefaultTextStyle(yellowColor, fontSize);
+            GUIStyle styleBlue = GetDefaultTextStyle(blueColor, fontSize);
+            GUIStyle styleRed = GetDefaultTextStyle(redColor, fontSize);
+            GUIStyle styleWhite = GetDefaultTextStyle(whiteColor, fontSize);
+            // 先计算出来整行字幕的位置
+            float startPositionX = camera.pixelWidth / 2 - theTrueSubtitle.Length * fontSize / 2;
+            float positionY = camera.pixelHeight * subtitleRatioHeight;
+            foreach (var color in colors)
+            {
+                int theLength = color.endIndex - color.startIndex + 1;
+                float theStartPositionX = startPositionX + color.startIndex * fontSize;
+                switch (color.color)
+                {
+                    case SubtitleParser.YELLOW:
+                        GUI.Label(
+                            new Rect(
+                                new Vector2(theStartPositionX, positionY),
+                                new Vector2(theLength * fontSize, fontSize)
+                                ), theTrueSubtitle.Substring(color.startIndex, theLength), styleYellow
+                            );
+                        break;
+                    case SubtitleParser.BLUE:
+                        GUI.Label(
+                            new Rect(
+                                new Vector2(theStartPositionX, positionY),
+                                new Vector2(theLength * fontSize, fontSize)
+                                ), theTrueSubtitle.Substring(color.startIndex, theLength), styleBlue
+                            );
+                        break;
+                    case SubtitleParser.RED:
+                        GUI.Label(
+                            new Rect(
+                                new Vector2(theStartPositionX, positionY),
+                                new Vector2(theLength * fontSize, fontSize)
+                                ), theTrueSubtitle.Substring(color.startIndex, theLength), styleRed
+                            );
+                        break;
+                    case SubtitleParser.WHITE:
+                        GUI.Label(
+                            new Rect(
+                                new Vector2(theStartPositionX, positionY),
+                                new Vector2(theLength * fontSize, fontSize)
+                                ), theTrueSubtitle.Substring(color.startIndex, theLength), styleWhite
+                            );
+                        break;
+                }
+            }
+
+        }
+
+        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！
+        public static void DisplaySubtitleInGivenGrammar(string subtitle,Camera camera)
+        {
+            DisplaySubtitleInGivenGrammar(subtitle, camera, defaultFontSize);
+        }
+
+        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize)
+        {
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, defaultSubtitleRatioHeight);
+        }
+
+        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字幕高度比例参数
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, float subtitleRatioHeight)
+        {
+            DisplaySubtitleInGivenGrammar(subtitle, camera, defaultFontSize, subtitleRatioHeight);
+        }
+
+
+
+
+        private static bool isFrameCounterStart = false;
+        private static int frameCounter;
+        public static bool canBeStopDisplaySubtitleInGivenGrammar = false; // 如果要用这个方法，推荐可以每帧获取一下这个bool值来判断,不要让他每帧都反复判断
+        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！再加一个帧数！！这些参数都是可以从static get字段取得的！默认的是前面加default
+        [Obsolete]   // 事实上，在每一帧都调用的OnGUI()里面设定停止条件是不现实的，所以已废弃，交给调用者实现停止条件。而且，就算是到达停止条件了，也会反复询问，很吃资源
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight,int frames)
+        {
+            if (canBeStopDisplaySubtitleInGivenGrammar) return;
+            if (!isFrameCounterStart)
+            {
+                frameCounter = frames;
+                isFrameCounterStart = true;
+            }
+            else
+            {
+                if (frameCounter-- >= 0)
+                {
+                    DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight);
+                }
+                else
+                {
+                    canBeStopDisplaySubtitleInGivenGrammar = true;
+                    return;
+                }
+            }
+        }
+
+
     }
 }
