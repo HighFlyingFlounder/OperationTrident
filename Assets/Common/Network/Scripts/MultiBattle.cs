@@ -90,11 +90,11 @@ public class MultiBattle : MonoBehaviour
         Debug.Log("GameMgr.instance.id = " + GameMgr.instance.id);
         if (id == GameMgr.instance.id)
         {
-            playerObj.GetComponent<NetSyncController>().ctrlType = NetSyncController.CtrlType.player;
+            playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.player;
         }
         else
         {
-            playerObj.GetComponent<NetSyncController>().ctrlType = NetSyncController.CtrlType.net;
+            playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
             playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
             playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
         }

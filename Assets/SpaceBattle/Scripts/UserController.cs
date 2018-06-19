@@ -3,11 +3,12 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
 [RequireComponent(typeof(Rigidbody))]
+
 public class UserController : MonoBehaviour,NetSyncInterface
 {
     //网络同步
     private float lastSendInfoTime = float.MinValue;
-
+    private NetSyncController m_NetSyncController;
     public class MovementSettings
     {
         //都是一个速度感觉直接用一个变量算了= =
@@ -22,16 +23,20 @@ public class UserController : MonoBehaviour,NetSyncInterface
         public bool isPushed = false;
 
         public float CurrentTargetSpeed = 8.0f;
+        public NetSyncController m_NetSyncController;
 
         public void UpdateDesiredTargetSpeed(Vector2 input)
         {
             if (Input.GetKeyDown(RunKey))
             {
                 isRun = true;
+                m_NetSyncController.SyncVariables();
+
             }
             if (Input.GetKeyUp(RunKey))
             {
                 isRun = false;
+                m_NetSyncController.SyncVariables();
             }
             if (input == Vector2.zero) return;
             if (input.x > 0 || input.x < 0)
@@ -68,6 +73,7 @@ public class UserController : MonoBehaviour,NetSyncInterface
     {
         mouseLook = new MouseLook();
         movementSettings = new MovementSettings();
+        movementSettings.m_NetSyncController = m_NetSyncController;
     }
 
     private void Start()
@@ -97,7 +103,7 @@ public class UserController : MonoBehaviour,NetSyncInterface
         m_Animator.SetFloat("Vertical", 20 * (2 * ViewPortPos.y - 1.0f));
         m_Animator.SetFloat("Horizontal", 20 * (2 * ViewPortPos.x - 1.0f));
         m_Animator.SetBool("isPushed", movementSettings.isPushed);
-        if (gameObject.GetComponent<NetSyncController>().ctrlType == NetSyncController.CtrlType.net)
+        if (gameObject.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.net)
             return;
         //正常飞行情况下
         if (!movementSettings.isPushed)
@@ -130,6 +136,7 @@ public class UserController : MonoBehaviour,NetSyncInterface
             if (t == 0f)
             {
                 movementSettings.isPushed = false;
+                m_NetSyncController.SyncVariables();
             }
             movementSettings.isRun = false;
         }
@@ -180,5 +187,10 @@ public class UserController : MonoBehaviour,NetSyncInterface
         data.Add(movementSettings.isPushed);
         data.Add(movementSettings.isRun);
         return data;
+    }
+
+    public void Init(NetSyncController controller)
+    {
+        m_NetSyncController = controller;
     }
 }
