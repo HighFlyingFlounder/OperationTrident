@@ -19,8 +19,6 @@ public class LoginPanel : PanelBase
         base.Init(args);
         skinPath = "LoginPanel";
         layer = PanelLayer.Panel;
-        IPInput.text = GameMgr.id;
-        PORTInput.text = GameMgr.port + "";
     }
 
     public override void OnShowing()
