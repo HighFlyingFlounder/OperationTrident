@@ -16,4 +16,7 @@ public interface NetSyncInterface
     /// <param></param>         
     /// <returns type="SyncData">返回打包好的数据</returns> 
     SyncData GetData();
+
+    void Init(NetSyncController controller);
+    //Hashtable Variables { get; set; }
 }
