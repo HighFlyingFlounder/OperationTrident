@@ -41,7 +41,6 @@ namespace OperationTrident.Util
         public readonly static Color deepGreenColor = GetColorFromVector3(deepGreenVec);
 
         public readonly static Color subtitleNormalColor = GetPureColor(200.0f / 256.0f);
-        public readonly static Color missionContentNormalCor = GetColorFromString("66 33 99");
 
         // 默认的字体大小
         private const int defaultFontSize = 12;
@@ -286,10 +285,6 @@ namespace OperationTrident.Util
                 camera.pixelHeight);
         }
 
-
-        // 注意下面这些Display开头的函数都要放在OnGUI()里面调用！@！@！￥！@￥！@￥！@%……！@￥……@#%&￥……*
-
-
         // 直接调字幕，显示在默认的位置。注意一定要在OnGUI()中调用该函数！！！
         public static void DisplaySubtitleInDefaultPosition(string subtitle,Camera camera)
         {
@@ -308,39 +303,10 @@ namespace OperationTrident.Util
         }
 
         // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle,Rect positionRect)
-        {
-            DisplayContentInGivenPosition(subtitle, positionRect, DefaultFontSize);
-        }
-
-        // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle,Rect positionRect,int fontSize)
+        public static void DisplaySubtitleInGivenPosition(string subtitle,Rect positionRect,int fontSize)
         {
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
             GUI.Label(positionRect, subtitle, style);
-        }
-
-        // 在指定位置显示内容，并有指定样式
-        public static void DisplayContentInGivenPosition(string subtile,Rect positionRect,GUIStyle style)
-        {
-            GUI.Label(positionRect, subtile, style);
-        }
-
-        // 默认的显示任务目标
-        public static void DisplayMissionTargetDefault(string missionContent,Camera camera, bool inLeft = true)
-        {
-            if (inLeft)
-            {
-                DisplayContentInGivenPosition(missionContent,
-                        new Rect(1.0f, camera.pixelHeight / 20.0f, DefaultFontSize * missionContent.Length, DefaultFontSize),
-                        GetDefaultTextStyle(missionContentNormalCor));
-            }
-            else
-            {
-                DisplayContentInGivenPosition(missionContent,
-                        new Rect(camera.pixelWidth-1.0f- DefaultFontSize * missionContent.Length, camera.pixelHeight / 20.0f, DefaultFontSize * missionContent.Length, DefaultFontSize),
-                        GetDefaultTextStyle(missionContentNormalCor));
-            }
         }
     }
 }
