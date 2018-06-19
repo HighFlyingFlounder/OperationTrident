@@ -243,6 +243,7 @@ namespace OperationTrident.Room1
             {
                 // TODO: 拿到了尸体C4
                 state = Room1State.FindingIDCard;
+                cropse.GetComponent<InteractiveThing>().enabled = false;
             }
         }
 
