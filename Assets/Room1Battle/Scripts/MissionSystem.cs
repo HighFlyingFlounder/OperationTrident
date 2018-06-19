@@ -43,6 +43,9 @@ namespace OperationTrident.Room1
         // 目标的世界坐标
         private Vector3 targetWorldPosition;
 
+        // 字幕每个字显示的时间
+        public float timePerSubTitleWord = 1.0f;
+
         private float nowDistance;
         // Use this for initialization
         void Start()
@@ -121,7 +124,8 @@ namespace OperationTrident.Room1
             // 指定颜色
             GUI.Label(rect, (int)nowDistance + "m", style);
 
-            GUIUtil.DisplaySubtitleInGivenGrammar("^w你好，^r艾伦^w，我是^y三笠", camera, 20, 0.8f, 500);
+            string subtitle = "^w你好，^r面包^w，我是^y甜甜圈";
+            GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
         }
     }
 }

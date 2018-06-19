@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,8 @@ namespace OperationTrident.Util
         public readonly static Color deepGreenColor = GetColorFromVector3(deepGreenVec);
 
         public readonly static Color subtitleNormalColor = GetPureColor(200.0f / 256.0f);
-        public readonly static Color missionContentNormalCor = GetColorFromString("66 33 99");
+        public readonly static Color missionContentNormalCor = GetColorFromString("ee ee ee");
+
 
         // 默认的字体大小
         private const int defaultFontSize = 12;
@@ -234,11 +236,17 @@ namespace OperationTrident.Util
         // 得到指定大小的默认字体样式
         public static GUIStyle GetDefaultTextStyle(Color color,int fontSize)
         {
+            return GetDefaultTextStyle(color, fontSize, defaultAnchor);
+        }
+
+        // 得到指定大小，颜色，对齐方式的默认字体样式
+        public static GUIStyle GetDefaultTextStyle(Color color, int fontSize,TextAnchor textAnchor)
+        {
             GUIStyle style = new GUIStyle();
             style.normal.textColor = color;
             style.fontStyle = FontStyle.Normal;
             style.font = microsoftYaHei;
-            style.alignment = defaultAnchor;
+            style.alignment = textAnchor;
             style.fontSize = fontSize;
             return style;
         }
@@ -339,16 +347,28 @@ namespace OperationTrident.Util
         {
             if (inLeft)
             {
+                DisplayContentInGivenPosition("任务目标：",
+                        new Rect(1.0f, camera.pixelHeight / 20.0f - defaultFontSize, defaultFontSize * missionContent.Length, DefaultFontSize+10.0F),
+                        GetDefaultTextStyle(GetColorFromString("66 cc ff"), defaultFontSize + 4, TextAnchor.UpperLeft));
                 DisplayContentInGivenPosition(missionContent,
-                        new Rect(1.0f, camera.pixelHeight / 20.0f, DefaultFontSize * missionContent.Length, DefaultFontSize),
-                        GetDefaultTextStyle(missionContentNormalCor));
+                        new Rect(1.0f, camera.pixelHeight / 20.0f + defaultFontSize, defaultFontSize * missionContent.Length, DefaultFontSize),
+                        GetDefaultTextStyle(missionContentNormalCor, defaultFontSize, TextAnchor.LowerLeft));
             }
             else
             {
+                DisplayContentInGivenPosition("任务目标：",
+                        new Rect(camera.pixelWidth - DefaultFontSize * missionContent.Length, camera.pixelHeight / 20.0f - defaultFontSize - 1.0f, defaultFontSize * missionContent.Length, DefaultFontSize+10.0f),
+                        GetDefaultTextStyle(GetColorFromString("66 cc ff"), defaultFontSize + 4, TextAnchor.UpperRight));
                 DisplayContentInGivenPosition(missionContent,
-                        new Rect(camera.pixelWidth-1.0f- DefaultFontSize * missionContent.Length, camera.pixelHeight / 20.0f, DefaultFontSize * missionContent.Length, DefaultFontSize),
-                        GetDefaultTextStyle(missionContentNormalCor));
+                        new Rect(camera.pixelWidth-1.0f- DefaultFontSize * missionContent.Length, camera.pixelHeight / 20.0f + defaultFontSize, DefaultFontSize * missionContent.Length, DefaultFontSize),
+                        GetDefaultTextStyle(missionContentNormalCor, defaultFontSize, TextAnchor.LowerRight));
             }
+        }
+
+        // 用指定的文法显示任务目标！！！！！
+        public static void DisplayMissionTargetInGivenGrammar(string missionContent,Camera camera, bool inLeft = true)
+        {
+            throw new NotImplementedException();
         }
 
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
@@ -432,12 +452,12 @@ namespace OperationTrident.Util
 
         private static bool isFrameCounterStart = false;
         private static int frameCounter;
-        public static bool canBeStopDisplaySubtitleInGivenGrammar = false; // 如果要用这个方法，推荐可以每帧获取一下这个bool值来判断,不要让他每帧都反复判断
+        public static bool canBeStopDisplaySubtitleInGivenGrammarInFrames = false; // 如果要用这个方法，推荐可以每帧获取一下这个bool值来判断,不要让他每帧都反复判断
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！再加一个帧数！！这些参数都是可以从static get字段取得的！默认的是前面加default
         [Obsolete]   // 事实上，在每一帧都调用的OnGUI()里面设定停止条件是不现实的，所以已废弃，交给调用者实现停止条件。而且，就算是到达停止条件了，也会反复询问，很吃资源
         public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight,int frames)
         {
-            if (canBeStopDisplaySubtitleInGivenGrammar) return;
+            if (canBeStopDisplaySubtitleInGivenGrammarInFrames) return;
             if (!isFrameCounterStart)
             {
                 frameCounter = frames;
@@ -451,12 +471,22 @@ namespace OperationTrident.Util
                 }
                 else
                 {
-                    canBeStopDisplaySubtitleInGivenGrammar = true;
+                    canBeStopDisplaySubtitleInGivenGrammarInFrames = true;
                     return;
                 }
             }
         }
 
-
+        private static float frameTimer = 0;
+        public static bool canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
+        // 没错，在指定的时间里显示！
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float second)
+        {
+            if (canBeStopDisplaySubtitleInGivenGrammarInSeconds) return;
+            frameTimer += Time.deltaTime;
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight);
+            // 达到时间了
+            if (frameTimer >= second) canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
+        }
     }
 }
