@@ -92,6 +92,8 @@ namespace OperationTrident.Room1
 
             }
             if (canBeDestroy) Destroy(this);
+
+
         }
 
 

@@ -116,13 +116,16 @@ namespace OperationTrident.Room1
 
             if (missionContent != String.Empty)
             {
-                GUIUtil.DisplayMissionTargetDefault(missionContent, camera, false);
+                GUIUtil.DisplayMissionTargetDefault(missionContent, camera, true);
             }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
             // 指定颜色
-            GUI.Label(rect, (int)nowDistance + "m", style);
+            if (toDisplayTheMissionPoint)
+            {
+                GUI.Label(rect, (int)nowDistance + "m", style);
+            }
 
             string subtitle = "^w你好，^r面包^w，我是^y甜甜圈";
             GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
