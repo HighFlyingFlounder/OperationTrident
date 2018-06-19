@@ -96,7 +96,7 @@ public class LoginPanel : PanelBase
     public void OnUpdateServerClick()
     {
         PanelMgr.instance.OpenPanel<TipPanel>("", "修改成功!");
-        GameMgr.instance.id = IPInput.text;
+        GameMgr.instance.host = IPInput.text;
         GameMgr.instance.port = int.Parse(PORTInput.text);
     }
 }
