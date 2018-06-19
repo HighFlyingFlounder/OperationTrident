@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class RoomPanel : PanelBase
@@ -152,8 +153,9 @@ public class RoomPanel : PanelBase
 
     public void RecvFight(ProtocolBase protocol)
     {
-        ProtocolBytes proto = (ProtocolBytes)protocol;
-        MultiBattle.instance.StartBattle(proto);
+        Debug.Log("RecvFight GameMgr.instance.id" + GameMgr.instance.id);
+        MultiBattle.fight_protocal = (ProtocolBytes)protocol;
+        SceneManager.LoadScene("SpaceBattle", LoadSceneMode.Single);
         Close();
     }
 

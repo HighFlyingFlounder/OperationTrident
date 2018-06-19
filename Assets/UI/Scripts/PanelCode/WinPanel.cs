@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class WinPanel : PanelBase
 {
@@ -51,8 +52,12 @@ public class WinPanel : PanelBase
 
     public void OnCloseClick()
     {
-        MultiBattle.instance.ClearBattle();
-        PanelMgr.instance.OpenPanel<RoomPanel>("");
+        if (SceneManager.GetActiveScene().name == "SpaceBattle")
+        {
+            PanelMgr.instance.OpenPanel<RoomPanel>("");
+            SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
+            //PanelMgr.instance.OpenPanel<LoginPanel>("");
+        }
         Close();
     }
 }

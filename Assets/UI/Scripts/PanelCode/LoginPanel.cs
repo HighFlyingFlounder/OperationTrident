@@ -6,8 +6,11 @@ public class LoginPanel : PanelBase
 {
     private InputField idInput;
     private InputField pwInput;
+    private InputField IPInput;
+    private InputField PORTInput;
     private Button loginBtn;
     private Button regBtn;
+    private Button UpdateServerBtn;
 
     #region 生命周期
     //初始化
@@ -24,11 +27,15 @@ public class LoginPanel : PanelBase
         Transform skinTrans = skin.transform;
         idInput = skinTrans.Find("IDInput").GetComponent<InputField>();
         pwInput = skinTrans.Find("PWInput").GetComponent<InputField>();
+        IPInput = skinTrans.Find("IPInput").GetComponent<InputField>();
+        PORTInput = skinTrans.Find("PORTInput").GetComponent<InputField>();
         loginBtn = skinTrans.Find("LoginBtn").GetComponent<Button>();
         regBtn = skinTrans.Find("RegBtn").GetComponent<Button>();
+        UpdateServerBtn = skinTrans.Find("UpdateServerBtn").GetComponent<Button>();
 
         loginBtn.onClick.AddListener(OnLoginClick);
         regBtn.onClick.AddListener(OnRegClick);
+        UpdateServerBtn.onClick.AddListener(OnUpdateServerClick);
     }
     #endregion
 
@@ -74,6 +81,7 @@ public class LoginPanel : PanelBase
         if (ret == 0)
         {
             PanelMgr.instance.OpenPanel<TipPanel>("", "登录成功!");
+            PanelMgr.login_in = true;
             //开始游戏
             PanelMgr.instance.OpenPanel<RoomListPanel>("");
             GameMgr.instance.id = idInput.text;
@@ -83,5 +91,12 @@ public class LoginPanel : PanelBase
         {
             PanelMgr.instance.OpenPanel<TipPanel>("", "登录失败，请检查用户名密码!");
         }
+    }
+
+    public void OnUpdateServerClick()
+    {
+        PanelMgr.instance.OpenPanel<TipPanel>("", "修改成功!");
+        GameMgr.instance.id = IPInput.text;
+        GameMgr.instance.port = int.Parse(PORTInput.text);
     }
 }
