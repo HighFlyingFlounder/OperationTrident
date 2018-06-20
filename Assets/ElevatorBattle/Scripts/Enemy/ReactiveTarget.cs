@@ -42,7 +42,6 @@ namespace OperationTrident.Elevator
         {
             this.transform.Rotate(-75, 0, 0);
             yield return new WaitForSeconds(0.2f);
-            gameObject.SendMessage("Die", SendMessageOptions.DontRequireReceiver);
             Destroy(this.gameObject);
         }
     }

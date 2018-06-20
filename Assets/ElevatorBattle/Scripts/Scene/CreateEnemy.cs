@@ -5,7 +5,7 @@ using OperationTrident.EventSystem;
 
 namespace OperationTrident.Elevator
 {
-    public class Create : MonoBehaviour {
+    public class CreateEnemy : MonoBehaviour {
         [SerializeField]
         //要生成的物体
         public GameObject CreateObject;
@@ -78,7 +78,7 @@ namespace OperationTrident.Elevator
         {
             foreach (GameObject enemy in list)
             {
-                Destroy(enemy);
+                
             }
         }
 

@@ -20,9 +20,9 @@ namespace OperationTrident.Elevator
 
         }
 
-        private void Operate()
+        public void Operate()
         {
-            
+            Messenger<int>.Broadcast(GameEvent.Push_Button, 0);
         }
     }
 }
