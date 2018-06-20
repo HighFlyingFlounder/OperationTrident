@@ -42,17 +42,19 @@ public class UserController : MonoBehaviour
             {
                 isRun = false;
             }
-            if (input == Vector2.zero) return;
-            if (input.x > 0 || input.x < 0)
-            {
-                //horizontal
-                CurrentTargetSpeed = /*Horizontal*/Speed * (isRun ? RunMultiplier : 1.0f);
-            }
-            if (input.y > 0 || input.y < 0)
-            {
-                //vertical
-                CurrentTargetSpeed = /*Vertical*/Speed * (isRun ? RunMultiplier : 1.0f);
-            }
+            CurrentTargetSpeed = Speed * (isRun ? RunMultiplier : 1.0f);
+
+            //if (input == Vector2.zero) return;
+            //if (input.x > 0 || input.x < 0)
+            //{
+            //    //horizontal
+            //    CurrentTargetSpeed = /*Horizontal*/Speed * (isRun ? RunMultiplier : 1.0f);
+            //}
+            //if (input.y > 0 || input.y < 0)
+            //{
+            //    //vertical
+            //    CurrentTargetSpeed = /*Vertical*/Speed * (isRun ? RunMultiplier : 1.0f);
+            //}
         }
     }
 
@@ -119,7 +121,7 @@ public class UserController : MonoBehaviour
         {
             t += 0.01f;
             t = Mathf.Clamp(t, 0f, 1f);
-            m_RigidBody.velocity = cam.transform.forward * movementSettings.CurrentTargetSpeed * t;
+            m_RigidBody.velocity = cam.transform.forward * movementSettings.CurrentTargetSpeed * t * 2f;//让前进速度为左右移动速度的3倍
 
             Vector2 input = GetInput();
 
@@ -131,6 +133,7 @@ public class UserController : MonoBehaviour
 
                 desiredMove.x = desiredMove.x * movementSettings.CurrentTargetSpeed;
                 desiredMove.y = desiredMove.y * movementSettings.CurrentTargetSpeed;
+                desiredMove.z = desiredMove.z * movementSettings.CurrentTargetSpeed;
                 m_RigidBody.AddForce(desiredMove, ForceMode.Impulse);
             }
         }
