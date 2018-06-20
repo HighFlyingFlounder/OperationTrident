@@ -9,13 +9,15 @@ public class SpaceBattleManager : MonoBehaviour
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
-    public Dictionary<string, GameObject> list = new Dictionary<string, GameObject>();
-    public Dictionary<string, Hinder> rock_list = new Dictionary<string, Hinder>();
+    public Dictionary<string, GameObject> list;
+    public Dictionary<string, Hinder> rock_list;
     private GameObject[] rocks;
     // Use this for initialization
     void Start()
     {
-        //this.StartBattle(NetWorkManager.fight_protocal);
+        list = new Dictionary<string, GameObject>();
+        rock_list = new Dictionary<string, Hinder>();
+        StartBattle(NetWorkManager.fight_protocal);
     }
 
     // Update is called once per frame
@@ -60,7 +62,6 @@ public class SpaceBattleManager : MonoBehaviour
         }
         foreach (GameObject rock in rocks)
             rock.SetActive(true);
-        //NetMgr.srvConn.msgDist.AddListener("UpdateUnitInfo", RecvUpdateUnitInfo);
         NetMgr.srvConn.msgDist.AddListener("HitRock", RecvHitRock);
         NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
     }
@@ -86,7 +87,6 @@ public class SpaceBattleManager : MonoBehaviour
         list.Add(id, playerObj);
         //玩家处理
 
-        Debug.Log("GameMgr.instance.id = " + GameMgr.instance.id);
         if (id == GameMgr.instance.id)
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.player;
@@ -123,11 +123,16 @@ public class SpaceBattleManager : MonoBehaviour
         int isWin = proto.GetInt(start, ref start);
         //弹出胜负面板
         PanelMgr.instance.OpenPanel<WinPanel>("", isWin);
-        list[GameMgr.instance.id].gameObject.SetActive(false);
+        Debug.Log("GameMgr.instance.id: " + GameMgr.instance.id);
+        //玩家收到胜利条件后禁用掉list中的玩家
+        GameObject flyer;
+        Debug.Log("list.TryGetValue : " + list.TryGetValue(GameMgr.instance.id,out flyer));
+        if(list.TryGetValue(GameMgr.instance.id, out flyer))
+            flyer.SetActive(false);
+        //list[GameMgr.instance.id].gameObject.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //取消监听
-        //NetMgr.srvConn.msgDist.DelListener("UpdateUnitInfo", RecvUpdateUnitInfo);
         NetMgr.srvConn.msgDist.DelListener("HitRock", RecvHitRock);
         NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
         ClearBattle();

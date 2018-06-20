@@ -45,6 +45,7 @@ public class Hinder : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
+        //只有本地玩家才会触发撞击事件并发送协议，其他玩家在本地玩家客户端是不会触发这些事件的。
         if (other.collider.tag == "Player" && other.collider.transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             SendHitRock();
