@@ -1,3 +1,7 @@
+# svn
+.svn/
+.svnignore
+
 # Image formats
 *.psd 
 *.jpg 
