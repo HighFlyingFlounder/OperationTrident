@@ -134,7 +134,7 @@ public class SpaceBattleManager : MonoBehaviour
         Cursor.visible = true;
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("HitRock", RecvHitRock);
-        NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
+        NetMgr.srvConn.msgDist.DelListener("Result", RecvResult);
         ClearBattle();
     }
 }
