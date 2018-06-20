@@ -45,7 +45,7 @@ public class Hinder : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.tag == "Player" && other.collider.transform.parent.GetComponent<UserController>().ctrlType == UserController.CtrlType.player)
+        if (other.collider.tag == "Player" && other.collider.transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             SendHitRock();
             Boom();
