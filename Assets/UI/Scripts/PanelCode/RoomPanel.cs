@@ -38,7 +38,7 @@ public class RoomPanel : PanelBase
         startBtn.onClick.AddListener(OnStartClick);
         //监听
         NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
-        NetMgr.srvConn.msgDist.AddListener("Fight", RecvFight);
+        NetMgr.srvConn.msgDist.AddListener("StartGame", RecvStartGame);
         //发送查询
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("GetRoomInfo");
@@ -51,7 +51,7 @@ public class RoomPanel : PanelBase
     {
 
         NetMgr.srvConn.msgDist.DelListener("GetRoomInfo", RecvGetRoomInfo);
-        NetMgr.srvConn.msgDist.DelListener("Fight", RecvFight);
+        NetMgr.srvConn.msgDist.DelListener("StartGame", RecvStartGame);
 
     }
 
@@ -151,10 +151,9 @@ public class RoomPanel : PanelBase
     }
 
 
-    public void RecvFight(ProtocolBase protocol)
+    public void RecvStartGame(ProtocolBase protocol)
     {
         Debug.Log("RecvFight GameMgr.instance.id" + GameMgr.instance.id);
-        NetWorkManager.fight_protocal = (ProtocolBytes)protocol;
         SceneManager.LoadScene("SpaceBattle", LoadSceneMode.Single);
         Close();
     }
