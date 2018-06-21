@@ -13,6 +13,8 @@ public class PanelMgr : MonoBehaviour
     public Dictionary<string, PanelBase> dict;
     //层级
     private Dictionary<PanelLayer, Transform> layerDict;
+    //当前面板
+    public static bool login_in = false;
 
     //开始
     public void Awake()
