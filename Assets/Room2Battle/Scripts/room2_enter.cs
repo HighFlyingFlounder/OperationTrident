@@ -16,14 +16,11 @@ namespace room2Battle
         protected Transform playerInitPos;
 
         [SerializeField]
-        protected Transform[] enemyInitPositions;
+        protected GameObject player;
 
-        [SerializeField]
-        protected Elevator elevator;
+        protected bool isNear = false;
 
         protected bool isEnter = false;
-
-        protected bool enterElevator = false;
 
         //摆放玩家位置，初始化敌人
         public override void onSubsceneInit()
@@ -31,9 +28,7 @@ namespace room2Battle
             for (int i = 0; i < players.Length; ++i)
             {
                 players[i].transform.position = playerInitPos.position;
-            }
-            //RenderSettings.ambientLight = Color.black;
-            
+            }          
         }
 
         public override bool isTransitionTriggered()
@@ -55,9 +50,24 @@ namespace room2Battle
         {
             if (i == 1)
             {
+                isNear = true;
+                player.GetComponent<becomeDark>().enabled = true;
+            }
+            else if (i == 2)
+            {
                 isEnter = true;
-                elevator.disableAutoOpenDoor();
-                elevator.shutDown = true;
+            }
+        }
+
+        void OnGUI()
+        {
+            if (!isNear)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("突入电源室！", Camera.main, true);
+            }
+            else
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("任务变化：开启照明开关！", Camera.main, true);
             }
         }
     }
