@@ -117,7 +117,7 @@ namespace OperationTrident.Elevator
 
             if (missionContent != String.Empty)
             {
-                GUIUtil.DisplayMissionTargetDefault(missionContent, camera, true);
+                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.blueColor, interval: 0.2f, blingInterval: 0.05f, fontSize: 16, inLeft: true, sequentClear: true);
             }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
