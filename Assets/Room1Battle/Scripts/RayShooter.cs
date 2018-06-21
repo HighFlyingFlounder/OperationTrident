@@ -9,9 +9,7 @@ namespace OperationTrident.Room1
 {
     public class RayShooter : MonoBehaviour
     {
-        // 判断能否够到物体的距离
-        [SerializeField]
-        private float distanceQuota = 1.0f;
+
 
         // 射速：一秒钟能射多少枪
         public float shootingSpeed = 10.0f;
@@ -24,11 +22,7 @@ namespace OperationTrident.Room1
         public float jitterFactorX = 1.0f;
         public float jitterFactorY = 0.2f;
 
-        // 是否提示玩家按下某个键
-        [SerializeField]
-        private bool toNotify = true;
 
-        private bool toDisplayHint = false; 
 
         // 附加在这个东西上的摄像机
         private new Camera camera;
@@ -87,79 +81,7 @@ namespace OperationTrident.Room1
                     camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
                 }
             }
-            // 提示玩家按键
-            if (toNotify)
-            {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
-                    {
-                        KeyScript target =
-                            hitObject.GetComponent<KeyScript>();
-                        if (target != null)   //检查对象上是否有KeyScript组件
-                        {
-                            toDisplayHint = true;
-                        }
-                        DoorScript target1 =
-                            hitObject.GetComponent<DoorScript>();
-                        if (target1 != null)
-                        {
-                            toDisplayHint = true;
-                        }
-                        InteractiveThing target2 =
-                            hitObject.GetComponent<InteractiveThing>();
-                        if (target2 != null)
-                        {
-                            toDisplayHint = true;
-                        }
-                    }
-                    else toDisplayHint = false;
-                }
-            }
-            // 处理玩家的物品交互按键
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position,hitObject.transform.position)>distanceQuota)
-                    {
-                        return;
-                    }
-                    KeyScript target = 
-                        hitObject.GetComponent<KeyScript>();
-                    if (target != null)   //检查对象上是否有KeyScript组件
-                    {
-                        Messenger<int>.Broadcast(GameEvent.KEY_GOT,target.ThisId);
-                        return;
-                    }
-                    DoorScript target1 =
-                        hitObject.GetComponent<DoorScript>();
-                    if (target1 != null)
-                    {
-                        Messenger<int>.Broadcast(GameEvent.DOOR_OPEN,target1.ThisId);
-                        return;
-                    }
-                    InteractiveThing target2 =
-                        hitObject.GetComponent<InteractiveThing>();
-                    if (target2 != null)
-                    {
-                        Messenger.Broadcast(GameEvent.CROPSE_TRY);
-                        return;
-                    }
-                }
-            }
+
 
         }
 
@@ -176,12 +98,6 @@ namespace OperationTrident.Room1
             // 准心！！！
             GUI.Label(rect, "*", style);
 
-            // 显示物体可以获得的提示
-            if (toDisplayHint)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w获取物品", camera, GUIUtil.DefaultFontSize + 8, 0.5f);
-                
-            }
         }
 
         //协程，随着时间推移逐步执行
