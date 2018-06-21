@@ -109,7 +109,7 @@ namespace OperationTrident.Elevator {
         {
             //进入关门
             count++;
-            if(count % 2 == 0 && state == ElevatorState.Initing)
+            if(state == ElevatorState.Initing)
             {
                 state = ElevatorState.FindingButton;
                 GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
