@@ -30,13 +30,13 @@ public class UserController : MonoBehaviour,NetSyncInterface
             if (Input.GetKeyDown(RunKey))
             {
                 isRun = true;
-                m_NetSyncController.SyncVariables();
+                //m_NetSyncController.SyncVariables();
 
             }
             if (Input.GetKeyUp(RunKey))
             {
                 isRun = false;
-                m_NetSyncController.SyncVariables();
+                //m_NetSyncController.SyncVariables();
             }
             CurrentTargetSpeed = Speed * (isRun ? RunMultiplier : 1.0f);
 
@@ -139,7 +139,7 @@ public class UserController : MonoBehaviour,NetSyncInterface
             if (t == 0f)
             {
                 movementSettings.isPushed = false;
-                m_NetSyncController.SyncVariables();
+                //m_NetSyncController.SyncVariables();
             }
             movementSettings.isRun = false;
         }

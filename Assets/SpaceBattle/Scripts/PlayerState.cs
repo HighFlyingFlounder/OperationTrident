@@ -18,7 +18,8 @@ public class PlayerState : MonoBehaviour {
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.tag == "Hinder")
+        //只有本地玩家才会触发这些事件
+        if(transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
             //ChangeHp(-40.0f);
@@ -46,14 +47,19 @@ public class PlayerState : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "End")
+        //只有本地玩家才会触发这些事件
+        if (transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
-            Flyer.GetComponent<UserController>().enabled = false;
-            Flyer.GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f);
-            Flyer.transform.position = other.transform.position;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            if (other.tag == "End")
+            {
+                Flyer.GetComponent<UserController>().enabled = false;
+                Flyer.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+                Flyer.transform.position = other.transform.position;
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
+            
     }
 
     public void SendDead()
