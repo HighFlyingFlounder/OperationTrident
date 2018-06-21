@@ -7,6 +7,8 @@ namespace OperationTrident.CrossInput {
     public class InputManager : MonoBehaviour,NetSyncInterface {
         public bool IsLocalPlayer;
         private NetSyncController m_NetSyncController;
+        [SerializeField]
+        private bool m_HasNetwork = false;
 
         private Hashtable m_Hashtable;
 
@@ -123,7 +125,7 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempBool = Input.GetKeyDown(KeyCode.H);
 
-                if ((bool)m_Hashtable["SwitchButtonDown"] != m_TempBool) {
+                if (m_HasNetwork && (bool)m_Hashtable["SwitchButtonDown"] != m_TempBool) {
                     m_Hashtable["SwitchButtonDown"] = m_TempBool;
                     m_NetSyncController.SyncVariables();
                 }
@@ -142,7 +144,7 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempBool = Input.GetKey(KeyCode.LeftShift);
 
-                if ((bool)m_Hashtable["PressSpeedUpButton"] != m_TempBool) {
+                if (m_HasNetwork && (bool)m_Hashtable["PressSpeedUpButton"] != m_TempBool) {
                     m_Hashtable["PressSpeedUpButton"] = m_TempBool;
                     m_NetSyncController.SyncVariables();
                 }
@@ -156,7 +158,7 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempBool = Input.GetButtonDown("Jump");
 
-                if ((bool)m_Hashtable["JumpButtonDown"] != m_TempBool) {
+                if (m_HasNetwork && (bool)m_Hashtable["JumpButtonDown"] != m_TempBool) {
                     m_Hashtable["JumpButtonDown"] = m_TempBool;
                     m_NetSyncController.SyncVariables();
                 }
@@ -189,7 +191,8 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempFloat = Input.GetAxis("Mouse Y");
 
-                if (Mathf.Abs((float)m_Hashtable["MouseY"] - m_TempFloat) > 0) {
+                if (m_HasNetwork && Mathf.Abs((float)m_Hashtable["MouseY"] - m_TempFloat) > 0) {
+                    Debug.Log(m_HasNetwork);
                     m_Hashtable["MouseY"] = m_TempFloat;
                     m_NetSyncController.SyncVariables();
                 }
@@ -203,7 +206,7 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempFloat = Input.GetAxis("Horizontal");
 
-                if (Mathf.Abs((float)m_Hashtable["Horizontal"] - m_TempFloat) > 0) {
+                if (m_HasNetwork && Mathf.Abs((float)m_Hashtable["Horizontal"] - m_TempFloat) > 0) {
                     m_Hashtable["Horizontal"] = m_TempFloat;
                     m_NetSyncController.SyncVariables();
                 }
@@ -217,7 +220,7 @@ namespace OperationTrident.CrossInput {
             if (IsLocalPlayer) {
                 m_TempFloat = Input.GetAxis("Vertical");
 
-                if (Mathf.Abs((float)m_Hashtable["Vertical"] - m_TempFloat) > 0) {
+                if (m_HasNetwork && Mathf.Abs((float)m_Hashtable["Vertical"] - m_TempFloat) > 0) {
                     m_Hashtable["Vertical"] = m_TempFloat;
                     m_NetSyncController.SyncVariables();
                 }
