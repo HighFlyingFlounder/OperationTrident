@@ -176,9 +176,9 @@ namespace OperationTrident.Room1
                 {
                     GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     cube.transform.localScale= new Vector3(
-                        UnityEngine.Random.Range(0.02f, 0.05f),
-                        UnityEngine.Random.Range(0.02f, 0.05f),
-                        UnityEngine.Random.Range(0.02f, 0.05f));
+                        UnityEngine.Random.Range(0.2f, 0.5f),
+                        UnityEngine.Random.Range(0.2f, 0.5f),
+                        UnityEngine.Random.Range(0.2f, 0.5f));
                     cube.transform.position = point;
                     cube.AddComponent<Rigidbody>();
                 }
