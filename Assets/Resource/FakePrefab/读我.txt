@@ -1,0 +1,2 @@
+作者：鸡哥
+因为unity一直不出nested prefab，然后fbx格式模型都是prefab，于是更大的prefab就没办法了。还是把相关的东西放在一个文件夹里面比较好，例如Model-Elevator就包含了小电梯的模型、贴图、材质等。
