@@ -26,10 +26,10 @@ public class SpaceBattleManager : MonoBehaviour {
         rock_list = new Dictionary<string, Hinder> ();
         //协议
         ProtocolBytes protocol = new ProtocolBytes ();
-        protocol.AddString ("StartFight");
+        protocol.AddString ("FinishLoading");
         NetMgr.srvConn.Send (protocol);
         //监听
-        NetMgr.srvConn.msgDist.AddListener ("Fight", RecvFight);
+        NetMgr.srvConn.msgDist.AddListener ("StartFight", RecvStartFight);
     }
 
     //清理场景
@@ -46,7 +46,7 @@ public class SpaceBattleManager : MonoBehaviour {
         //解析协议
         int start = 0;
         string protoName = proto.GetString (start, ref start);
-        if (protoName != "Fight")
+        if (protoName != "StartFight")
             return;
         //清理场景
         ClearBattle ();
@@ -134,9 +134,9 @@ public class SpaceBattleManager : MonoBehaviour {
         ClearBattle ();
     }
 
-    public void RecvFight (ProtocolBase protocol) {
-        StartBattle (protocol);
+    public void RecvStartFight(ProtocolBase protocol) {
+        StartBattle ((ProtocolBytes)protocol);
         //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
-        NetMgr.srvConn.msgDist.DelListener ("Fight", RecvStartGame);
+        NetMgr.srvConn.msgDist.DelListener ("StartFight", RecvStartFight);
     }
 }
