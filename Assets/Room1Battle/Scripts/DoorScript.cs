@@ -36,6 +36,9 @@ namespace OperationTrident.Room1
         // 门是否失去了用处
         bool canBeDestroy;
 
+        // 爆炸后碎片出现的位置
+        private List<Vector3> fragmentsInitPoints = new List<Vector3>();
+
         void Awake()
         {
             //Messenger.AddListener(GameEvent.DOOR1_OPEN, OpenAndDestroy);
@@ -59,34 +62,34 @@ namespace OperationTrident.Room1
                 switch (direction)
                 {
                     case DoorOpenDirection.XNegative:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x - openSpeed,
-                            this.transform.localPosition.y,
-                            this.transform.localPosition.z);
+                        transform.localPosition = new Vector3(transform.localPosition.x - openSpeed,
+                            transform.localPosition.y,
+                            transform.localPosition.z);
                         break;
                     case DoorOpenDirection.XPositive:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x + openSpeed,
-                            this.transform.localPosition.y,
-                            this.transform.localPosition.z);
+                        transform.localPosition = new Vector3(transform.localPosition.x + openSpeed,
+                            transform.localPosition.y,
+                            transform.localPosition.z);
                         break;
                     case DoorOpenDirection.YNegative:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
-                            this.transform.localPosition.y - openSpeed,
-                            this.transform.localPosition.z);
+                        transform.localPosition = new Vector3(transform.localPosition.x,
+                            transform.localPosition.y - openSpeed,
+                            transform.localPosition.z);
                         break;
                     case DoorOpenDirection.YPositive:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
-                            this.transform.localPosition.y + openSpeed,
-                            this.transform.localPosition.z);
+                        transform.localPosition = new Vector3(transform.localPosition.x,
+                            transform.localPosition.y + openSpeed,
+                            transform.localPosition.z);
                         break;
                     case DoorOpenDirection.ZNegative:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
-                            this.transform.localPosition.y,
-                            this.transform.localPosition.z - openSpeed);
+                        transform.localPosition = new Vector3(transform.localPosition.x,
+                            transform.localPosition.y,
+                            transform.localPosition.z - openSpeed);
                         break;
                     case DoorOpenDirection.ZPositive:
-                        this.transform.localPosition = new Vector3(this.transform.localPosition.x,
-                            this.transform.localPosition.y,
-                            this.transform.localPosition.z + openSpeed);
+                        transform.localPosition = new Vector3(transform.localPosition.x,
+                            transform.localPosition.y,
+                            transform.localPosition.z + openSpeed);
                         break;
                 }
 
@@ -110,6 +113,113 @@ namespace OperationTrident.Room1
         {
             yield return new WaitForSeconds(openSecond);
             canBeDestroy = true;
+        }
+
+        // 在炸开的门下面弄点碎片
+        public void CreateFragmentsInFloor(int amount,bool isMainX)
+        {
+            const float randomFactor = 0.5f;
+            if (isMainX) {
+                // 左上角
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x - transform.localScale.x / 4,
+                        transform.position.y + transform.localScale.y - 4,
+                        transform.position.z));
+                // 左边
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x - transform.localScale.x / 4,
+                        transform.position.y,
+                        transform.position.z));
+                // 左下角
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x - transform.localScale.x / 4,
+                        transform.position.y - transform.localScale.y - 4,
+                        transform.position.z));
+                // 上边
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x,
+                        transform.position.y + transform.localScale.y - 4,
+                        transform.position.z));
+                // 中间
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x,
+                        transform.position.y,
+                        transform.position.z));
+                // 下边
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x,
+                        transform.position.y - transform.localScale.y - 4,
+                        transform.position.z));
+                // 右上角
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x + transform.localScale.x / 4,
+                        transform.position.y + transform.localScale.y - 4,
+                        transform.position.z));
+                // 右边
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x + transform.localScale.x / 4,
+                        transform.position.y,
+                        transform.position.z));
+                // 右下角
+                fragmentsInitPoints.Add(new Vector3(
+                        transform.position.x + transform.localScale.x / 4,
+                        transform.position.y - transform.localScale.y - 4,
+                        transform.position.z));
+            }
+            else
+            {
+                // TODO: 还没实现
+            }
+            foreach(var point in fragmentsInitPoints)
+            {
+                for(int i = 0; i < amount / fragmentsInitPoints.Count; i++)
+                {
+                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    cube.transform.localScale= new Vector3(
+                        UnityEngine.Random.Range(0.02f, 0.05f),
+                        UnityEngine.Random.Range(0.02f, 0.05f),
+                        UnityEngine.Random.Range(0.02f, 0.05f));
+                    cube.transform.position = point;
+                    cube.AddComponent<Rigidbody>();
+                }
+            }
+            //for(int i = 0; i < amount; i++)
+            //{
+            //    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //    cube.transform.localScale = new Vector3(
+            //        UnityEngine.Random.Range(0.02f, 0.05f),
+            //        UnityEngine.Random.Range(0.02f, 0.05f),
+            //        UnityEngine.Random.Range(0.02f, 0.05f));
+            //    cube.AddComponent<Rigidbody>();
+            //    //cube.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            //    //cube.transform.position = new Vector3();
+            //    if (isMainX)
+            //    {
+            //        float x = UnityEngine.Random.Range(
+            //            transform.position.x - transform.localScale.x / 2,
+            //            transform.position.x + transform.localScale.x / 2);
+            //        float z = UnityEngine.Random.Range(
+            //            transform.position.z - randomFactor,
+            //            transform.position.z + randomFactor);
+            //        float y = UnityEngine.Random.Range(
+            //            transform.position.y - transform.localScale.y / 2.5f - 0.05f,
+            //            transform.position.y - transform.localScale.y / 2.5f + 0.05f);
+            //        cube.transform.position = new Vector3(x, y, z);
+            //    }
+            //    else
+            //    {
+            //        float x = UnityEngine.Random.Range(
+            //            transform.position.x - transform.localScale.x / 2 - 0.05f,
+            //            transform.position.x - transform.localScale.x / 2 + 0.05f);
+            //        float z = UnityEngine.Random.Range(
+            //            transform.position.z - randomFactor,
+            //            transform.position.z + randomFactor);
+            //        float y = UnityEngine.Random.Range(
+            //            transform.position.y - transform.localScale.y / 2.5f,
+            //            transform.position.y + transform.localScale.y / 2.5f);
+            //        cube.transform.position = new Vector3(x, y, z);
+            //    }
+            //}
         }
     }
 }

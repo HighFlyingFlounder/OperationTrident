@@ -462,12 +462,12 @@ namespace OperationTrident.Util
             bool inLeft=true,
             bool sequentClear=true)
         {
-            frameTimer4 += Time.deltaTime;
             if (frameTimer4 > blingInterval||frameTimer4==0.0f)
             {
                 frameTimer4 = 0.0f;
                 toDisplay = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
             }
+            frameTimer4 += Time.deltaTime;
             if (!hasRememberString2Init)
             {
                 hasRememberString2Init = true;
