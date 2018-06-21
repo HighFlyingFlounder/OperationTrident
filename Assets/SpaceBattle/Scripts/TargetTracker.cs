@@ -30,7 +30,7 @@ public class TargetTracker : MonoBehaviour {
 
         Vector3 Move = new Vector3(disX, disY, disZ);
         float Speed = Move.sqrMagnitude * SpeedPar;
-        Speed = Mathf.Clamp(Speed, 0.0f, 50.0f);
+        Speed = Mathf.Clamp(Speed, 0.0f, 125.0f);
         Move = Move.normalized;
         m_RigidBody.velocity = Move * Speed;
 
