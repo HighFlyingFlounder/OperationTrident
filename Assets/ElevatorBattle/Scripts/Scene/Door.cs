@@ -104,6 +104,13 @@ namespace OperationTrident.Elevator
                         open = true;
                     }
                     break;
+                case SceneController.ElevatorState.Escape:
+                    if (state)
+                    {
+                        //关门
+                        close = true;
+                    }
+                    break;
             }
 
         }

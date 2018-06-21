@@ -24,6 +24,10 @@ namespace OperationTrident.Elevator
         private List<GameObject> list;
         //开始时间
         private float s_time;
+        //现在时间
+        private float c_time;
+        //结束时间
+        private float e_time;
 
         // Use this for initialization
         void Start() {
@@ -35,7 +39,8 @@ namespace OperationTrident.Elevator
         // Update is called once per frame
         void Update() {
             //判断何时生成
-            if (System.DateTime.Now.Second - s_time >= time)
+            c_time += Time.deltaTime;
+            if (c_time >= e_time)
             {
                 if (isStart)
                 {
@@ -70,7 +75,9 @@ namespace OperationTrident.Elevator
 
         public void Operate(int id)
         {
-            s_time = System.DateTime.Now.Second;
+            s_time = Time.time;
+            c_time = s_time;
+            e_time = s_time + time;
             isStart = true;
         }
 
