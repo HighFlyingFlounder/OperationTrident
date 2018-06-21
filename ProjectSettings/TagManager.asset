@@ -9,7 +9,7 @@ TagManager:
   - End
   - Stone
   - flyer
-  - Gun
+  - ControlPanel
   layers:
   - Default
   - TransparentFX
