@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class NetSyncTransform : MonoBehaviour
 {
+    
     public enum CtrlType
     {
         none,
@@ -15,6 +16,7 @@ public class NetSyncTransform : MonoBehaviour
         computer,
         net,
     }
+    [HideInInspector]
     public CtrlType ctrlType = CtrlType.player;
     private string sync_id;
     //last 上次的位置信息
@@ -30,7 +32,7 @@ public class NetSyncTransform : MonoBehaviour
     //上次接收的时间
     float lastRecvInfoTime = float.MinValue;
     [SerializeField]
-    private int syncPerSceond = 10;
+    private float syncPerSceond = 10;
     [SerializeField]
     private bool ForcastSync = true;
     // Use this for initialization
@@ -44,6 +46,9 @@ public class NetSyncTransform : MonoBehaviour
     //玩家控制
     public void PlayerCtrl()
     {
+        if(syncPerSceond == 0f) {
+            return;
+        }
         //网络同步
         if (Time.time - lastSendInfoTime > 1.0f / syncPerSceond)
         {
@@ -87,7 +92,8 @@ public class NetSyncTransform : MonoBehaviour
     public void NetTransformInfo(Vector3 nPos, Vector3 nRot)
     {
         transform.position = nPos;
-        transform.rotation = Quaternion.Euler(nRot);
+        //transform.rotation = Quaternion.Euler(nRot);
+        transform.eulerAngles = nRot;
     }
 
     //初始化位置预测数据
@@ -166,6 +172,7 @@ public class NetSyncTransform : MonoBehaviour
 
         if (ForcastSync)
             NetForecastInfo(new Vector3(x, y, z), new Vector3(rotx, roty, rotz));
-        else NetTransformInfo(new Vector3(x, y, z), new Vector3(rotx, roty, rotz));
+        else
+            NetTransformInfo(new Vector3(x, y, z), new Vector3(rotx, roty, rotz));
     }
 }

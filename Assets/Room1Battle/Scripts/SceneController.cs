@@ -212,6 +212,7 @@ namespace OperationTrident.Room1
                     if (state == Room1State.FindingKey1)
                     {
                         doorStart.GetComponent<DoorScript>().OpenAndDestroy(2.5f,DoorScript.DoorOpenDirection.ZPositive);
+                        doorStart.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
                 // 第二扇门
@@ -219,6 +220,7 @@ namespace OperationTrident.Room1
                     if (state == Room1State.FindingKey2)
                     {
                         door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XNegative);
+                        door1.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
                 // 第三扇门
@@ -231,6 +233,7 @@ namespace OperationTrident.Room1
                     else if (state == Room1State.FindingIDCard)
                     {
                         door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
+                        door2.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
             }
@@ -246,36 +249,5 @@ namespace OperationTrident.Room1
                 cropse.GetComponent<InteractiveThing>().enabled = false;
             }
         }
-
-
-
-        //// 第一个key拿到了！
-        //private void OnKey1Got()
-        //{
-        //    if (state == Room1State.FindingKey1)
-        //    {
-        //        Destroy(key1);
-        //        state = Room1State.FindingKey2;
-        //    }
-        //}
-
-        //// 第二个key拿到了
-        //private void OnKey2Got()
-        //{
-        //    if (state == Room1State.FindingKey2)
-        //    {
-        //        Destroy(key2);
-        //        state = Room1State.TryingToOpenRoom;
-        //    }
-        //}
-
-        //// 尝试把门1打开
-        //private void OnDoor1Open()
-        //{
-        //    if (state == Room1State.FindingKey2)
-        //    {
-        //        door1.GetComponent<DoorScript>().OpenAndDestroy();
-        //    }
-        //}
     }
 }
