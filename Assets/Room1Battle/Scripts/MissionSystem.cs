@@ -46,6 +46,12 @@ namespace OperationTrident.Room1
         // 字幕每个字显示的时间
         public float timePerSubTitleWord = 1.0f;
 
+        // 任务目标每个字出现的速度
+        public float appearInterval = 0.5f;
+
+        // 任务目标每个乱码闪烁的速度
+        public float blingInterval = 0.3f;
+
         // 任务目标是随机的生成正确的还是顺序
         public bool sequentClear = true;
 
@@ -121,7 +127,8 @@ namespace OperationTrident.Room1
             {
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.brightGreenColor, interval: 0.5f, fontSize: 16, sequentClear:sequentClear);
+                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.brightGreenColor,
+                    interval: appearInterval, blingInterval:blingInterval,fontSize: 16, sequentClear:sequentClear);
             }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));

@@ -447,19 +447,27 @@ namespace OperationTrident.Util
 
         private static List<int> frequentNumberCounter1 = new List<int>(); // 记录有多少个是正确的
         private static float frameTimer3 = 0.0f;
+        private static float frameTimer4 = 0.0f;
         private static string rememberString2 = string.Empty;
         private static bool hasRememberString2Init = false;
-        // 默认的显示任务目标，先乱后正，sequentClear表示是否是从左到右来变好
+        private static char[] toDisplay;
+        // 默认的显示任务目标，先乱后正，sequentClear表示是否是从左到右来变好,interval指的是任务目标每个字出现的速度，blindInterval表示的是乱码闪烁的速度
         public static void DisplayMissionTargetInMessSequently(
             string missionContent,
             Camera camera,
             Color color,
-            float interval=0.5f,
+            float interval = 0.5f,
+            float blingInterval = 0.1f,
             int fontSize=defaultFontSize,
             bool inLeft=true,
             bool sequentClear=true)
         {
-            char[] toDisplay = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
+            frameTimer4 += Time.deltaTime;
+            if (frameTimer4 > blingInterval||frameTimer4==0.0f)
+            {
+                frameTimer4 = 0.0f;
+                toDisplay = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
+            }
             if (!hasRememberString2Init)
             {
                 hasRememberString2Init = true;
@@ -554,6 +562,17 @@ namespace OperationTrident.Util
         public static void DisplayMissionTargetInGivenGrammar(string missionContent, Camera camera, bool inLeft = true)
         {
             throw new NotImplementedException();
+        }
+
+        // 显示任务时间地点等细节
+        public static void DisplayMissionDetailDefault(
+            string[] missionDetails,
+            Camera camera,
+            Color color,
+            int fontSize=defaultFontSize
+            )
+        {
+
         }
 
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
