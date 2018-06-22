@@ -79,7 +79,9 @@ namespace room2Battle
         public override void onSubsceneInit()
         {
             //RenderSettings.ambientIntensity = 0.1f;
-            player.GetComponent<becomeDark>().enabled = true;
+            NetWorkManager.instance.list[GameMgr.instance.id].AddComponent<becomeDark>();
+            NetWorkManager.instance.list[GameMgr.instance.id].GetComponent<becomeDark>().enabled = true;
+            //player.GetComponent<becomeDark>().enabled = true;
             //player.GetComponent<depthSensor>().enabled = true;
 
             //生成敌人

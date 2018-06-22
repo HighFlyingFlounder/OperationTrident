@@ -6,6 +6,7 @@ using OperationTrident.Player;
 
 public class NetWorkManager : MonoBehaviour
 {
+    public static NetWorkManager instance;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
@@ -13,6 +14,7 @@ public class NetWorkManager : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("FinishLoading");
