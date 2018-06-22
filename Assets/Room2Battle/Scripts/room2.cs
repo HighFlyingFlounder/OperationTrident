@@ -13,7 +13,7 @@ namespace room2Battle
             subSceneController.addSubscene("enterRoom2", "room2_enter");
             subSceneController.addSubscene("room2_powerroom", "room2_power");
             subSceneController.addSubscene("room2_battle", "room2_battle");
-            subSceneController.setInitialSubScene("room2_powerroom");
+            subSceneController.setInitialSubScene("enterRoom2");
             subSceneController.enabled = true;
         }
     }
