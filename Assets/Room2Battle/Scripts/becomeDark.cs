@@ -15,9 +15,6 @@ namespace room2Battle
         //unity editor里绑定Depth Sensor Post processing shader
         public Shader m_Shader;
 
-        //绑定的相机
-        private Camera m_Camera = null;
-
         //当前材质
         private Material curMaterial;
 
