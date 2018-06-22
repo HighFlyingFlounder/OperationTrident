@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerTest : MonoBehaviour {
+public class EnterNextScene : MonoBehaviour {
     private bool arrived = false;
+    public string nextScene = "PlayerTest2";
 	// Use this for initialization
 	void Start () {
         NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
@@ -35,9 +36,7 @@ public class PlayerTest : MonoBehaviour {
         ProtocolBytes proto = (ProtocolBytes)protocol;
         string protoName = proto.GetString(start, ref start);
         int isWin = proto.GetInt(start, ref start);
-
-        Debug.Log("111111111111");
-        SceneManager.LoadScene("PlayerTest2", LoadSceneMode.Single);
+        SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
 
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("Result", RecvResult);
