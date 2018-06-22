@@ -20,7 +20,7 @@ namespace room2Battle
         [SerializeField]
         protected Transform[] enemyInitPositions;
         //玩家
-        public GameObject player;
+        //public GameObject player;
 
         //钥匙
         [SerializeField]
@@ -46,6 +46,10 @@ namespace room2Battle
         //是否打开夜视仪
         protected bool isOpenDepthSensor = false;
 
+        //挂载脚本的shader，包括dark和depth sensor
+        [SerializeField]
+        protected Shader shader_dark = null;
+
         //获取相机句柄
         void Start()
         {
@@ -66,7 +70,7 @@ namespace room2Battle
 
         public override void onSubsceneDestory()
         {
-            player.GetComponent<depthSensor>().enabled = false;
+            //player.GetComponent<depthSensor>().enabled = false;
             foreach (GameObject obj in enemyList)
             {
                 if (obj != null)
@@ -79,7 +83,10 @@ namespace room2Battle
         public override void onSubsceneInit()
         {
             //RenderSettings.ambientIntensity = 0.1f;
+            //添加脚本
             NetWorkManager.instance.list[GameMgr.instance.id].AddComponent<becomeDark>();
+            //初始化脚本参数
+            (NetWorkManager.instance.list[GameMgr.instance.id].GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
             NetWorkManager.instance.list[GameMgr.instance.id].GetComponent<becomeDark>().enabled = true;
             //player.GetComponent<becomeDark>().enabled = true;
             //player.GetComponent<depthSensor>().enabled = true;
@@ -163,7 +170,7 @@ namespace room2Battle
                     span = after.Subtract(sw);
                     if (span.TotalSeconds >= 5.0f)
                     {
-                        player.GetComponent<becomeDark>().enabled = false;
+                        //player.GetComponent<becomeDark>().enabled = false;
                         RenderSettings.ambientIntensity = 1.0f;
                         isSwitchOpen = true;
                     }
@@ -182,17 +189,17 @@ namespace room2Battle
                 //通过只有一个后处理，减少post processing的pass
                 if (!isOpenDepthSensor)
                 {
-                    player.GetComponent<depthSensor>().enabled = true;
-                    player.GetComponent<becomeDark>().enabled = false;
+                   // player.GetComponent<depthSensor>().enabled = true;
+                    //player.GetComponent<becomeDark>().enabled = false;
                     isOpenDepthSensor = true;
                 }
                 else
                 {
                     if (!isSwitchOpen)
                     {
-                        player.GetComponent<becomeDark>().enabled = true;
+                        //player.GetComponent<becomeDark>().enabled = true;
                     }
-                    player.GetComponent<depthSensor>().enabled = false; 
+                    //player.GetComponent<depthSensor>().enabled = false; 
                     isOpenDepthSensor = false;
                 }
             }
