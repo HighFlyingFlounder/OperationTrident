@@ -31,7 +31,7 @@ public class NetWorkManager : MonoBehaviour
         list = new Dictionary<string, GameObject>();
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("FinishLoading");
+        protocol.AddString("StartFight");
         NetMgr.srvConn.Send(protocol);
         //监听
         NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);

@@ -153,7 +153,7 @@ public class RoomPanel : PanelBase
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        SceneManager.LoadScene("SpaceBattle", LoadSceneMode.Single);
+        SceneManager.LoadScene(GameMgr.instance.startScene, LoadSceneMode.Single);
         Close();
     }
 
