@@ -5,7 +5,7 @@ using UnityEngine;
 namespace room2Battle
 {
     //能源房大战
-    public class room2_power : Subscene
+    public class room2_power : Subscene, NetSyncInterface
     {
         //敌人预设
         [SerializeField]
@@ -19,8 +19,8 @@ namespace room2Battle
         //敌人出生点
         [SerializeField]
         protected Transform[] enemyInitPositions;
-
-        public GameObject player;
+        //玩家
+        //public GameObject player;
 
         //钥匙
         [SerializeField]
@@ -43,6 +43,20 @@ namespace room2Battle
         protected bool isSwitchOpen = false;
         //是否进入2楼
         protected bool isIntoSecondFloor = false;
+        //是否打开夜视仪
+        protected bool isOpenDepthSensor = false;
+
+        protected GameObject playerCamera = null;
+
+        //挂载脚本的shader，包括dark和depth sensor
+        [SerializeField]
+        protected Shader shader_dark = null;
+
+        [SerializeField]
+        protected Shader shader_depthSensor = null;
+
+        [SerializeField]
+        protected Texture texture = null;
 
         //获取相机句柄
         void Start()
@@ -64,7 +78,10 @@ namespace room2Battle
 
         public override void onSubsceneDestory()
         {
-            player.GetComponent<depthSensor>().enabled = false;
+            //player.GetComponent<depthSensor>().enabled = false;
+            playerCamera.GetComponent<depthSensor>().enabled = false;
+            playerCamera.GetComponent<becomeDark>().enabled = false;
+
             foreach (GameObject obj in enemyList)
             {
                 if (obj != null)
@@ -77,14 +94,26 @@ namespace room2Battle
         public override void onSubsceneInit()
         {
             //RenderSettings.ambientIntensity = 0.1f;
-            player.GetComponent<becomeDark>().enabled = true;
-            player.GetComponent<depthSensor>().enabled = true;
+            //添加脚本
+            playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+            playerCamera.AddComponent<becomeDark>();
+            playerCamera.AddComponent<depthSensor>();
+            //初始化脚本参数
+            (playerCamera.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
+            playerCamera.GetComponent<becomeDark>().enabled = true;
+
+            (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
+            (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Texture = texture;
+            playerCamera.GetComponent<depthSensor>().enabled = false;
+
+            //player.GetComponent<becomeDark>().enabled = true;
+            //player.GetComponent<depthSensor>().enabled = true;
 
             //生成敌人
             for (int i = 0; i < maxEnemyNum; ++i)
             {
                 GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                enemyList.Add(obj);   
+                enemyList.Add(obj);
             }
         }
 
@@ -94,6 +123,7 @@ namespace room2Battle
             {
                 isIntoSecondFloor = true;
                 Debug.Log("player into floor2");
+                gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
         }
 
@@ -159,9 +189,11 @@ namespace room2Battle
                     span = after.Subtract(sw);
                     if (span.TotalSeconds >= 5.0f)
                     {
-                        player.GetComponent<becomeDark>().enabled = false;
-                        RenderSettings.ambientIntensity = 1.0f;
+                        //player.GetComponent<becomeDark>().enabled = false;
+                        
+                        //RenderSettings.ambientIntensity = 1.0f;
                         isSwitchOpen = true;
+                        gameObject.GetComponent<NetSyncController>().SyncVariables();
                     }
                 }
                 else
@@ -172,8 +204,39 @@ namespace room2Battle
                     span = System.TimeSpan.Zero;
                 }
             }
+            //按H打开夜视仪
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                //通过只有一个后处理，减少post processing的pass
+                if (!isOpenDepthSensor)
+                {
+                    // player.GetComponent<depthSensor>().enabled = true;
+                    //player.GetComponent<becomeDark>().enabled = false;
+                    playerCamera.GetComponent<depthSensor>().enabled = true;
+                    playerCamera.GetComponent<becomeDark>().enabled = false;
+                    isOpenDepthSensor = true;
+                }
+                else
+                {
+                    if (!isSwitchOpen)
+                    {
+                        //player.GetComponent<becomeDark>().enabled = true;
+                        playerCamera.GetComponent<becomeDark>().enabled = true;
+                    }
+                    //player.GetComponent<depthSensor>().enabled = false; 
+                    playerCamera.GetComponent<depthSensor>().enabled = false;
+                    isOpenDepthSensor = false;
+                }
+            }
+
+            if(isSwitchOpen)
+            {
+                playerCamera.GetComponent<becomeDark>().enabled = false;
+            }
+
         }
 
+        //TODO： 更新到佩炜的GUI
         void OnGUI()
         {
             if (isFocus)
@@ -207,6 +270,25 @@ namespace room2Battle
                     OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("挺进2楼！", Camera.main, true);
                 }
             }
+        }
+
+        public void SetData(SyncData data)
+        {
+            isSwitchOpen = (bool)data.Get(typeof(bool));
+            isIntoSecondFloor = (bool)data.Get(typeof(bool));
+        }
+
+        public SyncData GetData()
+        {
+            SyncData data = new SyncData();
+            data.Add(isSwitchOpen);
+            data.Add(isIntoSecondFloor);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+
         }
     }
 }

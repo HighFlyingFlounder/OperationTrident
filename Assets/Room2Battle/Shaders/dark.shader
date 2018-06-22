@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-	_Factor("factor",float) = 0.1
+		_Factor("factor",float) = 0.1
 	}
 		SubShader
 	{
@@ -44,9 +44,8 @@
 	fixed4 frag(v2f i) : SV_Target
 	{
 		fixed4 col = tex2D(_MainTex, i.uv);
-	// just invert the colors
-	col.rgb = col.rgb * _Factor;
-	return col;
+		col.rgb = col.rgb * _Factor;
+		return col;
 	}
 		ENDCG
 	}

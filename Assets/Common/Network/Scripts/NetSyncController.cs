@@ -15,8 +15,10 @@ public class NetSyncController : MonoBehaviour
     private string sync_id;
     // Use this for initialization
 
-    private void Awake() {
-        for(int i = 0; i < sync_scripts.Length; i++) {
+    private void Awake()
+    {
+        for (int i = 0; i < sync_scripts.Length; i++)
+        {
             (sync_scripts[i] as NetSyncInterface).Init(this);
         }
     }
@@ -31,8 +33,6 @@ public class NetSyncController : MonoBehaviour
 
     void SendNetSync()
     {
-        Vector3 pos = transform.position;
-        Vector3 rot = transform.eulerAngles;
         //消息
         ProtocolBytes proto = new ProtocolBytes();
         proto.AddString("BroadCast");
@@ -67,18 +67,19 @@ public class NetSyncController : MonoBehaviour
         string _sync_id = proto.GetString(start, ref start);
         if (_sync_id != sync_id)//不是该物体要同步信息
             return;
-
         //sync_scripts
+        SyncData data = proto.GetSyncData(start, ref start);
         for (int i = 0; i < sync_scripts.Length; i++)
         {
-            SyncData data = proto.GetSyncData(start, ref start);
+            // SyncData data = proto.GetSyncData(start, ref start);
             Component temp = sync_scripts[i];
             (temp as NetSyncInterface).SetData(data);
         }
     }
 
     //强制同步变量
-    public void SyncVariables() {
+    public void SyncVariables()
+    {
         SendNetSync();
     }
 
