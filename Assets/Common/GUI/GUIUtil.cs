@@ -864,19 +864,24 @@ namespace OperationTrident.Util
         //===============================================================================
 
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
-        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera,
-            int fontSize = defaultFontSize, float subtitleRatioHeight = defaultSubtitleRatioHeight)
+        public static void DisplaySubtitleInGivenGrammar(
+            string subtitle,
+            Camera camera,
+            int fontSize = defaultFontSize,
+            float subtitleRatioHeight = defaultSubtitleRatioHeight,
+            int transparent = 0
+            )
         {
             List<ColorTempMemory> colors;
             // 先进行文法编译
             string theTrueSubtitle = SubtitleParser.ParseALine(subtitle, out colors);
             // 四种颜色的GUIStyle
-            GUIStyle styleYellow = GetDefaultTextStyle(yellowColor, fontSize);
-            GUIStyle styleBlue = GetDefaultTextStyle(blueColor, fontSize);
-            GUIStyle styleRed = GetDefaultTextStyle(redColor, fontSize);
-            GUIStyle styleGreen = GetDefaultTextStyle(greenColor, fontSize);
-            GUIStyle styleWhite = GetDefaultTextStyle(whiteColor, fontSize);
-            GUIStyle styleBlack= GetDefaultTextStyle(blackColor, fontSize);
+            GUIStyle styleYellow = GetDefaultTextStyle(TransparentMoreColor(yellowColor,transparent), fontSize);
+            GUIStyle styleBlue = GetDefaultTextStyle(TransparentMoreColor(blueColor, transparent), fontSize);
+            GUIStyle styleRed = GetDefaultTextStyle(TransparentMoreColor(redColor, transparent), fontSize);
+            GUIStyle styleGreen = GetDefaultTextStyle(TransparentMoreColor(greenColor, transparent), fontSize);
+            GUIStyle styleWhite = GetDefaultTextStyle(TransparentMoreColor(whiteColor, transparent), fontSize);
+            GUIStyle styleBlack= GetDefaultTextStyle(TransparentMoreColor(blackColor, transparent), fontSize);
             // 先计算出来整行字幕的位置
             float startPositionX = camera.pixelWidth / 2 - theTrueSubtitle.Length * fontSize / 2;
             float positionY = camera.pixelHeight * subtitleRatioHeight;
@@ -963,7 +968,7 @@ namespace OperationTrident.Util
         public static bool canBeStopDisplaySubtitleInGivenGrammarInFrames = false; // 如果要用这个方法，推荐可以每帧获取一下这个bool值来判断,不要让他每帧都反复判断
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！再加一个帧数！！这些参数都是可以从static get字段取得的！默认的是前面加default
         [Obsolete]   // 事实上，在每一帧都调用的OnGUI()里面设定停止条件是不现实的，所以已废弃，交给调用者实现停止条件。而且，就算是到达停止条件了，也会反复询问，很吃资源
-        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, int frames)
+        public static void DisplaySubtitleInGivenGrammarInFrames(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, int frames)
         {
             if (canBeStopDisplaySubtitleInGivenGrammarInFrames) return;
             if (!isFrameCounterStart)
@@ -988,12 +993,17 @@ namespace OperationTrident.Util
 
         private static float frameTimer2 = 0;
         public static bool canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
+        private static int transparentFactor = 0;
         // 没错，在指定的时间里显示！但是我还是想说，你最好随时获取一下上面这个bool值，为true的时候在你自己的程序逻辑里停下。实际上，这个函数本质上和上面那个函数是差不多的。因为接受的参数比较现实所以姑且保留了下来
         public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float second)
         {
+            if (transparentFactor >= 255) return;
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
+                transparentFactor += 4;
                 frameTimer2 = 0;
+                DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:transparentFactor);
+
                 return;
             }
             frameTimer2 += Time.deltaTime;
