@@ -11,13 +11,13 @@ public class TokamakeCoreFloating : MonoBehaviour {
     private static float m_Time;
 
     //漂浮的幅度
-    public float m_FloatingAmplitude=3.0f;
+    public float m_FloatingAmplitude=0.1f;
 
     //漂浮的频率
-    public float m_FloatingFrequency=0.05f;
+    public float m_FloatingFrequency=2.0f;
 
     //旋转的速率
-    public float m_RotatingVelocity = 0.05f;
+    public float m_RotatingVelocity = 30.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -26,7 +26,8 @@ public class TokamakeCoreFloating : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        this.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime* m_RotatingVelocity);
+        //Quaternion rot =  Quaternion.Euler(0, Time.deltaTime * m_RotatingVelocity, 0);
+        this.transform.Rotate(new Vector3(0, 1, 0), Time.deltaTime * m_RotatingVelocity,Space.World);
 
         m_Time += Time.deltaTime;
         this.transform.position = m_OriginPos + new Vector3(0,Mathf.Sin(m_Time* m_FloatingFrequency),0) * m_FloatingAmplitude;
