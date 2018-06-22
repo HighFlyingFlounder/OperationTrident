@@ -378,6 +378,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 299697314}
+  - component: {fileID: 299697320}
   - component: {fileID: 299697316}
   - component: {fileID: 299697315}
   - component: {fileID: 299697317}
@@ -458,6 +459,8 @@ MonoBehaviour:
   - {fileID: 1574952954}
   key: {fileID: 674223789}
   shader_dark: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
+  shader_depthSensor: {fileID: 4800000, guid: b51eff598e74cbd478f5480d7ffc6a43, type: 3}
+  texture: {fileID: 2800000, guid: 53dda7dc883b23149983c0ae0bd11983, type: 3}
 --- !u!114 &299697319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,6 +478,20 @@ MonoBehaviour:
   - {fileID: 720959758}
   enemyPrefabs: {fileID: 1339328970737070, guid: aa1cd200460493d4f88d00e8c3152c90,
     type: 2}
+--- !u!114 &299697320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 299697313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c2ab1dd21f7814392f34bb245130af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sync_scripts:
+  - {fileID: 299697316}
+  - {fileID: 299697318}
 --- !u!1 &307675738
 GameObject:
   m_ObjectHideFlags: 0

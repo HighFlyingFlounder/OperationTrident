@@ -8,7 +8,9 @@ namespace room2Battle
     //================   走出电梯   ====================
     //=================================================
 
-    public class room2_enter : Subscene {
+    public class room2_enter : Subscene, NetSyncInterface
+    {
+        NetSyncController m_controller;
         [SerializeField]
         protected GameObject[] players;
 
@@ -28,7 +30,7 @@ namespace room2Battle
             for (int i = 0; i < players.Length; ++i)
             {
                 players[i].transform.position = playerInitPos.position;
-            }          
+            }
         }
 
         public override bool isTransitionTriggered()
@@ -43,7 +45,7 @@ namespace room2Battle
 
         public override void onSubsceneDestory()
         {
-            
+
         }
 
         public override void notify(int i)
@@ -52,10 +54,12 @@ namespace room2Battle
             {
                 isNear = true;
                 player.GetComponent<becomeDark>().enabled = true;
+                gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
             else if (i == 2)
             {
                 isEnter = true;
+                gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
         }
 
@@ -69,6 +73,25 @@ namespace room2Battle
             {
                 OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("任务变化：开启照明开关！", Camera.main, true);
             }
+        }
+
+        public void SetData(SyncData data)
+        {
+            isNear = (bool)data.Get(typeof(bool));
+            isEnter = (bool)data.Get(typeof(bool));
+        }
+
+        public SyncData GetData()
+        {
+            SyncData data = new SyncData();
+            data.Add(isNear);
+            data.Add(isEnter);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
         }
     }
 }
