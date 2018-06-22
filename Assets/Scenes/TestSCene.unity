@@ -843,7 +843,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 238288915}
-  m_Mesh: {fileID: 4300002, guid: 24a213c38cd227b488eb502e89c0c69b, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 198cbb5e54a333245aa6e82b676a3225, type: 3}
 --- !u!1 &264331456
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,7 +1186,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 547904952}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.732, y: 0, z: 0}
+  m_LocalPosition: {x: 0.732, y: 0.63, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 173989767}
@@ -1232,7 +1232,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 1
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 4300000, guid: 320b1c2af77554f99a1658df4a6d3d5c, type: 3}
+  m_Mesh: {fileID: 4300000, guid: e51e77e356b68f8498be148a5f32067c, type: 3}
   m_Bones:
   - {fileID: 226745362}
   - {fileID: 2092092300}
@@ -1759,7 +1759,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 871379396}
-  m_Mesh: {fileID: 4300000, guid: fddeeac0ebed86c4cab4320764b5c227, type: 3}
+  m_Mesh: {fileID: 4300000, guid: af917bd8aa4906140916de4d97ecef70, type: 3}
 --- !u!1 &911363970
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,7 +1987,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 962037800}
-  m_Mesh: {fileID: 4300002, guid: fddeeac0ebed86c4cab4320764b5c227, type: 3}
+  m_Mesh: {fileID: 4300002, guid: af917bd8aa4906140916de4d97ecef70, type: 3}
 --- !u!1 &968845290
 GameObject:
   m_ObjectHideFlags: 0
@@ -2063,7 +2063,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 968845290}
-  m_Mesh: {fileID: 4300000, guid: 4f9635b162a471144969563595ddeed9, type: 3}
+  m_Mesh: {fileID: 4300000, guid: bee28a7cd6f071b46a161e5cf6dd40f8, type: 3}
 --- !u!1 &969974666
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,7 +2506,6 @@ MonoBehaviour:
   MaxUpAngle: 0.3
   MoveSpeed: 3
   MirrorTarget: {fileID: 989712459}
-  m_LockGun: 0
   m_MainCamera: {fileID: 217481539}
   m_InputManager: {fileID: 173989757}
 --- !u!114 &1070572610
@@ -2605,7 +2604,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1072569781}
-  m_Mesh: {fileID: 4300000, guid: 24a213c38cd227b488eb502e89c0c69b, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 198cbb5e54a333245aa6e82b676a3225, type: 3}
 --- !u!1 &1084808298
 GameObject:
   m_ObjectHideFlags: 0
@@ -2774,7 +2773,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1186562704}
-  m_Mesh: {fileID: 4300004, guid: 24a213c38cd227b488eb502e89c0c69b, type: 3}
+  m_Mesh: {fileID: 4300004, guid: 198cbb5e54a333245aa6e82b676a3225, type: 3}
 --- !u!1 &1225219082
 GameObject:
   m_ObjectHideFlags: 0
@@ -4055,7 +4054,7 @@ MeshFilter:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1989880066}
-  m_Mesh: {fileID: 4300004, guid: fddeeac0ebed86c4cab4320764b5c227, type: 3}
+  m_Mesh: {fileID: 4300004, guid: af917bd8aa4906140916de4d97ecef70, type: 3}
 --- !u!1 &1995566595
 GameObject:
   m_ObjectHideFlags: 0
