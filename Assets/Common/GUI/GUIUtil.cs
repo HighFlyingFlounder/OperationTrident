@@ -413,7 +413,7 @@ namespace OperationTrident.Util
             for(int i = 0; i < content.Length; i++)
             {
 
-                if (isDigit(content[i]))
+                if (IsDigit(content[i]))
                 {
                     GUI.Label(
                         new Rect(
@@ -536,9 +536,20 @@ namespace OperationTrident.Util
             rememberString1 = missionContent;
         }
 
-        private static bool isDigit(char a)
+        private static bool IsDigit(char a)
         {
             return a - ' ' >= 0 && a - ' ' <= 94;
+        }
+
+        // 根据是否是字母，数字来计算真正的字符串长度
+        private static float GetTrueStringFontTotalSize(string source,int fontSize)
+        {
+            float toReturn = 0.0f;
+            foreach(char a in source)
+            {
+                toReturn += IsDigit(a) ? fontSize / 2 : fontSize;
+            }
+            return toReturn;
         }
 
         private static float frameTimer5 = -0.3f;
@@ -553,8 +564,9 @@ namespace OperationTrident.Util
             Color color,
             float startPositionOffsetXRatio,  // 内容离屏幕左边的距离占整个屏幕的比例
             float startPositionOffsetYRatio,  // 内容离屏幕上面的距离占整个屏幕的比例
-            float interval=0.5f,
-            int fontSize = defaultFontSize)
+            float interval = 0.5f,
+            int fontSize = defaultFontSize,
+            bool withAVerticalLine=false)
         {
             // 记录上一帧的字符串
             if (!hasRememberString3Init)
@@ -597,6 +609,24 @@ namespace OperationTrident.Util
                 startPositionOffsetYRatio,
                 color,
                 fontSize);
+            //Debug.Log("withAVerticalLine    "+ withAVerticalLine);
+            //Debug.Log("contentCounter1+1    " + (contentCounter1 + 1));
+            //Debug.Log("content.Length    " + content.Length);
+
+            if (withAVerticalLine)
+            {
+                if (contentCounter1 + 1 != content.Length)
+                {
+                    DisplayContentInGivenPosition(
+                    "_",
+                    camera,
+                    startPositionOffsetXRatio +
+                        GetTrueStringFontTotalSize(content.Substring(0, contentCounter1 + 1), fontSize) / camera.pixelWidth,
+                    startPositionOffsetYRatio,
+                    color,
+                    fontSize);
+                }
+            }
             //for (int i = 0; i <= contentCounter1; i++)
             //{
 
@@ -777,7 +807,8 @@ namespace OperationTrident.Util
                         defaultMissionDetailOffsetLeft,
                         defaultMissionDetailOffsetUp + missionDetailIndex * fontSize / camera.pixelHeight,
                         interval: wordAppearanceInterval,
-                        fontSize: fontSize);
+                        fontSize: fontSize,
+                        withAVerticalLine:true);
             }
             else
             {
@@ -802,7 +833,8 @@ namespace OperationTrident.Util
                         defaultMissionDetailOffsetLeft,
                         defaultMissionDetailOffsetUp + (float)missionDetailIndex * (fontSize) / camera.pixelHeight,
                         interval: wordAppearanceInterval,
-                        fontSize: fontSize);
+                        fontSize: fontSize,
+                        withAVerticalLine:true);
             }
             //float startPositionX = defaultMissionDetailOffsetLeft * camera.pixelWidth;
             //float startPositionY = defaultMissionDetailOffsetUp * camera.pixelHeight;

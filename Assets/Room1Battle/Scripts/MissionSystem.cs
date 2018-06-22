@@ -131,14 +131,14 @@ namespace OperationTrident.Room1
         {
             // 显示任务细节
             //GUIUtil.DisplayContentInGivenPositionSequently(missionDetails[0], camera, GUIUtil.greenColor, 1.0f / 10.0f, 2.0f / 3.0f,fontSize:16);
-            GUIUtil.DisplayMissionDetailDefault(
-                missionDetails,
-                camera,
-                GUIUtil.greenColor,
-                wordTransparentInterval: 0.005f,
-                wordAppearanceInterval: 0.1f,
-                lineSubsequentlyInterval: 1.236f,
-                fontSize: 16);
+            //GUIUtil.DisplayMissionDetailDefault(
+            //    missionDetails,
+            //    camera,
+            //    GUIUtil.greenColor,
+            //    wordTransparentInterval: 0.005f,
+            //    wordAppearanceInterval: 0.1f,
+            //    lineSubsequentlyInterval: 1.236f,
+            //    fontSize: 16);
 
             // 显示任务目标
 
