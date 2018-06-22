@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4517646742306642}
-  - component: {fileID: 114790112446074674}
+  - component: {fileID: 114162465201068860}
   m_Layer: 0
   m_Name: SceneController
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114790112446074674
+--- !u!114 &114162465201068860
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,11 +48,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1521893265286264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e084d9b9355c6d48bcaf4d16ec710dd, type: 3}
+  m_Script: {fileID: 11500000, guid: 094a13ebab88664489b85552060acba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyPos: []
-  num_enemypos: 0
-  ePos: []
-  ButtonPosition: {x: 0, y: 0, z: 0}
-  state: 0
+  buttonPre: {fileID: 1702440466664720, guid: 839b4c19d3723e64091089f9571069e8, type: 2}
+  time: 0

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4738718329774702}
-  - component: {fileID: 114191866720532856}
+  - component: {fileID: 114500441908115098}
   m_Layer: 0
   m_Name: EnemyPos
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114191866720532856
+--- !u!114 &114500441908115098
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,12 +48,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1682009407167858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8894af186cfc547b4a969b3dfb6cae, type: 3}
+  m_Script: {fileID: 11500000, guid: 33e900205083d134bacabd793cd20bd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CreateObject: {fileID: 1678822668127206, guid: 7ae32114bf1edd944804b20a27e586c3,
+  CreateObject: {fileID: 1678822668127206, guid: 47ef2315a3ba7fd4092afe3a7f2058b8,
     type: 2}
-  number: 10
-  speed: 1
+  number: 0
+  speed: 0
   time: 0
   isStart: 0

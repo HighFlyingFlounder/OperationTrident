@@ -21,24 +21,27 @@ public class PlayerState : MonoBehaviour {
         //只有本地玩家才会触发这些事件
         if(transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
-            if (other.collider.tag == "Hinder")
-            {
-                ChangeHp(-40.0f);
-                Vector3 Force = this.transform.position - other.transform.position;
-                //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
-                Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
-                Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 100f);//往反方向推
-                Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
-            }
-            else if (other.collider.tag == "BigHinder")
-            {
-                ChangeHp(-100.0f);
-            }
-            if (Hp == 0f)
-            {
-                this.GetComponent<Collider>().enabled = false;
-                SendDead();
-            }
+            ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
+            //ChangeHp(-40.0f);
+            Vector3 Force = this.transform.position - other.transform.position;
+            //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
+            Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
+            Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 80f);//往反方向推
+            Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
+        }
+        else if (other.collider.tag == "BigHinder")
+        {
+            ChangeHp(other.gameObject.GetComponent<BigHinder>().damage);
+            Vector3 Force = this.transform.position - other.transform.position;
+            //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
+            Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
+            Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 80f);//往反方向推
+            Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
+        }
+        if (Hp == 0f)
+        {
+            this.GetComponent<Collider>().enabled = false;
+            SendDead();
         }
     }
 
