@@ -37,6 +37,11 @@ namespace OperationTrident.Room1
             "逃离房间"
         };
 
+        public string[] missionDetails =
+        {
+            "2018.6.22  星期五    \n雷克雅未克    \n休伯利安行动"
+        };
+
         // 任务目标的内容
         private string missionContent;
 
@@ -121,6 +126,10 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
+            // 显示任务细节
+            //GUIUtil.DisplayContentInGivenPositionSequently(missionDetails[0], camera, GUIUtil.greenColor, 1.0f / 10.0f, 2.0f / 3.0f,fontSize:16);
+            GUIUtil.DisplayMissionDetailDefault(missionDetails, camera, GUIUtil.greenColor, fontSize: 16);
+
             // 显示任务目标
 
             if (missionContent != string.Empty)
@@ -130,6 +139,7 @@ namespace OperationTrident.Room1
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.brightGreenColor,
                     interval: appearInterval, blingInterval:blingInterval,fontSize: 16, sequentClear:sequentClear);
             }
+
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);

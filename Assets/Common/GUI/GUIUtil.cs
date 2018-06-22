@@ -55,6 +55,14 @@ namespace OperationTrident.Util
         // 字幕在屏幕的哪里：按比例算
         private const float defaultSubtitleRatioHeight = 4.0f / 5.0f;
 
+        // 任务目标在屏幕左边多少，占屏幕宽的比例
+        private const float defaultMissionTargetOffsetLeft = 1.0f / 40.0f;
+
+        // 任务详细信息从屏幕的哪里开始啊，两个Offset值
+        private const float defaultMissionDetailOffsetLeft = 1.0f / 20.0f;
+        private const float defaultMissionDetailOffsetUp = 2.0f / 3.0f;
+        private const float defaultMissionDetailInterval = 0.5f; // 任务细节每行显示的间隔
+
         // 微软雅黑
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
         // 微软Sans Serif
@@ -118,7 +126,7 @@ namespace OperationTrident.Util
             }
         }
 
-        // 从一个字符串里面构造颜色向量
+        // 从一个字符串里面构造Color类型
         public static Color GetColorFromString(string a)
         {
             return GetColorFromVector3(GetColorVec3FromString(a));
@@ -138,25 +146,25 @@ namespace OperationTrident.Util
         }
 
         // 变得不透明，传入一个参数，单位还是1/256
-        public static Vector4 transparentLessColor(Vector4 color, float factor)
+        public static Vector4 TransparentLessColor(Vector4 color, float factor)
         {
             return new Vector4(color.x, color.y, color.z, Math.Min(color.w + factor / 256.0f, 1.0f));
         }
 
         // 变得不透明，传入一个参数，单位还是1/256
-        public static Vector4 transparentLessColor(Color color, float factor)
+        public static Vector4 TransparentLessColor(Color color, float factor)
         {
             return new Vector4(color.r, color.g, color.b, Math.Min(color.a + factor / 256.0f, 1.0f));
         }
 
         // 变得透明，传入一个参数，单位还是1/256
-        public static Vector4 transparentMoreColor(Vector4 color, float factor)
+        public static Vector4 TransparentMoreColor(Vector4 color, float factor)
         {
             return new Vector4(color.x, color.y, color.z, Math.Max(color.w - factor / 256.0f, 0.0f));
         }
 
         // 变得透明，传入一个参数，单位还是1/256
-        public static Vector4 transparentMoreColor(Color color, float factor)
+        public static Vector4 TransparentMoreColor(Color color, float factor)
         {
             return new Vector4(color.r, color.g, color.b, Math.Max(color.a - factor / 256.0f, 0.0f));
         }
@@ -356,9 +364,51 @@ namespace OperationTrident.Util
         }
 
         // 在指定位置显示内容，并有指定样式
-        public static void DisplayContentInGivenPosition(string subtile, Rect positionRect, GUIStyle style)
+        public static void DisplayContentInGivenPosition(string content, Rect positionRect, GUIStyle style)
         {
-            GUI.Label(positionRect, subtile, style);
+            GUI.Label(positionRect, content, style);
+        }
+
+        // 在指定的比例位置显示内容，有指定颜色，字体大小等（解决Digit占两个位置的问题）
+        public static void DisplayContentInGivenPosition(
+            string content,
+            Camera camera,
+            float offsetRatioX,
+            float offsetRatioY,
+            Color color,
+            int fontSize=defaultFontSize,
+            TextAnchor textAnchor = defaultAnchor)
+        {
+            // 当前计算字母位的漂移距离
+            float nowXOffset = 0.0f;
+            for(int i = 0; i < content.Length; i++)
+            {
+
+                if (isDigit(content[i]))
+                {
+                    GUI.Label(
+                        new Rect(
+                            new Vector2(
+                                offsetRatioX * camera.pixelWidth + nowXOffset,
+                                offsetRatioY * camera.pixelHeight),
+                            new Vector2(fontSize / 2, fontSize)
+                            ), "" + content[i], GetDefaultTextStyle(color, fontSize, textAnchor)
+                            );
+                    nowXOffset += fontSize / 2.0f;
+                }
+                else
+                {
+                    GUI.Label(
+    new Rect(
+        new Vector2(
+            offsetRatioX * camera.pixelWidth + nowXOffset,
+            offsetRatioY * camera.pixelHeight),
+        new Vector2(fontSize, fontSize)
+        ), "" + content[i], GetDefaultTextStyle(color, fontSize, textAnchor)
+        );
+                    nowXOffset += fontSize;
+                }
+            }
         }
 
         // 默认的显示任务目标
@@ -374,20 +424,20 @@ namespace OperationTrident.Util
             if (inLeft)
             {
                 DisplayContentInGivenPosition(missionContent,
-                        new Rect(1.0f, camera.pixelHeight / 20.0f + fontSize, fontSize * missionContent.Length, fontSize),
+                        new Rect(defaultMissionTargetOffsetLeft*camera.pixelWidth, camera.pixelHeight / 20.0f + fontSize, fontSize * missionContent.Length, fontSize),
                         GetDefaultTextStyle(color, fontSize, TextAnchor.LowerLeft));
             }
             else
             {
                 DisplayContentInGivenPosition(missionContent,
-                        new Rect(camera.pixelWidth - 1.0f - fontSize * missionContent.Length, camera.pixelHeight / 20.0f + fontSize, fontSize * missionContent.Length, fontSize),
+                        new Rect(camera.pixelWidth - defaultMissionTargetOffsetLeft * camera.pixelWidth - fontSize * missionContent.Length, camera.pixelHeight / 20.0f + fontSize, fontSize * missionContent.Length, fontSize),
                         GetDefaultTextStyle(color, fontSize, TextAnchor.LowerRight));
             }
         }
 
         private static float frameTimer1 = -0.3f;
-        private static bool isInit = false;
-        private static int missionContentCounter = 0;
+        private static bool isInitDMTDS = false;
+        private static int missionContentCounter1 = 0;
         private static string rememberString1 = string.Empty;
         private static bool hasRememberString1Init = false;
         // 默认的显示任务目标，在慢慢的时间显示出来
@@ -399,51 +449,151 @@ namespace OperationTrident.Util
             int fontSize = defaultFontSize, 
             bool inLeft = true)
         {
+            // 记录上一帧的字符串
+            if (!hasRememberString1Init)
+            {
+                hasRememberString1Init = true;
+                rememberString1 = missionContent;
+            }
+            // 如果任务目标出现了变化
+            else if (missionContent != rememberString1)
+            {
+                missionContentCounter1 = 0;
+                frameTimer1 = -0.3f;
+            }
+            if (missionContentCounter1 >= missionContent.Length - 1)
+            {
+                missionContentCounter1 = missionContent.Length - 1;
+                frameTimer1 = 0;
+            }
+            else
+            {
+                frameTimer1 += Time.deltaTime;
+                if (frameTimer1 > 0)
+                {
+                    frameTimer1 = -interval;
+                    missionContentCounter1++;
+                }
+            }
             if (inLeft)
             {
-                // 记录上一帧的字符串
-                if (!hasRememberString1Init)
-                {
-                    hasRememberString1Init = true;
-                    rememberString1 = missionContent;
-                }
-                // 如果任务目标出现了变化
-                else if (missionContent != rememberString1)
-                {
-                    missionContentCounter = 0;
-                    frameTimer1 = -0.3f;
-                }
-                if (missionContentCounter >= missionContent.Length - 1)
-                {
-                    missionContentCounter = missionContent.Length - 1;
-                    frameTimer1 = 0;
-                }
-                else
-                {
-                    frameTimer1 += Time.deltaTime;
-                    if (frameTimer1 > 0)
-                    {
-                        frameTimer1 = -interval;
-                        missionContentCounter++;
-                    }
-                }
-                for (int i = 0; i <= missionContentCounter; i++)
+                for (int i = 0; i <= missionContentCounter1; i++)
                 {
                     DisplayContentInGivenPosition(
                             "" + missionContent[i],
                             new Rect(
-                                new Vector2(1.0f + i * fontSize, camera.pixelHeight / 15.0f),
+                                new Vector2(defaultMissionTargetOffsetLeft * camera.pixelWidth + i * fontSize, camera.pixelHeight / 15.0f),
                                 new Vector2(fontSize, fontSize)),GetDefaultTextStyle(color,fontSize)
                             );
                 }
-                rememberString1 = missionContent;
             }
             else
             {
-
+                for (int i = 0; i <= missionContentCounter1; i++)
+                {
+                    DisplayContentInGivenPosition(
+                            "" + missionContent[i],
+                            new Rect(
+                                new Vector2(camera.pixelWidth-defaultMissionTargetOffsetLeft * camera.pixelWidth - i * fontSize, 
+                                camera.pixelHeight / 15.0f),
+                                new Vector2(fontSize, fontSize)), GetDefaultTextStyle(color, fontSize)
+                            );
+                }
             }
+            rememberString1 = missionContent;
         }
 
+        private static bool isDigit(char a)
+        {
+            return a - ' ' >= 0 && a - ' ' <= 94;
+        }
+
+        private static float frameTimer5 = -0.3f;
+        private static bool isInitDCIGPS = false;
+        private static int contentCounter1 = 0;
+        private static string rememberString3 = string.Empty;
+        private static bool hasRememberString3Init = false;
+        // 默认的指定位置显示指定内容，在慢慢的时间显示出来
+        public static void DisplayContentInGivenPositionSequently(
+            string content,
+            Camera camera,
+            Color color,
+            float startPositionOffsetXRatio,  // 内容离屏幕左边的距离占整个屏幕的比例
+            float startPositionOffsetYRatio,  // 内容离屏幕上面的距离占整个屏幕的比例
+            float interval=0.5f,
+            int fontSize = defaultFontSize)
+        {
+            // 记录上一帧的字符串
+            if (!hasRememberString3Init)
+            {
+                hasRememberString3Init = true;
+                rememberString3 = content;
+            }
+            // 如果任务目标出现了变化
+            else if (content != rememberString3)
+            {
+                contentCounter1 = 0;
+                frameTimer5 = -0.3f;
+            }
+            if (contentCounter1 >= content.Length - 1)
+            {
+                contentCounter1 = content.Length - 1;
+                frameTimer5 = 0;
+                //DisplayContentInGivenPosition(content,
+                //    new Rect(
+                //            new Vector2(startPositionOffsetXRatio * camera.pixelWidth,
+                //            startPositionOffsetYRatio * camera.pixelHeight),
+                //            new Vector2(fontSize, fontSize)), GetDefaultTextStyle(color, fontSize)
+                //        );
+                //goto End;
+            }
+            else
+            {
+                frameTimer5 += Time.deltaTime;
+                if (frameTimer5 > 0)
+                {
+                    frameTimer5 = -interval;
+                    contentCounter1++;
+                }
+            }
+            //float nowOffset = 0.0f;
+            DisplayContentInGivenPosition(
+                content.Substring(0, contentCounter1 + 1),
+                camera,
+                startPositionOffsetXRatio,
+                startPositionOffsetYRatio,
+                color,
+                fontSize);
+            //for (int i = 0; i <= contentCounter1; i++)
+            //{
+
+            //    // 如果是字母
+            //    if (isDigit(content[i]))
+            //    {
+            //        nowOffset += fontSize / 2.0f;
+            //        DisplayContentInGivenPosition(
+            //                "" + content[i],
+            //                new Rect(
+            //                    new Vector2(startPositionOffsetXRatio * camera.pixelWidth + nowOffset,
+            //                    startPositionOffsetYRatio * camera.pixelHeight),
+            //                    new Vector2(fontSize/2, fontSize)), GetDefaultTextStyle(color, fontSize)
+            //                );
+            //    }
+            //    else
+            //    {
+            //        nowOffset += fontSize / 1.0f;
+            //        DisplayContentInGivenPosition(
+            //                "" + content[i],
+            //                new Rect(
+            //                    new Vector2(startPositionOffsetXRatio * camera.pixelWidth + nowOffset,
+            //                    startPositionOffsetYRatio * camera.pixelHeight),
+            //                    new Vector2(fontSize, fontSize)), GetDefaultTextStyle(color, fontSize)
+            //                );
+            //    }
+            //}
+            //End:
+            rememberString3 = content;
+        }
 
         private static List<int> frequentNumberCounter1 = new List<int>(); // 记录有多少个是正确的
         private static float frameTimer3 = 0.0f;
@@ -522,11 +672,9 @@ namespace OperationTrident.Util
                 }
             }
             string toDisplayStr = new string(toDisplay);
-            if (inLeft)
-            {
-                DisplayMissionTargetDefault(toDisplayStr, camera, color, inLeft, fontSize);
-                rememberString2 = missionContent;
-            }
+            DisplayMissionTargetDefault(toDisplayStr, camera, color, inLeft, fontSize);
+            rememberString2 = missionContent;
+            
         }
 
         // 获得指定长度的乱码，真的很乱！就是平时的乱码
@@ -564,15 +712,68 @@ namespace OperationTrident.Util
             throw new NotImplementedException();
         }
 
+        private static float frameTimer6 = 0.01f;
+        private static int missionDetailIndex = 0;
+        private static bool canBeStopDMDD = false;
         // 显示任务时间地点等细节
         public static void DisplayMissionDetailDefault(
             string[] missionDetails,
             Camera camera,
             Color color,
-            int fontSize=defaultFontSize
+            int fontSize = defaultFontSize
             )
         {
-
+            if (canBeStopDMDD) { return;}
+            frameTimer6 += Time.deltaTime;
+            if (missionDetailIndex == 0)
+            {
+                DisplayContentInGivenPositionSequently(
+                        missionDetails[missionDetailIndex],
+                        camera,
+                        color,
+                        defaultMissionDetailOffsetLeft,
+                        defaultMissionDetailOffsetUp + missionDetailIndex * fontSize / camera.pixelHeight,
+                        fontSize: fontSize);
+            }
+            else
+            {
+                for(int i = 0; i < Math.Min(missionDetailIndex,missionDetails.Length-1); i++)
+                {
+                    //DisplayContentInGivenPosition(missionDetails[i],
+                    //    new Rect(new Vector2(defaultMissionDetailOffsetLeft * camera.pixelWidth,
+                    //    defaultMissionDetailOffsetUp * camera.pixelHeight+fontSize*i),
+                    //    new Vector2(missionDetails[i].Length * fontSize, fontSize)),GetDefaultTextStyle(color,fontSize,defaultAnchor)
+                    //    );
+                    DisplayContentInGivenPosition(
+                        missionDetails[i],
+                        camera, defaultMissionDetailOffsetLeft,
+                        defaultMissionDetailOffsetUp + (float)fontSize*i / camera.pixelHeight,
+                        color,
+                        fontSize);
+                }
+                DisplayContentInGivenPositionSequently(
+                        missionDetails[missionDetailIndex],
+                        camera,
+                        color,
+                        defaultMissionDetailOffsetLeft,
+                        defaultMissionDetailOffsetUp + (float)missionDetailIndex * (fontSize) / camera.pixelHeight,
+                        fontSize: fontSize);
+            }
+            //float startPositionX = defaultMissionDetailOffsetLeft * camera.pixelWidth;
+            //float startPositionY = defaultMissionDetailOffsetUp * camera.pixelHeight;
+            if (frameTimer6 > defaultMissionDetailInterval*(missionDetails[missionDetailIndex].Length+2))
+            {
+                if (missionDetailIndex >= missionDetails.Length)
+                {
+                    canBeStopDMDD = true;
+                }
+                else
+                {
+                    ++missionDetailIndex;
+                }
+                frameTimer6 = 0.0f;
+            }
+            
         }
 
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
