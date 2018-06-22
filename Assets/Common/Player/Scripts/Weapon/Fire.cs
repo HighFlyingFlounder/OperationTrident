@@ -29,6 +29,9 @@ namespace OperationTrident.Weapon {
         [Tooltip("开镜时枪的位置")]
         public Transform MirrorTarget;
 
+        //[SerializeField]
+        private Transform m_InitTransform;
+
         //当前弹夹剩余子弹数
         private int m_ClipBulletNum;
         //用于开枪的计时器
@@ -37,8 +40,7 @@ namespace OperationTrident.Weapon {
         private bool m_IsShooting;
         //当前是否开镜射击
         private bool m_IsUsingMirror;
-        [HideInInspector]
-        public bool m_LockGun;
+
         //保存枪口位置偏移量
         private float m_GunPosShakeOffet;
         //将枪运动的最大偏移量进行缩放，避免设置的值太小
@@ -58,17 +60,19 @@ namespace OperationTrident.Weapon {
         private AudioSource m_AudioSource;
         //gun的IK控制器
         private GunIKController m_GunIKController;
-        
+
+        private Vector3 m_InitPosition;
+        private Quaternion m_InitRotation;
 
         private void Awake() {
             //获取引用
             m_AudioSource = GetComponent<AudioSource>();
             m_GunIKController = GetComponent<GunIKController>();
+
+            m_InitTransform = this.transform;
         }
 
         private void OnEnable() {
-            //默认设置gun跟随camera移动
-            m_LockGun = true;
             //不使用瞄准镜
             MirrorCamera.enabled = false;
             //重置射击状态
@@ -77,6 +81,9 @@ namespace OperationTrident.Weapon {
             m_IsUsingMirror = false;
             //重置计时器
             m_ShootTimer = 0f;
+
+            m_InitPosition = this.transform.localPosition;
+            m_InitRotation = this.transform.localRotation;
         }
 
         // 初始化数据成员
@@ -114,18 +121,15 @@ namespace OperationTrident.Weapon {
                 if (m_IsUsingMirror) {
                     MirrorCamera.enabled = false;
                     m_IsUsingMirror = false;
+
+                    this.transform.localPosition = m_InitPosition;
+                    this.transform.localRotation = m_InitRotation;
                 } else {
                     MirrorCamera.enabled = true;
                     m_IsUsingMirror = true;
-                }
-            }
 
-            if (m_IsUsingMirror) {
-                UpdateGunTransformUsingMirror();
-            } else {
-                if (m_LockGun) {
-                    //camera位置更新完毕再更新gun的位置
-                    UpdateGunTransform();
+                    this.transform.localPosition = m_RelativeMirrorTargetPosition;
+                    this.transform.localRotation = m_RelativeMirrorTargetRotation;
                 }
             }
         }
@@ -133,25 +137,6 @@ namespace OperationTrident.Weapon {
         private void OnDisable() {
             MirrorCamera.enabled = false;
             m_IsUsingMirror = false;
-
-            //UpdateGunTransform();
-            //不让gun随着camera移动
-            m_LockGun = false;
-        }
-
-        private void UpdateGunTransform() {
-            Vector3 position = m_GunIKController.GetGunPosition();
-            Quaternion rotation = m_GunIKController.GetGunRotation();
-
-            this.transform.rotation = rotation;
-            this.transform.position = Vector3.MoveTowards(this.transform.position, position, MoveSpeed * Time.deltaTime);
-        }
-
-        private void UpdateGunTransformUsingMirror() {
-            Vector3 position = m_MainCamera.transform.TransformPoint(m_RelativeMirrorTargetPosition);
-            this.transform.rotation = m_MainCamera.transform.rotation * m_RelativeMirrorTargetRotation;
-
-            this.transform.position = Vector3.MoveTowards(this.transform.position, position, MoveSpeed * Time.deltaTime);
         }
 
         private void Shoot() {
@@ -172,8 +157,6 @@ namespace OperationTrident.Weapon {
             float interval = ShootInterval / 2;
             Vector3 direction = transform.forward + transform.up / 2;
 
-            m_LockGun = false;
-
             while (timer <= interval) {
                 m_GunPosShakeOffet = Mathf.Lerp(0, m_ScaledMaxBackwordOffset, timer / interval);
                 this.transform.position += direction * m_GunPosShakeOffet;
@@ -191,7 +174,8 @@ namespace OperationTrident.Weapon {
                 yield return new WaitForFixedUpdate();
             }
 
-            m_LockGun = true;
+            //恢复枪的位置
+            this.transform.localPosition = m_InitPosition;
         }
 
         //旋转角为负数往上动
