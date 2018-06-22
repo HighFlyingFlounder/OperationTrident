@@ -233,7 +233,7 @@ namespace OperationTrident.Room1
                     else if (state == Room1State.FindingIDCard)
                     {
                         //door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
-                        door2.GetComponent<DoorScript>().CreateFragmentsInFloor(100, true);
+                        door2.GetComponent<DoorScript>().CreateFragmentsInFloor(270, true);
                         door2.GetComponent<HintableObject>().DestroyThis();
                         Destroy(door2);
                     }

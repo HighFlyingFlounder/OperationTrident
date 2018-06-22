@@ -37,14 +37,6 @@ namespace OperationTrident.Room1
             "逃离房间"
         };
 
-        public string[] missionDetails =
-        {
-            //"2018.6.22  星期五    \n雷克雅未克    \n休伯利安行动"
-            "2018.6.22  星期五",
-            "雷克雅未克",
-            "普罗米修斯行动"
-        };
-
         // 任务目标的内容
         private string missionContent;
 
@@ -129,17 +121,6 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            // 显示任务细节
-            //GUIUtil.DisplayContentInGivenPositionSequently(missionDetails[0], camera, GUIUtil.greenColor, 1.0f / 10.0f, 2.0f / 3.0f,fontSize:16);
-            //GUIUtil.DisplayMissionDetailDefault(
-            //    missionDetails,
-            //    camera,
-            //    GUIUtil.greenColor,
-            //    wordTransparentInterval: 0.005f,
-            //    wordAppearanceInterval: 0.1f,
-            //    lineSubsequentlyInterval: 1.236f,
-            //    fontSize: 16);
-
             // 显示任务目标
 
             if (missionContent != string.Empty)
@@ -164,7 +145,7 @@ namespace OperationTrident.Room1
                 GUI.Label(rect, (int)nowDistance + "m", style);
             }
 
-            string subtitle = "^w你好,^r面包^w,我是^b甜甜圈^w,我们要找到^yID卡";
+            string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
             GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
         }
     }
