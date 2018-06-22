@@ -2332,7 +2332,7 @@ Camera:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1475960324823428}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -3451,14 +3451,14 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444310486929022}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b4d53593373d6a4387bebf4ff59ae91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ctrlType: 1
   syncPerSceond: 10
-  ForcastSync: 0
+  ForcastSync: 1
 --- !u!114 &114353155239874898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3500,7 +3500,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444310486929022}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8c2ab1dd21f7814392f34bb245130af, type: 3}
   m_Name: 
@@ -3556,7 +3556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsLocalPlayer: 1
-  m_HasNetwork: 0
+  m_HasNetwork: 1
 --- !u!114 &114912667248724828
 MonoBehaviour:
   m_ObjectHideFlags: 1

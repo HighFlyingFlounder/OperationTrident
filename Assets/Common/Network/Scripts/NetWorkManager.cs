@@ -89,7 +89,7 @@ public class NetWorkManager : MonoBehaviour
 
         if (id == GameMgr.instance.id)
         {
-            playerObj.transform.Find("Camera").gameObject.SetActive(true);
+            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = true;
             playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
