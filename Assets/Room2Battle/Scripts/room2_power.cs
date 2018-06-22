@@ -190,8 +190,8 @@ namespace room2Battle
                     if (span.TotalSeconds >= 5.0f)
                     {
                         //player.GetComponent<becomeDark>().enabled = false;
-                        playerCamera.GetComponent<becomeDark>().enabled = false;
-                        RenderSettings.ambientIntensity = 1.0f;
+                        
+                        //RenderSettings.ambientIntensity = 1.0f;
                         isSwitchOpen = true;
                         gameObject.GetComponent<NetSyncController>().SyncVariables();
                     }
@@ -227,6 +227,11 @@ namespace room2Battle
                     playerCamera.GetComponent<depthSensor>().enabled = false;
                     isOpenDepthSensor = false;
                 }
+            }
+
+            if(isSwitchOpen)
+            {
+                playerCamera.GetComponent<becomeDark>().enabled = false;
             }
 
         }
