@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine.UI;
+using System.Reflection;
+
 
 public class NetSyncController : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class NetSyncController : MonoBehaviour
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
         sync_id = this.gameObject.name;
         NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.AddListener(sync_id + "RPC", RecvRPC);
     }
 
     void SendNetSync()
@@ -77,5 +80,60 @@ public class NetSyncController : MonoBehaviour
     //强制同步变量
     public void SyncVariables() {
         SendNetSync();
+    }
+
+    public void RPC(string methodName, Type type, params object[] args)
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        proto.AddString("RPC");
+        proto.AddString(sync_id + "RPC");
+        // componentName
+        proto.AddString(type.ToString());
+
+        proto.AddString(methodName);
+        // 问题1， 发送obj数组
+        proto.AddObjects(args);
+        NetMgr.srvConn.Send(proto);
+    }
+
+    public void RecvRPC(ProtocolBase protoBase)
+    {
+        Debug.Log("Reach RecvRPC");
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        if (!protoName.Equals(sync_id + "RPC"))
+            return;
+        //丢弃自己发的信息
+        string player_id = proto.GetString(start, ref start);
+        Debug.Log("player_id:" + player_id);
+        if (player_id == GameMgr.instance.id)//丢弃自己发的信息
+        {
+            return;
+        }
+
+        string componentName = proto.GetString(start, ref start);
+        string methodName = proto.GetString(start, ref start);
+
+        object[] parameters = (object[])proto.GetObjects(start);
+
+        Debug.Log("componentName:" + componentName);
+        Debug.Log("methodName:" + methodName);
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            Debug.Log("Parameters:" + parameters[i].ToString());
+        }
+
+        for (int i = 0; i < sync_scripts.Length; i++)
+        {
+            if (sync_scripts[i].GetType().ToString() != componentName)
+                continue;
+            //反射调用
+            Type t = sync_scripts[i].GetType();
+            MethodInfo method = t.GetMethod(methodName);
+            Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
+            method.Invoke(sync_scripts[i], parameters);
+        }
     }
 }
