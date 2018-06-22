@@ -664,7 +664,6 @@ namespace OperationTrident.Util
             }
             if (frequentNumberCounter1.Count >= missionContent.Length)
             {
-                //frequentNumberCounter1 = missionContent.Length;
                 DisplayMissionTargetDefault(missionContent, camera, color, inLeft, fontSize); // TODO:重载一下这个函数，接受字体大小和颜色,顺便重载一下Sequently那个，让他也调用这个Default
                 return;
             }
@@ -692,13 +691,12 @@ namespace OperationTrident.Util
                 {
                     for (int i = 0; i < frequentNumberCounter1.Count; i++)
                     {
-                        //int j = UnityEngine.Random.Range(0, frequentNumberCounter1);
                         toDisplay[i] = missionContent[i];
                     }
                 }
                 else
                 {
-                    for(int i = 0; i < frequentNumberCounter1.Count; i++)
+                    for (int i = 0; i < frequentNumberCounter1.Count; i++)
                     {
                         toDisplay[frequentNumberCounter1[i]] = missionContent[frequentNumberCounter1[i]];
                     }

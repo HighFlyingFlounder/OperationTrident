@@ -1,104 +1,77 @@
-﻿Shader "Custom/test"
+﻿Shader "test"
 {
 	Properties
 	{
-		_MainTex("Texture", 2D) = "white" {}
-		_Contrast("Constrast",Range(0,4)) = 2
-		_Brightness("Brightness",Range(0,2)) = 1
-		_NightVisionColor("Night Vision Color",Color) = (1,1,1,1)
-		_RandomValue("RandomValue",Float) = 0
-		_distortion("distortion",Float) = 0.2
-		_scale("scale",Float) = 0.8
-		_VignetteTex("Vignette Texture", 2D) = "white"{}
-		_ScanLineTileTex("Scan Line Tile Texture", 2D) = "white"{}
-		_ScanLineTileAmount("Scan Line Tile Amount", Float) = 4.0
-		_NoiseTex("Noise Texture", 2D) = "white" {}
-		_NoiseXSpeed("Noise X Speed", Float) = 100.0
-		_NoiseYSpeed("Noise Y Speed",Float) = 100.0
+		//_MainTex ("Texture", 2D) = "white" {}
+		_WaveTex("waveTexture", 2D) = "waveTex" {}
+	_TexCoordOffset("texCoordOffset",float) = 0
+		_MaxDistance("MaxDistance", float) = 0.02
 	}
 		SubShader
 	{
-		// No culling or depth
+		//Post Processing, No culling or depth
 		Cull Off ZWrite Off ZTest Always
 
 		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hit_fastest
-			#include "UnityCG.cginc"
+	{
+		CGPROGRAM
+#pragma vertex vert
+#pragma fragment frag
 
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
+#include "UnityCG.cginc"
 
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
+		struct appdata
+	{
+		float4 vertex : POSITION;
+		float2 uv : TEXCOORD0;
+	};
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-				return o;
-			}
+	struct v2f
+	{
+		float2 uv : TEXCOORD0;
+		float4 vertex : SV_POSITION;
+	};
 
-			sampler2D _MainTex;
-			uniform sampler2D _ScanLineTileTex;
-			uniform sampler2D _NoiseTex;
-			uniform sampler2D _VignetteTex;
-			fixed _Contrast;
-			fixed _Brightness;
-			fixed _RandomValue;
-			fixed _distortion;
-			fixed _scale;
-			fixed _NoiseYSpeed;
-			fixed _NoiseXSpeed;
-			fixed _ScanLineTileAmount;
-			fixed4 _NightVisionColor;
+	v2f vert(appdata v)
+	{
+		v2f o;
+		o.vertex = UnityObjectToClipPos(v.vertex);
+		o.uv = v.uv;
+		return o;
+	}
 
-			float2 barrelDistortion(float2 coord)
-			{
-				float2 h = coord.xy - float2(0.5, 0.5);
-				float r2 = h.x * h.x + h.y * h.y;
-				float f = 1.0 + r2 * (_distortion * sqrt(r2));
+	sampler2D _CameraDepthTexture;
+	uniform sampler2D _WaveTex;
+	uniform float _TexCoordOffset;
+	uniform float _MaxDistance;
 
-				return f * _scale * h + 0.5;
-			}
+	fixed4 frag(v2f i) : SV_Target
+	{
+		float depth = Linear01Depth(tex2D(_CameraDepthTexture, i.uv));
+	float tmpX = i.uv.x - 0.5f;
+	float tmpY = i.uv.y - 0.5f;
+	//用z算出像素射线的length
+	float length = depth * sqrt(1 + tmpX * tmpX + tmpY* tmpY);
+	//深度决定v，于是加随时间变化v的偏移，就能实现“往外扩散的波浪”
+	//至于fix u还是V,就取决于条纹纹理是怎么ps的了
+	float v_scale = 50.0f;
+	fixed4 color;
 
-			fixed4 frag(v2f i) : SV_Target
-			{
-				//桶型畸变算出的新uv
-				half2 distortedUV = barrelDistortion(i.uv);
-				fixed4 renderTex = tex2D(_MainTex, distortedUV);
-				fixed4 vignetteTex = tex2D(_VignetteTex, distortedUV);
+	if (length < _MaxDistance)
+	{
+		color = tex2D(_WaveTex, float2(0.5f, length * v_scale - _TexCoordOffset));
+	}
+	else
+	{
+		float _Attactor = 50.0;
+		float attenuation = 1.0f / (1.0f + _Attactor * length);
+		color = attenuation * tex2D(_WaveTex, float2(0.5f, length * v_scale - _TexCoordOffset));
+	}
 
-				half2 scanLinesUV = half2(i.uv.x * _ScanLineTileAmount, i.uv.y *_ScanLineTileAmount);
-				fixed4 scanLineTex = tex2D(_ScanLineTileTex, scanLinesUV);
 
-				//噪声贴图,使用sin函数？
-				half2 noiseUV = half2(i.uv.x + (_RandomValue * _SinTime.z *_NoiseXSpeed), i.uv.y + (_Time.x * _NoiseYSpeed));
-				fixed noiseTex = tex2D(_NoiseTex, noiseUV);
-
-				//混合颜色
-				fixed lum = dot(fixed3(0.299, 0.587, 0.114), renderTex.rgb);
-				lum += _Brightness; // 补光
-				fixed4 finalColor = (lum * 2) + _NightVisionColor;
-
-				finalColor = pow(finalColor, _Contrast);
-				finalColor *= vignetteTex;
-				finalColor *= scanLineTex * noiseTex;
-
-				return finalColor;
-		}
+	return color;
+	}
 		ENDCG
 	}
 	}
-	FallBack "Diffuse"
 }
