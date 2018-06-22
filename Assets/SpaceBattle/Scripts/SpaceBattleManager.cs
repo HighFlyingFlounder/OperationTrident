@@ -11,22 +11,27 @@ public class SpaceBattleManager : MonoBehaviour {
     public Dictionary<string, GameObject> list;
     public Dictionary<string, Hinder> rock_list;
     private GameObject[] rocks;
+    void Awake()
+    {
+        //协议
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("FinishLoading");
+        NetMgr.srvConn.Send(protocol);
+        //监听
+        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
+    }
     // Use this for initialization
     void Start () {
         StartGame ();
     }
 
-    // Update is called once per frame
-    void Update () {
-
-    }
     //开始一场游戏的准备工作
     void StartGame () {
         list = new Dictionary<string, GameObject> ();
         rock_list = new Dictionary<string, Hinder> ();
         //协议
         ProtocolBytes protocol = new ProtocolBytes ();
-        protocol.AddString ("FinishLoading");
+        protocol.AddString ("StartFight");
         NetMgr.srvConn.Send (protocol);
         //监听
         NetMgr.srvConn.msgDist.AddListener ("StartFight", RecvStartFight);
@@ -131,6 +136,7 @@ public class SpaceBattleManager : MonoBehaviour {
         //取消监听
         NetMgr.srvConn.msgDist.DelListener ("HitRock", RecvHitRock);
         NetMgr.srvConn.msgDist.DelListener ("Result", RecvResult);
+        NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
         ClearBattle ();
     }
 
@@ -138,5 +144,15 @@ public class SpaceBattleManager : MonoBehaviour {
         StartBattle ((ProtocolBytes)protocol);
         //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
         NetMgr.srvConn.msgDist.DelListener ("StartFight", RecvStartFight);
+    }
+
+    public void RecvLoading(ProtocolBase protocol)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        //解析协议
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        string player_id = proto.GetString(start, ref start);
+        Debug.Log(player_id + " finish Loading");
     }
 }

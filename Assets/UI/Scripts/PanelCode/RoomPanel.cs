@@ -153,8 +153,7 @@ public class RoomPanel : PanelBase
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        Debug.Log("RecvFight GameMgr.instance.id" + GameMgr.instance.id);
-        SceneManager.LoadScene("PlayerTest", LoadSceneMode.Single);
+        SceneManager.LoadScene("SpaceBattle", LoadSceneMode.Single);
         Close();
     }
 
