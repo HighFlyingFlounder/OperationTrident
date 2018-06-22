@@ -19,7 +19,7 @@ namespace room2Battle
         //敌人出生点
         [SerializeField]
         protected Transform[] enemyInitPositions;
-
+        //玩家
         public GameObject player;
 
         //钥匙
@@ -43,6 +43,8 @@ namespace room2Battle
         protected bool isSwitchOpen = false;
         //是否进入2楼
         protected bool isIntoSecondFloor = false;
+        //是否打开夜视仪
+        protected bool isOpenDepthSensor = false;
 
         //获取相机句柄
         void Start()
@@ -78,7 +80,7 @@ namespace room2Battle
         {
             //RenderSettings.ambientIntensity = 0.1f;
             player.GetComponent<becomeDark>().enabled = true;
-            player.GetComponent<depthSensor>().enabled = true;
+            //player.GetComponent<depthSensor>().enabled = true;
 
             //生成敌人
             for (int i = 0; i < maxEnemyNum; ++i)
@@ -172,8 +174,30 @@ namespace room2Battle
                     span = System.TimeSpan.Zero;
                 }
             }
+            //按H打开夜视仪
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                //通过只有一个后处理，减少post processing的pass
+                if (!isOpenDepthSensor)
+                {
+                    player.GetComponent<depthSensor>().enabled = true;
+                    player.GetComponent<becomeDark>().enabled = false;
+                    isOpenDepthSensor = true;
+                }
+                else
+                {
+                    if (!isSwitchOpen)
+                    {
+                        player.GetComponent<becomeDark>().enabled = true;
+                    }
+                    player.GetComponent<depthSensor>().enabled = false; 
+                    isOpenDepthSensor = false;
+                }
+            }
+
         }
 
+        //TODO： 更新到佩炜的GUI
         void OnGUI()
         {
             if (isFocus)
