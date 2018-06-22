@@ -39,7 +39,10 @@ namespace OperationTrident.Room1
 
         public string[] missionDetails =
         {
-            "2018.6.22  星期五    \n雷克雅未克    \n休伯利安行动"
+            //"2018.6.22  星期五    \n雷克雅未克    \n休伯利安行动"
+            "2018.6.22  星期五",
+            "雷克雅未克",
+            "普罗米修斯行动"
         };
 
         // 任务目标的内容
@@ -128,7 +131,14 @@ namespace OperationTrident.Room1
         {
             // 显示任务细节
             //GUIUtil.DisplayContentInGivenPositionSequently(missionDetails[0], camera, GUIUtil.greenColor, 1.0f / 10.0f, 2.0f / 3.0f,fontSize:16);
-            GUIUtil.DisplayMissionDetailDefault(missionDetails, camera, GUIUtil.greenColor, fontSize: 16);
+            GUIUtil.DisplayMissionDetailDefault(
+                missionDetails,
+                camera,
+                GUIUtil.greenColor,
+                wordTransparentInterval: 0.005f,
+                wordAppearanceInterval: 0.1f,
+                lineSubsequentlyInterval: 1.236f,
+                fontSize: 16);
 
             // 显示任务目标
 
@@ -136,8 +146,13 @@ namespace OperationTrident.Room1
             {
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.brightGreenColor,
-                    interval: appearInterval, blingInterval:blingInterval,fontSize: 16, sequentClear:sequentClear);
+                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
+                    camera,
+                    GUIUtil.brightGreenColor,
+                    interval: appearInterval,
+                    blingInterval:blingInterval,
+                    fontSize: 16,
+                    sequentClear:sequentClear);
             }
 
 

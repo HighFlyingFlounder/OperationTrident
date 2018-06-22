@@ -9,6 +9,10 @@ namespace OperationTrident.Util
 {
     public static class GUIUtil
     {
+        //================================================================================
+        //==========        一些可以获得的颜色，推荐直接获取Color后缀的         ===============================
+        //================================================================================
+
         public readonly static Vector3 blackVec = new Vector3(0.0f, 0.0f, 0.0f);// 完全黑
         public readonly static Vector3 greyVec = new Vector3(0.5f, 0.5f, 0.5f);// 中间灰
         public readonly static Vector3 whiteVec = new Vector3(1.0f, 1.0f, 1.0f);// 完全白
@@ -41,6 +45,7 @@ namespace OperationTrident.Util
         public readonly static Color brightGreenColor = GetColorFromVector3(brightGreenVec);
         public readonly static Color deepGreenColor = GetColorFromVector3(deepGreenVec);
 
+
         public readonly static Color subtitleNormalColor = GetColorFromString("66 cc ff");
         public readonly static Color missionContentNormalColor = GetColorFromString("ee ee ee");
 
@@ -62,6 +67,10 @@ namespace OperationTrident.Util
         private const float defaultMissionDetailOffsetLeft = 1.0f / 20.0f;
         private const float defaultMissionDetailOffsetUp = 2.0f / 3.0f;
         private const float defaultMissionDetailInterval = 0.5f; // 任务细节每行显示的间隔
+
+        //================================================================================
+        //==========        一些可以获得的默认的参数         ===============================
+        //================================================================================
 
         // 微软雅黑
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
@@ -99,6 +108,10 @@ namespace OperationTrident.Util
                 return defaultSubtitleRatioHeight;
             }
         }
+
+        //================================================================================
+        //==========        一些关于颜色的基本操作         ===============================
+        //================================================================================
 
         // 传入参数获得一种纯色  越接近0越黑，越接近1越白
         public static Color GetPureColor(float factor)
@@ -225,6 +238,10 @@ namespace OperationTrident.Util
             return new Vector4(color.r, color.g, color.b, color.a);
         }
 
+        //================================================================================
+        //==========        一些关于样式GUIStyle的基本操作         ===============================
+        //================================================================================
+
         // 得到默认的字体样式（全默认,颜色黑色）
         public static GUIStyle GetDefaultTextStyle()
         {
@@ -260,6 +277,10 @@ namespace OperationTrident.Util
             style.fontSize = fontSize;
             return style;
         }
+
+        //================================================================================
+        //==========        一些坐标转换的操作         ===============================
+        //================================================================================
 
         // 从GUI的位置转到屏幕坐标
         public static Vector2 GUIPositionToScreenPoint(Vector2 guiPoint)
@@ -316,6 +337,10 @@ namespace OperationTrident.Util
         // 注意下面这些Display开头的函数都要放在OnGUI()里面调用！@！@！￥！@￥！@￥！@%……！@￥……@#%&￥……*
 
 
+        //================================================================================
+        //==========        一些显示字幕的函数         ===============================
+        //================================================================================
+
         // 直接调字幕，显示在默认的位置。注意一定要在OnGUI()中调用该函数！！！
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera)
         {
@@ -349,6 +374,10 @@ namespace OperationTrident.Util
                     new Vector2(camera.pixelWidth, fontSize)
                     ), subtitle, style);
         }
+
+        //================================================================================
+        //==========        一些显示指定内容的默认参数         ===============================
+        //================================================================================
 
         // 在指定位置显示内容
         public static void DisplayContentInGivenPosition(string subtitle, Rect positionRect)
@@ -410,6 +439,10 @@ namespace OperationTrident.Util
                 }
             }
         }
+
+        //================================================================================
+        //==========        一些关于任务目标的显示函数         ===============================
+        //================================================================================
 
         // 默认的显示任务目标
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera, bool inLeft = true)
@@ -715,15 +748,27 @@ namespace OperationTrident.Util
         private static float frameTimer6 = 0.01f;
         private static int missionDetailIndex = 0;
         private static bool canBeStopDMDD = false;
+        private static float minusFactorAlpha=0.0f;
         // 显示任务时间地点等细节
         public static void DisplayMissionDetailDefault(
             string[] missionDetails,
             Camera camera,
             Color color,
-            int fontSize = defaultFontSize
+            int fontSize = defaultFontSize,
+            float wordTransparentInterval = 0.005f,  // 字变得透明的速度
+            float wordAppearanceInterval = 0.5f,  // 字出现的速度
+            float lineSubsequentlyInterval = defaultMissionDetailInterval  // 每一行出现的速度
             )
         {
-            if (canBeStopDMDD) { return;}
+            if (canBeStopDMDD)
+            {
+                if (color.a - minusFactorAlpha == 0.0f) return;
+                else
+                {
+                    color.a -= minusFactorAlpha;
+                    minusFactorAlpha += wordTransparentInterval;
+                }
+            }
             frameTimer6 += Time.deltaTime;
             if (missionDetailIndex == 0)
             {
@@ -733,6 +778,7 @@ namespace OperationTrident.Util
                         color,
                         defaultMissionDetailOffsetLeft,
                         defaultMissionDetailOffsetUp + missionDetailIndex * fontSize / camera.pixelHeight,
+                        interval: wordAppearanceInterval,
                         fontSize: fontSize);
             }
             else
@@ -757,24 +803,35 @@ namespace OperationTrident.Util
                         color,
                         defaultMissionDetailOffsetLeft,
                         defaultMissionDetailOffsetUp + (float)missionDetailIndex * (fontSize) / camera.pixelHeight,
+                        interval: wordAppearanceInterval,
                         fontSize: fontSize);
             }
             //float startPositionX = defaultMissionDetailOffsetLeft * camera.pixelWidth;
             //float startPositionY = defaultMissionDetailOffsetUp * camera.pixelHeight;
-            if (frameTimer6 > defaultMissionDetailInterval*(missionDetails[missionDetailIndex].Length+2))
+            if (frameTimer6 > 
+                lineSubsequentlyInterval+wordAppearanceInterval*3.0f*(missionDetails[missionDetailIndex].Length))
             {
-                if (missionDetailIndex >= missionDetails.Length)
+                if (missionDetailIndex+1 >= missionDetails.Length)
                 {
                     canBeStopDMDD = true;
                 }
                 else
                 {
                     ++missionDetailIndex;
+                    missionDetailIndex = Math.Min(missionDetailIndex, missionDetails.Length - 1);
                 }
                 frameTimer6 = 0.0f;
             }
             
         }
+
+        //================================================================================
+        //==        显示字幕，要用指定的文法的！                                      ===============================
+        //==        文法示例：                                                        =========================
+        //==        ^w你好,^r温蒂艾斯^w,我是^b爱思文迪^w,我们要找到^y托卡米克之心"       ===================================================
+        //==        ^w作为标签，后面跟着的全是白色，直到遇到后面的标签，                  =====================================================================
+        //==        ^w 白色， ^r 红色， ^b 蓝色， ^y 黄色，^k 黑色                      =====================================================================
+        //===============================================================================
 
         // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字体大小参数,再加一个高度的比例参数，默认是3/4
         public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera,
