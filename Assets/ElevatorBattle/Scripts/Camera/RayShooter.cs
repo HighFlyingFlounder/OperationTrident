@@ -9,7 +9,7 @@ namespace OperationTrident.Elevator
     {
         // 判断能否够到物体的距离
         [SerializeField]
-        public float distanceQuota = 1.0f;
+        public float distanceQuota;
 
         // 附加在这个东西上的摄像机
         private Camera camera;
@@ -64,13 +64,7 @@ namespace OperationTrident.Elevator
                     {
                         return;
                     }
-                    OperationTrident.Elevator.Button target =
-                        hitObject.GetComponent<OperationTrident.Elevator.Button>();
-                    if (target != null)   //检查对象上是否有Button组件
-                    {
-                        Messenger<int>.Broadcast(GameEvent.Push_Button, 0);
-                        return;
-                    }
+                    hitObject.SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
                 }
             }
 
