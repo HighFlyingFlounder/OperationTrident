@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace room2Battle
 {
+    /// <summary>
+    /// 驱动文件，挂在场景的子场景
+    /// </summary>
     public class room2 : MonoBehaviour {
         [SerializeField]
         protected SubsceneController subSceneController;
