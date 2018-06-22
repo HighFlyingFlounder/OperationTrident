@@ -46,6 +46,8 @@ namespace room2Battle
         //是否打开夜视仪
         protected bool isOpenDepthSensor = false;
 
+        protected GameObject playerCamera = null;
+
         //挂载脚本的shader，包括dark和depth sensor
         [SerializeField]
         protected Shader shader_dark = null;
@@ -84,10 +86,12 @@ namespace room2Battle
         {
             //RenderSettings.ambientIntensity = 0.1f;
             //添加脚本
-            NetWorkManager.instance.list[GameMgr.instance.id].AddComponent<becomeDark>();
+            playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+            playerCamera.AddComponent<becomeDark>();
             //初始化脚本参数
-            (NetWorkManager.instance.list[GameMgr.instance.id].GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
-            NetWorkManager.instance.list[GameMgr.instance.id].GetComponent<becomeDark>().enabled = true;
+            (playerCamera.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
+            playerCamera.GetComponent<becomeDark>().enabled = true;
+            
             //player.GetComponent<becomeDark>().enabled = true;
             //player.GetComponent<depthSensor>().enabled = true;
 
@@ -95,7 +99,7 @@ namespace room2Battle
             for (int i = 0; i < maxEnemyNum; ++i)
             {
                 GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                enemyList.Add(obj);   
+                enemyList.Add(obj);
             }
         }
 
@@ -189,7 +193,7 @@ namespace room2Battle
                 //通过只有一个后处理，减少post processing的pass
                 if (!isOpenDepthSensor)
                 {
-                   // player.GetComponent<depthSensor>().enabled = true;
+                    // player.GetComponent<depthSensor>().enabled = true;
                     //player.GetComponent<becomeDark>().enabled = false;
                     isOpenDepthSensor = true;
                 }

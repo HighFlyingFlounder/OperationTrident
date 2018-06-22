@@ -456,8 +456,8 @@ MonoBehaviour:
     type: 2}
   enemyInitPositions:
   - {fileID: 1574952954}
-  player: {fileID: 784918786}
   key: {fileID: 674223789}
+  shader_dark: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
 --- !u!114 &299697319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -569,15 +569,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4307294581555432, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 27.96
+      value: -65.5
       objectReference: {fileID: 0}
     - target: {fileID: 4307294581555432, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 12.79
       objectReference: {fileID: 0}
     - target: {fileID: 4307294581555432, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -23.42117
+      value: -1.48
       objectReference: {fileID: 0}
     - target: {fileID: 4307294581555432, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}
       propertyPath: m_LocalRotation.x
