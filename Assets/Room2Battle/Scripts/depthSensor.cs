@@ -57,6 +57,7 @@ namespace room2Battle
         // Update is called once per frame
         void Update()
         {
+            /*
             //按下H来打开／深度感应器（depth sensor）模式
             if (Input.GetKeyDown(KeyCode.H))
             {
@@ -72,11 +73,12 @@ namespace room2Battle
                     m_IsDepthSensorEnabled = true;
                 }
             }
-
+            */
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
+            /*
             if (m_IsDepthSensorEnabled)
             {
                 m_TexCoordOffset += Time.deltaTime * 1.0f;
@@ -95,6 +97,18 @@ namespace room2Battle
             {
                 Graphics.Blit(src, dest);
             }
+            */
+            m_TexCoordOffset += Time.deltaTime * 1.0f;
+            //m_TexCoordOffset -= (int)m_TexCoordOffset;
+
+            //把间隔条纹纹理及其uv偏移传进去
+            material.SetFloat("_TexCoordOffset", m_TexCoordOffset);
+            material.SetFloat("_Attactor", maxdistance);
+            material.SetTexture("_WaveTex", m_Texture);
+
+            //Graphics.Blit是用给定shader把src RenderTexture复制到dest
+            //所以可以当作是post processing的draw call
+            Graphics.Blit(src, dest, material);
         }
     }
 }
