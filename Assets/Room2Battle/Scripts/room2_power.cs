@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace room2Battle {
+namespace room2Battle
+{
     //能源房大战
-    public class room2_power :  Subscene{
+    public class room2_power : Subscene
+    {
+        //敌人预设
         [SerializeField]
         protected GameObject enemyPrefabs;
-
+        //敌人列表方便管理
         protected ArrayList enemyList = new ArrayList();
-
+        //当前敌人数目，用于补充敌人数目
         protected int currentEnemyNum = 0;
-
+        //最多敌人数目
         protected int maxEnemyNum = 20;
-
-        [SerializeField]
-        protected Light light;
-
+        //敌人出生点
         [SerializeField]
         protected Transform[] enemyInitPositions;
 
-        [SerializeField]
-        protected GameObject playerControl;
+        public GameObject player;
 
         //钥匙
         [SerializeField]
@@ -30,16 +29,19 @@ namespace room2Battle {
         //主相机，需要判断是否拿到钥匙
         protected Camera mCamera;
 
+        //计时器
         protected System.DateTime sw = new System.DateTime();
 
         protected System.TimeSpan span;
 
+        //是否对准开关
         protected bool isFocus = false;
 
+        //是否开始计时
         protected bool startTiming = false;
-
+        //是否打开开关
         protected bool isSwitchOpen = false;
-
+        //是否进入2楼
         protected bool isIntoSecondFloor = false;
 
         //获取相机句柄
@@ -48,11 +50,13 @@ namespace room2Battle {
             mCamera = Camera.main;
         }
 
+        //@override
         public override bool isTransitionTriggered()
         {
             return isIntoSecondFloor && isSwitchOpen;
         }
 
+        //@override
         public override string GetNextSubscene()
         {
             return "room2_battle";
@@ -60,6 +64,7 @@ namespace room2Battle {
 
         public override void onSubsceneDestory()
         {
+            player.GetComponent<depthSensor>().enabled = false;
             foreach (GameObject obj in enemyList)
             {
                 if (obj != null)
@@ -71,7 +76,16 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
-            light.intensity = 0.0f;
+            //RenderSettings.ambientIntensity = 0.1f;
+            player.GetComponent<becomeDark>().enabled = true;
+            player.GetComponent<depthSensor>().enabled = true;
+
+            //生成敌人
+            for (int i = 0; i < maxEnemyNum; ++i)
+            {
+                GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
+                enemyList.Add(obj);   
+            }
         }
 
         public override void notify(int i)
@@ -85,9 +99,13 @@ namespace room2Battle {
 
         void Update()
         {
+            Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
+
+            Ray ray = mCamera.ScreenPointToRay(point);
+
             //通过摄像机的蓝色轴（即Z轴），射向对应物体，判断标签
             RaycastHit hit;
-            if (Physics.Raycast(mCamera.transform.position, mCamera.transform.forward,out hit))
+            if (Physics.Raycast(ray, out hit))
             {
                 //获取物体
                 GameObject obj = hit.transform.gameObject;
@@ -112,21 +130,13 @@ namespace room2Battle {
                 }
             }
 
-            //生成敌人
-            if (enemyList.Count < maxEnemyNum)
+            //补充敌人
+            for (int i = 0; i < enemyList.Count; ++i)
             {
-                GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                enemyList.Add(obj);
-            }
-            else
-            {
-                for (int i = 0; i < enemyList.Count; ++i)
+                if (enemyList[i] == null)
                 {
-                    if (enemyList[i] == null)
-                    {
-                        enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        break;
-                    }
+                    enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
+                    break;
                 }
             }
         }
@@ -149,7 +159,8 @@ namespace room2Battle {
                     span = after.Subtract(sw);
                     if (span.TotalSeconds >= 5.0f)
                     {
-                        light.intensity = 0.6f;
+                        player.GetComponent<becomeDark>().enabled = false;
+                        RenderSettings.ambientIntensity = 1.0f;
                         isSwitchOpen = true;
                     }
                 }
@@ -160,13 +171,6 @@ namespace room2Battle {
                     sw = System.DateTime.Now;
                     span = System.TimeSpan.Zero;
                 }
-            }
-
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                inDark dark = playerControl.GetComponent<inDark>();
-                Debug.Log(dark);
-                dark.gameObject.SetActive(true);
             }
         }
 
@@ -190,6 +194,17 @@ namespace room2Battle {
                 else
                 {
                     GUI.Label(new Rect(posX, posY, 100, 100), "");
+                }
+            }
+            if (!isSwitchOpen)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("清除附近敌人，打通到电源室的道路！", Camera.main, true);
+            }
+            else
+            {
+                if (!isIntoSecondFloor)
+                {
+                    OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("挺进2楼！", Camera.main, true);
                 }
             }
         }
