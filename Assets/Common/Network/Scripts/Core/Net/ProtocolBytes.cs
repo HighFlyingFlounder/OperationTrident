@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 //字节流协议模型
 public class ProtocolBytes : ProtocolBase
@@ -144,4 +146,40 @@ public class ProtocolBytes : ProtocolBase
 
         return data;
     }
+
+    public void AddObjects(object[] objs)
+    {
+        byte[] buff = null;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(ms, objs);
+            buff = ms.ToArray();
+        }
+        bytes = bytes.Concat(buff).ToArray();
+
+        Object obj = null;
+        using (MemoryStream ms = new MemoryStream(buff))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            obj = bf.Deserialize(ms);
+        }
+    }
+
+    public Object GetObjects(int start)
+    {
+        if (bytes == null)
+            return null;
+        if (bytes.Length < start)
+            return null;
+        Object obj = new object();
+
+        using (MemoryStream ms = new MemoryStream(bytes, start, bytes.Length - start))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            obj = bf.Deserialize(ms);
+        }
+        return obj;
+    }
+
 }
