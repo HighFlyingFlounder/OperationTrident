@@ -7,6 +7,11 @@ namespace Room5Battle
     //第一次进入房间后，
     public class Subscene_Escape : Subscene
     {
+        //反应柱（下降）
+        public TokamakeReactorPillar m_ReactorPillar;
+        //核心（下降）
+        public TokamakeCore m_ReactorCore;
+
 
         public override bool isTransitionTriggered()
         {
@@ -24,6 +29,8 @@ namespace Room5Battle
         //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑
         public override void onSubsceneInit()
         {
+            m_ReactorCore.Shutdown();
+            m_ReactorPillar.Shutdown();
         }
 
         //@brief 善后工作

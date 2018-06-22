@@ -6,16 +6,18 @@ namespace Room5Battle
 {
     public class Subscene_CountDown : Subscene
     {
+        //反应柱开始冷却（变色）
+        public TokamakeReactorPillar m_ReactorPillar;
+
+        //敌人的prefab
+        public GameObject m_EnemyPrefab1;
+
+        //四个高台可以生成敌人
+        public Transform[] m_EnemyGenPos = new Transform[4];
+
         //五分钟 300s
         private float m_CountDownTime = 15.0f;
 
-        //敌人的prefab
-        [SerializeField]
-        private GameObject m_EnemyPrefab1;
-
-        //四个高台可以生成敌人
-        [SerializeField]
-        private Transform[] m_EnemyGenPos = new Transform[4];
 
         public override bool isTransitionTriggered()
         {
@@ -37,6 +39,7 @@ namespace Room5Battle
         //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑
         public override void onSubsceneInit()
         {
+            m_ReactorPillar.StartCoolDownProcedure();
             StartCoroutine(spawnEnemies1());
             StartCoroutine(spawnEnemies2());
         }
