@@ -133,6 +133,9 @@ public class NetSyncController : MonoBehaviour
             //反射调用
             Type t = sync_scripts[i].GetType();
             MethodInfo method = t.GetMethod(methodName);
+            if(method == null){
+                Debug.LogError("No public method in class " + t);
+            }
             Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
             method.Invoke(sync_scripts[i], parameters);
         }
