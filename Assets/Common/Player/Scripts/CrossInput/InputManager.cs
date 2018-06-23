@@ -230,7 +230,7 @@ namespace OperationTrident.CrossInput {
             }
         }
 
-        public void SetData(SyncData data) {
+        public void RecvData(SyncData data) {
             //m_MirrorButtonDown = (bool)data.Get(typeof(bool));
             //m_AttackButtonDown = (bool)data.Get(typeof(bool));
             //m_PressAttackButton = (bool)data.Get(typeof(bool));
@@ -245,7 +245,7 @@ namespace OperationTrident.CrossInput {
             m_Vertical = (float)data.Get(typeof(float));
         }
 
-        public SyncData GetData() {
+        public SyncData SendData() {
             SyncData data = new SyncData();
 
             //data.Add(m_Hashtable["MirrorButtonDown"]);
