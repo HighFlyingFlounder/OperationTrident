@@ -54,17 +54,14 @@ namespace room2Battle
             {
                 isNear = true;
                 player.GetComponent<becomeDark>().enabled = true;
-                m_controller.RPC("method_need_to_sync",this.GetType(),1,"string for param2");
+                m_controller.SyncVariables();
+                //m_controller.RPC(this,"method_need_to_sync",1,"string for param2");
             }
             else if (i == 2)
             {
                 isEnter = true;
+                m_controller.SyncVariables();
             }
-        }
-
-        public void method_need_to_sync(int param1,string param2){
-            Debug.Log(param1);
-            Debug.Log(param2);
         }
 
         void OnGUI()

@@ -85,17 +85,17 @@ public class NetSyncController : MonoBehaviour
     /// <summary> 
     /// 同步调用其他玩家客户端中此GameObject中此脚本中的此方法        
     /// </summary> 
+    /// <param name="_this">此脚本类的object，统一用this</param> 
     /// <param name="methodName">函数名字</param>  
-    /// <param name="type">此脚本类的名字，统一用this.GetType()</param> 
     /// <param name="args">函数的参数，可动态扩充长度</param>         
     /// <returns></returns> 
-    public void RPC(string methodName, Type type, params object[] args)
+    public void RPC(object _this, string methodName, params object[] args)
     {
         ProtocolBytes proto = new ProtocolBytes();
         proto.AddString("RPC");
         proto.AddString(sync_id + "RPC");
         // componentName
-        proto.AddString(type.ToString());
+        proto.AddString(_this.GetType().ToString());
 
         proto.AddString(methodName);
         // 问题1， 发送obj数组
