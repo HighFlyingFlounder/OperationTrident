@@ -21,4 +21,11 @@ public class NetMgr
         protocol.AddString("HeatBeat");
         return protocol;
     }
+
+    public static ProtocolBase GetDelayProtocol()
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("Delay");
+        return protocol;
+    }
 }

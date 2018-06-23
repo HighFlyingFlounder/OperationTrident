@@ -25,6 +25,9 @@ public class Connection
     //心跳时间
     public float lastTickTime = 0;
     public float heartBeatTime = 30;
+    //延时测量间隔
+    public float lastDelayTime = 0;
+    public float testDelayTime = 1.5;
     //消息分发
     public MsgDistribution msgDist = new MsgDistribution();
     ///状态
@@ -170,6 +173,12 @@ public class Connection
                 ProtocolBase protocol = NetMgr.GetHeatBeatProtocol();
                 Send(protocol);
                 lastTickTime = Time.time;
+            }
+            if (Tiem.time - lastDelayTime > testDelayTime)
+            {
+                ProtocolBase protocol = NetMgr.GetDelayProtocol();
+                Send(protocol);
+                lastDelayTime = Time.time;
             }
         }
     }
