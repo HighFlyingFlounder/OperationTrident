@@ -272,13 +272,13 @@ namespace room2Battle
             }
         }
 
-        public void SetData(SyncData data)
+        public void RecvData(SyncData data)
         {
             isSwitchOpen = (bool)data.Get(typeof(bool));
             isIntoSecondFloor = (bool)data.Get(typeof(bool));
         }
 
-        public SyncData GetData()
+        public SyncData SendData()
         {
             SyncData data = new SyncData();
             data.Add(isSwitchOpen);
