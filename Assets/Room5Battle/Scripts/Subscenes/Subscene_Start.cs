@@ -7,7 +7,7 @@ namespace Room5Battle
     public class Subscene_Start : Subscene
     {
         [SerializeField]
-        private Texture mTexturePureGrey;
+        private Texture m_TexturePureGrey;
 
         //托卡马克之心是否已启动冷却（要对着控制台按住F十秒）
         private bool m_isTokamakeStartToCoolDown;
@@ -114,7 +114,7 @@ namespace Room5Battle
                     rect2.xMax = rect2.xMin + barWidth * (m_ControlPanelKeyFPressingTime / c_RequiredKeyFPressingTime);
                     rect2.yMin = halfH + 30.0f;
                     rect2.yMax = halfH + 40.0f;
-                    GUI.DrawTexture(rect2, mTexturePureGrey);
+                    GUI.DrawTexture(rect2, m_TexturePureGrey);
                 }
                 else
                 {
