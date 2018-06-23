@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //网络管理
 public class NetMgr
@@ -26,6 +27,7 @@ public class NetMgr
     {
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("Delay");
+        protocol.AddLong(Stopwatch.GetTimestamp());
         return protocol;
     }
 }
