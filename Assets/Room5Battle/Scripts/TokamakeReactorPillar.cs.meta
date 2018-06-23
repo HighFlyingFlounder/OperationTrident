@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 51f59e6589e5f734a81f5a4eabbf9d13
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ReactorPillarShutdownMat: {fileID: 2100000, guid: c063ced656b57ec41907589fb0245d6d,
+      type: 2}
+  - m_DescendingAnimDirector: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
