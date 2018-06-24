@@ -18,7 +18,7 @@ using UnityEngine;
 /// 假如需要转移，则会调用SubState的onSubStateExit执行善后工作，然后进行转移
 /// </summary>
 /// 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
     public class SubsceneController : MonoBehaviour
     {

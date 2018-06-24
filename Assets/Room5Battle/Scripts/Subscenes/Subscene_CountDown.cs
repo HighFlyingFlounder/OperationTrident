@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
     public class Subscene_CountDown : Subscene
     {
         //反应柱开始冷却（变色）
-        public TokamakeReactorPillar m_ReactorPillar;
+        public TokamakReactorPillar m_ReactorPillar;
 
         //敌人的prefab
         public GameObject m_EnemyPrefab1;
@@ -91,18 +92,7 @@ namespace Room5Battle
 
         private void OnGUI()
         {
-            //提示按住F
-            GUIStyle textStyle = new GUIStyle();
-            textStyle.fontSize = 16;
-            textStyle.normal.textColor = new Color(0.3f, 0.3f, 1.0f);
-            textStyle.alignment = TextAnchor.UpperLeft;
-
-            Rect rect1 = new Rect();
-            rect1.xMin = 20.0f;
-            rect1.xMax = 200.0f;
-            rect1.yMin = 20.0f;
-            rect1.yMax = 50.0f;
-            GUI.Label(rect1, "托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), textStyle);
+            GUIUtil.DisplayMissionTargetDefault("托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), Camera.main, Color.white);
         }
     }
 }
