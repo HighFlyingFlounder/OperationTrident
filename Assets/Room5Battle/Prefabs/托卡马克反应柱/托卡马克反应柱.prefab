@@ -36,6 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4759794079760826}
+  - component: {fileID: 114686251067800552}
   m_Layer: 0
   m_Name: "\u53CD\u5E94\u67F1"
   m_TagString: Untagged
@@ -70,9 +71,11 @@ GameObject:
   - component: {fileID: 4488039985898700}
   - component: {fileID: 33521977386588252}
   - component: {fileID: 23008007401838124}
+  - component: {fileID: 114583089300372656}
   - component: {fileID: 114951327036236292}
+  - component: {fileID: 65921432704165392}
   m_Layer: 0
-  m_Name: tokamake-core
+  m_Name: "\u53CD\u5E94\u6838\u5FC3"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,9 +89,12 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4347136965754146}
+  - component: {fileID: 320815057199317288}
+  - component: {fileID: 95237069568194232}
+  - component: {fileID: 136272118204921900}
   m_Layer: 0
   m_Name: "\u6258\u5361\u9A6C\u514B\u53CD\u5E94\u67F1"
-  m_TagString: Untagged
+  m_TagString: TokamakCore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -318,6 +324,36 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1145881483844314}
   m_Mesh: {fileID: 4300000, guid: a21c7cb2a7ab6a74099c565ad54f1168, type: 3}
+--- !u!65 &65921432704165392
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1401921424718828}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.127, y: 0.12700003, z: 0.38100007}
+  m_Center: {x: 0, y: -0.00000047683716, z: 0.19050027}
+--- !u!95 &95237069568194232
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1908741431377612}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!108 &108362000533726918
 Light:
   m_ObjectHideFlags: 1
@@ -328,7 +364,7 @@ Light:
   serializedVersion: 8
   m_Type: 2
   m_Color: {r: 0, g: 1, b: 0.82497525, a: 1}
-  m_Intensity: 0.51
+  m_Intensity: 0.55
   m_Range: 5.9
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -354,6 +390,34 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114583089300372656
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1401921424718828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 082f199cef1eb0240b09872b8bc6b68f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TextureGrey: {fileID: 2800000, guid: 1e1649cccfaa09e4485f615a9fc02b33, type: 3}
+--- !u!114 &114686251067800552
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1193546047260594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f59e6589e5f734a81f5a4eabbf9d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ReactorPillarCoolingDownMat: {fileID: 2100000, guid: d51cb62c9d3be894e952b385e9924da8,
+    type: 2}
+  m_ReactorPillarShutdownMat: {fileID: 2100000, guid: c063ced656b57ec41907589fb0245d6d,
+    type: 2}
+  m_DescendingAnimDirector: {fileID: 320815057199317288}
 --- !u!114 &114951327036236292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -365,6 +429,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6d6be5d1212ce4d98c0ad24fba9a28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_CoreInteractiveObj: {fileID: 114583089300372656}
+  m_ShutdownCoreMat: {fileID: 2100000, guid: 02d224386920d6046addfc60ae839ef0, type: 2}
   m_FloatingAmplitude: 0.5
   m_FloatingFrequency: 2
   m_RotatingVelocity: 30
+--- !u!136 &136272118204921900
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1908741431377612}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.56
+  m_Height: 36.28
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!320 &320815057199317288
+PlayableDirector:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1908741431377612}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: bd08ab735d35edf479210ec964113b9d, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 114974328884135662, guid: bd08ab735d35edf479210ec964113b9d, type: 2}
+    value: {fileID: 1908741431377612}
+  - key: {fileID: 114303862551926312, guid: bd08ab735d35edf479210ec964113b9d, type: 2}
+    value: {fileID: 0}
+  m_ExposedReferences:
+    m_References: []

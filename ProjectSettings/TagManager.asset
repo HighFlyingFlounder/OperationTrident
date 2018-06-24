@@ -10,6 +10,7 @@ TagManager:
   - Stone
   - flyer
   - ControlPanel
+  - TokamakCore
   layers:
   - Default
   - TransparentFX

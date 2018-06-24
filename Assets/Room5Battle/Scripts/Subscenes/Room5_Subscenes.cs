@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
     public enum GameState
     {
