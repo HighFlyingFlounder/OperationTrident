@@ -58,6 +58,9 @@ namespace room2Battle
         [SerializeField]
         protected Texture texture = null;
 
+        [SerializeField]
+        protected GameObject player;
+
         //获取相机句柄
         void Start()
         {
@@ -95,7 +98,10 @@ namespace room2Battle
         {
             //RenderSettings.ambientIntensity = 0.1f;
             //添加脚本
-            playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+            if (GameMgr.instance)//联网状态
+                playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+            else playerCamera = player.transform.Find("Camera").gameObject;
+            
             playerCamera.AddComponent<becomeDark>();
             playerCamera.AddComponent<depthSensor>();
             //初始化脚本参数
@@ -190,7 +196,7 @@ namespace room2Battle
                     if (span.TotalSeconds >= 5.0f)
                     {
                         //player.GetComponent<becomeDark>().enabled = false;
-                        
+
                         //RenderSettings.ambientIntensity = 1.0f;
                         isSwitchOpen = true;
                         gameObject.GetComponent<NetSyncController>().SyncVariables();
@@ -229,7 +235,7 @@ namespace room2Battle
                 }
             }
 
-            if(isSwitchOpen)
+            if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;
             }

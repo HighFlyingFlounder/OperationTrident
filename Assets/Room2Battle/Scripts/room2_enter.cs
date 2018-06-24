@@ -11,14 +11,14 @@ namespace room2Battle
     public class room2_enter : Subscene, NetSyncInterface
     {
         NetSyncController m_controller;
-        [SerializeField]
-        protected GameObject[] players;
+        // [SerializeField]
+        // protected GameObject[] players;
 
-        [SerializeField]
-        protected Transform playerInitPos;
+        //[SerializeField]
+        //protected Transform playerInitPos;
 
-        [SerializeField]
-        protected GameObject player;
+        // [SerializeField]
+        // protected GameObject player;
 
         protected bool isNear = false;
 
@@ -27,10 +27,10 @@ namespace room2Battle
         //摆放玩家位置，初始化敌人
         public override void onSubsceneInit()
         {
-            for (int i = 0; i < players.Length; ++i)
-            {
-                players[i].transform.position = playerInitPos.position;
-            }
+            // for (int i = 0; i < players.Length; ++i)
+            // {
+            //     players[i].transform.position = playerInitPos.position;
+            // }
         }
 
         public override bool isTransitionTriggered()
@@ -53,7 +53,7 @@ namespace room2Battle
             if (i == 1)
             {
                 isNear = true;
-                player.GetComponent<becomeDark>().enabled = true;
+                // player.GetComponent<becomeDark>().enabled = true;
                 m_controller.SyncVariables();
                 //m_controller.RPC(this,"method_need_to_sync",1,"string for param2");
             }

@@ -15,6 +15,8 @@ public class NetWorkManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("FinishLoading");
@@ -25,6 +27,10 @@ public class NetWorkManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
+        if (GameObject.FindGameObjectWithTag("Player"))
+            Destroy(GameObject.FindGameObjectWithTag("Player"));
         StartGame();
     }
     //开始一场游戏的准备工作
@@ -88,18 +94,19 @@ public class NetWorkManager : MonoBehaviour
 
         list.Add(id, playerObj);
         //玩家处理
-
+        NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
         if (id == GameMgr.instance.id)
         {
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = true;
+            netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
             playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
-            NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
+
             netsyn.ctrlType = NetSyncTransform.CtrlType.net;
             playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
             playerObj.GetComponent<PlayerController>().enabled = false;
+            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
         }
     }
 

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class NetSyncTransform : MonoBehaviour
 {
-    
+
     public enum CtrlType
     {
         none,
@@ -17,7 +17,7 @@ public class NetSyncTransform : MonoBehaviour
         net,
     }
     [HideInInspector]
-    public CtrlType ctrlType = CtrlType.player;
+    public CtrlType ctrlType = CtrlType.none;
     private string sync_id;
     //last 上次的位置信息
     Vector3 lPos;
@@ -38,6 +38,8 @@ public class NetSyncTransform : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
         sync_id = this.gameObject.name;
         NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncTransform", RecvNetSync);
@@ -46,7 +48,8 @@ public class NetSyncTransform : MonoBehaviour
     //玩家控制
     public void PlayerCtrl()
     {
-        if(syncPerSceond == 0f) {
+        if (syncPerSceond == 0f)
+        {
             return;
         }
         //网络同步
@@ -63,11 +66,12 @@ public class NetSyncTransform : MonoBehaviour
         //网络同步
         if (ctrlType == CtrlType.net)
         {
-            if(ForcastSync)
-               NetUpdate();
+            if (ForcastSync)
+                NetUpdate();
             return;
         }
-        PlayerCtrl();
+        if (ctrlType == CtrlType.player)
+            PlayerCtrl();
 
     }
 
