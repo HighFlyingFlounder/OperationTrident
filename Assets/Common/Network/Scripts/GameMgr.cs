@@ -5,7 +5,7 @@ public class GameMgr : MonoBehaviour
 {
     public static GameMgr instance;
 
-    public string id = "PlayerID";
+    public string id = "OffLine";
 
     public string startScene = "SpaceBattle";
 

@@ -25,6 +25,8 @@ public class NetSyncController : MonoBehaviour
 
     void Start()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
         sync_id = this.gameObject.name;
         NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncController", RecvNetSync);
@@ -33,6 +35,8 @@ public class NetSyncController : MonoBehaviour
 
     void SendNetSync()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         //消息
         ProtocolBytes proto = new ProtocolBytes();
         proto.AddString("BroadCast");
@@ -91,6 +95,8 @@ public class NetSyncController : MonoBehaviour
     /// <returns></returns> 
     public void RPC(object _this, string methodName, params object[] args)
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         ProtocolBytes proto = new ProtocolBytes();
         proto.AddString("RPC");
         proto.AddString(sync_id + "RPC");
