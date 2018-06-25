@@ -2705,10 +2705,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1777184918930474, guid: fc7717e140a0775478ca1ce4a0a0d725, type: 2}
-      propertyPath: m_TagString
-      value: flyer
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fc7717e140a0775478ca1ce4a0a0d725, type: 2}
   m_IsPrefabParent: 0
