@@ -12,7 +12,7 @@ namespace OperationTrident.Elevator
         private bool open;
         private bool close;
 
-        NetSyncController m_controller;
+        NetSyncController m_controller = null;
 
         //true: open false: close
         public static bool state;

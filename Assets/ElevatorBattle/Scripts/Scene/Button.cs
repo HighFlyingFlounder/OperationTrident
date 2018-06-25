@@ -7,7 +7,7 @@ namespace OperationTrident.Elevator
 {
     public class Button : MonoBehaviour, NetSyncInterface
     {
-        NetSyncController m_controller;
+        NetSyncController m_controller = null;
 
         // Use this for initialization
         void Start()

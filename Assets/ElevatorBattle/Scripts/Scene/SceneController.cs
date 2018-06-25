@@ -4,7 +4,7 @@ using UnityEngine;
 using OperationTrident.EventSystem;
 
 namespace OperationTrident.Elevator {
-    public class SceneController : MonoBehaviour
+    public class SceneController : MonoBehaviour, NetSyncInterface
     {
         [SerializeField]
         //电梯开关的预设
@@ -36,6 +36,8 @@ namespace OperationTrident.Elevator {
 
         //碰撞体
         private BoxCollider bcollider;
+
+        NetSyncController m_controller = null;
 
         // Use this for initialization
         void Start()
@@ -95,14 +97,31 @@ namespace OperationTrident.Elevator {
             }
         }
 
+        //监听器
         private void Awake()
         {
-            Messenger<int>.AddListener(GameEvent.Push_Button, Operate);
+            Messenger<int>.AddListener(GameEvent.Push_Button, fight);
         }
 
         private void Destroy()
         {
-            Messenger<int>.RemoveListener(GameEvent.Push_Button, Operate);
+            Messenger<int>.RemoveListener(GameEvent.Push_Button, fight);
+        }
+
+        //网络同步
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
         }
 
         void OnTriggerEnter(Collider other)
@@ -111,7 +130,8 @@ namespace OperationTrident.Elevator {
             count++;
             if(Door.state && state == ElevatorState.Initing)
             {
-                state = ElevatorState.FindingButton;
+                changeState();
+                m_controller.RPC(this, "changeState");
                 GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
             }
         }
@@ -122,21 +142,40 @@ namespace OperationTrident.Elevator {
             count--;
             if (Door.state && state == ElevatorState.End)
             {
-                state = ElevatorState.Escape;
+                changeState();
+                m_controller.RPC(this, "changeState");
                 GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
-                bcollider.size = new Vector3(10f, bcollider.size.y, bcollider.size.z);
             }
         }
 
-        private void Operate(int id)
+        private void fight(int id)
         {
             //点击按钮
             if (state == ElevatorState.FindingButton && !Door.state)
             {
-                state = ElevatorState.Start_Fighting;
+                Debug.Log("sss ");
+                changeState();
+                m_controller.RPC(this, "changeState");
             }
         }
 
+        public void changeState()
+        {
+            switch (state)
+            {
+                case ElevatorState.Initing:
+                    state = ElevatorState.FindingButton;
+                    break;
 
+                case ElevatorState.FindingButton:
+                    state = ElevatorState.Start_Fighting;
+                    break;
+
+                case ElevatorState.End:
+                    state = ElevatorState.Escape;
+                    bcollider.size = new Vector3(10f, bcollider.size.y, bcollider.size.z);
+                    break;
+            }
+        }
     }
 }
