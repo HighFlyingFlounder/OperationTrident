@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ElevatorBattleNetManager : SceneNetManager {
+    //玩家生成的时候为其进行一些操作
     public override void HandlePlayer(string id,GameObject player)
     {
         GameObject playerCamera = null;

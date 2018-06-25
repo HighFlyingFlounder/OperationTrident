@@ -109,7 +109,7 @@ namespace OperationTrident.Elevator {
         {
             //进入关门
             count++;
-            if(state == ElevatorState.Initing)
+            if(Door.state && state == ElevatorState.Initing)
             {
                 state = ElevatorState.FindingButton;
                 GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
@@ -120,7 +120,7 @@ namespace OperationTrident.Elevator {
         {
             //离开关门
             count--;
-            if (state == ElevatorState.End)
+            if (Door.state && state == ElevatorState.End)
             {
                 state = ElevatorState.Escape;
                 GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
