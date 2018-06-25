@@ -39,6 +39,8 @@ namespace OperationTrident.Elevator {
 
         NetSyncController m_controller = null;
 
+        int number = SceneNetManager.instance.list.Count;
+
         // Use this for initialization
         void Start()
         {
@@ -128,7 +130,7 @@ namespace OperationTrident.Elevator {
         {
             //进入关门
             count++;
-            if(Door.state && state == ElevatorState.Initing)
+            if(count >= number && Door.state && state == ElevatorState.Initing)
             {
                 changeState();
                 m_controller.RPC(this, "changeState");
@@ -140,7 +142,7 @@ namespace OperationTrident.Elevator {
         {
             //离开关门
             count--;
-            if (Door.state && state == ElevatorState.End)
+            if (count >= number && Door.state && state == ElevatorState.End)
             {
                 changeState();
                 m_controller.RPC(this, "changeState");
