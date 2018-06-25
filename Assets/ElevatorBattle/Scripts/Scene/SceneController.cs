@@ -82,13 +82,14 @@ namespace OperationTrident.Elevator {
 
                 case ElevatorState.End:
                     Messenger<int>.Broadcast(GameEvent.End, 0);
-                    //关门
-                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
 
                     if (change)
                     {
                         //更改碰撞体
                         bcollider.size = new Vector3(12f, bcollider.size.y, bcollider.size.z);
+                        //开门
+                        GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                        change = false;
                     }
                     break;
 
@@ -126,29 +127,33 @@ namespace OperationTrident.Elevator {
 
         void OnTriggerEnter(Collider other)
         {
-            int number = SceneNetManager.instance.list.Count;
-            //进入关门
-            count++;
-            Debug.Log(number);
-            Debug.Log(count);
-            if(count >= number && Door.state && state == ElevatorState.Initing)
+            if (state == ElevatorState.Initing || state == ElevatorState.End)
             {
-                changeState();
-                m_controller.RPC(this, "changeState");
-                GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                int number = SceneNetManager.instance.list.Count;
+                //进入关门
+                count++;
+                Debug.Log("Enter" + count);
+                if (count >= number && Door.state && state == ElevatorState.Initing)
+                {
+                    changeState();
+                    m_controller.RPC(this, "changeState");
+                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                }
             }
         }
 
         void OnTriggerExit(Collider other)
         {
-            int number = SceneNetManager.instance.list.Count;
-            //离开关门
-            count--;
-            if (count == 0 && Door.state && state == ElevatorState.End)
+            if (state == ElevatorState.Initing || state == ElevatorState.End)
             {
-                changeState();
-                m_controller.RPC(this, "changeState");
-                GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                //离开关门
+                count--;
+                if (count <= 0 && Door.state && state == ElevatorState.End)
+                {
+                    changeState();
+                    m_controller.RPC(this, "changeState");
+                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                }
             }
         }
 
@@ -157,7 +162,6 @@ namespace OperationTrident.Elevator {
             //点击按钮
             if (state == ElevatorState.FindingButton && !Door.state)
             {
-                Debug.Log("sss ");
                 changeState();
                 m_controller.RPC(this, "changeState");
             }
@@ -177,7 +181,6 @@ namespace OperationTrident.Elevator {
 
                 case ElevatorState.End:
                     state = ElevatorState.Escape;
-                    bcollider.size = new Vector3(10f, bcollider.size.y, bcollider.size.z);
                     break;
             }
         }
