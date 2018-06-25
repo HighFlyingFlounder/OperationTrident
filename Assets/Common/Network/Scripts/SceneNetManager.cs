@@ -107,6 +107,7 @@ public class SceneNetManager : MonoBehaviour
             playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
             playerObj.GetComponent<PlayerController>().enabled = false;
             playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
         }
         //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
         HandlePlayer(id,playerObj);

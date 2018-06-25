@@ -129,6 +129,8 @@ namespace OperationTrident.Elevator {
             int number = SceneNetManager.instance.list.Count;
             //进入关门
             count++;
+            Debug.Log(number);
+            Debug.Log(count);
             if(count >= number && Door.state && state == ElevatorState.Initing)
             {
                 changeState();
