@@ -21,25 +21,28 @@ public class CameraMovement : MonoBehaviour
     private const float m_BgmBarTime = 60.0f / 140.0f * 4.0f ;
 
     //当前Camera的状态
-    private CameraState m_CamState = CameraState.ROAMING;
+    private CameraState m_CamState;
 
     //场景流逝总时间
     private float m_Time = 0.0f;
 
-    //
-    private Camera m_Cam;
+    //Timeline控制一个Camera，第三人称控制一个Camera
+    public Camera m_CamDirected;
+    public Camera m_CamThirdPerson;
 
     //第三人称环视的Camera信息
     public float m_CamRotateSpeed = 0.5f;
-    public float m_ThirdPersonRadius=2.0f;
-    //private Quaternion m_ThirdPersonRotation;
-    private Transform m_TargetCamTransform;//用鼠标控制的，同时影响CameraPos和Lookat的方向。真是Cam.transform要线性插值跟随。
+    private Vector3 m_ThirdPersonCamOffset;
+    private Vector3 m_TargetCamPos;//用鼠标控制的，同时影响CameraPos和Lookat的方向。真是Cam.transform要线性插值跟随。
 
     // Use this for initialization
     void Start ()
     {
-        m_Cam = Camera.main;
-	}
+        m_CamState = CameraState.THIRD_PERSON;
+        m_ThirdPersonCamOffset = new Vector3(20f,0,0);
+        m_TargetCamPos = m_CamDirected.transform.position;
+
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -72,17 +75,18 @@ public class CameraMovement : MonoBehaviour
      * **********************************************/
      private void Update_Roaming()
     {
-        if(m_Time>m_BgmBarTime * 8)
+        if(m_Time>m_BgmBarTime * 1)
         {
             //切换至第三人称状态
             m_CamState = CameraState.THIRD_PERSON;
             //m_ThirdPersonRadius = (m_Cam.transform.position - m_EscapingCabin.transform.position).magnitude;
-            m_TargetCamTransform = m_Cam.transform;//初始化第三人称视角camera的transform
+            m_TargetCamPos = m_CamDirected.transform.position;//初始化第三人称视角camera的position
         }
     }
 
     private void Update_ThirdPerson()
     {
+
         if (m_Time > m_BgmBarTime * (8+16+16))
         {
             //切至下一状态，不再绑定在玩家的第三人称，禁用控制
@@ -90,20 +94,29 @@ public class CameraMovement : MonoBehaviour
         }
         else
         {
+
+
             //鼠标控制target transform的旋转角度
             //实际Camera transform以一定比例Lerp向target transform
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
-            m_TargetCamTransform.rotation *= Quaternion.Euler(new Vector3(mouseY * Time.deltaTime, mouseX * Time.deltaTime, 0));
-            Vector3 camPosOffset = Quaternion.ro new Vector3(0, 0, 1);
-            m_TargetCamTransform.position = m_EscapingCabin.transform.position;
-            
-            m_Cam.transform.position = Vector3.Lerp(m_Cam.transform.position, m_TargetCamTransform.position, m_CamRotateSpeed * Time.deltaTime);
+
+            Quaternion rot = Quaternion.Euler(new Vector3(mouseY * Time.deltaTime, mouseX * Time.deltaTime, 0));
+            m_CamThirdPerson.transform.rotation *= rot;
+            m_ThirdPersonCamOffset = Quaternion.Inverse(rot) * m_ThirdPersonCamOffset;
+            m_TargetCamPos = m_EscapingCabin.transform.position+ m_ThirdPersonCamOffset;
+            Debug.Log(m_TargetCamPos);
+
+            //实际Camera位置向Target camera处插值
+            const float lerpScale = 50.0f;
+            m_CamThirdPerson.transform.position = m_TargetCamPos;
+            Debug.Log(lerpScale * Time.deltaTime);
         }
     }
 
     private void Update_LookingAtKun()
     {
+        Debug.Log("asdfsdf");
 
     }
 }
