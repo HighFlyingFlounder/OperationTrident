@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 33270537}
   - component: {fileID: 33270536}
   m_Layer: 0
-  m_Name: CamController
+  m_Name: TimelineDirector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Kun: {fileID: 1759336737}
   m_CamDirected: {fileID: 289771981}
   m_CamThirdPerson: {fileID: 692610342}
-  m_CamRotateSpeed: 0.5
+  m_MouseLookSensitivity: 15
 --- !u!320 &33270537
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -327,6 +327,8 @@ PlayableDirector:
     value: {fileID: 289771978}
   - key: {fileID: 114206671770564370, guid: 6910443ce8f6e024398cb05affc4dc16, type: 2}
     value: {fileID: 692610339}
+  - key: {fileID: 114625072734246288, guid: 6910443ce8f6e024398cb05affc4dc16, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &33270538
@@ -5510,7 +5512,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &692610340
 AudioListener:
   m_ObjectHideFlags: 0
@@ -5543,7 +5545,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 50
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
