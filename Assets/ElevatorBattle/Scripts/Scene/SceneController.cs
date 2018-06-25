@@ -144,7 +144,7 @@ namespace OperationTrident.Elevator {
             int number = SceneNetManager.instance.list.Count;
             //离开关门
             count--;
-            if (count >= number && Door.state && state == ElevatorState.End)
+            if (count == 0 && Door.state && state == ElevatorState.End)
             {
                 changeState();
                 m_controller.RPC(this, "changeState");
