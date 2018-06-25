@@ -85,8 +85,17 @@ namespace room2Battle {
 
         void OnGUI()
         {
-            if(isTimelinePaused)
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("击退敌人，继续前进！", Camera.main, true);
+            if (isTimelinePaused)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                      Camera.main,
+                      OperationTrident.Util.GUIUtil.yellowColor,
+                      0.5f, 0.1f, 16);
+            }
+            if (!isTimelinePaused)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
+            }
         }
 
     }
