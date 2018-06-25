@@ -994,10 +994,26 @@ namespace OperationTrident.Util
         private static float frameTimer2 = 0;
         public static bool canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
         private static int transparentFactor = 0;
+        private static bool hasInitRememberStringDSIGG = false;
+        private static string rememberStringDSIGG = string.Empty;
         // 没错，在指定的时间里显示！但是我还是想说，你最好随时获取一下上面这个bool值，为true的时候在你自己的程序逻辑里停下。实际上，这个函数本质上和上面那个函数是差不多的。因为接受的参数比较现实所以姑且保留了下来
-        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float second)
+        // 参数时间是每个字的时间
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float secondOfEachWord)
         {
-            if (transparentFactor >= 255) return;
+            // 最开始的时候调用，这时候还没有初始化记下字幕的变量
+            if (!hasInitRememberStringDSIGG)
+            {
+                rememberStringDSIGG = subtitle;
+                hasInitRememberStringDSIGG = true;
+            }
+            if (rememberStringDSIGG != subtitle)
+            {
+                frameTimer2 = 0;
+                transparentFactor = 0;
+                canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
+                rememberStringDSIGG = subtitle;
+            }
+            if (transparentFactor > 255) return;
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
                 transparentFactor += 4;
@@ -1007,11 +1023,60 @@ namespace OperationTrident.Util
                 return;
             }
             frameTimer2 += Time.deltaTime;
-            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight);
+            transparentFactor = Math.Min(transparentFactor + 4, 255);
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactor);
             // 达到时间了
-            if (frameTimer2 >= second)
+            if (frameTimer2 >= secondOfEachWord*(subtitle.Length+2))
             {
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
+                transparentFactor = 0;
+            }
+        }
+
+        private static float frameTimerDSIGG = 0.0f;
+        private static string[] rememberSubtitles;
+        private static int displayingSubtitlesIndex = 0;
+        public static bool canBeStopDisplaySubtitlesInGivenGrammar = false;
+        // 按时间显示每行字幕
+        public static void DisplaySubtitlesInGivenGrammar(string[] subtitles,
+            Camera camera,
+            int fontSize,
+            float subtitleRatioHeight,
+            float secondOfEachWord,
+            float secondBetweenLine)
+        {
+            if (rememberSubtitles == null)
+            {
+                rememberSubtitles = subtitles;
+            }
+            // 要显示的总字幕发生了变化
+            if (rememberSubtitles[0] != subtitles[0])
+            {
+                frameTimerDSIGG = 0.0f;
+                displayingSubtitlesIndex = 0;
+                canBeStopDisplaySubtitlesInGivenGrammar = false;
+            }
+            if (canBeStopDisplaySubtitlesInGivenGrammar) return;
+            rememberSubtitles = subtitles;
+            DisplaySubtitleInGivenGrammar(
+                subtitles[displayingSubtitlesIndex],
+                camera,
+                fontSize: fontSize,
+                subtitleRatioHeight: subtitleRatioHeight,
+                secondOfEachWord: secondOfEachWord);
+            if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
+            {
+                frameTimerDSIGG += Time.deltaTime;
+                if (frameTimerDSIGG >= secondBetweenLine)
+                {
+                    if (displayingSubtitlesIndex == subtitles.Length - 1)
+                    {
+                        canBeStopDisplaySubtitlesInGivenGrammar = true;
+                    }
+                    displayingSubtitlesIndex = Math.Min(displayingSubtitlesIndex + 1, subtitles.Length - 1);
+
+                    frameTimerDSIGG = 0;
+                }
             }
         }
     }
