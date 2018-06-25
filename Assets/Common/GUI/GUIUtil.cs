@@ -10,8 +10,10 @@ namespace OperationTrident.Util
     public static class GUIUtil
     {
         //================================================================================
-        //==========        一些可以获得的颜色，推荐直接获取Color后缀的         ===============================
+        //==========        一些可以获得的颜色，推荐直接获取Color后缀的         =============
+        //==========        颜色Color类和Vector4是直接可以互换的 implicit隐式转换      =============
         //================================================================================
+
 
         public readonly static Vector3 blackVec = new Vector3(0.0f, 0.0f, 0.0f);// 完全黑
         public readonly static Vector3 greyVec = new Vector3(0.5f, 0.5f, 0.5f);// 中间灰
@@ -113,24 +115,71 @@ namespace OperationTrident.Util
         //==========        一些关于颜色的基本操作         ===============================
         //================================================================================
 
-        // 传入参数获得一种纯色  越接近0越黑，越接近1越白
+        /// <summary>
+        /// 传入参数获得一种纯色  越接近0越黑，越接近1越白
+        /// </summary>
+        /// <param name="factor" type="float" constraint="0.0f<=factor<=1.0f">
+        /// 将颜色的rgb值都设为factor
+        /// </param>
+        /// <returns type="Color">
+        /// 返回一个纯色的颜色向量
+        /// </returns>
         public static Color GetPureColor(float factor)
         {
             return GetColorFromVector3(new Vector3(factor, factor, factor));
         }
 
-        // 混合两个颜色
+        /// <summary>
+        /// 混合两个颜色
+        /// </summary>
+        /// <param name="colorA" type="Vector3" constraint="0.0f<=colorA<=1.0f" >
+        /// 要混合的颜色A，是一个向量Vector3，代表颜色的rgb
+        /// </param>
+        /// <param name="colorB" type="Vector3" constraint="0.0f<=colorB<=1.0f">
+        /// 要混合的颜色B，是一个向量Vector3，代表颜色的rgb
+        /// </param>
+        /// <returns type="Vector3">
+        /// 返回混合后的颜色向量
+        /// </returns>
         public static Vector3 MixTwoColor(Vector3 colorA, Vector3 colorB)
         {
             return new Vector3((colorA.x + colorB.x) / 2, (colorA.y + colorB.y) / 2, (colorA.z + colorB.z) / 2);
         }
 
-        // 从一个字符串里面构造颜色向量 格式"48 3F 1F"
-        public static Vector3 GetColorVec3FromString(string a)
+        /// <summary>
+        /// 混合两个颜色
+        /// </summary>
+        /// <param name="colorA" type="Color">
+        /// 要混合的颜色A，是一个Color
+        /// </param>
+        /// <param name="colorB" type="Color">
+        /// 要混合的颜色B，是一个Color
+        /// </param>
+        /// <returns type="Color">
+        /// 返回混合后的颜色
+        /// </returns>
+        public static Color MixTwoColor(Color colorA,Color colorB)
+        {
+            return GetColorFromVector3(
+                MixTwoColor
+                (GetVector3FromColor(colorA), GetVector3FromColor(colorB)));
+        }
+
+        /// <summary>
+        /// 从一个字符串里面构造颜色向量 格式"48 3F 1F"
+        /// </summary>
+        /// <param name="sourceString" type="string" 
+        /// constraint="每两个字符用空格隔开,总长为8个字符，两个字符在00-FF之间，代表两位十六进制">
+        /// 传进来的字符串
+        /// </param>
+        /// <returns type="Vector3">
+        /// 返回一个颜色向量
+        /// </returns>
+        public static Vector3 GetColorVec3FromString(string sourceString)
         {
             try
             {
-                int[] rgb = GetIntArrayFromString(a);
+                int[] rgb = GetIntArrayFromString(sourceString);
                 return new Vector3(rgb[0] / 256.0f, rgb[1] / 256.0f, rgb[2] / 256.0f);
             }
             catch (Exception e)
@@ -139,16 +188,32 @@ namespace OperationTrident.Util
             }
         }
 
-        // 从一个字符串里面构造Color类型
-        public static Color GetColorFromString(string a)
+        /// <summary>
+        /// 从一个字符串里面构造Color类型
+        /// </summary>
+        /// <param name="sourceString" type="string">
+        /// 传进来的字符串
+        /// </param>
+        /// <returns type="Color">
+        /// 返回一个颜色类
+        /// </returns>
+        public static Color GetColorFromString(string sourceString)
         {
-            return GetColorFromVector3(GetColorVec3FromString(a));
+            return GetColorFromVector3(GetColorVec3FromString(sourceString));
         }
 
-        // 从字符串中构造一个int数组
-        private static int[] GetIntArrayFromString(string a)
+        /// <summary>
+        /// 从字符串中构造一个int数组，作为private函数，主要用于构造上述的颜色向量
+        /// </summary>
+        /// <param name="sourceString" type="string">
+        /// 传进来的字符串
+        /// </param>
+        /// <returns type="int[]">
+        /// 返回构造好的int数组
+        /// </returns>
+        private static int[] GetIntArrayFromString(string sourceString)
         {
-            string[] hexValuesSplit = a.Split(' ');
+            string[] hexValuesSplit = sourceString.Split(' ');
             int[] toReturn = new int[hexValuesSplit.Length];
             for (int i = 0; i < hexValuesSplit.Length; i++)
             {
@@ -158,31 +223,94 @@ namespace OperationTrident.Util
             return toReturn;
         }
 
-        // 变得不透明，传入一个参数，单位还是1/256
+        /// <summary>
+        /// 将一个颜色变得不透明，传入一个参数，单位是1/256，
+        /// 意味着每一个单位的factor会将颜色的rgba的a值增加1/256。
+        /// factor太大的话会直接把颜色的a值设为1
+        /// </summary>
+        /// <param name="color" type="Vector4">
+        /// 传进的颜色向量
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 传进的不透明参数
+        /// </param>
+        /// <returns type="Vector4">
+        /// 返回处理后变得不透明的颜色向量
+        /// </returns>
         public static Vector4 TransparentLessColor(Vector4 color, float factor)
         {
             return new Vector4(color.x, color.y, color.z, Math.Min(color.w + factor / 256.0f, 1.0f));
         }
 
-        // 变得不透明，传入一个参数，单位还是1/256
+        /// <summary>
+        /// 将一个颜色变得不透明，传入一个参数，单位是1/256，
+        /// 意味着每一个单位的factor会将颜色的rgba的a值增加1/256。
+        /// factor太大的话会直接把颜色的a值设为1
+        /// </summary>
+        /// <param name="color" type="Color">
+        /// 传进来要处理的颜色
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 传进来的透明参数
+        /// </param>
+        /// <returns type=Vector4>
+        /// 返回一个颜色向量Vector4
+        /// </returns>
+        [Obsolete]
         public static Vector4 TransparentLessColor(Color color, float factor)
         {
             return new Vector4(color.r, color.g, color.b, Math.Min(color.a + factor / 256.0f, 1.0f));
         }
 
-        // 变得透明，传入一个参数，单位还是1/256
+        /// <summary>
+        /// 将一个颜色变得透明，传入一个参数，单位是1/256
+        /// 意味着每一个单位的factor会将颜色的rgba的a值减少1/256。
+        /// </summary>
+        /// <param name="color" type="Vector4">
+        /// 传进来要处理的颜色向量
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 传进来的透明参数
+        /// </param>
+        /// <returns type="Vector4">
+        /// 返回一个处理之后的颜色向量
+        /// </returns>
         public static Vector4 TransparentMoreColor(Vector4 color, float factor)
         {
             return new Vector4(color.x, color.y, color.z, Math.Max(color.w - factor / 256.0f, 0.0f));
         }
 
-        // 变得透明，传入一个参数，单位还是1/256
+        /// <summary>
+        /// 将一个颜色变得透明，传入一个参数，单位是1/256
+        /// 意味着每一个单位的factor会将颜色的rgba的a值减少1/256。
+        /// </summary>
+        /// <param name="color" type="Color">
+        /// 传进来要处理的颜色向量
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 传进来的透明参数
+        /// </param>
+        /// <returns type="Color">
+        /// 返回一个处理之后的颜色向量
+        /// </returns>
+        [Obsolete]
         public static Vector4 TransparentMoreColor(Color color, float factor)
         {
             return new Vector4(color.r, color.g, color.b, Math.Max(color.a - factor / 256.0f, 0.0f));
         }
 
-        // 淡化颜色，传入一个淡化的参数（意味着会变得更加明亮！）factor的每个单位代表着1/256
+        /// <summary>
+        /// 淡化颜色，使颜色变得更白
+        /// </summary>
+        /// <param name="color" type="Vector3">
+        /// 传进来的颜色向量
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 每个单位代表着1.0f/256.0f的rgb值的增加
+        /// </param>
+        /// <returns type="Vector3">
+        /// 返回处理过后的颜色向量
+        /// </returns>
         public static Vector3 FadeAColor(Vector3 color, float factor)
         {
             return new Vector3(Math.Min(color.x + factor / 256.0f, 1.0f)
@@ -190,7 +318,18 @@ namespace OperationTrident.Util
                 , Math.Min(color.z + factor / 256.0f, 1.0f));
         }
 
-        // 淡化颜色，传入一个淡化的参数（意味着会变得更加明亮！）factor的每个单位代表着1/256
+        /// <summary>
+        /// 淡化颜色，使颜色变得更白
+        /// </summary>
+        /// <param name="color" type="Color">
+        /// 传进来的颜色
+        /// </param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 每个单位代表着1.0f/256.0f的rgb值的增加
+        /// </param>
+        /// <returns type="Color">
+        /// 返回处理过后的颜色
+        /// </returns>
         public static Color FadeAColor(Color color, float factor)
         {
             return new Color(Math.Min(color.r + factor / 256.0f, 1.0f)
@@ -198,7 +337,14 @@ namespace OperationTrident.Util
                 , Math.Min(color.b + factor / 256.0f, 1.0f));
         }
 
-        // 增强颜色，传入一个增强的参数（意味着会变得更加黑暗！）factor的每个单位代表着1/256
+        /// <summary>
+        /// 增强颜色，使颜色变得更黑
+        /// </summary>
+        /// <param name="color" type="Vector3"></param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 每个单位代表着1/256.0f的rgb值得减少
+        /// </param>
+        /// <returns type="Vector3"></returns>
         public static Vector3 DeepAColor(Vector3 color, float factor)
         {
             return new Vector3(Math.Max(color.x - factor / 256.0f, 0.0f)
@@ -206,33 +352,58 @@ namespace OperationTrident.Util
                 , Math.Max(color.z - factor / 256.0f, 0.0f));
         }
 
-        // 增强颜色，传入一个增强的参数（意味着会变得更加黑暗！）factor的每个单位代表着1/256
-        public static Vector3 DeepAColor(Color color, float factor)
+        /// <summary>
+        /// 增强颜色，使颜色变得更黑
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <param name="factor" type="float" constraint="factor>=0.0f">
+        /// 每个单位代表着1/256.0f的rgb值得减少
+        /// </param>
+        /// <returns type="Color"></returns>
+        public static Color DeepAColor(Color color, float factor)
         {
-            return new Vector3(Math.Max(color.r - factor / 256.0f, 0.0f)
+            return new Color(Math.Max(color.r - factor / 256.0f, 0.0f)
                 , Math.Max(color.g - factor / 256.0f, 0.0f)
                 , Math.Max(color.b - factor / 256.0f, 0.0f));
         }
 
-        // 从Vector3构造一个颜色
+        /// <summary>
+        /// 从Vector3构造一个颜色
+        /// </summary>
+        /// <param name="vec" type="Vector3"></param>
+        /// <returns type="Color"></returns>
         public static Color GetColorFromVector3(Vector3 vec)
         {
             return new Color(vec.x, vec.y, vec.z);
         }
 
-        // 从Vector4构造一个颜色
+        /// <summary>
+        /// 从Vector4构造一个颜色
+        /// </summary>
+        /// <param name="vec" type="Vector4"></param>
+        /// <returns type="Color"></returns>
+        [Obsolete]
         public static Color GetColorFromVector4(Vector4 vec)
         {
             return new Color(vec.x, vec.y, vec.z, vec.w);
         }
 
-        // 从颜色中获得Vector3
+        /// <summary>
+        /// 从颜色中获得Vector3
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <returns type="Vector3"></returns>
         public static Vector3 GetVector3FromColor(Color color)
         {
             return new Vector3(color.r, color.g, color.b);
         }
 
-        // 从颜色中获得Vector4
+        /// <summary>
+        /// 从颜色中获得Vector4
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <returns type="Vector4"></returns>
+        [Obsolete]
         public static Vector4 GetVector4FromColor(Color color)
         {
             return new Vector4(color.r, color.g, color.b, color.a);
@@ -242,32 +413,58 @@ namespace OperationTrident.Util
         //==========        一些关于样式GUIStyle的基本操作         ===============================
         //================================================================================
 
-        // 得到默认的字体样式（全默认,颜色黑色）
+        /// <summary>
+        /// 得到默认的字体样式（全默认,颜色黑色）
+        /// </summary>
+        /// <returns type="GUIStyle"></returns>
         public static GUIStyle GetDefaultTextStyle()
         {
             return GetDefaultTextStyle(blackColor);
         }
 
-        // 得到默认的字体样式（颜色自己指定）
+        /// <summary>
+        /// 得到指定颜色的默认字体样式
+        /// </summary>
+        /// <param name="color" type="Vector3"></param>
+        /// <returns type="GUIStyle"></returns>
+        [Obsolete]
         public static GUIStyle GetDefaultTextStyle(Vector3 color)
         {
             return GetDefaultTextStyle(GetColorFromVector3(color), defaultFontSize);
         }
 
-        // 得到默认的字体样式（颜色自己指定）
+        /// <summary>
+        /// 得到指定颜色的默认字体样式
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <returns type="GUIStyle"></returns>
         public static GUIStyle GetDefaultTextStyle(Color color)
         {
             return GetDefaultTextStyle(color, defaultFontSize);
         }
 
-        // 得到指定大小的默认字体样式
+        /// <summary>
+        /// 得到指定字体大小、颜色的默认字体样式
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <returns type="GUIStyle"></returns>
         public static GUIStyle GetDefaultTextStyle(Color color, int fontSize)
         {
             return GetDefaultTextStyle(color, fontSize, defaultAnchor);
         }
 
-        // 得到指定大小，颜色，对齐方式的默认字体样式
-        public static GUIStyle GetDefaultTextStyle(Color color, int fontSize, TextAnchor textAnchor)
+        /// <summary>
+        /// 得到指定字体大小，颜色，字体对齐方式的默认字体样式
+        /// </summary>
+        /// <param name="color" type="Color"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <param name="textAnchor" type="TextAnchor"></param>
+        /// <returns type="GUIStyle"></returns>
+        public static GUIStyle GetDefaultTextStyle(
+            Color color,
+            int fontSize, 
+            TextAnchor textAnchor)
         {
             GUIStyle style = new GUIStyle();
             style.normal.textColor = color;
@@ -282,34 +479,72 @@ namespace OperationTrident.Util
         //==========        一些坐标转换的操作         ===============================
         //================================================================================
 
-        // 从GUI的位置转到屏幕坐标
+        /// <summary>
+        /// 从GUI的位置转到屏幕坐标
+        /// </summary>
+        /// <param name="guiPoint" type="Vector2"></param>
+        /// <returns type="Vector2"></returns>
         public static Vector2 GUIPositionToScreenPoint(Vector2 guiPoint)
         {
             return GUIUtility.GUIToScreenPoint(guiPoint);
         }
 
-        // 从指定点以指定比例缩放GUI
+        /// <summary>
+        /// 从指定点以指定比例缩放GUI
+        /// </summary>
+        /// <param name="scale" type="Vector2"></param>
+        /// <param name="pivot" type="Vector2"></param>
         public static void ScaleGUIAroundPivot(Vector2 scale, Vector2 pivot)
         {
             GUIUtility.ScaleAroundPivot(scale, pivot);
         }
 
-        // 从屏幕坐标到GUI点
+        /// <summary>
+        /// 从屏幕坐标到GUI位置
+        /// </summary>
+        /// <param name="screenPoint" type="Vector2"></param>
+        /// <returns type="Vector2"></returns>
         public static Vector2 ScreenPointToGUIPositon(Vector2 screenPoint)
         {
             return GUIUtility.ScreenToGUIPoint(screenPoint);
         }
 
-        // 从屏幕矩形转到GUI的矩形
+        /// <summary>
+        /// 从屏幕矩形转到GUI的矩形
+        /// </summary>
+        /// <param name="screenRect" type="Rect"></param>
+        /// <returns type="Rect"></returns>
         public static Rect ScreenRectToGUIRect(Rect screenRect)
         {
             return GUIUtility.ScreenToGUIRect(screenRect);
         }
 
-        // 根据具体的字的大小修正一下GUI的位置，最后的bool值决定是否解决颠倒效应，如果要解决颠倒效应，必须传入相机的pixelHeight
-        public static Rect GetFixedRectDueToFontSize(Vector2 guiPosition, int fontSize = defaultFontSize, bool fixedTopDown = false, int cameraPixelHeight = 0)
+        /// <summary>
+        /// 根据具体的字的大小修正一下GUI的位置，
+        /// 最后的bool值决定是否解决颠倒效应，如果要解决颠倒效应，必须传入相机的pixelHeight
+        /// 建议：解决，并传入相机高
+        /// </summary>
+        /// <param name="guiPosition" type="Vector2"></param>
+        /// <param name="fontSize" type="int" default="defaultFontSize">
+        /// 默认字体大小
+        /// </param>
+        /// <param name="fixedTopDown" type="bool" default="false">
+        /// 是否解决颠倒效应：就是GUI坐标的XY中原点是左上角，Y值往下为正。
+        /// 如果设置为true的话，应在后面传入相机的高，如果不传入相机的高，那么结果和false是一样的
+        /// </param>
+        /// <param name="cameraPixelHeight" type="int" default="0">
+        /// camera.pixelHeight
+        /// </param>
+        /// <returns type="Rect">
+        /// 返回的矩形
+        /// </returns>
+        public static Rect GetFixedRectDueToFontSize(
+            Vector2 guiPosition,
+            int fontSize = defaultFontSize,
+            bool fixedTopDown = false, 
+            int cameraPixelHeight = 0)
         {
-            // 就算你设置了要解决颠倒效应，你也要传一个相机的高给我啊
+            // 传高+Bool
             if ((!fixedTopDown) || cameraPixelHeight == 0)
                 return new Rect(guiPosition.x - fontSize / 4,
                     guiPosition.y - fontSize / 4,
@@ -322,7 +557,14 @@ namespace OperationTrident.Util
                     fontSize);
         }
 
-        // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect (主要是方便任务系统？也可能用在别的地方)
+        /// <summary>
+        /// 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect 
+        /// 主要是方便任务系统,任务目标点可以直接获得其在屏幕上显示的Rect
+        /// </summary>
+        /// <param name="worldPosition" type="Vector3"></param>
+        /// <param name="camera" type="Camera"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <returns type="Rect"></returns>
         public static Rect GetFixedRectDirectlyFromWorldPosition(Vector3 worldPosition, Camera camera, int fontSize = defaultFontSize)
         {
             Vector3 guiPosition = camera.WorldToScreenPoint(worldPosition);
@@ -334,26 +576,47 @@ namespace OperationTrident.Util
         }
 
 
-        // 注意下面这些Display开头的函数都要放在OnGUI()里面调用！@！@！￥！@￥！@￥！@%……！@￥……@#%&￥……*
+        // 下面这些Display开头的函数都要放在OnGUI()里面调用
 
 
         //================================================================================
         //==========        一些显示字幕的函数         ===============================
         //================================================================================
 
-        // 直接调字幕，显示在默认的位置。注意一定要在OnGUI()中调用该函数！！！
+        /// <summary>
+        /// 在默认的位置显示字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">
+        /// 要显示的字幕
+        /// </param>
+        /// <param name="camera" type="Camera">
+        /// 在哪个相机
+        /// </param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera)
         {
             DisplaySubtitleInDefaultPosition(subtitle, camera, defaultFontSize, defaultSubtitleRatioHeight);
         }
 
-        // 以指定大小的字体显示默认位置的字幕
+        /// <summary>
+        /// 以指定大小的字体显示默认位置的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">显示字幕的相机</param>
+        /// <param name="fontSize" type="int">字体大小</param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize)
         {
             DisplaySubtitleInDefaultPosition(subtitle, camera, fontSize, defaultSubtitleRatioHeight);
         }
 
-        // 以指定大小的字体显示指定高度比例的字幕
+        /// <summary>
+        /// 以指定大小的字体显示指定高度比例的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">显示字幕的相机</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="subtitleRatioHeight" type="float">
+        /// 字幕距屏幕上方的距离占整个屏幕的高的比例
+        /// </param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight)
         {
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
@@ -364,8 +627,20 @@ namespace OperationTrident.Util
                     ), subtitle, style);
         }
 
-        //以指定大小的字体指定的颜色显示指定高度比例的字幕
-        public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight,Color color)
+        /// <summary>
+        /// 以指定大小的字体指定的颜色显示指定高度比例的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string"></param>
+        /// <param name="camera" type="Camera"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <param name="subtitleRatioHeight" type="float"></param>
+        /// <param name="color" type="Color"></param>
+        public static void DisplaySubtitleInDefaultPosition(
+            string subtitle,
+            Camera camera, 
+            int fontSize, 
+            float subtitleRatioHeight,
+            Color color)
         {
             GUIStyle style = GetDefaultTextStyle(color, fontSize);
             GUI.Label(
@@ -379,26 +654,49 @@ namespace OperationTrident.Util
         //==========        一些显示指定内容的默认参数         ===============================
         //================================================================================
 
-        // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle, Rect positionRect)
+        /// <summary>
+        /// 在指定位置显示指定内容
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        public static void DisplayContentInGivenPosition(string content, Rect positionRect)
         {
-            DisplayContentInGivenPosition(subtitle, positionRect, DefaultFontSize);
+            DisplayContentInGivenPosition(content, positionRect, DefaultFontSize);
         }
 
-        // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle, Rect positionRect, int fontSize)
+        /// <summary>
+        /// 在指定位置以指定字体大小显示指定内容
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        /// <param name="fontSize" type="int">字体的大小</param>
+        public static void DisplayContentInGivenPosition(string content, Rect positionRect, int fontSize)
         {
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
-            GUI.Label(positionRect, subtitle, style);
+            GUI.Label(positionRect, content, style);
         }
 
-        // 在指定位置显示内容，并有指定样式
+        /// <summary>
+        /// 在指定位置显示内容，并有指定样式
+        /// </summary>
+        /// <param name="content" type="content">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        /// <param name="style" type="GUIStyle">传进来的字体样式</param>
         public static void DisplayContentInGivenPosition(string content, Rect positionRect, GUIStyle style)
         {
             GUI.Label(positionRect, content, style);
         }
 
-        // 在指定的比例位置显示内容，有指定颜色，字体大小等（解决Digit占两个位置的问题）
+        /// <summary>
+        /// 在指定的比例位置显示内容，有指定颜色，字体大小等（解决Digit占两个位置的问题）
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="camera" type="Camera">显示内容的摄像头</param>
+        /// <param name="offsetRatioX" type="float">字幕距离屏幕左边的距离占整个屏幕宽度的比例</param>
+        /// <param name="offsetRatioY" type="float">字幕距离屏幕上面的距离占整个屏幕高度的比例</param>
+        /// <param name="color" type="Color">字体颜色</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="textAnchor" type="TextAnchor">文本框锚点</param>
         public static void DisplayContentInGivenPosition(
             string content,
             Camera camera,
@@ -439,18 +737,31 @@ namespace OperationTrident.Util
                 }
             }
         }
-
+        
+        
         //================================================================================
         //==========        一些关于任务目标的显示函数         ===============================
         //================================================================================
 
-        // 默认的显示任务目标
+        /// <summary>
+        /// 在默认的位置显示任务目标，以默认的颜色
+        /// </summary>
+        /// <param name="missionContent" type="string">任务目标的内容</param>
+        /// <param name="camera" type="Camera">显示的摄像头</param>
+        /// <param name="inLeft" type="bool">是否靠左显示</param>
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera, bool inLeft = true)
         {
             DisplayMissionTargetDefault(missionContent, camera, missionContentNormalColor, inLeft, defaultFontSize);
         }
 
-        // 默认的显示任务目标，有指定的颜色大小之类的
+        /// <summary>
+        /// 默认的显示任务目标，有指定的颜色，字体大小。
+        /// </summary>
+        /// <param name="missionContent" type="string">任务目标内容</param>
+        /// <param name="camera" type="Camera">显示的相机</param>
+        /// <param name="color" type="Color">字体颜色</param>
+        /// <param name="inLeft" type="bool">是否靠左显示</param>
+        /// <param name="fontSize" type="int">字体大小</param>
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera,
             Color color, bool inLeft = true,int fontSize=defaultFontSize)
         {
@@ -474,6 +785,7 @@ namespace OperationTrident.Util
         private static string rememberString1 = string.Empty;
         private static bool hasRememberString1Init = false;
         // 默认的显示任务目标，在慢慢的时间显示出来
+
         public static void DisplayMissionTargetDefaultSequently(
             string missionContent,
             Camera camera, 
@@ -994,10 +1306,26 @@ namespace OperationTrident.Util
         private static float frameTimer2 = 0;
         public static bool canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
         private static int transparentFactor = 0;
+        private static bool hasInitRememberStringDSIGG = false;
+        private static string rememberStringDSIGG = string.Empty;
         // 没错，在指定的时间里显示！但是我还是想说，你最好随时获取一下上面这个bool值，为true的时候在你自己的程序逻辑里停下。实际上，这个函数本质上和上面那个函数是差不多的。因为接受的参数比较现实所以姑且保留了下来
-        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float second)
+        // 参数时间是每个字的时间
+        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float secondOfEachWord)
         {
-            if (transparentFactor >= 255) return;
+            // 最开始的时候调用，这时候还没有初始化记下字幕的变量
+            if (!hasInitRememberStringDSIGG)
+            {
+                rememberStringDSIGG = subtitle;
+                hasInitRememberStringDSIGG = true;
+            }
+            if (rememberStringDSIGG != subtitle)
+            {
+                frameTimer2 = 0;
+                transparentFactor = 0;
+                canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
+                rememberStringDSIGG = subtitle;
+            }
+            if (transparentFactor > 255) return;
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
                 transparentFactor += 4;
@@ -1007,11 +1335,60 @@ namespace OperationTrident.Util
                 return;
             }
             frameTimer2 += Time.deltaTime;
-            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight);
+            transparentFactor = Math.Min(transparentFactor + 4, 255);
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactor);
             // 达到时间了
-            if (frameTimer2 >= second)
+            if (frameTimer2 >= secondOfEachWord*(subtitle.Length+2))
             {
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
+                transparentFactor = 0;
+            }
+        }
+
+        private static float frameTimerDSIGG = 0.0f;
+        private static string[] rememberSubtitles;
+        private static int displayingSubtitlesIndex = 0;
+        public static bool canBeStopDisplaySubtitlesInGivenGrammar = false;
+        // 按时间显示每行字幕
+        public static void DisplaySubtitlesInGivenGrammar(string[] subtitles,
+            Camera camera,
+            int fontSize,
+            float subtitleRatioHeight,
+            float secondOfEachWord,
+            float secondBetweenLine)
+        {
+            if (rememberSubtitles == null)
+            {
+                rememberSubtitles = subtitles;
+            }
+            // 要显示的总字幕发生了变化
+            if (rememberSubtitles[0] != subtitles[0])
+            {
+                frameTimerDSIGG = 0.0f;
+                displayingSubtitlesIndex = 0;
+                canBeStopDisplaySubtitlesInGivenGrammar = false;
+            }
+            if (canBeStopDisplaySubtitlesInGivenGrammar) return;
+            rememberSubtitles = subtitles;
+            DisplaySubtitleInGivenGrammar(
+                subtitles[displayingSubtitlesIndex],
+                camera,
+                fontSize: fontSize,
+                subtitleRatioHeight: subtitleRatioHeight,
+                secondOfEachWord: secondOfEachWord);
+            if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
+            {
+                frameTimerDSIGG += Time.deltaTime;
+                if (frameTimerDSIGG >= secondBetweenLine)
+                {
+                    if (displayingSubtitlesIndex == subtitles.Length - 1)
+                    {
+                        canBeStopDisplaySubtitlesInGivenGrammar = true;
+                    }
+                    displayingSubtitlesIndex = Math.Min(displayingSubtitlesIndex + 1, subtitles.Length - 1);
+
+                    frameTimerDSIGG = 0;
+                }
             }
         }
     }

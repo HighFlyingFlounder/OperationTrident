@@ -438,6 +438,7 @@ MonoBehaviour:
   wordAppearanceInterval: 0.1
   lineSubsequentlyInterval: 1.236
   fontSize: 16
+  roomPos: {fileID: 1750885542}
 --- !u!114 &299697317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,9 +467,9 @@ MonoBehaviour:
   enemyInitPositions:
   - {fileID: 1574952954}
   key: {fileID: 674223789}
-  shader_depthSensor: {fileID: 4800000, guid: b51eff598e74cbd478f5480d7ffc6a43, type: 3}
-  texture: {fileID: 2800000, guid: 53dda7dc883b23149983c0ae0bd11983, type: 3}
   player: {fileID: 930827135}
+  switchPos: {fileID: 674223790}
+  secondFloor: {fileID: 307675739}
 --- !u!114 &299697319
 MonoBehaviour:
   m_ObjectHideFlags: 0
