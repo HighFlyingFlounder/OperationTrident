@@ -522,6 +522,7 @@ namespace OperationTrident.Util
         /// <summary>
         /// 根据具体的字的大小修正一下GUI的位置，
         /// 最后的bool值决定是否解决颠倒效应，如果要解决颠倒效应，必须传入相机的pixelHeight
+        /// 建议：解决，并传入相机高
         /// </summary>
         /// <param name="guiPosition" type="Vector2"></param>
         /// <param name="fontSize" type="int" default="defaultFontSize">
@@ -531,15 +532,19 @@ namespace OperationTrident.Util
         /// 是否解决颠倒效应：就是GUI坐标的XY中原点是左上角，Y值往下为正。
         /// 如果设置为true的话，应在后面传入相机的高，如果不传入相机的高，那么结果和false是一样的
         /// </param>
-        /// <param name="cameraPixelHeight"></param>
-        /// <returns></returns>
+        /// <param name="cameraPixelHeight" type="int" default="0">
+        /// camera.pixelHeight
+        /// </param>
+        /// <returns type="Rect">
+        /// 返回的矩形
+        /// </returns>
         public static Rect GetFixedRectDueToFontSize(
             Vector2 guiPosition,
             int fontSize = defaultFontSize,
             bool fixedTopDown = false, 
             int cameraPixelHeight = 0)
         {
-            // 就算你设置了要解决颠倒效应，你也要传一个相机的高给我啊
+            // 传高+Bool
             if ((!fixedTopDown) || cameraPixelHeight == 0)
                 return new Rect(guiPosition.x - fontSize / 4,
                     guiPosition.y - fontSize / 4,
@@ -552,7 +557,14 @@ namespace OperationTrident.Util
                     fontSize);
         }
 
-        // 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect (主要是方便任务系统？也可能用在别的地方)
+        /// <summary>
+        /// 获得世界坐标，传入一个相机，然后直接获得修正过大小后的一个Rect 
+        /// 主要是方便任务系统,任务目标点可以直接获得其在屏幕上显示的Rect
+        /// </summary>
+        /// <param name="worldPosition" type="Vector3"></param>
+        /// <param name="camera" type="Camera"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <returns type="Rect"></returns>
         public static Rect GetFixedRectDirectlyFromWorldPosition(Vector3 worldPosition, Camera camera, int fontSize = defaultFontSize)
         {
             Vector3 guiPosition = camera.WorldToScreenPoint(worldPosition);
@@ -564,26 +576,47 @@ namespace OperationTrident.Util
         }
 
 
-        // 注意下面这些Display开头的函数都要放在OnGUI()里面调用！@！@！￥！@￥！@￥！@%……！@￥……@#%&￥……*
+        // 下面这些Display开头的函数都要放在OnGUI()里面调用
 
 
         //================================================================================
         //==========        一些显示字幕的函数         ===============================
         //================================================================================
 
-        // 直接调字幕，显示在默认的位置。注意一定要在OnGUI()中调用该函数！！！
+        /// <summary>
+        /// 在默认的位置显示字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">
+        /// 要显示的字幕
+        /// </param>
+        /// <param name="camera" type="Camera">
+        /// 在哪个相机
+        /// </param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera)
         {
             DisplaySubtitleInDefaultPosition(subtitle, camera, defaultFontSize, defaultSubtitleRatioHeight);
         }
 
-        // 以指定大小的字体显示默认位置的字幕
+        /// <summary>
+        /// 以指定大小的字体显示默认位置的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">显示字幕的相机</param>
+        /// <param name="fontSize" type="int">字体大小</param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize)
         {
             DisplaySubtitleInDefaultPosition(subtitle, camera, fontSize, defaultSubtitleRatioHeight);
         }
 
-        // 以指定大小的字体显示指定高度比例的字幕
+        /// <summary>
+        /// 以指定大小的字体显示指定高度比例的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">显示字幕的相机</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="subtitleRatioHeight" type="float">
+        /// 字幕距屏幕上方的距离占整个屏幕的高的比例
+        /// </param>
         public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight)
         {
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
@@ -594,8 +627,20 @@ namespace OperationTrident.Util
                     ), subtitle, style);
         }
 
-        //以指定大小的字体指定的颜色显示指定高度比例的字幕
-        public static void DisplaySubtitleInDefaultPosition(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight,Color color)
+        /// <summary>
+        /// 以指定大小的字体指定的颜色显示指定高度比例的字幕。字幕居中
+        /// </summary>
+        /// <param name="subtitle" type="string"></param>
+        /// <param name="camera" type="Camera"></param>
+        /// <param name="fontSize" type="int"></param>
+        /// <param name="subtitleRatioHeight" type="float"></param>
+        /// <param name="color" type="Color"></param>
+        public static void DisplaySubtitleInDefaultPosition(
+            string subtitle,
+            Camera camera, 
+            int fontSize, 
+            float subtitleRatioHeight,
+            Color color)
         {
             GUIStyle style = GetDefaultTextStyle(color, fontSize);
             GUI.Label(
@@ -609,26 +654,49 @@ namespace OperationTrident.Util
         //==========        一些显示指定内容的默认参数         ===============================
         //================================================================================
 
-        // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle, Rect positionRect)
+        /// <summary>
+        /// 在指定位置显示指定内容
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        public static void DisplayContentInGivenPosition(string content, Rect positionRect)
         {
-            DisplayContentInGivenPosition(subtitle, positionRect, DefaultFontSize);
+            DisplayContentInGivenPosition(content, positionRect, DefaultFontSize);
         }
 
-        // 在指定位置显示内容
-        public static void DisplayContentInGivenPosition(string subtitle, Rect positionRect, int fontSize)
+        /// <summary>
+        /// 在指定位置以指定字体大小显示指定内容
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        /// <param name="fontSize" type="int">字体的大小</param>
+        public static void DisplayContentInGivenPosition(string content, Rect positionRect, int fontSize)
         {
             GUIStyle style = GetDefaultTextStyle(subtitleNormalColor, fontSize);
-            GUI.Label(positionRect, subtitle, style);
+            GUI.Label(positionRect, content, style);
         }
 
-        // 在指定位置显示内容，并有指定样式
+        /// <summary>
+        /// 在指定位置显示内容，并有指定样式
+        /// </summary>
+        /// <param name="content" type="content">要显示的内容</param>
+        /// <param name="positionRect" type="Rect">显示的位置</param>
+        /// <param name="style" type="GUIStyle">传进来的字体样式</param>
         public static void DisplayContentInGivenPosition(string content, Rect positionRect, GUIStyle style)
         {
             GUI.Label(positionRect, content, style);
         }
 
-        // 在指定的比例位置显示内容，有指定颜色，字体大小等（解决Digit占两个位置的问题）
+        /// <summary>
+        /// 在指定的比例位置显示内容，有指定颜色，字体大小等（解决Digit占两个位置的问题）
+        /// </summary>
+        /// <param name="content" type="string">要显示的内容</param>
+        /// <param name="camera" type="Camera">显示内容的摄像头</param>
+        /// <param name="offsetRatioX" type="float">字幕距离屏幕左边的距离占整个屏幕宽度的比例</param>
+        /// <param name="offsetRatioY" type="float">字幕距离屏幕上面的距离占整个屏幕高度的比例</param>
+        /// <param name="color" type="Color">字体颜色</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="textAnchor" type="TextAnchor">文本框锚点</param>
         public static void DisplayContentInGivenPosition(
             string content,
             Camera camera,
@@ -669,18 +737,31 @@ namespace OperationTrident.Util
                 }
             }
         }
-
+        
+        
         //================================================================================
         //==========        一些关于任务目标的显示函数         ===============================
         //================================================================================
 
-        // 默认的显示任务目标
+        /// <summary>
+        /// 在默认的位置显示任务目标，以默认的颜色
+        /// </summary>
+        /// <param name="missionContent" type="string">任务目标的内容</param>
+        /// <param name="camera" type="Camera">显示的摄像头</param>
+        /// <param name="inLeft" type="bool">是否靠左显示</param>
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera, bool inLeft = true)
         {
             DisplayMissionTargetDefault(missionContent, camera, missionContentNormalColor, inLeft, defaultFontSize);
         }
 
-        // 默认的显示任务目标，有指定的颜色大小之类的
+        /// <summary>
+        /// 默认的显示任务目标，有指定的颜色，字体大小。
+        /// </summary>
+        /// <param name="missionContent" type="string">任务目标内容</param>
+        /// <param name="camera" type="Camera">显示的相机</param>
+        /// <param name="color" type="Color">字体颜色</param>
+        /// <param name="inLeft" type="bool">是否靠左显示</param>
+        /// <param name="fontSize" type="int">字体大小</param>
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera,
             Color color, bool inLeft = true,int fontSize=defaultFontSize)
         {
@@ -704,6 +785,7 @@ namespace OperationTrident.Util
         private static string rememberString1 = string.Empty;
         private static bool hasRememberString1Init = false;
         // 默认的显示任务目标，在慢慢的时间显示出来
+
         public static void DisplayMissionTargetDefaultSequently(
             string missionContent,
             Camera camera, 
