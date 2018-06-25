@@ -426,6 +426,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cb51a58e18e314283e8a93d5bb5b27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 930827135}
+  shader_dark: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
+  shader_depthSensor: {fileID: 4800000, guid: b51eff598e74cbd478f5480d7ffc6a43, type: 3}
+  texture: {fileID: 2800000, guid: 53dda7dc883b23149983c0ae0bd11983, type: 3}
+  missionDetails:
+  - "2018.6.22  \u661F\u671F\u4E94"
+  - "\u5916\u592A\u7A7A"
+  - "\u4E09\u53C9\u621F\u884C\u52A8"
+  wordTransparentInterval: 0.005
+  wordAppearanceInterval: 0.1
+  lineSubsequentlyInterval: 1.236
+  fontSize: 16
 --- !u!114 &299697317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +466,6 @@ MonoBehaviour:
   enemyInitPositions:
   - {fileID: 1574952954}
   key: {fileID: 674223789}
-  shader_dark: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
   shader_depthSensor: {fileID: 4800000, guid: b51eff598e74cbd478f5480d7ffc6a43, type: 3}
   texture: {fileID: 2800000, guid: 53dda7dc883b23149983c0ae0bd11983, type: 3}
   player: {fileID: 930827135}
@@ -657,8 +668,8 @@ Transform:
   - {fileID: 29998554}
   - {fileID: 307675739}
   - {fileID: 1699332585}
-  - {fileID: 1876577586}
   - {fileID: 1750885542}
+  - {fileID: 1876577586}
   - {fileID: 720959758}
   - {fileID: 1510610434}
   m_Father: {fileID: 0}
@@ -677,7 +688,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4755713671722864, guid: b34142d2f58c79f4c9f6940d38f20020, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 8.876593e-18
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4755713671722864, guid: b34142d2f58c79f4c9f6940d38f20020, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1365,7 +1376,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 405977061}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1750885543
 MonoBehaviour:
@@ -1650,7 +1661,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4714963031500312, guid: 37028816fbf7d044e90bd14aeef3e791, type: 2}
       propertyPath: m_RootOrder
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 64447590633177878, guid: 37028816fbf7d044e90bd14aeef3e791,
         type: 2}
