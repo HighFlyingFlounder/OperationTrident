@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
 namespace room2Battle
 {
@@ -19,8 +20,6 @@ namespace room2Battle
         //敌人出生点
         [SerializeField]
         protected Transform[] enemyInitPositions;
-        //玩家
-        //public GameObject player;
 
         //钥匙
         [SerializeField]
@@ -28,11 +27,6 @@ namespace room2Battle
 
         //主相机，需要判断是否拿到钥匙
         protected Camera mCamera;
-
-        //计时器
-        //protected System.DateTime sw = new System.DateTime();
-
-        //protected System.TimeSpan span;
 
         //是否对准开关
         protected bool isFocus = false;
@@ -52,22 +46,22 @@ namespace room2Battle
         //[SerializeField]
         //protected Shader shader_dark = null;
 
-        [SerializeField]
-        protected Shader shader_depthSensor = null;
-
-        //depthSensor的纹理
-        [SerializeField]
-        protected Texture texture = null;
-
         //挂载相机的对象，单机可用
         [SerializeField]
         protected GameObject player;
+
+        [SerializeField]
+        protected Transform targetPos;
+
+        protected bool isShowTarget = false;
 
         //获取相机句柄
         void Start()
         {
             mCamera = Camera.main;
         }
+
+        protected float distance = float.MaxValue;
 
         //@override
         public override bool isTransitionTriggered()
@@ -83,7 +77,6 @@ namespace room2Battle
 
         public override void onSubsceneDestory()
         {
-            //player.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<becomeDark>().enabled = false;
             //@TODO: 替换成老Y的AI
@@ -102,7 +95,8 @@ namespace room2Battle
             //添加脚本
             if (GameMgr.instance)//联网状态
                 playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
-            else playerCamera = player.transform.Find("Camera").gameObject;
+            else
+                playerCamera = player.transform.Find("Camera").gameObject;
 
             //@TODO: 替换成老Y的AI
             for (int i = 0; i < maxEnemyNum; ++i)
@@ -110,6 +104,8 @@ namespace room2Battle
                 GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
                 enemyList.Add(obj);
             }
+
+            distance = Vector3.Distance(targetPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
         public override void notify(int i)
@@ -159,6 +155,16 @@ namespace room2Battle
                     break;
                 }
             }
+
+            distance = Vector3.Distance(targetPos.position, playerCamera.GetComponent<Transform>().position);
+
+            Vector3 direction1 = ray.direction; // 摄像头的方向
+            Vector3 direction2 = targetPos.position -playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
+            // 如果物体大方向在人视线背后的话，就不显示了
+            if (Vector3.Dot(direction1, direction2) <= 0)
+                isShowTarget = false;
+            else
+                isShowTarget = true;
         }
 
         void LateUpdate()
@@ -179,8 +185,6 @@ namespace room2Battle
                 //通过只有一个后处理，减少post processing的pass
                 if (!isOpenDepthSensor)
                 {
-                    // player.GetComponent<depthSensor>().enabled = true;
-                    //player.GetComponent<becomeDark>().enabled = false;
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
                     isOpenDepthSensor = true;
@@ -213,11 +217,11 @@ namespace room2Battle
                 //交互提示
                 if (!isSwitchOpen)
                 {
-                    OperationTrident.Util.GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.5f);
                 }
                 else
                 {
-                    OperationTrident.Util.GUIUtil.DisplaySubtitleInDefaultPosition("干得漂亮", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInDefaultPosition("干得漂亮", mCamera, 12, 0.5f);
                 }
             }
             //深度摄像头是否开启，是否黑
@@ -225,28 +229,36 @@ namespace room2Battle
             bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
             if (!isSwitchOpen)
             {
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
+                GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                    Camera.main,
-                   OperationTrident.Util.GUIUtil.yellowColor,
+                   GUIUtil.yellowColor,
                    0.5f, 0.1f, 16);
 
                 if (!open2 && open)
                 {
-                    OperationTrident.Util.GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.5f);
+                }
+
+                GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
+                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetPos.position + new Vector3(0.0f,3.0f,0.0f), mCamera);
+                // 指定颜色
+                if (isShowTarget)
+                {
+                    GUI.Label(rect, (int)distance + "m", style);
                 }
             }
             else
             {
                 if (!isIntoSecondFloor)
                 {
-                   OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                   GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                        Camera.main,
-                       OperationTrident.Util.GUIUtil.yellowColor,
+                       GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
                 }
                 if (open2 && !isFocus)
                 {
-                    OperationTrident.Util.GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.5f);
                 }
             }
         }
