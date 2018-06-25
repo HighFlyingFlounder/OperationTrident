@@ -29,7 +29,6 @@ namespace OperationTrident.Room1
         // 场景中最大的敌人数量
         public int enemyMaxNum = 10;
         // 场景中当前敌人的数量
-        [SerializeField]
         private int nowEnemyNum;
 
         // Use this for initialization

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.EventSystem;
+using OperationTrident.Util;
 using System;
 
 namespace OperationTrident.Room1
@@ -9,6 +10,8 @@ namespace OperationTrident.Room1
 
     public class SceneController : MonoBehaviour
     {
+        private new Camera camera;
+
         // 钥匙预设
         [SerializeField]
         private GameObject keyPrefab;
@@ -100,6 +103,7 @@ namespace OperationTrident.Room1
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
 
+            camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
         }
 
@@ -117,10 +121,11 @@ namespace OperationTrident.Room1
                     IDCardWorldPosition = IDCard.transform.position;
                     //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
+                    subtitlesToDisplay = subtitleInitToDisplay;
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
-
+                    subtitleIndex = 0;
                     break;
                 // 玩家正在找第二个钥匙
                 case Room1State.FindingKey2:
@@ -128,21 +133,33 @@ namespace OperationTrident.Room1
                     break;
                 // 玩家正准备尝试开最后一个门
                 case Room1State.TryingToOpenRoom:
-
+                    
                     break;
                 // 玩家正在找必需品
                 case Room1State.FindingNeeded:
-
+                    subtitlesToDisplay = subtitleOpenDoorFalseToDisplay;
                     break;
                 // 玩家正在找ID卡
                 case Room1State.FindingIDCard:
-
+                    
                     break;
                 // 玩家正在逃离房间
                 case Room1State.EscapingRoom:
-
+                    subtitlesToDisplay = subtitleEscapingToDisplay;
                     break;
             }
+        }
+
+        IEnumerator AddSubtitleIndex(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            ++subtitleIndex;
+        }
+
+        IEnumerator SetSubtitleIndex(float delay,int index)
+        {
+            yield return new WaitForSeconds(delay);
+            subtitleIndex = index;
         }
 
         // 一次性生成了全部的GameObject，但是这里并没有生成C4？
@@ -248,8 +265,34 @@ namespace OperationTrident.Room1
             {
                 // TODO: 拿到了尸体C4
                 state = Room1State.FindingIDCard;
-                cropse.GetComponent<InteractiveThing>().enabled = false;
             }
+        }
+
+        public string[] subtitleInitToDisplay = {
+            "^b地球指挥官:^w根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
+            "^b地球指挥官:^w你们要拿到它，小心里面的^r巡逻机器人"
+        };
+
+        public string[] subtitleOpenDoorFalseToDisplay={
+            "^rAI:^w对不起，身份识别错误",
+            "^b队友:^w门居然打不开，来点硬一点的方法吧"
+        };
+
+        public string[] subtitleEscapingToDisplay = {
+            "^b地球指挥官:^w注意，仓库的警报启动",
+            "^b地球指挥官:^w大量的^r防御机器人^w正在进入你们的房间"
+        };
+        private string[] subtitlesToDisplay;
+        private int subtitleIndex = 0;
+        void OnGUI()
+        {
+            GUIUtil.DisplaySubtitlesInGivenGrammar(
+                subtitlesToDisplay,
+                camera,
+                fontSize: 16,
+                subtitleRatioHeight: 0.9f,
+                secondOfEachWord: 0.2f,
+                secondBetweenLine: 4.0f);
         }
     }
 }
