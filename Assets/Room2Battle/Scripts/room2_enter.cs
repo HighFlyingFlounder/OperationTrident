@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
 namespace room2Battle
 {
@@ -16,6 +17,8 @@ namespace room2Battle
 
         [SerializeField]
         protected GameObject player;
+
+        protected GameObject playerMirror;
 
         //挂载脚本的shader，包括dark和depth sensor
         [SerializeField]
@@ -45,6 +48,13 @@ namespace room2Battle
         public int fontSize = 16; // 字体大小
 
         protected bool isInit = false;
+
+        [SerializeField]
+        protected Transform roomPos;
+
+        protected bool isShowTarget = false;
+
+        protected float distance = float.MaxValue;
 
         public override void onSubsceneInit()
         {
@@ -79,10 +89,19 @@ namespace room2Battle
                 else
                     playerCamera = player.transform.Find("Camera").gameObject;
 
+                if (playerCamera)
+                {
+                    GameObject gun = playerCamera.transform.Find("Gun").gameObject;
+                    playerMirror = gun.transform.Find("Mirror").gameObject;
+                }
+
                 if (!isInit && this.enabled)
                 {
                     playerCamera.AddComponent<becomeDark>();
                     playerCamera.AddComponent<depthSensor>();
+
+                    playerMirror.AddComponent<becomeDark>();
+                    playerMirror.AddComponent<depthSensor>();
                     //初始化脚本参数
                     (playerCamera.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
                     playerCamera.GetComponent<becomeDark>().enabled = true;
@@ -90,6 +109,13 @@ namespace room2Battle
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Texture = texture;
                     playerCamera.GetComponent<depthSensor>().enabled = false;
+
+                    (playerMirror.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
+                    playerMirror.GetComponent<becomeDark>().enabled = true;
+
+                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
+                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_Texture = texture;
+                    playerMirror.GetComponent<depthSensor>().enabled = false;
 
                     isInit = true;
                 }
@@ -103,10 +129,10 @@ namespace room2Battle
 
         void OnGUI()
         {
-            OperationTrident.Util.GUIUtil.DisplayMissionDetailDefault(
+            GUIUtil.DisplayMissionDetailDefault(
                             missionDetails,
                             Camera.main,
-                            OperationTrident.Util.GUIUtil.yellowColor,
+                            GUIUtil.yellowColor,
                             wordTransparentInterval: wordTransparentInterval,
                             wordAppearanceInterval: wordAppearanceInterval,
                             lineSubsequentlyInterval: lineSubsequentlyInterval,
@@ -114,21 +140,29 @@ namespace room2Battle
 
             if (!isNear)
             {
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
+                GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
                     Camera.main,
-                    OperationTrident.Util.GUIUtil.yellowColor,
+                    GUIUtil.yellowColor,
                     0.5f, 0.1f, 16);
             }
             else
             {
                 //深度摄像头是否开启
                 bool open = playerCamera.GetComponent<depthSensor>().enabled;
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
+                GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
                     Camera.main,
-                    OperationTrident.Util.GUIUtil.yellowColor,
+                    GUIUtil.yellowColor,
                     0.5f,0.1f,16);
                 if(!open)
-                    OperationTrident.Util.GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", Camera.main, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", Camera.main, 12, 0.5f);
+            }
+
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(roomPos.position, Camera.main);
+            // 指定颜色
+            if (isShowTarget)
+            {
+                GUI.Label(rect, (int)distance + "m", style);
             }
         }
 
@@ -162,14 +196,40 @@ namespace room2Battle
                 {
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
+
+                    playerMirror.GetComponent<depthSensor>().enabled = true;
+                    playerMirror.GetComponent<becomeDark>().enabled = false;
                 }
                 else
                 {
-                    playerCamera.GetComponent<depthSensor>().enabled = false;
-                    playerCamera.GetComponent<becomeDark>().enabled = true;
+                    playerMirror.GetComponent<depthSensor>().enabled = false;
+                    playerMirror.GetComponent<becomeDark>().enabled = true;
+
+                    playerMirror.GetComponent<depthSensor>().enabled = true;
+                    playerMirror.GetComponent<becomeDark>().enabled = false;
                 }
             }
 
+        }
+
+        void Update()
+        {
+            if (isInit)
+            {
+                Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);
+
+                Ray ray = Camera.main.ScreenPointToRay(point);
+
+                distance = Vector3.Distance(roomPos.position, playerCamera.GetComponent<Transform>().position);
+
+                Vector3 direction1 = ray.direction; // 摄像头的方向
+                Vector3 direction2 = roomPos.position - playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
+
+                if (Vector3.Dot(direction1, direction2) <= 0)
+                    isShowTarget = false;
+                else
+                    isShowTarget = true;
+            }
         }
     }
 }
