@@ -4,9 +4,9 @@ using UnityEngine;
 using OperationTrident.CrossInput;
 using OperationTrident.Player;
 
-public class NetWorkManager : MonoBehaviour
+public class SceneNetManager : MonoBehaviour
 {
-    public static NetWorkManager instance;
+    public static SceneNetManager instance;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
@@ -93,7 +93,7 @@ public class NetWorkManager : MonoBehaviour
         playerObj.transform.rotation = swopTrans.rotation;
 
         list.Add(id, playerObj);
-        //玩家处理
+        //玩家通用处理
         NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
         if (id == GameMgr.instance.id)
         {
@@ -108,6 +108,18 @@ public class NetWorkManager : MonoBehaviour
             playerObj.GetComponent<PlayerController>().enabled = false;
             playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
         }
+        //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
+        HandlePlayer(id,playerObj);
+    }
+    /// <summary> 
+    /// 生成玩家时对玩家进行处理        
+    /// </summary> 
+    /// <param name="id">玩家的id，用id == GameMgr.instance.id来判断是否是本地玩家</param>
+    /// <param name="playerObj">玩家对象</param>    
+    /// <returns></returns> 
+    public virtual void HandlePlayer(string id, GameObject playerObj)
+    {
+
     }
 
     public void RecvStartFight(ProtocolBase protocol)
