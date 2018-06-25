@@ -138,8 +138,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 3877511}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.29, y: 0.51, z: -23.24}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 29.29, y: 1.532, z: -23.24}
+  m_LocalScale: {x: 1, y: 2.6346388, z: 1}
   m_Children: []
   m_Father: {fileID: 405977061}
   m_RootOrder: 4
@@ -429,7 +429,8 @@ MonoBehaviour:
   player: {fileID: 930827135}
   shader_dark: {fileID: 4800000, guid: 1a2cbeb32225cf1448f6ac4ec34a28dc, type: 3}
   shader_depthSensor: {fileID: 4800000, guid: b51eff598e74cbd478f5480d7ffc6a43, type: 3}
-  texture: {fileID: 2800000, guid: 53dda7dc883b23149983c0ae0bd11983, type: 3}
+  waveTexture: {fileID: 2800000, guid: 8444ba459b96a704f8c357b5a412b2c7, type: 3}
+  waveMaskTexture: {fileID: 2800000, guid: 57f1646828dedfd4799254fbe23e12c7, type: 3}
   missionDetails:
   - "2018.6.22  \u661F\u671F\u4E94"
   - "\u5916\u592A\u7A7A"

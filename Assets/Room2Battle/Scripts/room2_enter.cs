@@ -29,7 +29,10 @@ namespace room2Battle
 
         //depthSensor的纹理
         [SerializeField]
-        protected Texture texture = null;
+        protected Texture waveTexture = null;
+
+        [SerializeField]
+        protected Texture waveMaskTexture = null;
 
         protected bool isNear = false;
 
@@ -107,14 +110,16 @@ namespace room2Battle
                     playerCamera.GetComponent<becomeDark>().enabled = true;
 
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
-                    (playerCamera.GetComponent<depthSensor>() as depthSensor).m_Texture = texture;
+                    (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
+                    (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
                     playerCamera.GetComponent<depthSensor>().enabled = false;
 
                     (playerMirror.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
                     playerMirror.GetComponent<becomeDark>().enabled = true;
 
                     (playerMirror.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
-                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_Texture = texture;
+                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
+                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
                     playerMirror.GetComponent<depthSensor>().enabled = false;
 
                     isInit = true;
@@ -202,11 +207,11 @@ namespace room2Battle
                 }
                 else
                 {
+                    playerCamera.GetComponent<depthSensor>().enabled = false;
+                    playerCamera.GetComponent<becomeDark>().enabled = true;
+
                     playerMirror.GetComponent<depthSensor>().enabled = false;
                     playerMirror.GetComponent<becomeDark>().enabled = true;
-
-                    playerMirror.GetComponent<depthSensor>().enabled = true;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
                 }
             }
 
