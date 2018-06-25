@@ -42,6 +42,8 @@ namespace room2Battle
         //挂载相机的对象，联网可用
         protected GameObject playerCamera = null;
 
+        protected GameObject playerMirror = null;
+
         //挂载脚本的shader，包括dark和depth sensor
         //[SerializeField]
         //protected Shader shader_dark = null;
@@ -51,7 +53,10 @@ namespace room2Battle
         protected GameObject player;
 
         [SerializeField]
-        protected Transform targetPos;
+        protected Transform switchPos;
+
+        [SerializeField]
+        protected Transform secondFloor;
 
         protected bool isShowTarget = false;
 
@@ -79,6 +84,15 @@ namespace room2Battle
         {
             playerCamera.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<becomeDark>().enabled = false;
+
+            playerMirror.GetComponent<depthSensor>().enabled = false;
+            playerMirror.GetComponent<becomeDark>().enabled = false;
+
+            Destroy(playerCamera.GetComponent<depthSensor>());
+            Destroy(playerCamera.GetComponent<becomeDark>());
+            Destroy(playerMirror.GetComponent<depthSensor>());
+            Destroy(playerMirror.GetComponent<becomeDark>());
+
             //@TODO: 替换成老Y的AI
             foreach (GameObject obj in enemyList)
             {
@@ -98,6 +112,12 @@ namespace room2Battle
             else
                 playerCamera = player.transform.Find("Camera").gameObject;
 
+            if (playerCamera)
+            {
+                GameObject gun = playerCamera.transform.Find("Gun").gameObject;
+                playerMirror = gun.transform.Find("Mirror").gameObject;
+            }
+
             //@TODO: 替换成老Y的AI
             for (int i = 0; i < maxEnemyNum; ++i)
             {
@@ -105,7 +125,7 @@ namespace room2Battle
                 enemyList.Add(obj);
             }
 
-            distance = Vector3.Distance(targetPos.position, playerCamera.GetComponent<Transform>().position);
+            distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
         public override void notify(int i)
@@ -142,7 +162,7 @@ namespace room2Battle
                 else
                 {
                     isFocus = false;
- 
+
                 }
             }
 
@@ -155,11 +175,21 @@ namespace room2Battle
                     break;
                 }
             }
-
-            distance = Vector3.Distance(targetPos.position, playerCamera.GetComponent<Transform>().position);
-
             Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2 = targetPos.position -playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
+            Vector3 direction2;
+
+            if (!isSwitchOpen)
+            {
+                distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
+                direction2 = switchPos.position - playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
+            }
+            else
+            {
+                distance = Vector3.Distance(secondFloor.position, playerCamera.GetComponent<Transform>().position);
+                direction2 = secondFloor.position - playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
+            }
+            
+            
             // 如果物体大方向在人视线背后的话，就不显示了
             if (Vector3.Dot(direction1, direction2) <= 0)
                 isShowTarget = false;
@@ -172,7 +202,7 @@ namespace room2Battle
             //当看到物品时
             if (isFocus)
             {
-                
+
                 if (Input.GetKey(KeyCode.F))
                 {
                     isSwitchOpen = true;
@@ -187,6 +217,10 @@ namespace room2Battle
                 {
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
+
+                    playerMirror.GetComponent<depthSensor>().enabled = true;
+                    playerMirror.GetComponent<becomeDark>().enabled = false;
+
                     isOpenDepthSensor = true;
                 }
                 else
@@ -194,8 +228,10 @@ namespace room2Battle
                     if (!isSwitchOpen)
                     {
                         playerCamera.GetComponent<becomeDark>().enabled = true;
-                    } 
+                        playerMirror.GetComponent<becomeDark>().enabled = true;
+                    }
                     playerCamera.GetComponent<depthSensor>().enabled = false;
+                    playerMirror.GetComponent<depthSensor>().enabled = false;
                     isOpenDepthSensor = false;
                 }
             }
@@ -203,6 +239,7 @@ namespace room2Battle
             if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;
+                playerMirror.GetComponent<becomeDark>().enabled = false;
             }
 
         }
@@ -240,7 +277,7 @@ namespace room2Battle
                 }
 
                 GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetPos.position + new Vector3(0.0f,3.0f,0.0f), mCamera);
+                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(switchPos.position + new Vector3(0.0f, 3.0f, 0.0f), mCamera);
                 // 指定颜色
                 if (isShowTarget)
                 {
@@ -251,10 +288,17 @@ namespace room2Battle
             {
                 if (!isIntoSecondFloor)
                 {
-                   GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                    GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                        Camera.main,
                        GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
+                    GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
+                    Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(secondFloor.position + new Vector3(0.0f, 3.0f, 0.0f), mCamera);
+                    // 指定颜色
+                    if (isShowTarget)
+                    {
+                        GUI.Label(rect, (int)distance + "m", style);
+                    }
                 }
                 if (open2 && !isFocus)
                 {
