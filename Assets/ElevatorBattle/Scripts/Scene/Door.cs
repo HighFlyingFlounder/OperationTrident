@@ -4,13 +4,15 @@ using UnityEngine;
 
 namespace OperationTrident.Elevator
 {
-    public class Door : MonoBehaviour
+    public class Door : MonoBehaviour, NetSyncInterface
     {
         private GameObject child1;
         private GameObject child2;
 
         private bool open;
         private bool close;
+
+        NetSyncController m_controller;
 
         //true: open false: close
         public static bool state;
@@ -61,7 +63,30 @@ namespace OperationTrident.Elevator
 
         }
 
+        //网络同步
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
+        }
+
+        //发信息
         private void Operate()
+        {
+            Operate_Imp();
+            m_controller.RPC(this, "Operate_Imp");
+        }
+
+        private void Operate_Imp()
         {
             switch (SceneController.state)
             {
