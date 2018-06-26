@@ -216,7 +216,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: ab7e80c5c03fb62418e2a3c6ef88b090, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: ab7e80c5c03fb62418e2a3c6ef88b090, type: 3}
       propertyPath: m_LocalScale.x
@@ -282,6 +282,7 @@ GameObject:
   - component: {fileID: 555158580}
   - component: {fileID: 555158582}
   - component: {fileID: 555158581}
+  - component: {fileID: 555158583}
   m_Layer: 0
   m_Name: Scene Controller
   m_TagString: Untagged
@@ -409,6 +410,19 @@ MonoBehaviour:
   wordAppearanceInterval: 0.1
   lineSubsequentlyInterval: 1.236
   fontSize: 16
+--- !u!114 &555158583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 555158576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c2ab1dd21f7814392f34bb245130af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sync_scripts:
+  - {fileID: 555158577}
 --- !u!1001 &579850832
 Prefab:
   m_ObjectHideFlags: 0
@@ -446,7 +460,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4307294581555432, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8370d1d670366eb49815b12f2cb95c5b, type: 2}

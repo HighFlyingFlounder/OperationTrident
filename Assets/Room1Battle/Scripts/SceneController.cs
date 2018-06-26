@@ -8,9 +8,11 @@ using System;
 namespace OperationTrident.Room1
 {
 
-    public class SceneController : MonoBehaviour
+    public class SceneController : MonoBehaviour, NetSyncInterface
     {
         //private new Camera camera;
+
+        NetSyncController m_controller;
 
         // 钥匙预设
         [SerializeField]
@@ -186,8 +188,14 @@ namespace OperationTrident.Room1
             door2.transform.localScale = new Vector3(3.0f, door2.transform.localScale.y, door2.transform.localScale.z);
         }
 
-        // 改进后的函数，所有钥匙的事件分ID处理
         private void OnKeyGot(int id)
+        {
+            OnKeyGot_Imp(id);
+            m_controller.RPC(this, "OnKeyGot_Imp", id);
+        }
+
+        // 改进后的函数，所有钥匙的事件分ID处理
+        public void OnKeyGot_Imp(int id)
         {
             switch (id)
             {
@@ -218,8 +226,14 @@ namespace OperationTrident.Room1
             }
         }
 
-        // 改进后的函数，所有门的事件分ID处理
         private void OnDoorOpen(int id)
+        {
+            OnDoorOpen_Imp(id);
+            m_controller.RPC(this, "OnDoorOpen_Imp", id);
+        }
+
+        // 改进后的函数，所有门的事件分ID处理
+        public void OnDoorOpen_Imp(int id)
         {
             
             switch (id)
@@ -258,8 +272,14 @@ namespace OperationTrident.Room1
             }
         }
 
-        // 搜刮尸体
         private void OnCropseTry()
+        {
+            OnCropseTry_Imp();
+            m_controller.RPC(this, "OnCropseTry_Imp");
+        }
+
+        // 搜刮尸体
+        public void OnCropseTry_Imp()
         {
             if (state == Room1State.FindingNeeded)
             {
@@ -293,6 +313,21 @@ namespace OperationTrident.Room1
                 subtitleRatioHeight: 0.9f,
                 secondOfEachWord: 0.2f,
                 secondBetweenLine: 4.0f);
+        }
+
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
         }
     }
 }

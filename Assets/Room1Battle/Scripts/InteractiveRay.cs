@@ -7,9 +7,8 @@ using System;
 
 namespace OperationTrident.Room1
 {
-    public class InteractiveRay : MonoBehaviour,NetSyncInterface
+    public class InteractiveRay : MonoBehaviour
     {
-        NetSyncController m_NetSyncController;
         // 判断能否够到物体的距离
         [SerializeField]
         private float distanceQuota = 3.0f;
@@ -90,8 +89,7 @@ namespace OperationTrident.Room1
                         hitObject.GetComponent<DoorScript>();
                     if (target1 != null)
                     {
-                        OpenDoor(target1);
-                        m_NetSyncController.RPC(this, "OpenDoor", target1);
+                        Messenger<int>.Broadcast(GameEvent.DOOR_OPEN, target1.ThisId);
                         return;
                     }
                     if (hitObject.CompareTag("Corpse"))
@@ -110,12 +108,6 @@ namespace OperationTrident.Room1
             }
         }
 
-        public void OpenDoor(DoorScript target)
-        {
-            Debug.Log("1241534264235783568679");
-            Messenger<int>.Broadcast(GameEvent.DOOR_OPEN, target.ThisId);
-        }
-
         void OnGUI()
         {
 
@@ -127,22 +119,6 @@ namespace OperationTrident.Room1
                 else
                     GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, camera, hintFontSize, 0.5f);
             }
-        }
-
-        public void RecvData(SyncData data)
-        {
-        }
-
-        public SyncData SendData()
-        {
-            SyncData data = new SyncData();
-            data.Add(1);
-            return data;
-        }
-
-        public void Init(NetSyncController controller)
-        {
-            m_NetSyncController = controller;
         }
     }
 }
