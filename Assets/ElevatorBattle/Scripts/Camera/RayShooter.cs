@@ -9,7 +9,7 @@ namespace OperationTrident.Elevator
     {
         // 判断能否够到物体的距离
         [SerializeField]
-        public float distanceQuota;
+        public float distanceQuota = 3;
 
         // 附加在这个东西上的摄像机
         private Camera camera;

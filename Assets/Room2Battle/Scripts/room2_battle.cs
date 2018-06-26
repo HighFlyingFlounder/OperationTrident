@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
+
 
 namespace room2Battle {
     //小boss大战
@@ -29,6 +31,8 @@ namespace room2Battle {
 
         [SerializeField]
         protected GameObject nextScene_;
+
+        public string[] line = {"" };
 
         public override void notify(int i)
         {
@@ -91,6 +95,7 @@ namespace room2Battle {
         {
             if (isTimelinePaused)
             {
+                GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
                 OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
                       Camera.main,
                       OperationTrident.Util.GUIUtil.yellowColor,
@@ -98,8 +103,9 @@ namespace room2Battle {
             }
             if (!isTimelinePaused)
             {
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
+                GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
             }
+            
         }
 
     }

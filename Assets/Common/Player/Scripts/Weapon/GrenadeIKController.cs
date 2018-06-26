@@ -60,7 +60,6 @@ namespace OperationTrident.Weapon {
 
 
         void OnAnimatorIK() {
-
             if (m_PickGrenade) {
                 if (RightHandTarget != null) {
                     m_Animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
@@ -68,7 +67,7 @@ namespace OperationTrident.Weapon {
                     m_Animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandTarget.position);
                     m_Animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandTarget.rotation);
                 }
-            } 
+            }
         }
 
         //返回grenade的位置

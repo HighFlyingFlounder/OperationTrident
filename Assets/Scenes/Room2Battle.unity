@@ -445,6 +445,11 @@ MonoBehaviour:
   - "2018.6.22  \u661F\u671F\u4E94"
   - "\u5916\u592A\u7A7A"
   - "\u4E09\u53C9\u621F\u884C\u52A8"
+  line:
+  - "^w\u5662\uFF0C\u771F\u662F\u89C1\u9B3C!"
+  - "^y\u6211^w\u6562\u6253\u8D4C\u8FD9\u7FA4^y\u6DF7\u86CB^w\u4E00\u5B9A\u662F\u5173\u95ED\u4E86^r\u7167\u660E\u7684\u7535\u6E90\u3002"
+  - "^y\u4F19\u8BA1\u4EEC^w\uFF0C\u6253\u5F00^r\u611F\u5E94\u5668!"
+  - "^w\u5E72\u6389\u8FD9\u7FA4\u611A\u8822\u7684^y\u571F\u62E8\u9F20"
   wordTransparentInterval: 0.005
   wordAppearanceInterval: 0.1
   lineSubsequentlyInterval: 1.236
@@ -481,6 +486,9 @@ MonoBehaviour:
   player: {fileID: 930827135}
   switchPos: {fileID: 674223790}
   secondFloor: {fileID: 307675739}
+  line:
+  - "^w\u68D2\u6781\u4E86\uFF0C\u6211\u7684\u8001\u4F19\u8BA1!"
+  - "^w\u73B0\u5728\u6CBF\u7740\u65C1\u8FB9\u7684\u697C\u68AF\u51B2\u4E0A\u53BB"
 --- !u!114 &299697319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -499,6 +507,9 @@ MonoBehaviour:
   enemyPrefabs: {fileID: 1339328970737070, guid: aa1cd200460493d4f88d00e8c3152c90,
     type: 2}
   nextScene_: {fileID: 49156620}
+  line:
+  - "^y\u6211\u7684\u4E0A\u5E1D\uFF0C^w\u8FD9\u662F\u4EC0\u4E48\u602A\u7269!"
+  - "^y\u795D\u4F60\u4EEC\u597D\u8FD0!"
 --- !u!114 &299697320
 MonoBehaviour:
   m_ObjectHideFlags: 0
