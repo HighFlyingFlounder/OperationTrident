@@ -1455,7 +1455,7 @@ namespace OperationTrident.Util
         private static float frameTimerDSsIGG = 0.0f;
         private static string[] rememberSubtitlesDSsIGG;
         private static int displayingSubtitlesIndexDSsIGG = 0;
-        public static bool canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = false;
+        public static bool canBeStopDisplaySubtitlesInGivenGrammar = false;
         /// <summary>
         /// 按时间显示多行字幕，每次只显示一行。
         /// </summary>
@@ -1481,9 +1481,9 @@ namespace OperationTrident.Util
             {
                 frameTimerDSsIGG = 0.0f;
                 displayingSubtitlesIndexDSsIGG = 0;
-                canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = false;
+                canBeStopDisplaySubtitlesInGivenGrammar = false;
             }
-            if (canBeStopDisplaySubtitlesInGivenGrammarDSsIGG) return;
+            if (canBeStopDisplaySubtitlesInGivenGrammar) return;
             rememberSubtitlesDSsIGG = subtitles;
             DisplaySubtitleInGivenGrammar(
                 subtitles[displayingSubtitlesIndexDSsIGG],
@@ -1498,7 +1498,7 @@ namespace OperationTrident.Util
                 {
                     if (displayingSubtitlesIndexDSsIGG == subtitles.Length - 1)
                     {
-                        canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = true;
+                        canBeStopDisplaySubtitlesInGivenGrammar = true;
                     }
                     displayingSubtitlesIndexDSsIGG = Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
 

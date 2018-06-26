@@ -400,7 +400,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca766e4878d649649aadca92f015de2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
   missionDetails:
   - "2018.6.22  \u661F\u671F\u4E94"
   - "\u96F7\u514B\u96C5\u672A\u514B"
@@ -599,9 +598,28 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114627958363885942, guid: 61363b6013e34504aaa61f92297cff86, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 61363b6013e34504aaa61f92297cff86, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1704529653 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1508856695242680, guid: 61363b6013e34504aaa61f92297cff86,
+    type: 2}
+  m_PrefabInternal: {fileID: 1704529652}
+--- !u!114 &1704529654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1704529653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84b21bdbcdf835744814277a04dd747f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerPrefabs:
+  - {fileID: 1444310486929022, guid: b34142d2f58c79f4c9f6940d38f20020, type: 2}
 --- !u!1001 &1710786091
 Prefab:
   m_ObjectHideFlags: 0

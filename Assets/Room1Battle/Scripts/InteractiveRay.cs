@@ -10,14 +10,13 @@ namespace OperationTrident.Room1
     {
         // 判断能否够到物体的距离
         [SerializeField]
-        private float distanceQuota = 1.0f;
+        private float distanceQuota = 3.0f;
 
         // 附加在这个游戏对象上的摄像头
         private new Camera camera;
 
         // 是否提示玩家按下某个键
-        [SerializeField]
-        private bool toNotify = true;
+        public bool toNotify = true;
 
         private bool toDisplayHint = false;  
         private bool usingGrammar;  // 是否使用文法
@@ -27,11 +26,7 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = GetComponent<Camera>();
-            if (camera == null)
-            {
-                camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-            }
+            camera = Camera.main;
             hintToDisplay = string.Empty;
         }
 
@@ -51,6 +46,7 @@ namespace OperationTrident.Room1
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
                     {
+                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         HintableObject target = hitObject.GetComponent<HintableObject>();
                         if (target != null)
                         {
@@ -78,6 +74,7 @@ namespace OperationTrident.Room1
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
                     {
+                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         return;
                     }
                     KeyScript target =
