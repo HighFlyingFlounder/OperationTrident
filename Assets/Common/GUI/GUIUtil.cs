@@ -1445,7 +1445,7 @@ namespace OperationTrident.Util
             transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
             DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
             // 达到时间了
-            if (frameTimerDSIGG >= secondOfEachWord*(subtitle.Length+2))
+            if (frameTimerDSIGG >= secondOfEachWord*(subtitle.Length))
             {
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
                 transparentFactorDSIGG = 0;
@@ -1465,7 +1465,8 @@ namespace OperationTrident.Util
         /// <param name="subtitleRatioHeight" type="float">字幕离屏幕上方的距离占整个屏幕高的比例</param>
         /// <param name="secondOfEachWord" type="float">每个字显示的秒数</param>
         /// <param name="secondBetweenLine" type="float">行与行字幕之间的显示间隔秒数</param>
-        public static void DisplaySubtitlesInGivenGrammar(string[] subtitles,
+        public static void DisplaySubtitlesInGivenGrammar(
+            string[] subtitles,
             Camera camera,
             int fontSize,
             float subtitleRatioHeight,
@@ -1503,6 +1504,56 @@ namespace OperationTrident.Util
                     displayingSubtitlesIndexDSsIGG = Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
 
                     frameTimerDSsIGG = 0;
+                }
+            }
+        }
+
+        private static float frameTimerDSsIGGWT = 0.0f;
+        private static string[] rememberSubtitlesDSsIGGWT;
+        private static int displayingSubtitlesIndexDSsIGGWT = 0;
+        public static bool canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+        public static void DisplaySubtitlesInGivenGrammarWithTimeStamp(
+            string[] subtitles,
+            Camera camera,
+            int fontSize,
+            float subtitleRatioHeight,
+            float[] secondsOfEachLine,
+            float[] secondBetweenLine)
+        {
+            if (rememberSubtitlesDSsIGGWT == null)
+            {
+                rememberSubtitlesDSsIGGWT = subtitles;
+            }
+            // 要显示的总字幕发生了变化
+            if (rememberSubtitlesDSsIGGWT[0] != subtitles[0])
+            {
+                frameTimerDSsIGGWT = 0.0f;
+                displayingSubtitlesIndexDSsIGGWT = 0;
+                canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+            }
+            if (canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp) return;
+            rememberSubtitlesDSsIGGWT = subtitles;
+            DisplaySubtitleInGivenGrammar(
+                subtitles[displayingSubtitlesIndexDSsIGGWT],
+                camera,
+                fontSize: fontSize,
+                subtitleRatioHeight: subtitleRatioHeight,
+                secondOfEachWord: 
+                    secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]/
+                        subtitles[displayingSubtitlesIndexDSsIGGWT].Length);
+            if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
+            {
+                frameTimerDSsIGGWT += Time.deltaTime;
+                if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
+                {
+                    if (displayingSubtitlesIndexDSsIGGWT == subtitles.Length - 1)
+                    {
+                        canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = true;
+                    }
+                    displayingSubtitlesIndexDSsIGGWT = 
+                        Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
+
+                    frameTimerDSsIGGWT = 0;
                 }
             }
         }

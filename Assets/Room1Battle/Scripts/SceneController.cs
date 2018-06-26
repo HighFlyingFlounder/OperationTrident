@@ -31,14 +31,14 @@ namespace OperationTrident.Room1
         // 场景中当前出现的可交互物品
         private GameObject gameObject;
 
-        private GameObject key1;
+        public GameObject key1;
         private GameObject key2;
         // 这里的尸体指的是尸体上的C4，尸体是一直都在的,这里有个问题！@Question: 可以不用把这个C4显示出来的
         public GameObject cropse;
         private GameObject IDCard;
 
         // 三个门
-        private GameObject doorStart;
+        public GameObject doorStart;
         private GameObject door1;
         private GameObject door2;
 
@@ -117,16 +117,18 @@ namespace OperationTrident.Room1
                 // 场景的初始状态
                 case Room1State.Initing:
                     InitAllGameObject();
+                    subtitlesToDisplay = subtitleInitToDisplay;
                     Key1WorldPosition = key1.transform.position;
                     Key2WorldPosition = key2.transform.position;
                     CropseWorldPosition = cropse.transform.position;
                     IDCardWorldPosition = IDCard.transform.position;
                     //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
-                    subtitlesToDisplay = subtitleInitToDisplay;
+                    
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
+                    Debug.Log(key1.transform.position);
                     break;
                 // 玩家正在找第二个钥匙
                 case Room1State.FindingKey2:
@@ -166,8 +168,8 @@ namespace OperationTrident.Room1
         // 一次性生成了全部的GameObject，但是这里并没有生成C4？
         private void InitAllGameObject()
         {
-            key1 = Instantiate(keyPrefab) as GameObject;
-            key1.transform.localPosition = Key1Position;
+            //key1 = Instantiate(keyPrefab) as GameObject;
+            //key1.transform.localPosition = Key1Position;
 
             key2 = Instantiate(keyPrefab) as GameObject;
             key2.transform.localPosition = Key2Position;
@@ -175,17 +177,18 @@ namespace OperationTrident.Room1
             IDCard = Instantiate(IDCardPrefab) as GameObject;
             IDCard.transform.localPosition = IDCardPosition;
 
-            doorStart = Instantiate(DoorPrefab) as GameObject;
-            doorStart.transform.localPosition = DoorStartPosition;
-            doorStart.transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
-            doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
+            //doorStart = Instantiate(DoorPrefab) as GameObject;
+            //doorStart.transform.localPosition = DoorStartPosition;
+            //doorStart.transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
+            //doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
 
             door1 = Instantiate(DoorPrefab) as GameObject;
             door1.transform.localPosition = Door1Position;
+            door1.transform.localScale = new Vector3(3.2f, 4.9f, 0.2f);
 
             door2 = Instantiate(DoorPrefab) as GameObject;
             door2.transform.localPosition = Door2Position;
-            door2.transform.localScale = new Vector3(3.0f, door2.transform.localScale.y, door2.transform.localScale.z);
+            door2.transform.localScale = new Vector3(3.8f, 5.0f, 0.2f);
         }
 
         private void OnKeyGot(int id)
@@ -242,7 +245,8 @@ namespace OperationTrident.Room1
                 case 0:
                     if (state == Room1State.FindingKey1)
                     {
-                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(2.5f,DoorScript.DoorOpenDirection.ZPositive);
+                        Debug.Log("WindyIce");
+                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.ZNegative);
                         doorStart.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
@@ -250,7 +254,7 @@ namespace OperationTrident.Room1
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XNegative);
+                        door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XPositive);
                         door1.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
@@ -306,13 +310,24 @@ namespace OperationTrident.Room1
         private int subtitleIndex = 0;
         void OnGUI()
         {
-            GUIUtil.DisplaySubtitlesInGivenGrammar(
-                subtitlesToDisplay,
+            //GUIUtil.DisplaySubtitlesInGivenGrammar(
+            //    subtitlesToDisplay,
+            //    Camera.main,
+            //    fontSize: 16,
+            //    subtitleRatioHeight: 0.9f,
+            //    secondOfEachWord: 0.2f,
+            //    secondBetweenLine: 4.0f);
+
+            string[] toD = { "^w你好，^b一王", "^w你好，^r鸡王" };
+            float[] a1 = { 10.0f, 5.0f };
+            float[] a2 = { 5.0f, 10.0f };
+            GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
+                toD,
                 Camera.main,
                 fontSize: 16,
                 subtitleRatioHeight: 0.9f,
-                secondOfEachWord: 0.2f,
-                secondBetweenLine: 4.0f);
+                secondsOfEachLine:a1,
+                secondBetweenLine: a2);
         }
 
         public void RecvData(SyncData data)

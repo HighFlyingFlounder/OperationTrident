@@ -47,7 +47,6 @@ namespace OperationTrident.Room1
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
                     {
-                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         HintableObject target = hitObject.GetComponent<HintableObject>();
                         if (target != null)
                         {
