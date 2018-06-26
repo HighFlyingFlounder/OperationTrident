@@ -13,6 +13,9 @@ namespace OperationTrident.EndingScene
         //鲲
         public GameObject m_Kun;
 
+        //太空垃圾铁板
+        public GameObject m_SpaceRubbish;
+
         //爆炸生成器
         public ExplosionGenerator m_ExplosionGenerator;
 
@@ -87,8 +90,7 @@ namespace OperationTrident.EndingScene
                 case CameraState.THIRD_PERSON:
                     GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white,0.1f);
                     StartCoroutine(CoroutineWait(5.0f));
-                    GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white, 0.1f);
-
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^g蓝星陆战队^w：指挥部，已取回托卡马克之心",m_CamFree);
 
                     break;
 
@@ -160,19 +162,28 @@ namespace OperationTrident.EndingScene
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 m_CamState = CameraState.VIDEO;
+                return;
             }
-            else
+
+            //计算新的需要插值到的camera pos/lookat
+            const float lerpScale = 2.0f;
+            m_DestCamPos += new Vector3(0, 1.5f, -15.0f) * Time.deltaTime;
+            m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime);
+
+            m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
+            m_CamFree.transform.LookAt(m_DestLookat);
+
+            //爆炸特效
+            m_ExplosionGenerator.GenerateExplosion();
+
+            //最后几小节太空垃圾飞过来撞镜头
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 8))
             {
-                //计算新的需要插值到的camera pos/lookat
-                const float lerpScale = 2.0f;
-                m_DestCamPos += new Vector3(0, 1.5f, -15.0f) * Time.deltaTime;
-                m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime);
-
-                m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
-                m_CamFree.transform.LookAt(m_DestLookat);
-
-                //爆炸特效
-                m_ExplosionGenerator.GenerateExplosion();
+                const float velocity = 500.0f;
+                Vector3 objPos = m_SpaceRubbish.transform.position;
+                Vector3 camPos = m_CamFree.transform.position;
+                m_SpaceRubbish.transform.position = Vector3.Lerp(objPos, camPos,velocity * Time.deltaTime / (camPos-objPos).magnitude);
+                m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(0.1f, 0.1f, 0.1f) * Time.deltaTime);
             }
         }
 
