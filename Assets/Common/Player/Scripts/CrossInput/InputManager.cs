@@ -192,7 +192,7 @@ namespace OperationTrident.CrossInput {
                 m_TempFloat = Input.GetAxis("Mouse Y");
 
                 if (m_HasNetwork && Mathf.Abs((float)m_Hashtable["MouseY"] - m_TempFloat) > 0) {
-                    Debug.Log(m_HasNetwork);
+                    //Debug.Log(m_HasNetwork);
                     m_Hashtable["MouseY"] = m_TempFloat;
                     m_NetSyncController.SyncVariables();
                 }
