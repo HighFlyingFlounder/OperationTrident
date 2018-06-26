@@ -4,13 +4,16 @@ using UnityEngine;
 
 namespace OperationTrident.EndingScene
 {
-    public class CameraMovement : MonoBehaviour
+    public class SceneDirector : MonoBehaviour
     {
         //逃生舱
         public GameObject m_EscapingCabin;
 
         //鲲
         public GameObject m_Kun;
+
+        //爆炸生成器
+        public ExplosionGenerator m_ExplosionGenerator;
 
         enum CameraState
         {
@@ -139,6 +142,9 @@ namespace OperationTrident.EndingScene
 
                 m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
                 m_CamFree.transform.LookAt(m_DestLookat);
+
+                //爆炸特效
+                m_ExplosionGenerator.GenerateExplosion();
             }
         }
 
