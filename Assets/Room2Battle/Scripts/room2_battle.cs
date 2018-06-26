@@ -27,6 +27,9 @@ namespace room2Battle {
 
         protected bool isTimelinePaused = false;
 
+        [SerializeField]
+        protected GameObject nextScene_;
+
         public override void notify(int i)
         {
             
@@ -71,6 +74,7 @@ namespace room2Battle {
                 }
             }
             else {
+                nextScene_.SetActive(true);
                 //补充敌人
                 for (int i = 0; i < enemyList.Count; ++i)
                 {

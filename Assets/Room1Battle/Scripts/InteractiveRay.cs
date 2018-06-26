@@ -28,6 +28,10 @@ namespace OperationTrident.Room1
         void Start()
         {
             camera = GetComponent<Camera>();
+            if (camera == null)
+            {
+                camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            }
             hintToDisplay = string.Empty;
         }
 
