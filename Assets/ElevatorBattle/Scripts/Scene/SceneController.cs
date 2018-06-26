@@ -67,7 +67,7 @@ namespace OperationTrident.Elevator {
                     s_time = Time.time;
                     c_time = s_time;
                     e_time = s_time + d_time;
-                    bcollider.size = new Vector3(10f, bcollider.size.y, bcollider.size.z);
+                    bcollider.size = new Vector3(12f, bcollider.size.y, bcollider.size.z);
                     break;
 
                 case ElevatorState.Fighting:
@@ -85,8 +85,6 @@ namespace OperationTrident.Elevator {
 
                     if (change)
                     {
-                        //更改碰撞体
-                        bcollider.size = new Vector3(12f, bcollider.size.y, bcollider.size.z);
                         //开门
                         GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
                         change = false;
@@ -136,7 +134,6 @@ namespace OperationTrident.Elevator {
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
                     changeState();
-                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -148,10 +145,10 @@ namespace OperationTrident.Elevator {
             {
                 //离开关门
                 count--;
+                Debug.Log("Exit" + count);
                 if (count <= 0 && Door.state && state == ElevatorState.End)
                 {
                     changeState();
-                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
                 }
             }
