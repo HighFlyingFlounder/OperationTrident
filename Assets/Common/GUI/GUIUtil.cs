@@ -1343,49 +1343,81 @@ namespace OperationTrident.Util
             DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, defaultSubtitleRatioHeight);
         }
 
-        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！加一个字幕高度比例参数
+        /// <summary>
+        /// 用指定的文法显示字幕
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">摄像头</param>
+        /// <param name="subtitleRatioHeight">字幕距离屏幕上面的距离占整个屏幕高的比例</param>
         public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, float subtitleRatioHeight)
         {
             DisplaySubtitleInGivenGrammar(subtitle, camera, defaultFontSize, subtitleRatioHeight);
         }
 
 
-        private static bool isFrameCounterStart = false;
-        private static int frameCounter;
-        public static bool canBeStopDisplaySubtitleInGivenGrammarInFrames = false; // 如果要用这个方法，推荐可以每帧获取一下这个bool值来判断,不要让他每帧都反复判断
-        // 显示字幕，用指定的文法！！！！！！！只有一行字幕传进来！再加一个帧数！！这些参数都是可以从static get字段取得的！默认的是前面加default
-        [Obsolete]   // 事实上，在每一帧都调用的OnGUI()里面设定停止条件是不现实的，所以已废弃，交给调用者实现停止条件。而且，就算是到达停止条件了，也会反复询问，很吃资源
-        public static void DisplaySubtitleInGivenGrammarInFrames(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, int frames)
+        private static bool isFrameCounterStartDSIGGIF = false;
+        private static int frameCounterDSIGGIF;
+        public static bool canBeStopDisplaySubtitleInGivenGrammarInFrames = false;
+        /// <summary>
+        /// 在给定的帧数里显示给定的字幕。没有淡入淡出的效果
+        /// 如果想自行在程序外部判断是不是显示完毕的话
+        /// 可以看canBeStopDisplaySubtitleInGivenGrammarInFrames是否为真
+        /// </summary>
+        /// <param name="subtitle" type="string">要显示的字幕</param>
+        /// <param name="camera" type="Camera">摄像头</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="subtitleRatioHeight" type="float">字幕距离屏幕上方的距离占整个屏幕高的比例</param>
+        /// <param name="frames" type="int">显示持续的帧数</param>
+        [Obsolete]   
+        public static void DisplaySubtitleInGivenGrammarInFrames(
+            string subtitle,
+            Camera camera,
+            int fontSize, 
+            float subtitleRatioHeight, 
+            int frames)
         {
             if (canBeStopDisplaySubtitleInGivenGrammarInFrames) return;
-            if (!isFrameCounterStart)
+            if (!isFrameCounterStartDSIGGIF)
             {
-                frameCounter = frames;
-                isFrameCounterStart = true;
+                frameCounterDSIGGIF = frames;
+                isFrameCounterStartDSIGGIF = true;
             }
             else
             {
-                if (frameCounter-- >= 0)
+                if (frameCounterDSIGGIF-- >= 0)
                 {
                     DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight);
                 }
                 else
                 {
                     canBeStopDisplaySubtitleInGivenGrammarInFrames = true;
-                    isFrameCounterStart = false;
+                    isFrameCounterStartDSIGGIF = false;
                     return;
                 }
             }
         }
 
-        private static float frameTimer2 = 0;
+        private static float frameTimerDSIGG = 0;
         public static bool canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
-        private static int transparentFactor = 0;
+        private static int transparentFactorDSIGG = 0;
         private static bool hasInitRememberStringDSIGG = false;
         private static string rememberStringDSIGG = string.Empty;
-        // 没错，在指定的时间里显示！但是我还是想说，你最好随时获取一下上面这个bool值，为true的时候在你自己的程序逻辑里停下。实际上，这个函数本质上和上面那个函数是差不多的。因为接受的参数比较现实所以姑且保留了下来
-        // 参数时间是每个字的时间
-        public static void DisplaySubtitleInGivenGrammar(string subtitle, Camera camera, int fontSize, float subtitleRatioHeight, float secondOfEachWord)
+        /// <summary>
+        /// 在给定的时间里显示字幕。
+        /// 如果想要判断该函数是否已经显示完毕的话，可以获取canBeStopDisplaySubtitleInGivenGrammarInSeconds，
+        /// 为真的时候显示完毕
+        /// </summary>
+        /// <param name="subtitle" type="string">显示的字幕</param>
+        /// <param name="camera" type="Camera">摄像头</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="subtitleRatioHeight" type="float">字幕距离屏幕上方的距离占整个屏幕高度的比例</param>
+        /// <param name="secondOfEachWord" type="float">字幕每个字显示的时间</param>
+        public static void DisplaySubtitleInGivenGrammar(
+            string subtitle,
+            Camera camera,
+            int fontSize, 
+            float subtitleRatioHeight,
+            float secondOfEachWord)
         {
             // 最开始的时候调用，这时候还没有初始化记下字幕的变量
             if (!hasInitRememberStringDSIGG)
@@ -1395,36 +1427,44 @@ namespace OperationTrident.Util
             }
             if (rememberStringDSIGG != subtitle)
             {
-                frameTimer2 = 0;
-                transparentFactor = 0;
+                frameTimerDSIGG = 0;
+                transparentFactorDSIGG = 0;
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
                 rememberStringDSIGG = subtitle;
             }
-            if (transparentFactor > 255) return;
+            if (transparentFactorDSIGG > 255) return;
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
-                transparentFactor += 4;
-                frameTimer2 = 0;
-                DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:transparentFactor);
+                transparentFactorDSIGG += 4;
+                frameTimerDSIGG = 0;
+                DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:transparentFactorDSIGG);
 
                 return;
             }
-            frameTimer2 += Time.deltaTime;
-            transparentFactor = Math.Min(transparentFactor + 4, 255);
-            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactor);
+            frameTimerDSIGG += Time.deltaTime;
+            transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
             // 达到时间了
-            if (frameTimer2 >= secondOfEachWord*(subtitle.Length+2))
+            if (frameTimerDSIGG >= secondOfEachWord*(subtitle.Length+2))
             {
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
-                transparentFactor = 0;
+                transparentFactorDSIGG = 0;
             }
         }
 
-        private static float frameTimerDSIGG = 0.0f;
-        private static string[] rememberSubtitles;
-        private static int displayingSubtitlesIndex = 0;
-        public static bool canBeStopDisplaySubtitlesInGivenGrammar = false;
-        // 按时间显示每行字幕
+        private static float frameTimerDSsIGG = 0.0f;
+        private static string[] rememberSubtitlesDSsIGG;
+        private static int displayingSubtitlesIndexDSsIGG = 0;
+        public static bool canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = false;
+        /// <summary>
+        /// 按时间显示多行字幕，每次只显示一行。
+        /// </summary>
+        /// <param name="subtitles" type="string[]">显示的字幕的数组</param>
+        /// <param name="camera" type="Camera">摄像头</param>
+        /// <param name="fontSize" type="int">字体大小</param>
+        /// <param name="subtitleRatioHeight" type="float">字幕离屏幕上方的距离占整个屏幕高的比例</param>
+        /// <param name="secondOfEachWord" type="float">每个字显示的秒数</param>
+        /// <param name="secondBetweenLine" type="float">行与行字幕之间的显示间隔秒数</param>
         public static void DisplaySubtitlesInGivenGrammar(string[] subtitles,
             Camera camera,
             int fontSize,
@@ -1432,37 +1472,37 @@ namespace OperationTrident.Util
             float secondOfEachWord,
             float secondBetweenLine)
         {
-            if (rememberSubtitles == null)
+            if (rememberSubtitlesDSsIGG == null)
             {
-                rememberSubtitles = subtitles;
+                rememberSubtitlesDSsIGG = subtitles;
             }
             // 要显示的总字幕发生了变化
-            if (rememberSubtitles[0] != subtitles[0])
+            if (rememberSubtitlesDSsIGG[0] != subtitles[0])
             {
-                frameTimerDSIGG = 0.0f;
-                displayingSubtitlesIndex = 0;
-                canBeStopDisplaySubtitlesInGivenGrammar = false;
+                frameTimerDSsIGG = 0.0f;
+                displayingSubtitlesIndexDSsIGG = 0;
+                canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = false;
             }
-            if (canBeStopDisplaySubtitlesInGivenGrammar) return;
-            rememberSubtitles = subtitles;
+            if (canBeStopDisplaySubtitlesInGivenGrammarDSsIGG) return;
+            rememberSubtitlesDSsIGG = subtitles;
             DisplaySubtitleInGivenGrammar(
-                subtitles[displayingSubtitlesIndex],
+                subtitles[displayingSubtitlesIndexDSsIGG],
                 camera,
                 fontSize: fontSize,
                 subtitleRatioHeight: subtitleRatioHeight,
                 secondOfEachWord: secondOfEachWord);
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
-                frameTimerDSIGG += Time.deltaTime;
-                if (frameTimerDSIGG >= secondBetweenLine)
+                frameTimerDSsIGG += Time.deltaTime;
+                if (frameTimerDSsIGG >= secondBetweenLine)
                 {
-                    if (displayingSubtitlesIndex == subtitles.Length - 1)
+                    if (displayingSubtitlesIndexDSsIGG == subtitles.Length - 1)
                     {
-                        canBeStopDisplaySubtitlesInGivenGrammar = true;
+                        canBeStopDisplaySubtitlesInGivenGrammarDSsIGG = true;
                     }
-                    displayingSubtitlesIndex = Math.Min(displayingSubtitlesIndex + 1, subtitles.Length - 1);
+                    displayingSubtitlesIndexDSsIGG = Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
 
-                    frameTimerDSIGG = 0;
+                    frameTimerDSsIGG = 0;
                 }
             }
         }
