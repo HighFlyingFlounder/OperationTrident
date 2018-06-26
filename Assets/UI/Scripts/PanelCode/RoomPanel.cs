@@ -82,7 +82,12 @@ public class RoomPanel : PanelBase
             if (id == GameMgr.instance.id)
                 str += "【我自己】";
             if (isOwner == 1)
+            {
                 str += "【房主】";
+                GameMgr.instance.isMasterClient = true;
+                NetSyncController.isMasterClient = true;
+            }
+                
             text.text = str;
 
             // if (team == 1)

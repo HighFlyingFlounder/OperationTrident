@@ -504,7 +504,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4755713671722864}
   - component: {fileID: 114436359509005066}
-  - component: {fileID: 114289827869503334}
+  - component: {fileID: 114977145394676476}
   - component: {fileID: 114353155239874898}
   - component: {fileID: 95521056919846876}
   - component: {fileID: 54897888050491100}
@@ -2133,7 +2133,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444310486929022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 2.66, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4683525020066134}
@@ -2332,7 +2332,7 @@ Camera:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1475960324823428}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -3445,20 +3445,6 @@ MonoBehaviour:
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
   m_Camera: {fileID: 20068872333894404}
---- !u!114 &114289827869503334
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1444310486929022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b4d53593373d6a4387bebf4ff59ae91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ctrlType: 1
-  syncPerSceond: 10
-  ForcastSync: 1
 --- !u!114 &114353155239874898
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3570,6 +3556,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Gun: {fileID: 1660058350492010}
   Grenade: {fileID: 1276063298606720}
+--- !u!114 &114977145394676476
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1444310486929022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b4d53593373d6a4387bebf4ff59ae91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ctrlType: 0
+  syncPerSceond: 10
+  ForcastSync: 1
 --- !u!124 &124960434992256720
 Behaviour:
   m_ObjectHideFlags: 1

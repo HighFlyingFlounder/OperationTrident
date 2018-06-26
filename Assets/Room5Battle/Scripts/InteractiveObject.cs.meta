@@ -1,9 +1,10 @@
 fileFormatVersion: 2
-guid: 2dc65b06283c6dc41bf2dafde7e79c14
+guid: 082f199cef1eb0240b09872b8bc6b68f
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_TextureGrey: {fileID: 2800000, guid: 1e1649cccfaa09e4485f615a9fc02b33, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
