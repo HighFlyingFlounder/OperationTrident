@@ -19,7 +19,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4738718329774702}
-  - component: {fileID: 114500441908115098}
+  - component: {fileID: 114922599257231970}
+  - component: {fileID: 114097977693310726}
   m_Layer: 0
   m_Name: EnemyPos
   m_TagString: Untagged
@@ -40,7 +41,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114500441908115098
+--- !u!114 &114097977693310726
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,7 +49,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1682009407167858}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33e900205083d134bacabd793cd20bd2, type: 3}
+  m_Script: {fileID: 11500000, guid: f8c2ab1dd21f7814392f34bb245130af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sync_scripts:
+  - {fileID: 114922599257231970}
+--- !u!114 &114922599257231970
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1682009407167858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e34c459ca0c69445afdba571facd3de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CreateObject: {fileID: 1678822668127206, guid: 47ef2315a3ba7fd4092afe3a7f2058b8,

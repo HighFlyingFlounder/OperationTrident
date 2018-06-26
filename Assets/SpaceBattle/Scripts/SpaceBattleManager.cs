@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpaceBattleManager : MonoBehaviour
 {
     //单例
-    public static NetWorkManager instance;
+    public static SceneNetManager instance;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色

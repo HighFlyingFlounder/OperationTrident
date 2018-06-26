@@ -88,7 +88,7 @@ namespace room2Battle
                 //m_controller.RPC(this,"method_need_to_sync",1,"string for param2");
                 //初始化
                 if (GameMgr.instance)//联网状态
-                    playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+                    playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
                 else
                     playerCamera = player.transform.Find("Camera").gameObject;
 
