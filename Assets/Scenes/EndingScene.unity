@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 33270537}
   - component: {fileID: 33270536}
   m_Layer: 0
-  m_Name: TimelineDirector
+  m_Name: SceneDirector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -298,8 +298,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EscapingCabin: {fileID: 1785529561}
   m_Kun: {fileID: 1759336737}
+  m_TimeLineDirector: {fileID: 33270537}
   m_CamDirected: {fileID: 289771981}
-  m_CamThirdPerson: {fileID: 692610342}
+  m_CamFree: {fileID: 692610342}
   m_MouseLookSensitivity: 15
 --- !u!320 &33270537
 PlayableDirector:
@@ -2038,7 +2039,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &289771979
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2071,7 +2072,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 3500
-  field of view: 50
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -5507,7 +5508,7 @@ GameObject:
   - component: {fileID: 692610341}
   - component: {fileID: 692610340}
   m_Layer: 0
-  m_Name: Camera-thirdPerson
+  m_Name: Camera-free
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5806,6 +5807,34 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8cdb697e2304144aa09f06e48ff0e8, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &708426500
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 708426501}
+  m_Layer: 0
+  m_Name: ExplosionGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &708426501
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 708426500}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1925.0928, y: -120.70007, z: 66.50824}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &712073089 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4623659878128276, guid: 3d5e3a7700398154b928e5ef49166e7e,
