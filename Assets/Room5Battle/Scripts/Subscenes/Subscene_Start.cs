@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using System;
 
 namespace OperationTrident.Room5
 {
-    public class Subscene_Start : Subscene
+    public class Subscene_Start : Subscene, NetSyncInterface
     {
         //可交互对象（在unity editor中初始化）
         public InteractiveObject m_ControlPanel;
@@ -59,6 +60,7 @@ namespace OperationTrident.Room5
             {
                 //交互完毕，可以转到“核心开始冷却”场景了
                 m_isTokamakeStartToCoolDown = true;
+                gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
         }
 
@@ -67,5 +69,21 @@ namespace OperationTrident.Room5
             m_ControlPanel.RenderGUI();
         }
 
+        public void RecvData(SyncData data)
+        {
+            m_isTokamakeStartToCoolDown = (bool)data.Get(typeof(bool));
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            data.Add(m_isTokamakeStartToCoolDown);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            
+        }
     }
 }
