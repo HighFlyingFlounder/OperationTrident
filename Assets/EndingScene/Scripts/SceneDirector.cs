@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
 namespace OperationTrident.EndingScene
 {
@@ -75,6 +76,35 @@ namespace OperationTrident.EndingScene
 
         }
 
+        void OnGUI()
+        {
+            switch (m_CamState)
+            {
+                case CameraState.ROAMING:
+
+                    break;
+
+                case CameraState.THIRD_PERSON:
+                    GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white,0.1f);
+                    StartCoroutine(CoroutineWait(5.0f));
+                    GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white, 0.1f);
+
+
+                    break;
+
+                case CameraState.LOOKING_AT_KUN:
+
+                    break;
+
+                case CameraState.VIDEO:
+
+                    break;
+            }
+
+        }
+
+
+
         /************************************************
          *                           PRIVATE
          * **********************************************/
@@ -95,7 +125,7 @@ namespace OperationTrident.EndingScene
         private void Update_ThirdPerson()
         {
 
-            if (m_Time > m_BgmBarTime * (8 + 16))
+            if (m_Time > m_BgmBarTime * (8 + 16+16))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 //并初始化camera的destPos和destLookat
@@ -114,8 +144,6 @@ namespace OperationTrident.EndingScene
                 Quaternion deltaRotation = Quaternion.Euler(new Vector3(mouseY, mouseX, 0));
                 m_ThirdPersonCamOffset = deltaRotation * m_ThirdPersonCamOffset;
 
-
-
                 //实际Camera位置向pos/lookat插值
                 const float lerpScale = 5.0f;
                 m_DestCamPos = m_EscapingCabin.transform.position + m_ThirdPersonCamOffset;
@@ -128,7 +156,7 @@ namespace OperationTrident.EndingScene
 
         private void Update_LookingAtKun()
         {
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16))
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16+16))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 m_CamState = CameraState.VIDEO;
@@ -153,6 +181,10 @@ namespace OperationTrident.EndingScene
 
         }
 
+        private IEnumerator CoroutineWait(float time)
+        {
+            yield return new WaitForSeconds(time);
+        }
     }
 
 }

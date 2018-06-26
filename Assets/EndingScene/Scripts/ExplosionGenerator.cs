@@ -21,7 +21,7 @@ namespace OperationTrident.EndingScene
             if (m_Time > m_ExplodeThresholdTime)
             {
                 //敌人在某个位置隔壁一定box范围内生成
-                Vector3 boxSize = new Vector3(600, 200, 300);
+                Vector3 boxSize = new Vector3(600, 400, 400);
                     float x_offset = Random.Range(-boxSize.x / 2.0f, boxSize.x / 2.0f);
                     float y_offset = Random.Range(-boxSize.y / 2.0f, boxSize.y / 2.0f);
                     float z_offset = Random.Range(-boxSize.z / 2.0f, boxSize.z / 2.0f);
