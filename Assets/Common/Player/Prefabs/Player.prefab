@@ -507,7 +507,6 @@ GameObject:
   - component: {fileID: 114977145394676476}
   - component: {fileID: 114353155239874898}
   - component: {fileID: 95521056919846876}
-  - component: {fileID: 54897888050491100}
   - component: {fileID: 143441578871613716}
   - component: {fileID: 82166840473006920}
   - component: {fileID: 114199756251556638}
@@ -2133,7 +2132,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1444310486929022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.03, y: 2.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4683525020066134}
@@ -3071,21 +3070,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1883975995755666}
   m_Mesh: {fileID: 4300000, guid: 4f9635b162a471144969563595ddeed9, type: 3}
---- !u!54 &54897888050491100
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1444310486929022}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!81 &81316003178265700
 AudioListener:
   m_ObjectHideFlags: 1
@@ -3331,7 +3315,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 0fbd15a6db858744a8c0b65f96add05b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1

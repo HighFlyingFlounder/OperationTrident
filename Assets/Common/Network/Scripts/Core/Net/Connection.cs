@@ -178,6 +178,7 @@ public class Connection
         string protoName = proto.GetString(start, ref start);
         long send_time = proto.GetLong(start, ref start);
         long end_time = System.Diagnostics.Stopwatch.GetTimestamp();
+        lastRecvDelayTime = Time.time;
         RTT = (int)((end_time - send_time) / (System.Diagnostics.Stopwatch.Frequency / 1000));
     }
 
@@ -199,6 +200,7 @@ public class Connection
                 // 上次发送的包还没有收到回包
                 if( lastRecvDelayTime < lastSendDelayTime ){
                     RTT = 460; //说明网络延时过高,需要更新RTT为一个很大的值.
+                    Debug.Log("网络延时过高");
                 }
                 ProtocolBase protocol = NetMgr.GetDelayProtocol();
                 Send(protocol);
