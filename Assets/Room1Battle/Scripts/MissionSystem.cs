@@ -9,9 +9,6 @@ namespace OperationTrident.Room1
     public class MissionSystem : MonoBehaviour
     {
 
-        // 场景的相机主相机
-        private new Camera camera;
-
         // 图标离目标有多高
         public float missionLabelOffset = 3.0f;
 
@@ -59,8 +56,6 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = GetComponent<Camera>();
-            //toDisplayNewMission = true;
             missionContent = String.Empty;
             missionContentsIndex = 0;
         }
@@ -101,8 +96,8 @@ namespace OperationTrident.Room1
             missionContent = missionContents[missionContentsIndex]; // 设置要显示的任务目标内容
             nowDistance = Vector3.Distance(targetWorldPosition,
                      GetComponentInParent<Transform>().position); // 两个世界坐标的
-            Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
@@ -128,7 +123,7 @@ namespace OperationTrident.Room1
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
-                    camera,
+                    Camera.main,
                     GUIUtil.brightGreenColor,
                     interval: appearInterval,
                     blingInterval:blingInterval,
@@ -138,7 +133,7 @@ namespace OperationTrident.Room1
 
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
             // 指定颜色
             if (toDisplayTheMissionPoint)
             {

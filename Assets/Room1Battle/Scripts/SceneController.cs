@@ -10,7 +10,7 @@ namespace OperationTrident.Room1
 
     public class SceneController : MonoBehaviour
     {
-        private new Camera camera;
+        //private new Camera camera;
 
         // 钥匙预设
         [SerializeField]
@@ -103,7 +103,7 @@ namespace OperationTrident.Room1
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
 
-            camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
         }
 
@@ -288,7 +288,7 @@ namespace OperationTrident.Room1
         {
             GUIUtil.DisplaySubtitlesInGivenGrammar(
                 subtitlesToDisplay,
-                camera,
+                Camera.main,
                 fontSize: 16,
                 subtitleRatioHeight: 0.9f,
                 secondOfEachWord: 0.2f,
