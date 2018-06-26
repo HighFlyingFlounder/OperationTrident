@@ -1085,7 +1085,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4603147585362420}
-  - component: {fileID: 114072742584996602}
+  - component: {fileID: 114266026367771928}
   - component: {fileID: 114767271316303618}
   - component: {fileID: 54379831312627802}
   - component: {fileID: 114112127848236266}
@@ -2782,20 +2782,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 100
---- !u!114 &114072742584996602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1777184918930474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b4d53593373d6a4387bebf4ff59ae91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ctrlType: 1
-  syncPerSceond: 10
-  ForcastSync: 1
 --- !u!114 &114112127848236266
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2811,6 +2797,20 @@ MonoBehaviour:
   model: {fileID: 1032643205350878}
   RunParticle: {fileID: 1473336348164282}
   m_RigidBody: {fileID: 0}
+--- !u!114 &114266026367771928
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1777184918930474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b4d53593373d6a4387bebf4ff59ae91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ctrlType: 0
+  syncPerSceond: 10
+  ForcastSync: 1
 --- !u!114 &114419168735336484
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2872,7 +2872,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8c2ab1dd21f7814392f34bb245130af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sync_scripts: []
+  sync_scripts:
+  - {fileID: 114112127848236266}
 --- !u!114 &114839320742071850
 MonoBehaviour:
   m_ObjectHideFlags: 1
