@@ -7,10 +7,10 @@ using OperationTrident.Util;
 
 namespace OperationTrident.Room1
 {
-    public class RayShooter : MonoBehaviour
+    public class RayShooter : MonoBehaviour,NetSyncInterface
     {
 
-
+        NetSyncController m_NetSyncController;
         // 射速：一秒钟能射多少枪
         public float shootingSpeed = 10.0f;
         // 辅助射速系统，判断能不能开枪
@@ -21,7 +21,7 @@ namespace OperationTrident.Room1
         // 后坐力：枪在X轴上的随机抖动factor
         public float jitterFactorX = 1.0f;
         public float jitterFactorY = 0.2f;
-
+        public bool isLocalPlayer = true;
 
 
         // 附加在这个东西上的摄像机
@@ -45,6 +45,9 @@ namespace OperationTrident.Room1
         // Update is called once per frame
         void Update()
         {
+            if (!isLocalPlayer)
+                return;
+
             //响应鼠标按键
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)&&canShoot
                 //&&  !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()
@@ -53,24 +56,8 @@ namespace OperationTrident.Room1
                 StartCoroutine(ShootRoutine());
                 Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
                 Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
-                    if (target != null)   //检查对象上是否有ReactiveTarget组件
-                    {
-                        target.ReactToHit();
-                        //Messenger.Broadcast(GameEvent.ENEMY_HIT);
-                    }
-                    else
-                    {
-                        StartCoroutine(SphereIndicator(hit.point));//响应击中
-                    }
-
-                }
+                ShootWithRay(ray);
+                m_NetSyncController.RPC(this, "ShootWithRay", ray);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {
@@ -81,10 +68,27 @@ namespace OperationTrident.Room1
                     camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
                 }
             }
-
-
         }
-
+        public void ShootWithRay(Ray ray)
+        {
+            RaycastHit hit;//射线交叉信息的包装
+                           //Raycast给引用的变量填充信息
+            if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
+            {
+                //hit.point:射线击中的坐标
+                GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
+                if (target != null)   //检查对象上是否有ReactiveTarget组件
+                {
+                    target.ReactToHit();
+                    //Messenger.Broadcast(GameEvent.ENEMY_HIT);
+                }
+                else
+                {
+                    StartCoroutine(SphereIndicator(hit.point));//响应击中
+                }
+            }
+        }
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
@@ -113,6 +117,23 @@ namespace OperationTrident.Room1
             yield return new WaitForSeconds(1);   //yield：协程在何处暂停
 
             Destroy(sphere);   //移除GameObject并释放占用的内存
+        }
+
+        public void RecvData(SyncData data)
+        {
+            
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            data.Add(1);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_NetSyncController = controller;
         }
     }
 }

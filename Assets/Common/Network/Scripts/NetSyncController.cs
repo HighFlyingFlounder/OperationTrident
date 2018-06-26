@@ -11,13 +11,12 @@ using System.Reflection;
 public class NetSyncController : MonoBehaviour
 {
     //public UnityEngine.Object controller;
-    public List<Component> sync_scripts=new List<Component>();
+    private List<Component> sync_scripts=new List<Component>();
     private string sync_id;
     public static bool isMasterClient = false;
     // Use this for initialization
-
-    private void Awake()
-    {
+    public void AddSyncScripts(Component Component){
+        sync_scripts.Add(Component);
         for (int i = 0; i < sync_scripts.Count; i++)
         {
             (sync_scripts[i] as NetSyncInterface).Init(this);
@@ -26,6 +25,10 @@ public class NetSyncController : MonoBehaviour
 
     void Start()
     {
+        for (int i = 0; i < sync_scripts.Count; i++)
+        {
+            (sync_scripts[i] as NetSyncInterface).Init(this);
+        }
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同

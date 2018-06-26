@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OperationTrident.Room1 {
-    public class Room1BattleNetManager : SceneNetManager {
+namespace OperationTrident.Room1
+{
+    public class Room1BattleNetManager : SceneNetManager
+    {
         public override void HandlePlayer(string id, GameObject playerObj)
         {
-            if (id == GameMgr.instance.id)//本地玩家
-            {
-                playerObj.AddComponent<RayShooter>();
-                playerObj.AddComponent<InteractiveRay>();
-            }
+            RayShooter ray_shooter = playerObj.AddComponent<RayShooter>();
+            //playerObj.GetComponent<NetSyncController>().sync_scripts.Add(ray_shooter);
+            playerObj.GetComponent<NetSyncController>().AddSyncScripts(ray_shooter);
+            playerObj.AddComponent<InteractiveRay>();
+            if (id != GameMgr.instance.id)
+                playerObj.GetComponent<RayShooter>().isLocalPlayer = false;
         }
     }
 }
