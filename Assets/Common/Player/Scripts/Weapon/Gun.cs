@@ -5,29 +5,40 @@ using OperationTrident.CrossInput;
 
 namespace OperationTrident.Weapon {
     [RequireComponent(typeof(AudioSource))]
-    public class Fire : MonoBehaviour {
+    public class Gun : MonoBehaviour {
         [Tooltip("射击音效")]
-        public AudioClip ShootSound;
+        [SerializeField]
+        private AudioClip ShootSound;
         [Tooltip("射击间隔")]
-        public float ShootInterval;
+        [SerializeField]
+        private float ShootInterval;
         [Tooltip("换弹时长")]
-        public float BulletSupplementInterval;
+        [SerializeField]
+        private float BulletSupplementInterval;
         [Tooltip("弹夹容量")]
-        public int ClipCapacity;
+        [SerializeField]
+        private int ClipCapacity;
         [Tooltip("总子弹数")]
-        public int BulletNum;
+        [SerializeField]
+        private int BulletNum;
         [Tooltip("瞄准镜摄像机")]
-        public Camera MirrorCamera;
+        [SerializeField]
+        private Camera MirrorCamera;
         [Tooltip("射击后下落的时间")]
-        public float DownTime;
+        [SerializeField]
+        private float DownTime;
         [Tooltip("枪向后运动的最大偏移量")]
-        public float MaxBackwordOffset;
+        [SerializeField]
+        private float MaxBackwordOffset;
         [Tooltip("镜头往上跳的最大角度")]
-        public float MaxUpAngle;
+        [SerializeField]
+        private float MaxUpAngle;
         [Tooltip("枪跟随摄像机移动的速度")]
-        public float MoveSpeed;
+        [SerializeField]
+        private float MoveSpeed;
         [Tooltip("开镜时枪的位置")]
-        public Transform MirrorTarget;
+        [SerializeField]
+        private Transform MirrorTarget;
 
         //[SerializeField]
         private Transform m_InitTransform;

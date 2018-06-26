@@ -38,7 +38,7 @@ namespace OperationTrident.Weapon {
         public bool RuningCoroutine { get; private set; }
 
         private Transform m_Gun;
-        private Fire m_Fire;
+        //private Fire m_Fire;
 
         //保存gun在camera坐标系下的相对参数
         private Vector3 m_RelativePosition;
@@ -53,7 +53,7 @@ namespace OperationTrident.Weapon {
             RuningCoroutine = false;
 
             m_Gun = this.transform;
-            m_Fire = GetComponent<Fire>();
+            //m_Fire = GetComponent<Fire>();
 
             //gun在世界坐标系下的姿态
             Quaternion gunRotationInWorld = this.transform.rotation;
@@ -72,7 +72,6 @@ namespace OperationTrident.Weapon {
 
         // 使用IK的逻辑，这个函数在Update之后调用，在LateUpdate之前调用
         void OnAnimatorIK() {
-
             if (m_PickGun) {
                 //拿枪的过程，保持右手拿枪
                 //拿完枪之后，设置左右手拿枪
@@ -130,8 +129,8 @@ namespace OperationTrident.Weapon {
             RuningCoroutine = true;
             m_PickGun = false;
             m_PuttingGun = true;
-            //开始放枪，解除摄像机和枪的绑定
-            m_Fire.enabled = false;
+            ////开始放枪，解除摄像机和枪的绑定
+            //m_Fire.enabled = false;
 
             Vector3 p0 = m_Gun.position;
             Vector3 p1 = CurveTarget.position;
@@ -201,8 +200,8 @@ namespace OperationTrident.Weapon {
                 yield return new WaitForFixedUpdate();
             }
 
-            //拿完枪，锁定摄像机
-            m_Fire.enabled = true;
+            ////拿完枪，锁定摄像机
+            //m_Fire.enabled = true;
             m_PickingGun = false;
             RuningCoroutine = false;
         }
