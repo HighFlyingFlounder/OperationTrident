@@ -299,7 +299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: OffLine
-  startScene: ElevatorBattle
+  startScene: PlayerTest
+  isMasterClient: 0
   host: 116.56.136.22
   port: 8000
 --- !u!114 &605592420
