@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Diagnostics;
+using System.Threading;
 
 //网络链接
 public class Connection
@@ -31,11 +31,11 @@ public class Connection
     //延时测量间隔
     public float lastSendDelayTime = 0;
     public float lastRecvDelayTime = 0;
-    public float testDelayTime = 1.5;
+    public float testDelayTime = 1.5f;
     //消息分发
     public MsgDistribution msgDist = new MsgDistribution();
     //高精度计时器
-    public Stopwatch watch;
+    public System.Diagnostics.Stopwatch watch;
 
 
 
@@ -65,7 +65,7 @@ public class Connection
                       ReceiveCb, readBuff);
             Debug.Log("连接成功");
             //Init StopWatch
-            watch = new Stopwatch();
+            watch = new System.Diagnostics.Stopwatch();
             msgDist.AddListener("Delay", calcDelay);
             //状态
             status = Status.Connected;
@@ -172,17 +172,13 @@ public class Connection
         return Send(protocol, cbName, cb);
     }
 
-    public int getDelay(){
-        return RTT;
-    }
-
     public void calcDelay(ProtocolBase protoBase){
         int start = 0;
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         string protoName = proto.GetString(start, ref start);
         long send_time = proto.GetLong(start, ref start);
-        long end_time = Stopwatch.GetTimestamp();
-        RTT = (end_time - send_time) / (Stopwatch.Frequency / 1000);
+        long end_time = System.Diagnostics.Stopwatch.GetTimestamp();
+        RTT = (int)((end_time - send_time) / (System.Diagnostics.Stopwatch.Frequency / 1000));
     }
 
     public void Update()
@@ -198,7 +194,7 @@ public class Connection
                 Send(protocol);
                 lastTickTime = Time.time;
             }
-            if (Time.time - lastDelayTime > testDelayTime)
+            if (Time.time - lastSendDelayTime > testDelayTime)
             {
                 // 上次发送的包还没有收到回包
                 if( lastRecvDelayTime < lastSendDelayTime ){
