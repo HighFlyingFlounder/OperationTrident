@@ -27,6 +27,9 @@ namespace room2Battle {
 
         protected bool isTimelinePaused = false;
 
+        [SerializeField]
+        protected GameObject nextScene_;
+
         public override void notify(int i)
         {
             
@@ -71,6 +74,7 @@ namespace room2Battle {
                 }
             }
             else {
+                nextScene_.SetActive(true);
                 //补充敌人
                 for (int i = 0; i < enemyList.Count; ++i)
                 {
@@ -85,8 +89,17 @@ namespace room2Battle {
 
         void OnGUI()
         {
-            if(isTimelinePaused)
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("击退敌人，继续前进！", Camera.main, true);
+            if (isTimelinePaused)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                      Camera.main,
+                      OperationTrident.Util.GUIUtil.yellowColor,
+                      0.5f, 0.1f, 16);
+            }
+            if (!isTimelinePaused)
+            {
+                OperationTrident.Util.GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
+            }
         }
 
     }

@@ -13,6 +13,7 @@ public class NetSyncController : MonoBehaviour
     //public UnityEngine.Object controller;
     public Component[] sync_scripts;
     private string sync_id;
+    public static bool isMasterClient = false;
     // Use this for initialization
 
     private void Awake()

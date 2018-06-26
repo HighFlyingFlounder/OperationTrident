@@ -275,10 +275,6 @@ MonoBehaviour:
   - "\u95E8\u6253\u4E0D\u5F00\uFF01\u627E\u627E\u56DB\u5468\u6709\u4EC0\u4E48\u53EF\u4EE5\u5229\u7528\u7684"
   - "\u62FF\u5230\u4E86C4\uFF0C\u901F\u53BB\u53D6\u5F97ID\u5361"
   - "\u9003\u79BB\u623F\u95F4"
-  missionDetails:
-  - "2018.6.22  \u661F\u671F\u4E94"
-  - "\u96F7\u514B\u96C5\u672A\u514B"
-  - "\u666E\u7F57\u7C73\u4FEE\u65AF\u884C\u52A8"
   timePerSubTitleWord: 1
   appearInterval: 0.15
   blingInterval: 0.075
@@ -374,6 +370,15 @@ MonoBehaviour:
   DoorStartPosition: {x: -7.04771, y: 1.345, z: 25.848}
   Door1Position: {x: -58.706, y: 1.349, z: 9.44}
   Door2Position: {x: -58.12, y: 2.05, z: 74.87}
+  subtitleInitToDisplay:
+  - "^b\u5730\u7403\u6307\u6325\u5B98:^w\u6839\u636E\u60C5\u62A5\u663E\u793A\uFF0C\u5F00\u542F\u7535\u6E90\u5BA4\u5165\u53E3\u7684^y\u667A\u80FD\u611F\u5E94\u82AF\u7247^w\u5728\u4ED3\u5E93\u91CC\u7684\u51E0\u4E2A\u53EF\u80FD\u4F4D\u7F6E"
+  - "^b\u5730\u7403\u6307\u6325\u5B98:^w\u4F60\u4EEC\u8981\u62FF\u5230\u5B83\uFF0C\u5C0F\u5FC3\u91CC\u9762\u7684^r\u5DE1\u903B\u673A\u5668\u4EBA"
+  subtitleOpenDoorFalseToDisplay:
+  - "^rAI:^w\u5BF9\u4E0D\u8D77\uFF0C\u8EAB\u4EFD\u8BC6\u522B\u9519\u8BEF"
+  - "^b\u961F\u53CB:^w\u95E8\u5C45\u7136\u6253\u4E0D\u5F00\uFF0C\u6765\u70B9\u786C\u4E00\u70B9\u7684\u65B9\u6CD5\u5427"
+  subtitleEscapingToDisplay:
+  - "^b\u5730\u7403\u6307\u6325\u5B98:^w\u6CE8\u610F\uFF0C\u4ED3\u5E93\u7684\u8B66\u62A5\u542F\u52A8"
+  - "^b\u5730\u7403\u6307\u6325\u5B98:^w\u5927\u91CF\u7684^r\u9632\u5FA1\u673A\u5668\u4EBA^w\u6B63\u5728\u8FDB\u5165\u4F60\u4EEC\u7684\u623F\u95F4"
 --- !u!4 &555158578
 Transform:
   m_ObjectHideFlags: 0
@@ -408,7 +413,6 @@ MonoBehaviour:
     type: 2}
   enemyCreateSpeed: 10
   enemyMaxNum: 8
-  nowEnemyNum: 0
 --- !u!114 &555158580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -617,7 +621,7 @@ GameObject:
   - component: {fileID: 1729479375}
   m_Layer: 0
   m_Name: Corpse
-  m_TagString: Untagged
+  m_TagString: Corpse
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
