@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 //网络管理
 public class NetMgr
@@ -19,6 +20,14 @@ public class NetMgr
         //具体的发送内容根据服务端设定改动
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("HeatBeat");
+        return protocol;
+    }
+
+    public static ProtocolBase GetDelayProtocol()
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("Delay");
+        protocol.AddLong(Stopwatch.GetTimestamp());
         return protocol;
     }
 }

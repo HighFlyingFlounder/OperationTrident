@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/ElevatorBattle.unity
     guid: 91c5829cbaeea23468a179b148fd5735
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Room1Battle.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0

@@ -6,7 +6,7 @@ using System;
 
 namespace OperationTrident.Elevator
 {
-    public class MissionSystem : MonoBehaviour
+    public class ElevatorMissionSystem : MonoBehaviour
     {
 
         // 场景的相机主相机

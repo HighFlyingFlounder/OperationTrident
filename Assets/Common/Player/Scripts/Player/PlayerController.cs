@@ -30,14 +30,12 @@ namespace OperationTrident.Player
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private MouseLook m_MouseLook;
 
-
         // 存放走路时的音效
         [SerializeField] private AudioClip[] m_FootstepSounds;
         // 存放跳跃时的音效
         [SerializeField] private AudioClip m_JumpSound;
         // 存放跳跃时落地的音效
         [SerializeField] private AudioClip m_LandSound;
-
 
         //获取摄像机引用
         [SerializeField] private Camera m_Camera;
@@ -125,6 +123,7 @@ namespace OperationTrident.Player
             else
             {
                 m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
+                //Debug.Log(Physics.gravity);
             }
 
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
@@ -295,10 +294,8 @@ namespace OperationTrident.Player
 
         //PlayerController被禁用时调用
         private void OnDisable() {
-            //销毁Rigidbody组件
-            Destroy(GetComponent<Rigidbody>());
-            //禁用控制移动的组件
-            m_CharacterController.enabled = false;
+            ////禁用控制移动的组件
+            //m_CharacterController.enabled = false;
 
             //启用动画控制脚本
             GetComponent<AnimatorController>().enabled = true;

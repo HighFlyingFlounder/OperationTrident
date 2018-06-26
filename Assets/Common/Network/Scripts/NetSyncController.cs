@@ -112,7 +112,7 @@ public class NetSyncController : MonoBehaviour
 
     public void RecvRPC(ProtocolBase protoBase)
     {
-        Debug.Log("Reach RecvRPC");
+        //Debug.Log("Reach RecvRPC");
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
@@ -120,7 +120,7 @@ public class NetSyncController : MonoBehaviour
             return;
         //丢弃自己发的信息
         string player_id = proto.GetString(start, ref start);
-        Debug.Log("player_id:" + player_id);
+        //Debug.Log("player_id:" + player_id);
         if (player_id == GameMgr.instance.id)//丢弃自己发的信息
         {
             return;
@@ -131,12 +131,12 @@ public class NetSyncController : MonoBehaviour
 
         object[] parameters = (object[])proto.GetObjects(start);
 
-        Debug.Log("componentName:" + componentName);
-        Debug.Log("methodName:" + methodName);
+        //Debug.Log("componentName:" + componentName);
+        //Debug.Log("methodName:" + methodName);
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            Debug.Log("Parameters:" + parameters[i].ToString());
+            //Debug.Log("Parameters:" + parameters[i].ToString());
         }
 
         for (int i = 0; i < sync_scripts.Length; i++)
@@ -150,7 +150,7 @@ public class NetSyncController : MonoBehaviour
             {
                 Debug.LogError("No public method in class " + t);
             }
-            Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
+            //Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
             method.Invoke(sync_scripts[i], parameters);
         }
     }
