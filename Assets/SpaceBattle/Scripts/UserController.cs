@@ -177,13 +177,13 @@ public class UserController : MonoBehaviour,NetSyncInterface
         mouseLook.LookRotation(transform, cam.transform);
     }
 
-    public void SetData(SyncData data)
+    public void RecvData(SyncData data)
     {
         movementSettings.isPushed = (bool)(data.Get(typeof(bool)));
         movementSettings.isRun = (bool)(data.Get(typeof(bool)));
     }
 
-    public SyncData GetData()
+    public SyncData SendData()
     {
         //消息
         SyncData data = new SyncData();

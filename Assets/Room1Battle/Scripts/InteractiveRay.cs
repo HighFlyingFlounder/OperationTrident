@@ -90,13 +90,18 @@ namespace OperationTrident.Room1
                         Messenger<int>.Broadcast(GameEvent.DOOR_OPEN, target1.ThisId);
                         return;
                     }
-                    InteractiveThing target2 =
-                        hitObject.GetComponent<InteractiveThing>();
-                    if (target2 != null)
+                    if (hitObject.CompareTag("Corpse"))
                     {
                         Messenger.Broadcast(GameEvent.CROPSE_TRY);
-                        return;
+                        return; 
                     }
+                    //InteractiveThing target2 =
+                    //    hitObject.GetComponent<InteractiveThing>();
+                    //if (target2 != null)
+                    //{
+                    //    Messenger.Broadcast(GameEvent.CROPSE_TRY);
+                    //    return;
+                    //}
                 }
             }
         }

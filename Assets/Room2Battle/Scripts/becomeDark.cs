@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace room2Battle
 {
+    /// <summary>
+    /// 后处理，挂在到主相机上，通过全部颜色 * 0.1实现变暗的效果
+    /// </summary>
     public class becomeDark : MonoBehaviour
     {
         //变黑的程度,越小越黑
@@ -11,9 +14,6 @@ namespace room2Battle
 
         //unity editor里绑定Depth Sensor Post processing shader
         public Shader m_Shader;
-
-        //绑定的相机
-        private Camera m_Camera = null;
 
         //当前材质
         private Material curMaterial;
@@ -34,18 +34,13 @@ namespace room2Battle
         }
         #endregion
 
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
+        //保证factor的范围不要越界
         void Update()
         {
             factor = Mathf.Clamp(factor, 0.0f, 1.0f);
         }
 
+        //直接改
         void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
             material.SetFloat("_Factor", factor);

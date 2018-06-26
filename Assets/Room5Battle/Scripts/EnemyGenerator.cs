@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
-
     public class EnemyGenerator : MonoBehaviour
     {
         //在一个正方体区域内随机instantiate一堆prefab

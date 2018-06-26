@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
     public class EnemySpawn_playerFirstEnter : MonoBehaviour
     {

@@ -82,7 +82,12 @@ public class RoomPanel : PanelBase
             if (id == GameMgr.instance.id)
                 str += "【我自己】";
             if (isOwner == 1)
+            {
                 str += "【房主】";
+                GameMgr.instance.isMasterClient = true;
+                NetSyncController.isMasterClient = true;
+            }
+                
             text.text = str;
 
             // if (team == 1)
@@ -153,8 +158,7 @@ public class RoomPanel : PanelBase
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        Debug.Log("RecvFight GameMgr.instance.id" + GameMgr.instance.id);
-        SceneManager.LoadScene("SpaceBattle", LoadSceneMode.Single);
+        SceneManager.LoadScene(GameMgr.instance.startScene, LoadSceneMode.Single);
         Close();
     }
 

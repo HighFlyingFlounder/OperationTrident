@@ -127,9 +127,15 @@ namespace OperationTrident.Room1
             {
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.brightGreenColor,
-                    interval: appearInterval, blingInterval:blingInterval,fontSize: 16, sequentClear:sequentClear);
+                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
+                    camera,
+                    GUIUtil.brightGreenColor,
+                    interval: appearInterval,
+                    blingInterval:blingInterval,
+                    fontSize: 16,
+                    sequentClear:sequentClear);
             }
+
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
@@ -139,8 +145,19 @@ namespace OperationTrident.Room1
                 GUI.Label(rect, (int)nowDistance + "m", style);
             }
 
-            string subtitle = "^w你好,^r面包^w,我是^b甜甜圈^w,我们要找到^yID卡";
-            GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
+            //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
+            //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
+            //string[] subtitles ={
+            //    "^b地球指挥官:^w 根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
+            //    "^b地球指挥官:^w 你们要拿到它，小心里面的^r巡逻机器人"
+            //};
+            //GUIUtil.DisplaySubtitlesInGivenGrammar(
+            //    subtitles, 
+            //    camera, 
+            //    fontSize: 16,
+            //    subtitleRatioHeight: 0.9f, 
+            //    secondOfEachWord: 0.5f, 
+            //    secondBetweenLine: 3.0f);
         }
     }
 }
