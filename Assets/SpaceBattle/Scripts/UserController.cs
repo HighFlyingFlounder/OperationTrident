@@ -89,8 +89,17 @@ public class UserController : MonoBehaviour,NetSyncInterface
 
     }
 
+    public void HitRock()
+    {
+        movementSettings.isPushed = true;
+        m_NetSyncController.SyncVariables();
+
+    }
+
     private void FixedUpdate()
     {
+
+
         if (movementSettings.isRun)
         {
             RunParticle.active = true;
@@ -137,7 +146,7 @@ public class UserController : MonoBehaviour,NetSyncInterface
             if (t == 0f)
             {
                 movementSettings.isPushed = false;
-                //m_NetSyncController.SyncVariables();
+                m_NetSyncController.SyncVariables();
             }
             movementSettings.isRun = false;
         }
