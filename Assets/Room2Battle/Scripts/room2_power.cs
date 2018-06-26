@@ -60,6 +60,10 @@ namespace room2Battle
 
         protected bool isShowTarget = false;
 
+        public string[] line =
+        {
+        };
+
         //获取相机句柄
         void Start()
         {
@@ -252,6 +256,7 @@ namespace room2Battle
         {
             if (isFocus)
             {
+                GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", Camera.main, 16);
                 float posX = mCamera.pixelWidth / 2 - 50;
                 float posY = mCamera.pixelHeight / 2 - 50;
                 //交互提示
@@ -273,7 +278,6 @@ namespace room2Battle
                    Camera.main,
                    GUIUtil.yellowColor,
                    0.5f, 0.1f, 16);
-
                 if (!open2 && open)
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.5f);
@@ -286,11 +290,13 @@ namespace room2Battle
                 {
                     GUI.Label(rect, (int)distance + "m", style);
                 }
+                
             }
             else
             {
                 if (!isIntoSecondFloor)
                 {
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16,0.9f,0.2f,1.2f);
                     GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                        Camera.main,
                        GUIUtil.yellowColor,
@@ -308,6 +314,8 @@ namespace room2Battle
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.5f);
                 }
             }
+
+
         }
 
         public void RecvData(SyncData data)
