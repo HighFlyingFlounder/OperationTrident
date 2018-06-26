@@ -133,9 +133,12 @@ namespace room2Battle
             //碰撞体消息
             if (i == 1)
             {
-                isIntoSecondFloor = true;
-                Debug.Log("player into floor2");
-                gameObject.GetComponent<NetSyncController>().SyncVariables();
+                if (isSwitchOpen)
+                {
+                    isIntoSecondFloor = true;
+                    Debug.Log("player into floor2");
+                    gameObject.GetComponent<NetSyncController>().SyncVariables();
+                }
             }
         }
 

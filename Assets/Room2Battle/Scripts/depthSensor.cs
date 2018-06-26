@@ -14,7 +14,8 @@ namespace room2Battle
 
         //texture是可以直接绑定在shader上的（因为定义了shader property）
         //但是为了防止忘了，在脚本也挂一个Texture吧
-        public Texture m_Texture;
+        public Texture m_WaveColorTexture;//感应波的纹理
+        public Texture m_WaveMaskTexture;//感应波的遮罩
 
         //post processing script绑定的Camera
         private Camera m_Camera = null;
@@ -102,9 +103,10 @@ namespace room2Battle
             //m_TexCoordOffset -= (int)m_TexCoordOffset;
 
             //把间隔条纹纹理及其uv偏移传进去
-            material.SetFloat("_TexCoordOffset", m_TexCoordOffset);
-            material.SetFloat("_Attactor", maxdistance);
-            material.SetTexture("_WaveTex", m_Texture);
+           // material.SetFloat("_CameraYawAngle", this.transform.eulerAngles.y);
+            //material.SetFloat("_Attactor", maxdistance);
+            material.SetTexture("_WaveTex", m_WaveColorTexture);
+            material.SetTexture("_WaveMaskTex", m_WaveMaskTexture);
 
             //Graphics.Blit是用给定shader把src RenderTexture复制到dest
             //所以可以当作是post processing的draw call
