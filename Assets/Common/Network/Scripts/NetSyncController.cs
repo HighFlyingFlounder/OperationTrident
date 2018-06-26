@@ -11,14 +11,14 @@ using System.Reflection;
 public class NetSyncController : MonoBehaviour
 {
     //public UnityEngine.Object controller;
-    public Component[] sync_scripts;
+    public List<Component> sync_scripts=new List<Component>();
     private string sync_id;
     public static bool isMasterClient = false;
     // Use this for initialization
 
     private void Awake()
     {
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             (sync_scripts[i] as NetSyncInterface).Init(this);
         }
@@ -45,7 +45,7 @@ public class NetSyncController : MonoBehaviour
         //sync_id
         proto.AddString(sync_id);
         //sync_scripts
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             Component temp = sync_scripts[i];
             SyncData data = (temp as NetSyncInterface).SendData();
@@ -74,7 +74,7 @@ public class NetSyncController : MonoBehaviour
             return;
         //sync_scripts
         SyncData data = proto.GetSyncData(start, ref start);
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             // SyncData data = proto.GetSyncData(start, ref start);
             Component temp = sync_scripts[i];
@@ -139,7 +139,7 @@ public class NetSyncController : MonoBehaviour
             //Debug.Log("Parameters:" + parameters[i].ToString());
         }
 
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             if (sync_scripts[i].GetType().ToString() != componentName)
                 continue;

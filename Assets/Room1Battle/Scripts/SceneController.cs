@@ -125,7 +125,6 @@ namespace OperationTrident.Room1
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
-                    subtitleIndex = 0;
                     break;
                 // 玩家正在找第二个钥匙
                 case Room1State.FindingKey2:
@@ -222,6 +221,7 @@ namespace OperationTrident.Room1
         // 改进后的函数，所有门的事件分ID处理
         private void OnDoorOpen(int id)
         {
+            
             switch (id)
             {
                 // 第一扇门
