@@ -18,14 +18,15 @@ public class NetSyncController : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < sync_scripts.Length; i++)
-        {
-            (sync_scripts[i] as NetSyncInterface).Init(this);
-        }
+
     }
 
     void Start()
     {
+        for (int i = 0; i < sync_scripts.Length; i++)
+        {
+            (sync_scripts[i] as NetSyncInterface).Init(this);
+        }
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
