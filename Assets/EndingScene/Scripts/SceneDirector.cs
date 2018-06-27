@@ -46,7 +46,8 @@ namespace OperationTrident.EndingScene
 
         //第三人称环视的Camera信息
         public float m_MouseLookSensitivity;
-        private Vector3 m_ThirdPersonCamOffset;
+        private Vector3 m_ThirdPersonCamOffsetEuler;//第三人称offset向量的欧拉角
+        private float m_ThirdPersonCamRotateRadius;
         private Vector3 m_DestCamPos;//真正的Cam.transform要线性插值跟随这个target pos
         private Vector3 m_DestLookat;
 
@@ -122,8 +123,9 @@ namespace OperationTrident.EndingScene
                 //初始化第三人称观察的参数
                 m_DestLookat = m_CamDirected.transform.position + m_CamDirected.transform.forward;
                 m_DestCamPos = m_CamDirected.transform.position;
-                m_CamFree.transform.position = m_CamDirected.transform.position;
-                m_ThirdPersonCamOffset = m_DestCamPos - m_EscapingCabin.transform.position;
+                //m_CamFree.transform.position = m_CamDirected.transform.position;
+                m_ThirdPersonCamRotateRadius = (m_DestCamPos - m_EscapingCabin.transform.position).magnitude;
+                m_ThirdPersonCamOffsetEuler = m_CamFree.transform.eulerAngles;
             }
         }
 
@@ -142,16 +144,23 @@ namespace OperationTrident.EndingScene
             {
                 //鼠标控制target transform的旋转角度
                 //实际Camera transform以一定比例Lerp向target transform
-                float mouseX = m_MouseLookSensitivity * Input.GetAxis("Mouse X") * Time.deltaTime;
-                float mouseY = -m_MouseLookSensitivity * Input.GetAxis("Mouse Y") * Time.deltaTime;
+                //注意鼠标在x,y上的移动和旋转的欧拉角要对上
+                float deltaAngleY = m_MouseLookSensitivity * Input.GetAxis("Mouse X") * Time.deltaTime;
+                float deltaAngleX = m_MouseLookSensitivity * Input.GetAxis("Mouse Y") * Time.deltaTime;
 
-                //旋转视向量
-                Quaternion deltaRotation = Quaternion.Euler(new Vector3(mouseY, mouseX, 0));
-                m_ThirdPersonCamOffset = deltaRotation * m_ThirdPersonCamOffset;
+                //offset vector的新欧拉角
+                m_ThirdPersonCamOffsetEuler.x += deltaAngleX;
+                m_ThirdPersonCamOffsetEuler.y += deltaAngleY;
+                m_ThirdPersonCamOffsetEuler.z = 0;
+                m_ThirdPersonCamOffsetEuler.x = Mathf.Clamp(m_ThirdPersonCamOffsetEuler.x, -89.9f, 89.9f);
+
+                //cam离注视中心的offset vector
+                Quaternion rotation = Quaternion.Euler(m_ThirdPersonCamOffsetEuler);
+                Vector3 posOffsetFromCenter = rotation * new Vector3(0,0, m_ThirdPersonCamRotateRadius);
 
                 //实际Camera位置向pos/lookat插值
                 const float posLerpScale = 10.0f;
-                m_DestCamPos = m_EscapingCabin.transform.position + m_ThirdPersonCamOffset;
+                m_DestCamPos = m_EscapingCabin.transform.position + posOffsetFromCenter;
                 m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, posLerpScale * Time.deltaTime);
 
                 //const float lookatLerpScale = 3.0f;
@@ -162,13 +171,6 @@ namespace OperationTrident.EndingScene
 
         private void Update_LookingAtKun()
         {
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 +16 ))
-            {
-                //切至下一状态，不再绑定在玩家的第三人称，禁用控制
-                m_CamState = CameraState.VIDEO;
-                return;
-            }
-
             //计算新的需要插值到的camera pos/lookat
             const float lerpScale = 2.0f;
             m_DestCamPos += new Vector3(0, 1.5f, -15.0f) * Time.deltaTime;
@@ -177,8 +179,13 @@ namespace OperationTrident.EndingScene
             m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
             m_CamFree.transform.LookAt(m_DestLookat);
 
-            //爆炸特效
+            //爆炸特效（越来越密集的爆炸）
             m_ExplosionGenerator.GenerateExplosion();
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 0)) m_ExplosionGenerator.SetExplodeMaxInterval(0.5f);
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 4)) m_ExplosionGenerator.SetExplodeMaxInterval(0.4f);
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 8)) m_ExplosionGenerator.SetExplodeMaxInterval(0.3f);
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 12)) m_ExplosionGenerator.SetExplodeMaxInterval(0.2f);
+
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
             if (m_Time > m_BgmBarTime * (8 + 16 +16+ 14))
@@ -193,6 +200,13 @@ namespace OperationTrident.EndingScene
 
                 //高速自转一下
                 m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(100f, -80f, 60f) * Time.deltaTime);
+            }
+
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 16))
+            {
+                //切至下一状态，不再绑定在玩家的第三人称，禁用控制
+                m_CamState = CameraState.VIDEO;
+                return;
             }
         }
 
