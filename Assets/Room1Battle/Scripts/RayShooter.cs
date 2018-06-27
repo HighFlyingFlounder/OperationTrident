@@ -59,7 +59,8 @@ namespace OperationTrident.Room1
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
                 ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
-                m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
+                if(m_NetSyncController!=null)
+                    m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {

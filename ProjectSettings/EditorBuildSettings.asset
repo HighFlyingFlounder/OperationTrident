@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ElevatorBattle.unity
     guid: 91c5829cbaeea23468a179b148fd5735
+  - enabled: 1
+    path: Assets/Scenes/EndingScene.unity
+    guid: e4f1876d73736034aa57a714ede8ea7e
   m_configObjects: {}

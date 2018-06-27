@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TimeLineLoadScene : MonoBehaviour {
-    string nextScene = "SpaceBattle";
+    public string nextScene = "SpaceBattle";
 	// Use this for initialization
 	void Start () {
         SceneManager.LoadScene(nextScene, LoadSceneMode.Single);

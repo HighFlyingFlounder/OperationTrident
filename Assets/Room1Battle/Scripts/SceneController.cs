@@ -128,7 +128,7 @@ namespace OperationTrident.Room1
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
-                    Debug.Log(key1.transform.position);
+
                     break;
                 // 玩家正在找第二个钥匙
                 case Room1State.FindingKey2:
@@ -318,7 +318,7 @@ namespace OperationTrident.Room1
             //    secondOfEachWord: 0.2f,
             //    secondBetweenLine: 4.0f);
 
-            string[] toD = { "^w你好，^b一王", "^w你好，^r鸡王" };
+            string[] toD = { "^w你好，^r一王^w，我是^bWindyIce", "^w你好，^r鸡王^w，我是^bWindyIce" };
             float[] a1 = { 10.0f, 5.0f };
             float[] a2 = { 5.0f, 10.0f };
             GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
