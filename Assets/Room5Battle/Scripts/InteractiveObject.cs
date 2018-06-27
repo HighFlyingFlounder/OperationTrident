@@ -119,19 +119,30 @@ namespace OperationTrident.Room5
         //玩家Camera view ray和Tagged了的目标物体的求交
         private bool IsLookingAtObject()
         {
-            //摄像机中心发出的射线
-            Vector3 centerCoordPixel = new Vector3(m_Cam.pixelWidth / 2.0f, m_Cam.pixelHeight / 2.0f);
-            Ray viewRay = m_Cam.ScreenPointToRay(centerCoordPixel);
-            RaycastHit hitInfo;
-            if (Physics.Raycast(viewRay, out hitInfo, 4.0f))
+            if (m_Cam)
             {
-                //如果玩家看着物体
-                if (hitInfo.transform.CompareTag(m_ObjectTag))
-                { return true; }
-                else
-                { return false; }
+                //摄像机中心发出的射线
+                Vector3 centerCoordPixel = new Vector3(m_Cam.pixelWidth / 2.0f, m_Cam.pixelHeight / 2.0f);
+                Ray viewRay = m_Cam.ScreenPointToRay(centerCoordPixel);
+                RaycastHit hitInfo;
+                if (Physics.Raycast(viewRay, out hitInfo, 4.0f))
+                {
+                    //如果玩家看着物体
+                    if (hitInfo.transform.CompareTag(m_ObjectTag))
+                    { return true; }
+                    else
+                    { return false; }
+                }
             }
-            else { return false; }
+            return false;
+        }
+
+        //=========================================
+        //=============  重新设置相机 =============
+        //=========================================
+        public void SetGUICamera(Camera guiCam)
+        {
+            m_Cam = guiCam;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using System;
 
 namespace OperationTrident.Room5
 {
@@ -12,6 +13,11 @@ namespace OperationTrident.Room5
         public TokamakReactorPillar m_ReactorPillar;
         //核心（下降）
         public TokamakCore m_ReactorCore;
+
+        public GameObject nextScene;
+
+        //是否已经获取核心
+        //protected bool isGetTorcore = false;
 
 
         public override bool isTransitionTriggered()
@@ -49,7 +55,10 @@ namespace OperationTrident.Room5
 
         private void Update()
         {
-            
+            if (m_ReactorCore == null)
+            {
+                nextScene.SetActive(true);
+            }
         }
 
         private void OnGUI()
@@ -63,6 +72,23 @@ namespace OperationTrident.Room5
                 GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Camera.main, Color.white);
             }
         }
+        /*
+        public void RecvData(SyncData data)
+        {
+            isGetTorcore = (bool)data.Get(typeof(bool));
+        }
 
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            data.Add(isGetTorcore);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            
+        }
+        */
     }
 }
