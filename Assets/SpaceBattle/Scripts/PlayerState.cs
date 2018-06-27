@@ -36,7 +36,8 @@ public class PlayerState : MonoBehaviour {
             //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
             Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
             Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 80f);//往反方向推
-            Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
+            //Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
+            Flyer.GetComponent<UserController>().HitRock();
         }
         if (Hp == 0f)
         {
