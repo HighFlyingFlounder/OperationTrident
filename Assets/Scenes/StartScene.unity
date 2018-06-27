@@ -299,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: OffLine
-  startScene: SpaceBattle
+  startScene: Room5Battle
   isMasterClient: 0
   host: 116.56.136.22
   port: 8000

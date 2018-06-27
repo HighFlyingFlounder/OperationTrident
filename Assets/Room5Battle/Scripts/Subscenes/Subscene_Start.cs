@@ -10,6 +10,7 @@ namespace OperationTrident.Room5
     {
         //可交互对象（在unity editor中初始化）
         public InteractiveObject m_ControlPanel;
+        public InteractiveObject m_TorCore;
 
         //托卡马克之心是否已启动冷却（要对着控制台按住F十秒）
         private bool m_isTokamakeStartToCoolDown;
@@ -19,6 +20,15 @@ namespace OperationTrident.Room5
         private bool m_isPressingKeyF=false;
         private float m_ControlPanelKeyFPressingTime = 0.0f;
         private const float c_RequiredKeyFPressingTime = 1.0f;*/
+
+        //player的camera引用
+        private GameObject mCamera;
+
+        //单机测试
+        private GameObject playerOffline;
+
+        //是否联网初始化完毕
+        private bool isNetworkInitialized = false;
 
         public override bool isTransitionTriggered()
         {
@@ -61,6 +71,21 @@ namespace OperationTrident.Room5
                 //交互完毕，可以转到“核心开始冷却”场景了
                 m_isTokamakeStartToCoolDown = true;
                 gameObject.GetComponent<NetSyncController>().SyncVariables();
+            }
+            //时刻检查是否联网，避免一开始联网玩家没有加载出来出现null引用的问题
+            if (GameMgr.instance)
+            {
+                if (!isNetworkInitialized)
+                {
+                    
+                    if (SceneNetManager.instance.list.ContainsKey(GameMgr.instance.id))
+                    {
+                        mCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+                        m_ControlPanel.SetGUICamera(mCamera.GetComponent<Camera>());
+                        m_TorCore.SetGUICamera(mCamera.GetComponent<Camera>());
+                        isNetworkInitialized = true;
+                    }
+                }
             }
         }
 
