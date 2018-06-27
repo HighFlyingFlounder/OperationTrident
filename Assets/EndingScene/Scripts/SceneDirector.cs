@@ -15,6 +15,8 @@ namespace OperationTrident.EndingScene
 
         //太空垃圾铁板
         public GameObject m_SpaceRubbish;
+        private Vector3 m_SpaceRubbishInitialPos;//铁板的起始位置，记录下来才方便插值
+        private float m_SpaceRubbishPosLerpFactor;
 
         //爆炸生成器
         public ExplosionGenerator m_ExplosionGenerator;
@@ -52,6 +54,7 @@ namespace OperationTrident.EndingScene
         void Start()
         {
             m_CamState = CameraState.ROAMING;
+            m_SpaceRubbishInitialPos = m_SpaceRubbish.transform.position;
         }
 
         // Update is called once per frame
@@ -89,8 +92,8 @@ namespace OperationTrident.EndingScene
 
                 case CameraState.THIRD_PERSON:
                     GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white,0.1f);
-                    StartCoroutine(CoroutineWait(5.0f));
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^g蓝星陆战队^w：指挥部，已取回托卡马克之心",m_CamFree);
+
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^g蓝星陆战队^w：指挥部，已取回托卡马克之心", m_CamFree);
 
                     break;
 
@@ -117,9 +120,9 @@ namespace OperationTrident.EndingScene
                 //切换至第三人称状态
                 m_CamState = CameraState.THIRD_PERSON;
                 //初始化第三人称观察的参数
-                m_CamFree.transform.position = m_CamDirected.transform.position;
-                m_DestLookat = m_EscapingCabin.transform.position;
+                m_DestLookat = m_CamDirected.transform.position + m_CamDirected.transform.forward;
                 m_DestCamPos = m_CamDirected.transform.position;
+                m_CamFree.transform.position = m_CamDirected.transform.position;
                 m_ThirdPersonCamOffset = m_DestCamPos - m_EscapingCabin.transform.position;
             }
         }
@@ -127,7 +130,7 @@ namespace OperationTrident.EndingScene
         private void Update_ThirdPerson()
         {
 
-            if (m_Time > m_BgmBarTime * (8 + 16+16))
+            if (m_Time > m_BgmBarTime * (8 + 16+ 16))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 //并初始化camera的destPos和destLookat
@@ -147,18 +150,19 @@ namespace OperationTrident.EndingScene
                 m_ThirdPersonCamOffset = deltaRotation * m_ThirdPersonCamOffset;
 
                 //实际Camera位置向pos/lookat插值
-                const float lerpScale = 5.0f;
+                const float posLerpScale = 10.0f;
                 m_DestCamPos = m_EscapingCabin.transform.position + m_ThirdPersonCamOffset;
-                m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime);
+                m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, posLerpScale * Time.deltaTime);
 
-                m_DestLookat = Vector3.Lerp(m_DestLookat, m_EscapingCabin.transform.position, lerpScale * Time.deltaTime);
+                //const float lookatLerpScale = 3.0f;
+                m_DestLookat = m_EscapingCabin.transform.position;// Vector3.Lerp(m_DestLookat, m_EscapingCabin.transform.position, lookatLerpScale * Time.deltaTime);
                 m_CamFree.transform.LookAt(m_DestLookat);
             }
         }
 
         private void Update_LookingAtKun()
         {
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16+16))
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 +16 ))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 m_CamState = CameraState.VIDEO;
@@ -176,25 +180,25 @@ namespace OperationTrident.EndingScene
             //爆炸特效
             m_ExplosionGenerator.GenerateExplosion();
 
-            //最后几小节太空垃圾飞过来撞镜头
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 8))
+            //BGM最后8小节，太空垃圾飞过来撞镜头
+            if (m_Time > m_BgmBarTime * (8 + 16 +16+ 14))
             {
-                const float velocity = 500.0f;
-                Vector3 objPos = m_SpaceRubbish.transform.position;
-                Vector3 camPos = m_CamFree.transform.position;
-                m_SpaceRubbish.transform.position = Vector3.Lerp(objPos, camPos,velocity * Time.deltaTime / (camPos-objPos).magnitude);
-                m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(0.1f, 0.1f, 0.1f) * Time.deltaTime);
+                m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 2));
+
+                //太空垃圾按BGM流逝时间从起始位置插值到camPos
+                m_SpaceRubbish.transform.position = Vector3.Lerp(
+                    m_SpaceRubbishInitialPos, 
+                    m_CamFree.transform.position,
+                    m_SpaceRubbishPosLerpFactor);
+
+                //高速自转一下
+                m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(100f, -80f, 60f) * Time.deltaTime);
             }
         }
 
         private void Update_Video()
         {
 
-        }
-
-        private IEnumerator CoroutineWait(float time)
-        {
-            yield return new WaitForSeconds(time);
         }
     }
 
