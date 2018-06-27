@@ -12,24 +12,21 @@ EditorBuildSettings:
     path: Assets/Scenes/GameHall.unity
     guid: 906d9b82900f61b49b562c8e60bf6a93
   - enabled: 1
+    path: Assets/Scenes/Storyboard2.unity
+    guid: 2d640b52168fab8469ede7283d6b33dd
+  - enabled: 1
     path: Assets/Scenes/SpaceBattle.unity
     guid: f9dd92b80a788fe4299092cb7c6d0016
-  - enabled: 0
-    path: Assets/Scenes/ElevatorBattle.unity
-    guid: 91c5829cbaeea23468a179b148fd5735
   - enabled: 1
     path: Assets/Scenes/Room1Battle.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Room2Battle.unity
     guid: 495056a15054de142adb46507a67057d
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Room5Battle.unity
     guid: 77b904ccf802a6e4a9c631de82152efc
   - enabled: 1
-    path: Assets/Scenes/PlayerTest.unity
-    guid: 444ec735915c9644e8067a67f8b0b833
-  - enabled: 1
-    path: Assets/Scenes/PlayerTest2.unity
-    guid: f827d12498c0b9944ae513b76fe40024
+    path: Assets/Scenes/ElevatorBattle.unity
+    guid: 91c5829cbaeea23468a179b148fd5735
   m_configObjects: {}
