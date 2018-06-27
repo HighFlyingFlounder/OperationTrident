@@ -130,7 +130,7 @@ namespace OperationTrident.EndingScene
         private void Update_ThirdPerson()
         {
 
-            if (m_Time > m_BgmBarTime * (8 + 16))
+            if (m_Time > m_BgmBarTime * (8 + 16+ 16))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 //并初始化camera的destPos和destLookat
@@ -150,7 +150,7 @@ namespace OperationTrident.EndingScene
                 m_ThirdPersonCamOffset = deltaRotation * m_ThirdPersonCamOffset;
 
                 //实际Camera位置向pos/lookat插值
-                const float posLerpScale = 5.0f;
+                const float posLerpScale = 10.0f;
                 m_DestCamPos = m_EscapingCabin.transform.position + m_ThirdPersonCamOffset;
                 m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, posLerpScale * Time.deltaTime);
 
@@ -162,7 +162,7 @@ namespace OperationTrident.EndingScene
 
         private void Update_LookingAtKun()
         {
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 ))
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16 +16 ))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 m_CamState = CameraState.VIDEO;
@@ -181,9 +181,9 @@ namespace OperationTrident.EndingScene
             m_ExplosionGenerator.GenerateExplosion();
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
-            if (m_Time > m_BgmBarTime * (8 + 16 + 12))
+            if (m_Time > m_BgmBarTime * (8 + 16 +16+ 14))
             {
-                m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 4));
+                m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 2));
 
                 //太空垃圾按BGM流逝时间从起始位置插值到camPos
                 m_SpaceRubbish.transform.position = Vector3.Lerp(
@@ -192,7 +192,7 @@ namespace OperationTrident.EndingScene
                     m_SpaceRubbishPosLerpFactor);
 
                 //高速自转一下
-                m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(50f, -40f, 30f) * Time.deltaTime);
+                m_SpaceRubbish.transform.rotation *= Quaternion.Euler(new Vector3(100f, -80f, 60f) * Time.deltaTime);
             }
         }
 
