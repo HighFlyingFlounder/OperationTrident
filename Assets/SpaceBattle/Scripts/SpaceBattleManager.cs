@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpaceBattleManager : MonoBehaviour
 {
-    //单例
-    public static SceneNetManager instance;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
@@ -143,8 +142,7 @@ public class SpaceBattleManager : MonoBehaviour
         string protoName = proto.GetString(start, ref start);
         int isWin = proto.GetInt(start, ref start);
         //弹出胜负面板
-        PanelMgr.instance.OpenPanel<WinPanel>("", isWin);
-        Debug.Log("GameMgr.instance.id: " + GameMgr.instance.id);
+        //PanelMgr.instance.OpenPanel<WinPanel>("", isWin);
         //玩家收到胜利条件后禁用掉list中的玩家
         GameObject flyer;
         Debug.Log("list.TryGetValue : " + list.TryGetValue(GameMgr.instance.id, out flyer));
@@ -158,6 +156,8 @@ public class SpaceBattleManager : MonoBehaviour
         NetMgr.srvConn.msgDist.DelListener("Result", RecvResult);
         NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
         ClearBattle();
+
+        SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
     }
 
     public void RecvStartFight(ProtocolBase protocol)
