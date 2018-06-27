@@ -17,8 +17,15 @@ public class EnterNextScene : MonoBehaviour {
 	}
     private void OnTriggerEnter(Collider other)
     {
-        if(!arrived)
-          SendSpaceArriveEnd();
+        if(other.gameObject.tag == "Player")
+        {
+            if (!arrived)
+            {
+                SendSpaceArriveEnd();
+                arrived = true;
+            }
+                
+        }
     }
 
     public void SendSpaceArriveEnd()

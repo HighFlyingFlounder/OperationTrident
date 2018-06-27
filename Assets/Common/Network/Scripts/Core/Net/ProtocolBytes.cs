@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.InteropServices;
 
 //字节流协议模型
 public class ProtocolBytes : ProtocolBase
@@ -172,6 +173,20 @@ public class ProtocolBytes : ProtocolBase
         return data;
     }
 
+    byte[] Object2Bytes(object obj)
+    {
+        byte[] buff = new byte[Marshal.SizeOf(obj)];
+        IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buff, 0);
+        Marshal.StructureToPtr(obj, ptr, true);
+        return buff;
+    }
+
+    object Bytes2Object(byte[] buff, Type type)
+    {
+        IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement(buff, 0);
+        return Marshal.PtrToStructure(ptr, type);
+    }
+
     public void AddObjects(object[] objs)
     {
         byte[] buff = null;
@@ -182,13 +197,17 @@ public class ProtocolBytes : ProtocolBase
             buff = ms.ToArray();
         }
         bytes = bytes.Concat(buff).ToArray();
-
         Object obj = null;
         using (MemoryStream ms = new MemoryStream(buff))
         {
             BinaryFormatter bf = new BinaryFormatter();
             obj = bf.Deserialize(ms);
         }
+        //foreach (var ob in objs)
+        //{
+        //    byte[] buff = Object2Bytes(ob);
+        //    bytes = bytes.Concat(buff).ToArray();
+        //}
     }
 
     public Object GetObjects(int start)

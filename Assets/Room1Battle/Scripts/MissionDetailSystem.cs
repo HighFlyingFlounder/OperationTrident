@@ -6,8 +6,6 @@ namespace OperationTrident.Util
 {
     public class MissionDetailSystem : MonoBehaviour
     {
-        [SerializeField]
-        private new Camera camera;
         public string[] missionDetails =
             {
             //"2018.6.22  星期五    \n雷克雅未克    \n休伯利安行动"
@@ -52,10 +50,6 @@ namespace OperationTrident.Util
                     theColor = GUIUtil.yellowColor;
                     break;
             }
-            if (camera == null)
-            {
-                camera = GetComponent<Camera>();
-            }
         }
 
         // Update is called once per frame
@@ -68,7 +62,7 @@ namespace OperationTrident.Util
         {
                     GUIUtil.DisplayMissionDetailDefault(
                             missionDetails,
-                            camera,
+                            Camera.main,
                             theColor,
                             wordTransparentInterval: wordTransparentInterval,
                             wordAppearanceInterval: wordAppearanceInterval,
