@@ -300,9 +300,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: OffLine
-  startScene: Room1Battle
+  startScene: Storyboard2
   isMasterClient: 0
-  host: 127.0.0.1
+  host: 116.56.136.22
   port: 8000
 --- !u!114 &605592420
 MonoBehaviour:

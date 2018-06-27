@@ -98,9 +98,10 @@ namespace OperationTrident.Room1
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
             else
+            {
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
-
+            }
             Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
             Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
