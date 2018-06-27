@@ -99,7 +99,6 @@ namespace OperationTrident.Room1
                      GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
             else
             {
-                Debug.Log(SceneNetManager.instance.list.Count);
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
             }
