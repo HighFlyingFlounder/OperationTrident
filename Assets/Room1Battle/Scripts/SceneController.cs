@@ -254,7 +254,7 @@ namespace OperationTrident.Room1
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XPositive);
+                        door1.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XPositive);
                         door1.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;

@@ -11,6 +11,7 @@ using System.Reflection;
 public class NetSyncController : MonoBehaviour
 {
     //public UnityEngine.Object controller;
+    [SerializeField]
     private List<Component> sync_scripts=new List<Component>();
     private string sync_id;
     public static bool isMasterClient = false;

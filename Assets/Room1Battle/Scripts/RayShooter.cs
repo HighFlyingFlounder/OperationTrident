@@ -56,8 +56,10 @@ namespace OperationTrident.Room1
                 StartCoroutine(ShootRoutine());
                 Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
                 Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                ShootWithRay(ray);
-                m_NetSyncController.RPC(this, "ShootWithRay", ray);
+                Vector3 direction = ray.direction;
+                Vector3 origin = ray.origin;
+                ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
+                m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {
@@ -69,8 +71,13 @@ namespace OperationTrident.Room1
                 }
             }
         }
-        public void ShootWithRay(Ray ray)
+        //public void ShootWithRay(Vector3 direction,Vector3 origin)
+        public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
         {
+            Vector3 origin = new Vector3(o_x, o_y, o_z);
+            Vector3 direction = new Vector3(d_x, d_y, d_z);
+
+            Ray ray = new Ray(origin, direction);
             RaycastHit hit;//射线交叉信息的包装
                            //Raycast给引用的变量填充信息
             if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量

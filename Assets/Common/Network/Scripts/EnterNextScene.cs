@@ -20,7 +20,11 @@ public class EnterNextScene : MonoBehaviour {
         if(other.gameObject.tag == "Player")
         {
             if (!arrived)
+            {
                 SendSpaceArriveEnd();
+                arrived = true;
+            }
+                
         }
     }
 

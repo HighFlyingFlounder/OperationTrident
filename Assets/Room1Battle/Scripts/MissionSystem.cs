@@ -94,8 +94,13 @@ namespace OperationTrident.Room1
             }
             
             missionContent = missionContents[missionContentsIndex]; // 设置要显示的任务目标内容
-            nowDistance = Vector3.Distance(targetWorldPosition,
-                     GetComponentInParent<Transform>().position); // 两个世界坐标的
+            if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+                nowDistance = Vector3.Distance(targetWorldPosition,
+                     GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
+            else
+                nowDistance = Vector3.Distance(targetWorldPosition,
+                     SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+
             Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
             Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
