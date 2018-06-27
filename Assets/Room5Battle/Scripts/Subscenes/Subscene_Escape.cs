@@ -7,15 +7,17 @@ using System;
 namespace OperationTrident.Room5
 {
     //第一次进入房间后，
-    public class Subscene_Escape : Subscene,NetSyncInterface
+    public class Subscene_Escape : Subscene
     {
         //反应柱（下降）
         public TokamakReactorPillar m_ReactorPillar;
         //核心（下降）
         public TokamakCore m_ReactorCore;
 
+        public GameObject nextScene;
+
         //是否已经获取核心
-        protected bool isGetTorcore = false;
+        //protected bool isGetTorcore = false;
 
 
         public override bool isTransitionTriggered()
@@ -55,14 +57,13 @@ namespace OperationTrident.Room5
         {
             if (m_ReactorCore == null)
             {
-                isGetTorcore = true;
-                gameObject.GetComponent<NetSyncController>().SyncVariables();
+                nextScene.SetActive(true);
             }
         }
 
         private void OnGUI()
         {
-            if (!isGetTorcore)
+            if (m_ReactorCore != null)
             {
                 GUIUtil.DisplayMissionTargetDefault("夺回托卡马克之心.", Camera.main, Color.white);
             }
@@ -71,7 +72,7 @@ namespace OperationTrident.Room5
                 GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Camera.main, Color.white);
             }
         }
-
+        /*
         public void RecvData(SyncData data)
         {
             isGetTorcore = (bool)data.Get(typeof(bool));
@@ -88,5 +89,6 @@ namespace OperationTrident.Room5
         {
             
         }
+        */
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace OperationTrident.Room5
 {
-    public class TokamakCore : MonoBehaviour
+    public class TokamakCore : MonoBehaviour,NetSyncInterface
     {
+        private NetSyncController mSynControler;
+
         //可交互对象（在unity editor中初始化）
         public InteractiveObject m_CoreInteractiveObj;
 
@@ -48,7 +51,8 @@ namespace OperationTrident.Room5
                 //拿到了托卡马克之心就
                 if(m_CoreInteractiveObj.IsInteractionDone())
                 {
-                    Destroy(this.gameObject);
+                    mSynControler.RPC(this, "destroyCore");
+                    destroyCore();
                 }
             }
             else
@@ -80,5 +84,26 @@ namespace OperationTrident.Room5
             }
         }
 
+        public void destroyCore()
+        {
+            Destroy(this.gameObject);
+            //GetComponent<MeshRenderer>().enabled = false;
+        }
+
+        public void RecvData(SyncData data)
+        {
+            
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            mSynControler = controller;
+        }
     }
 }
