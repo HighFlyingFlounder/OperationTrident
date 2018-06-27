@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[ExecuteInEditMode]
-public class RenderDepth : MonoBehaviour
+namespace OperationTrident.Elevator
 {
-    void OnEnable()
+    [ExecuteInEditMode]
+    public class RenderDepth : MonoBehaviour
     {
-        GetComponent<Camera>().depthTextureMode = DepthTextureMode.DepthNormals;
+        void OnEnable()
+        {
+            GetComponent<Camera>().depthTextureMode = DepthTextureMode.DepthNormals;
+        }
     }
 }
