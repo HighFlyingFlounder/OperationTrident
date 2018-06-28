@@ -7,12 +7,10 @@ using OperationTrident.Util;
 
 namespace OperationTrident.Room1
 {
-    public class RayShooter : MonoBehaviour
+    public class RayShooter : MonoBehaviour,NetSyncInterface
     {
-        // 判断能否够到物体的距离
-        [SerializeField]
-        private float distanceQuota = 1.0f;
 
+        NetSyncController m_NetSyncController;
         // 射速：一秒钟能射多少枪
         public float shootingSpeed = 10.0f;
         // 辅助射速系统，判断能不能开枪
@@ -23,19 +21,15 @@ namespace OperationTrident.Room1
         // 后坐力：枪在X轴上的随机抖动factor
         public float jitterFactorX = 1.0f;
         public float jitterFactorY = 0.2f;
+        public bool isLocalPlayer = true;
 
-        // 是否提示玩家按下某个键
-        [SerializeField]
-        private bool toNotify = true;
-
-        private bool toDisplayHint = false; 
 
         // 附加在这个东西上的摄像机
         private new Camera camera;
         // Use this for initialization
         void Start()
         {
-            camera = GetComponent<Camera>();
+            camera = Camera.main;
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -51,6 +45,9 @@ namespace OperationTrident.Room1
         // Update is called once per frame
         void Update()
         {
+            if (!isLocalPlayer)
+                return;
+
             //响应鼠标按键
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)&&canShoot
                 //&&  !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()
@@ -59,24 +56,11 @@ namespace OperationTrident.Room1
                 StartCoroutine(ShootRoutine());
                 Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
                 Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
-                    if (target != null)   //检查对象上是否有ReactiveTarget组件
-                    {
-                        target.ReactToHit();
-                        //Messenger.Broadcast(GameEvent.ENEMY_HIT);
-                    }
-                    else
-                    {
-                        StartCoroutine(SphereIndicator(hit.point));//响应击中
-                    }
-
-                }
+                Vector3 direction = ray.direction;
+                Vector3 origin = ray.origin;
+                ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
+                if(m_NetSyncController!=null)
+                    m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {
@@ -87,82 +71,32 @@ namespace OperationTrident.Room1
                     camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
                 }
             }
-            // 提示玩家按键
-            if (toNotify)
-            {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
-                    {
-                        KeyScript target =
-                            hitObject.GetComponent<KeyScript>();
-                        if (target != null)   //检查对象上是否有KeyScript组件
-                        {
-                            toDisplayHint = true;
-                        }
-                        DoorScript target1 =
-                            hitObject.GetComponent<DoorScript>();
-                        if (target1 != null)
-                        {
-                            toDisplayHint = true;
-                        }
-                        InteractiveThing target2 =
-                            hitObject.GetComponent<InteractiveThing>();
-                        if (target2 != null)
-                        {
-                            toDisplayHint = true;
-                        }
-                    }
-                    else toDisplayHint = false;
-                }
-            }
-            // 处理玩家的物品交互按键
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
-                RaycastHit hit;//射线交叉信息的包装
-                               //Raycast给引用的变量填充信息
-                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-                {
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position,hitObject.transform.position)>distanceQuota)
-                    {
-                        return;
-                    }
-                    KeyScript target = 
-                        hitObject.GetComponent<KeyScript>();
-                    if (target != null)   //检查对象上是否有KeyScript组件
-                    {
-                        Messenger<int>.Broadcast(GameEvent.KEY_GOT,target.ThisId);
-                        return;
-                    }
-                    DoorScript target1 =
-                        hitObject.GetComponent<DoorScript>();
-                    if (target1 != null)
-                    {
-                        Messenger<int>.Broadcast(GameEvent.DOOR_OPEN,target1.ThisId);
-                        return;
-                    }
-                    InteractiveThing target2 =
-                        hitObject.GetComponent<InteractiveThing>();
-                    if (target2 != null)
-                    {
-                        Messenger.Broadcast(GameEvent.CROPSE_TRY);
-                        return;
-                    }
-                }
-            }
-
         }
+        //public void ShootWithRay(Vector3 direction,Vector3 origin)
+        public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
+        {
+            Vector3 origin = new Vector3(o_x, o_y, o_z);
+            Vector3 direction = new Vector3(d_x, d_y, d_z);
 
+            Ray ray = new Ray(origin, direction);
+            RaycastHit hit;//射线交叉信息的包装
+                           //Raycast给引用的变量填充信息
+            if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
+            {
+                //hit.point:射线击中的坐标
+                GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
+                if (target != null)   //检查对象上是否有ReactiveTarget组件
+                {
+                    target.ReactToHit();
+                    //Messenger.Broadcast(GameEvent.ENEMY_HIT);
+                }
+                else
+                {
+                    StartCoroutine(SphereIndicator(hit.point));//响应击中
+                }
+            }
+        }
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
@@ -176,12 +110,6 @@ namespace OperationTrident.Room1
             // 准心！！！
             GUI.Label(rect, "*", style);
 
-            // 显示物体可以获得的提示
-            if (toDisplayHint)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w获取物品", camera, GUIUtil.DefaultFontSize + 8, 0.5f);
-                
-            }
         }
 
         //协程，随着时间推移逐步执行
@@ -197,6 +125,23 @@ namespace OperationTrident.Room1
             yield return new WaitForSeconds(1);   //yield：协程在何处暂停
 
             Destroy(sphere);   //移除GameObject并释放占用的内存
+        }
+
+        public void RecvData(SyncData data)
+        {
+            
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            data.Add(1);
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_NetSyncController = controller;
         }
     }
 }

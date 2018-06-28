@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class RoomPanel : PanelBase
@@ -37,7 +38,7 @@ public class RoomPanel : PanelBase
         startBtn.onClick.AddListener(OnStartClick);
         //监听
         NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
-        NetMgr.srvConn.msgDist.AddListener("Fight", RecvFight);
+        NetMgr.srvConn.msgDist.AddListener("EnterGame", RecvEnterGame);
         //发送查询
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("GetRoomInfo");
@@ -50,7 +51,7 @@ public class RoomPanel : PanelBase
     {
 
         NetMgr.srvConn.msgDist.DelListener("GetRoomInfo", RecvGetRoomInfo);
-        NetMgr.srvConn.msgDist.DelListener("Fight", RecvFight);
+        NetMgr.srvConn.msgDist.DelListener("EnterGame", RecvEnterGame);
 
     }
 
@@ -81,7 +82,12 @@ public class RoomPanel : PanelBase
             if (id == GameMgr.instance.id)
                 str += "【我自己】";
             if (isOwner == 1)
+            {
                 str += "【房主】";
+                GameMgr.instance.isMasterClient = true;
+                NetSyncController.isMasterClient = true;
+            }
+                
             text.text = str;
 
             // if (team == 1)
@@ -131,7 +137,7 @@ public class RoomPanel : PanelBase
     public void OnStartClick()
     {
         ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("StartFight");
+        protocol.AddString("StartGame");
         NetMgr.srvConn.Send(protocol, OnStartBack);
     }
 
@@ -150,10 +156,9 @@ public class RoomPanel : PanelBase
     }
 
 
-    public void RecvFight(ProtocolBase protocol)
+    public void RecvEnterGame(ProtocolBase protocol)
     {
-        ProtocolBytes proto = (ProtocolBytes)protocol;
-        MultiBattle.instance.StartBattle(proto);
+        SceneManager.LoadScene(GameMgr.instance.startScene, LoadSceneMode.Single);
         Close();
     }
 

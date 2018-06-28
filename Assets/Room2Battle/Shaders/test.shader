@@ -1,104 +1,94 @@
-﻿Shader "Custom/test"
+﻿Shader "test"
 {
 	Properties
 	{
-		_MainTex("Texture", 2D) = "white" {}
-		_Contrast("Constrast",Range(0,4)) = 2
-		_Brightness("Brightness",Range(0,2)) = 1
-		_NightVisionColor("Night Vision Color",Color) = (1,1,1,1)
-		_RandomValue("RandomValue",Float) = 0
-		_distortion("distortion",Float) = 0.2
-		_scale("scale",Float) = 0.8
-		_VignetteTex("Vignette Texture", 2D) = "white"{}
-		_ScanLineTileTex("Scan Line Tile Texture", 2D) = "white"{}
-		_ScanLineTileAmount("Scan Line Tile Amount", Float) = 4.0
-		_NoiseTex("Noise Texture", 2D) = "white" {}
-		_NoiseXSpeed("Noise X Speed", Float) = 100.0
-		_NoiseYSpeed("Noise Y Speed",Float) = 100.0
+		//_MainTex ("Texture", 2D) = "white" {}
+		_WaveTex("waveTexture", 2D) = "white" {}
+		_WaveMaskTex("waveMaskTexture",2D) = "white"{}
+		//_CameraYawAngle("cameraYawAngle",float) = 0
+		//_MaxDistance("MaxDistance", float) = 0.02
 	}
 		SubShader
 	{
-		// No culling or depth
+		//Post Processing, No culling or depth
 		Cull Off ZWrite Off ZTest Always
 
 		Pass
-		{
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hit_fastest
-			#include "UnityCG.cginc"
+	{
+		CGPROGRAM
+#pragma vertex vert
+#pragma fragment frag
 
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
+#include "UnityCG.cginc"
 
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
+		struct appdata
+	{
+		float4 vertex : POSITION;
+		float2 uv : TEXCOORD0;
+	};
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-				return o;
-			}
+	struct v2f
+	{
+		float2 uv : TEXCOORD0;
+		float4 vertex : SV_POSITION;
+	};
 
-			sampler2D _MainTex;
-			uniform sampler2D _ScanLineTileTex;
-			uniform sampler2D _NoiseTex;
-			uniform sampler2D _VignetteTex;
-			fixed _Contrast;
-			fixed _Brightness;
-			fixed _RandomValue;
-			fixed _distortion;
-			fixed _scale;
-			fixed _NoiseYSpeed;
-			fixed _NoiseXSpeed;
-			fixed _ScanLineTileAmount;
-			fixed4 _NightVisionColor;
+	v2f vert(appdata v)
+	{
+		v2f o;
+		o.vertex = UnityObjectToClipPos(v.vertex);
+		o.uv = v.uv;
+		return o;
+	}
 
-			float2 barrelDistortion(float2 coord)
-			{
-				float2 h = coord.xy - float2(0.5, 0.5);
-				float r2 = h.x * h.x + h.y * h.y;
-				float f = 1.0 + r2 * (_distortion * sqrt(r2));
+	sampler2D _CameraDepthTexture;
+	uniform sampler2D _WaveTex;
+	uniform sampler2D _WaveMaskTex;
+	uniform float _CameraYawAngle;
+	//uniform float _MaxDistance;
 
-				return f * _scale * h + 0.5;
-			}
+	fixed4 frag(v2f i) : SV_Target
+	{
+	float nonLinearDepth = tex2D(_CameraDepthTexture, i.uv);
+	float depth = Linear01Depth(nonLinearDepth);
+	float tmpX = i.uv.x - 0.5f;
+	float tmpY = i.uv.y - 0.5f;
+	//用z算出像素射线的length
+	float length = depth * sqrt(1 + tmpX * tmpX + tmpY* tmpY);
+	//深度决定v，于是加随时间变化v的偏移，就能实现“往外扩散的波浪”
+	//至于fix u还是V,就取决于条纹纹理是怎么ps的了
+	float v_scale = 10.0f;
 
-			fixed4 frag(v2f i) : SV_Target
-			{
-				//桶型畸变算出的新uv
-				half2 distortedUV = barrelDistortion(i.uv);
-				fixed4 renderTex = tex2D(_MainTex, distortedUV);
-				fixed4 vignetteTex = tex2D(_VignetteTex, distortedUV);
 
-				half2 scanLinesUV = half2(i.uv.x * _ScanLineTileAmount, i.uv.y *_ScanLineTileAmount);
-				fixed4 scanLineTex = tex2D(_ScanLineTileTex, scanLinesUV);
+	//衰减系数
+	float attFactor = 10.0f;
+	float attenuation = 1.0f / (1.0f + attFactor *length );
+	//color = attenuation * tex2D(_WaveTex, float2(0.5f, length * v_scale - _TexCoordOffset));
+	//_Time是float4的内置变量
+	float amplifiedDepthColor = clamp(1.0f - 40.0f * depth, 0, 1.0f);//增加深度的变化幅度（相当于把far-plane拉近
+	//float baseColorScale = 0.7f;
+	//float4 baseColor = float4(0.0f, 0.0f, 0.0f, 1.0f);// float4(baseColorScale, baseColorScale, baseColorScale, 1.0f)* float4(amplifiedDepthColor, amplifiedDepthColor, amplifiedDepthColor, 1.0f);
+	float4 maskColor = tex2D(_WaveMaskTex, float2(0.5f, length * v_scale - _Time.y*1.0f));
+	float4 depthColor = float4(0.1f, 0.3f, 0.5f, 1.0f);
+	float4 waveColor = float4(0.5f, 0.5f, 0.5f, 1.0f);// tex2D(_WaveTex, i.uv);
+	//深度图的一点颜色+感应波
+	float4 color =  attenuation * (depthColor * amplifiedDepthColor+ maskColor * waveColor);
 
-				//噪声贴图,使用sin函数？
-				half2 noiseUV = half2(i.uv.x + (_RandomValue * _SinTime.z *_NoiseXSpeed), i.uv.y + (_Time.x * _NoiseYSpeed));
-				fixed noiseTex = tex2D(_NoiseTex, noiseUV);
+	/*if (length < _MaxDistance)
+	{
+		color = float4(depth,depth,depth,0.4f) + tex2D(_WaveTex,float2(depth,depth))* tex2D(_WaveMaskTex, float2(0.5f, length * v_scale - _TexCoordOffset));
+	}
+	else
+	{
+		float _Attactor = 50.0;
+		float attenuation = 1.0f / (1.0f + _Attactor * length);
+		color = attenuation * tex2D(_WaveTex, float2(0.5f, length * v_scale - _TexCoordOffset));
+	}*/
 
-				//混合颜色
-				fixed lum = dot(fixed3(0.299, 0.587, 0.114), renderTex.rgb);
-				lum += _Brightness; // 补光
-				fixed4 finalColor = (lum * 2) + _NightVisionColor;
 
-				finalColor = pow(finalColor, _Contrast);
-				finalColor *= vignetteTex;
-				finalColor *= scanLineTex * noiseTex;
-
-				return finalColor;
-		}
+	return color;
+	}
 		ENDCG
 	}
 	}
-	FallBack "Diffuse"
 }

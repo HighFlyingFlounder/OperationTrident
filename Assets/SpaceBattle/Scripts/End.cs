@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class End : MonoBehaviour
 {
+    private bool arrived = false;
     public int total_player = 4;//默认是四个玩家
     private int finished_player = 0;
     private bool isWin = false;
@@ -14,10 +15,14 @@ public class End : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.gameObject.tag == "Player" && other.gameObject.transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
-            finished_player++;
-            SendSpaceArriveEnd();
+            if (!arrived)
+            {
+                finished_player++;
+                SendSpaceArriveEnd();
+                arrived = true;
+            }
         }
     }
 

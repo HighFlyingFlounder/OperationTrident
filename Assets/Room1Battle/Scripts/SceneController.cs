@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.EventSystem;
+using OperationTrident.Util;
 using System;
 
 namespace OperationTrident.Room1
 {
 
-    public class SceneController : MonoBehaviour
+    public class SceneController : MonoBehaviour, NetSyncInterface
     {
+        //private new Camera camera;
+
+        NetSyncController m_controller;
+
         // 钥匙预设
         [SerializeField]
         private GameObject keyPrefab;
@@ -26,14 +31,14 @@ namespace OperationTrident.Room1
         // 场景中当前出现的可交互物品
         private GameObject gameObject;
 
-        private GameObject key1;
+        public GameObject key1;
         private GameObject key2;
         // 这里的尸体指的是尸体上的C4，尸体是一直都在的,这里有个问题！@Question: 可以不用把这个C4显示出来的
         public GameObject cropse;
         private GameObject IDCard;
 
         // 三个门
-        private GameObject doorStart;
+        public GameObject doorStart;
         private GameObject door1;
         private GameObject door2;
 
@@ -100,6 +105,7 @@ namespace OperationTrident.Room1
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
 
+            //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
         }
 
@@ -111,12 +117,14 @@ namespace OperationTrident.Room1
                 // 场景的初始状态
                 case Room1State.Initing:
                     InitAllGameObject();
+                    subtitlesToDisplay = subtitleInitToDisplay;
                     Key1WorldPosition = key1.transform.position;
                     Key2WorldPosition = key2.transform.position;
                     CropseWorldPosition = cropse.transform.position;
                     IDCardWorldPosition = IDCard.transform.position;
                     //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
+                    
                     break;
                 // 玩家正在找第一个钥匙
                 case Room1State.FindingKey1:
@@ -128,28 +136,40 @@ namespace OperationTrident.Room1
                     break;
                 // 玩家正准备尝试开最后一个门
                 case Room1State.TryingToOpenRoom:
-
+                    
                     break;
                 // 玩家正在找必需品
                 case Room1State.FindingNeeded:
-
+                    subtitlesToDisplay = subtitleOpenDoorFalseToDisplay;
                     break;
                 // 玩家正在找ID卡
                 case Room1State.FindingIDCard:
-
+                    
                     break;
                 // 玩家正在逃离房间
                 case Room1State.EscapingRoom:
-
+                    subtitlesToDisplay = subtitleEscapingToDisplay;
                     break;
             }
+        }
+
+        IEnumerator AddSubtitleIndex(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            ++subtitleIndex;
+        }
+
+        IEnumerator SetSubtitleIndex(float delay,int index)
+        {
+            yield return new WaitForSeconds(delay);
+            subtitleIndex = index;
         }
 
         // 一次性生成了全部的GameObject，但是这里并没有生成C4？
         private void InitAllGameObject()
         {
-            key1 = Instantiate(keyPrefab) as GameObject;
-            key1.transform.localPosition = Key1Position;
+            //key1 = Instantiate(keyPrefab) as GameObject;
+            //key1.transform.localPosition = Key1Position;
 
             key2 = Instantiate(keyPrefab) as GameObject;
             key2.transform.localPosition = Key2Position;
@@ -157,21 +177,28 @@ namespace OperationTrident.Room1
             IDCard = Instantiate(IDCardPrefab) as GameObject;
             IDCard.transform.localPosition = IDCardPosition;
 
-            doorStart = Instantiate(DoorPrefab) as GameObject;
-            doorStart.transform.localPosition = DoorStartPosition;
-            doorStart.transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
-            doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
+            //doorStart = Instantiate(DoorPrefab) as GameObject;
+            //doorStart.transform.localPosition = DoorStartPosition;
+            //doorStart.transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
+            //doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
 
             door1 = Instantiate(DoorPrefab) as GameObject;
             door1.transform.localPosition = Door1Position;
+            door1.transform.localScale = new Vector3(3.2f, 4.9f, 0.2f);
 
             door2 = Instantiate(DoorPrefab) as GameObject;
             door2.transform.localPosition = Door2Position;
-            door2.transform.localScale = new Vector3(3.0f, door2.transform.localScale.y, door2.transform.localScale.z);
+            door2.transform.localScale = new Vector3(3.8f, 5.0f, 0.2f);
+        }
+
+        private void OnKeyGot(int id)
+        {
+            OnKeyGot_Imp(id);
+            m_controller.RPC(this, "OnKeyGot_Imp", id);
         }
 
         // 改进后的函数，所有钥匙的事件分ID处理
-        private void OnKeyGot(int id)
+        public void OnKeyGot_Imp(int id)
         {
             switch (id)
             {
@@ -202,23 +229,33 @@ namespace OperationTrident.Room1
             }
         }
 
-        // 改进后的函数，所有门的事件分ID处理
         private void OnDoorOpen(int id)
         {
+            OnDoorOpen_Imp(id);
+            m_controller.RPC(this, "OnDoorOpen_Imp", id);
+        }
+
+        // 改进后的函数，所有门的事件分ID处理
+        public void OnDoorOpen_Imp(int id)
+        {
+            
             switch (id)
             {
                 // 第一扇门
                 case 0:
                     if (state == Room1State.FindingKey1)
                     {
-                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(2.5f,DoorScript.DoorOpenDirection.ZPositive);
+                        Debug.Log("WindyIce");
+                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.ZNegative);
+                        doorStart.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
                 // 第二扇门
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        door1.GetComponent<DoorScript>().OpenAndDestroy(3.0f,DoorScript.DoorOpenDirection.XNegative);
+                        door1.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XPositive);
+                        door1.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
                 // 第三扇门
@@ -230,52 +267,82 @@ namespace OperationTrident.Room1
                     }
                     else if (state == Room1State.FindingIDCard)
                     {
-                        door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
+                        //door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
+                        door2.GetComponent<DoorScript>().CreateFragmentsInFloor(270, true);
+                        door2.GetComponent<HintableObject>().DestroyThis();
+                        Destroy(door2);
                     }
                     break;
             }
         }
 
-        // 搜刮尸体
         private void OnCropseTry()
+        {
+            OnCropseTry_Imp();
+            m_controller.RPC(this, "OnCropseTry_Imp");
+        }
+
+        // 搜刮尸体
+        public void OnCropseTry_Imp()
         {
             if (state == Room1State.FindingNeeded)
             {
                 // TODO: 拿到了尸体C4
                 state = Room1State.FindingIDCard;
-                cropse.GetComponent<InteractiveThing>().enabled = false;
             }
         }
 
+        public string[] subtitleInitToDisplay = {
+            "^b地球指挥官:^w根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
+            "^b地球指挥官:^w你们要拿到它，小心里面的^r巡逻机器人"
+        };
 
+        public string[] subtitleOpenDoorFalseToDisplay={
+            "^rAI:^w对不起，身份识别错误",
+            "^b队友:^w门居然打不开，来点硬一点的方法吧"
+        };
 
-        //// 第一个key拿到了！
-        //private void OnKey1Got()
-        //{
-        //    if (state == Room1State.FindingKey1)
-        //    {
-        //        Destroy(key1);
-        //        state = Room1State.FindingKey2;
-        //    }
-        //}
+        public string[] subtitleEscapingToDisplay = {
+            "^b地球指挥官:^w注意，仓库的警报启动",
+            "^b地球指挥官:^w大量的^r防御机器人^w正在进入你们的房间"
+        };
+        private string[] subtitlesToDisplay;
+        private int subtitleIndex = 0;
+        void OnGUI()
+        {
+            //GUIUtil.DisplaySubtitlesInGivenGrammar(
+            //    subtitlesToDisplay,
+            //    Camera.main,
+            //    fontSize: 16,
+            //    subtitleRatioHeight: 0.9f,
+            //    secondOfEachWord: 0.2f,
+            //    secondBetweenLine: 4.0f);
 
-        //// 第二个key拿到了
-        //private void OnKey2Got()
-        //{
-        //    if (state == Room1State.FindingKey2)
-        //    {
-        //        Destroy(key2);
-        //        state = Room1State.TryingToOpenRoom;
-        //    }
-        //}
+            string[] toD = { "^w你好，^r一王^w，我是^b WindyIce", "^w你好，^r鸡王^w，我是^b WindyIce" };
+            float[] a1 = { 10.0f, 5.0f };
+            float[] a2 = { 5.0f, 10.0f };
+            GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
+                toD,
+                Camera.main,
+                fontSize: 16,
+                subtitleRatioHeight: 0.9f,
+                secondsOfEachLine:a1,
+                secondBetweenLine: a2);
+        }
 
-        //// 尝试把门1打开
-        //private void OnDoor1Open()
-        //{
-        //    if (state == Room1State.FindingKey2)
-        //    {
-        //        door1.GetComponent<DoorScript>().OpenAndDestroy();
-        //    }
-        //}
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
+        }
     }
 }

@@ -22,7 +22,7 @@ using UnityEngine;
 ///  4: 通过onSubStateExit实现一些善后工作，例如敌人物体的消除等
 /// </summary>
 /// 
-namespace Room5Battle
+namespace OperationTrident.Room5
 {
     public class Subscene : MonoBehaviour
     {
