@@ -50,12 +50,14 @@ namespace OperationTrident.EndingScene
         private float m_ThirdPersonCamRotateRadius;
         private Vector3 m_DestCamPos;//真正的Cam.transform要线性插值跟随这个target pos
         private Vector3 m_DestLookat;
+        private float m_LookingAtKunCamShakingAmp;//鲲爆炸的时候镜头的抖动幅度
 
         // Use this for initialization
         void Start()
         {
             m_CamState = CameraState.ROAMING;
             m_SpaceRubbishInitialPos = m_SpaceRubbish.transform.position;
+            m_LookingAtKunCamShakingAmp = 1.0f;
         }
 
         // Update is called once per frame
@@ -93,8 +95,19 @@ namespace OperationTrident.EndingScene
 
                 case CameraState.THIRD_PERSON:
                     GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white,0.1f);
+                    string[] subtitles =
+                    {
+                        "",//等几秒先
+                        "^g蓝星陆战队：^w指挥部，已取回托卡马克之心",
+                        "^g蓝星陆战队：^w陆战队所有成员均已登上逃生舱，任务完成",
+                        "^g地球指挥部：^w收到，尽快返回海神号进行任务简报。",
+                        "^g蓝星陆战队：^w收到。建军节快乐。",
+                    };
 
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^g蓝星陆战队^w：指挥部，已取回托卡马克之心", m_CamFree);
+                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f,3.0f };
+                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f,1.0f};
+                    GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
+                        subtitles,m_CamFree,GUIUtil.DefaultFontSize, GUIUtil.DefaultSubtitleRatioHeight,subtitleTime, intervals);
 
                     break;
 
@@ -173,18 +186,30 @@ namespace OperationTrident.EndingScene
         {
             //计算新的需要插值到的camera pos/lookat
             const float lerpScale = 2.0f;
+
+            //爆炸时镜头加一点震动，显得炸的很激烈
+            Vector3 shakePosOffset = new Vector3(
+                Random.Range(-m_LookingAtKunCamShakingAmp, m_LookingAtKunCamShakingAmp),
+                Random.Range(-m_LookingAtKunCamShakingAmp, m_LookingAtKunCamShakingAmp),
+                Random.Range(-m_LookingAtKunCamShakingAmp, m_LookingAtKunCamShakingAmp)
+                );
             m_DestCamPos += new Vector3(0, 1.5f, -15.0f) * Time.deltaTime;
-            m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime);
+            m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime) ;
 
             m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
-            m_CamFree.transform.LookAt(m_DestLookat);
+            m_CamFree.transform.LookAt(m_DestLookat+ shakePosOffset);
 
             //爆炸特效（越来越密集的爆炸）
             m_ExplosionGenerator.GenerateExplosion();
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 0)) m_ExplosionGenerator.SetExplodeMaxInterval(0.5f);
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 4)) m_ExplosionGenerator.SetExplodeMaxInterval(0.4f);
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 8)) m_ExplosionGenerator.SetExplodeMaxInterval(0.3f);
-            if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 12)) m_ExplosionGenerator.SetExplodeMaxInterval(0.2f);
+            //每2个小节改变一点参数
+            for(int i=0;i<8;++i)
+            {
+                if(m_Time > m_BgmBarTime * (8 + 16 + 16 + i*2 ))
+                {
+                    m_ExplosionGenerator.SetExplodeMaxInterval(0.5f - 0.05f * i);
+                    m_LookingAtKunCamShakingAmp = 3f *(i+1);
+                }
+            }
 
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
