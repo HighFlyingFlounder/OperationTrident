@@ -99,14 +99,13 @@ namespace OperationTrident.Room1
                      GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
             else
             {
-                Debug.Log(SceneNetManager.instance.list.Count);
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
             }
             Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
             Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
+            Vector3 direction2 = targetWorldPosition - GameObject.FindWithTag("Player").transform.position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
             if (Vector3.Dot(direction1, direction2) <= 0) toDisplayTheMissionPoint = false;
             else toDisplayTheMissionPoint = true;
