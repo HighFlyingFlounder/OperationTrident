@@ -30,7 +30,7 @@ namespace OperationTrident.Elevator
 
         public void Operate_Imp()
         {
-            Messenger<int>.Broadcast(GameEvent.Push_Button, 0);
+            Messenger.Broadcast(GameEvent.Push_Button);
         }
 
         //网络同步
