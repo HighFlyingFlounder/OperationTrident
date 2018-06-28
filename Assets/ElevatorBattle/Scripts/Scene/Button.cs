@@ -5,8 +5,9 @@ using OperationTrident.EventSystem;
 
 namespace OperationTrident.Elevator
 {
-    public class Button : MonoBehaviour
+    public class Button : MonoBehaviour, NetSyncInterface
     {
+        NetSyncController m_controller = null;
 
         // Use this for initialization
         void Start()
@@ -20,9 +21,32 @@ namespace OperationTrident.Elevator
 
         }
 
-        public void Operate()
+        //RPC调用
+        private void Operate()
         {
-            Messenger<int>.Broadcast(GameEvent.Push_Button, 0);
+            Operate_Imp();
+            m_controller.RPC(this, "Operate_Imp");
+        }
+
+        public void Operate_Imp()
+        {
+            Messenger.Broadcast(GameEvent.Push_Button);
+        }
+
+        //网络同步
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
         }
     }
 }

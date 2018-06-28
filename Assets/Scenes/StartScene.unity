@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -89,7 +89,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000002, guid: 44a0aa63cc7a580439f6f3e3b90e2ac2,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -299,7 +300,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: OffLine
-  startScene: PlayerTest
+<<<<<<< HEAD
+  startScene: ElevatorBattle
+=======
+  startScene: Room1Battle
+>>>>>>> dev
+  isMasterClient: 0
   host: 127.0.0.1
   port: 8000
 --- !u!114 &605592420

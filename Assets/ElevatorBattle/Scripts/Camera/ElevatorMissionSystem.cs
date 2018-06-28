@@ -6,14 +6,11 @@ using System;
 
 namespace OperationTrident.Elevator
 {
-    public class MissionSystem : MonoBehaviour
+    public class ElevatorMissionSystem : MonoBehaviour
     {
 
-        // 场景的相机主相机
-        private new Camera camera;
-
         // 图标离目标有多高
-        public float missionLabelOffset = 0.5f;
+        public float missionLabelOffset = 3.0f;
 
         // 任务系统！！！的显示字符串的位置
         private Vector3 UIPosition;
@@ -27,7 +24,7 @@ namespace OperationTrident.Elevator
         // 在显示的任务目标索引
         private int missionContentsIndex;
 
-        private string[] missionContents = {
+        public string[] missionContents = {
             "",
             "开启电梯门",
             "寻找启动电梯的按钮",
@@ -42,17 +39,25 @@ namespace OperationTrident.Elevator
         private Vector3 targetWorldPosition;
 
         // 字幕每个字显示的时间
-        public float timePerSubTitleWord = 1f;
+        public float timePerSubTitleWord = 1.0f;
+
+        // 任务目标每个字出现的速度
+        public float appearInterval = 0.5f;
+
+        // 任务目标每个乱码闪烁的速度
+        public float blingInterval = 0.3f;
+
+        // 任务目标是随机的生成正确的还是顺序
+        public bool sequentClear = true;
+
+        private float nowDistance;
 
         // 是否显示距离
         private bool display;
 
-        private float nowDistance;
         // Use this for initialization
         void Start()
         {
-            camera = GetComponent<Camera>();
-            //toDisplayNewMission = true;
             missionContent = String.Empty;
             missionContentsIndex = 0;
             display = false;
@@ -91,10 +96,15 @@ namespace OperationTrident.Elevator
             }
 
             missionContent = missionContents[missionContentsIndex]; // 设置要显示的任务目标内容
-            nowDistance = Vector3.Distance(targetWorldPosition,
-                     GetComponentInParent<Transform>().position); // 两个世界坐标的
-            Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+                nowDistance = Vector3.Distance(targetWorldPosition,
+                     GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
+            else
+                nowDistance = Vector3.Distance(targetWorldPosition,
+                     SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+
+            Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
@@ -115,21 +125,41 @@ namespace OperationTrident.Elevator
         {
             // 显示任务目标
 
-            if (missionContent != String.Empty)
+            if (missionContent != string.Empty)
             {
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, camera, GUIUtil.blueColor, interval: 0.2f, blingInterval: 0.05f, fontSize: 16, inLeft: true, sequentClear: true);
+                //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
+                //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
+                GUIUtil.DisplayMissionTargetInMessSequently(missionContent,
+                    Camera.main,
+                    GUIUtil.brightGreenColor,
+                    interval: appearInterval,
+                    blingInterval: blingInterval,
+                    fontSize: 16,
+                    sequentClear: sequentClear);
             }
 
+
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, camera);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
             // 指定颜色
             if (toDisplayTheMissionPoint && display)
             {
                 GUI.Label(rect, (int)nowDistance + "m", style);
             }
 
-            string subtitle = "^w你好，^r面包^w，我是^y甜甜圈";
-            GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
+            //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
+            //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
+            //string[] subtitles ={
+            //    "^b地球指挥官:^w 根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
+            //    "^b地球指挥官:^w 你们要拿到它，小心里面的^r巡逻机器人"
+            //};
+            //GUIUtil.DisplaySubtitlesInGivenGrammar(
+            //    subtitles, 
+            //    camera, 
+            //    fontSize: 16,
+            //    subtitleRatioHeight: 0.9f, 
+            //    secondOfEachWord: 0.5f, 
+            //    secondBetweenLine: 3.0f);
         }
     }
 }

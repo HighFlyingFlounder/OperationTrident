@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 //网络链接
 public class Connection
@@ -25,8 +26,20 @@ public class Connection
     //心跳时间
     public float lastTickTime = 0;
     public float heartBeatTime = 30;
+    //最新测量延时(单位:ms)
+    public int RTT = 0;
+    //延时测量间隔
+    public float lastSendDelayTime = 0;
+    public float lastRecvDelayTime = 0;
+    public float testDelayTime = 1.5f;
     //消息分发
     public MsgDistribution msgDist = new MsgDistribution();
+    //高精度计时器
+    public System.Diagnostics.Stopwatch watch;
+
+
+
+
     ///状态
     public enum Status
     {
@@ -51,6 +64,9 @@ public class Connection
                       BUFFER_SIZE - buffCount, SocketFlags.None,
                       ReceiveCb, readBuff);
             Debug.Log("连接成功");
+            //Init StopWatch
+            watch = new System.Diagnostics.Stopwatch();
+            msgDist.AddListener("Delay", calcDelay);
             //状态
             status = Status.Connected;
             return true;
@@ -156,7 +172,15 @@ public class Connection
         return Send(protocol, cbName, cb);
     }
 
-
+    public void calcDelay(ProtocolBase protoBase){
+        int start = 0;
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        string protoName = proto.GetString(start, ref start);
+        long send_time = proto.GetLong(start, ref start);
+        long end_time = System.Diagnostics.Stopwatch.GetTimestamp();
+        lastRecvDelayTime = Time.time;
+        RTT = (int)((end_time - send_time) / (System.Diagnostics.Stopwatch.Frequency / 1000));
+    }
 
     public void Update()
     {
@@ -170,6 +194,17 @@ public class Connection
                 ProtocolBase protocol = NetMgr.GetHeatBeatProtocol();
                 Send(protocol);
                 lastTickTime = Time.time;
+            }
+            if (Time.time - lastSendDelayTime > testDelayTime)
+            {
+                // 上次发送的包还没有收到回包
+                if( lastRecvDelayTime < lastSendDelayTime ){
+                    RTT = 460; //说明网络延时过高,需要更新RTT为一个很大的值.
+                    Debug.Log("网络延时过高");
+                }
+                ProtocolBase protocol = NetMgr.GetDelayProtocol();
+                Send(protocol);
+                lastSendDelayTime = Time.time;
             }
         }
     }

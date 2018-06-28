@@ -45,6 +45,10 @@ namespace room2Battle
             "三叉戟行动"
         };
 
+        public string[] line =
+        {
+        };
+
         public float wordTransparentInterval = 0.005f; // 字变得更加透明的周期
         public float wordAppearanceInterval = 0.1f; // 每行字一个个出现的速度
         public float lineSubsequentlyInterval = 1.236f; // 每行字一行行出现的速度
@@ -88,7 +92,7 @@ namespace room2Battle
                 //m_controller.RPC(this,"method_need_to_sync",1,"string for param2");
                 //初始化
                 if (GameMgr.instance)//联网状态
-                    playerCamera = (NetWorkManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+                    playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
                 else
                     playerCamera = player.transform.Find("Camera").gameObject;
 
@@ -160,6 +164,7 @@ namespace room2Battle
                     0.5f,0.1f,16);
                 if(!open)
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", Camera.main, 12, 0.5f);
+                GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
             }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));

@@ -5,7 +5,8 @@ using OperationTrident.EventSystem;
 
 namespace OperationTrident.Elevator
 {
-    public class CreateEnemy : MonoBehaviour {
+    public class CreateEnemy : MonoBehaviour, NetSyncInterface
+    {
         [SerializeField]
         //要生成的物体
         public GameObject CreateObject;
@@ -28,6 +29,8 @@ namespace OperationTrident.Elevator
         private float c_time;
         //结束时间
         private float e_time;
+
+        NetSyncController m_controller;
 
         // Use this for initialization
         void Start() {
@@ -73,7 +76,30 @@ namespace OperationTrident.Elevator
             }
         }
 
-        public void Operate(int id)
+        //网络同步
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_controller = controller;
+        }
+
+        //RPC
+        private void Operate()
+        {
+            Operate_Imp();
+            m_controller.RPC(this, "Operate_Imp");
+        }
+
+        public void Operate_Imp()
         {
             s_time = Time.time;
             c_time = s_time;
@@ -81,7 +107,7 @@ namespace OperationTrident.Elevator
             isStart = true;
         }
 
-        public void End(int id)
+        public void End()
         {
             foreach (GameObject enemy in list)
             {
@@ -92,16 +118,16 @@ namespace OperationTrident.Elevator
         private void Awake()
         {
             //开始生成敌人
-            Messenger<int>.AddListener(GameEvent.Enemy_Start, Operate);
+            Messenger.AddListener(GameEvent.Enemy_Start, Operate);
             //开始销毁所有敌人 
-            Messenger<int>.AddListener(GameEvent.End, End);
+            Messenger.AddListener(GameEvent.End, End);
         }
 
         private void Destroy()
         {
             //移除
-            Messenger<int>.RemoveListener(GameEvent.Enemy_Start, Operate);
-            Messenger<int>.AddListener(GameEvent.End, End);
+            Messenger.RemoveListener(GameEvent.Enemy_Start, Operate);
+            Messenger.AddListener(GameEvent.End, End);
         }
     }
 }

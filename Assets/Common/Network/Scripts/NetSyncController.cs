@@ -11,14 +11,14 @@ using System.Reflection;
 public class NetSyncController : MonoBehaviour
 {
     //public UnityEngine.Object controller;
-    public Component[] sync_scripts;
+    [SerializeField]
+    private List<Component> sync_scripts=new List<Component>();
     private string sync_id;
     public static bool isMasterClient = false;
     // Use this for initialization
-
-    private void Awake()
-    {
-        for (int i = 0; i < sync_scripts.Length; i++)
+    public void AddSyncScripts(Component Component){
+        sync_scripts.Add(Component);
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             (sync_scripts[i] as NetSyncInterface).Init(this);
         }
@@ -26,6 +26,10 @@ public class NetSyncController : MonoBehaviour
 
     void Start()
     {
+        for (int i = 0; i < sync_scripts.Count; i++)
+        {
+            (sync_scripts[i] as NetSyncInterface).Init(this);
+        }
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
@@ -45,7 +49,7 @@ public class NetSyncController : MonoBehaviour
         //sync_id
         proto.AddString(sync_id);
         //sync_scripts
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             Component temp = sync_scripts[i];
             SyncData data = (temp as NetSyncInterface).SendData();
@@ -74,7 +78,7 @@ public class NetSyncController : MonoBehaviour
             return;
         //sync_scripts
         SyncData data = proto.GetSyncData(start, ref start);
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             // SyncData data = proto.GetSyncData(start, ref start);
             Component temp = sync_scripts[i];
@@ -112,7 +116,7 @@ public class NetSyncController : MonoBehaviour
 
     public void RecvRPC(ProtocolBase protoBase)
     {
-        Debug.Log("Reach RecvRPC");
+        //Debug.Log("Reach RecvRPC");
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
@@ -120,7 +124,7 @@ public class NetSyncController : MonoBehaviour
             return;
         //丢弃自己发的信息
         string player_id = proto.GetString(start, ref start);
-        Debug.Log("player_id:" + player_id);
+        //Debug.Log("player_id:" + player_id);
         if (player_id == GameMgr.instance.id)//丢弃自己发的信息
         {
             return;
@@ -131,15 +135,15 @@ public class NetSyncController : MonoBehaviour
 
         object[] parameters = (object[])proto.GetObjects(start);
 
-        Debug.Log("componentName:" + componentName);
-        Debug.Log("methodName:" + methodName);
+        //Debug.Log("componentName:" + componentName);
+        //Debug.Log("methodName:" + methodName);
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            Debug.Log("Parameters:" + parameters[i].ToString());
+            //Debug.Log("Parameters:" + parameters[i].ToString());
         }
 
-        for (int i = 0; i < sync_scripts.Length; i++)
+        for (int i = 0; i < sync_scripts.Count; i++)
         {
             if (sync_scripts[i].GetType().ToString() != componentName)
                 continue;
@@ -150,7 +154,7 @@ public class NetSyncController : MonoBehaviour
             {
                 Debug.LogError("No public method in class " + t);
             }
-            Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
+            //Debug.Log("sync_scripts.GetType" + sync_scripts[i].GetType().ToString());
             method.Invoke(sync_scripts[i], parameters);
         }
     }

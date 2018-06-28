@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpaceBattleManager : MonoBehaviour
 {
     //单例
-    public static NetWorkManager instance;
+    public static SceneNetManager instance;
     //玩家预设
     public GameObject[] PlayerPrefabs;
     //游戏中给所有的角色
@@ -14,6 +14,8 @@ public class SpaceBattleManager : MonoBehaviour
     private GameObject[] rocks;
     void Awake()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("FinishLoading");
@@ -24,6 +26,10 @@ public class SpaceBattleManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
+        if (GameObject.FindGameObjectWithTag("flyer"))
+            Destroy(GameObject.FindGameObjectWithTag("flyer"));
         StartGame();
     }
 

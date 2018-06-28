@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Util;
 
 namespace room2Battle
 {
@@ -18,6 +19,12 @@ namespace room2Battle
             subSceneController.addSubscene("room2_battle", "room2_battle");
             subSceneController.setInitialSubScene("enterRoom2");
             subSceneController.enabled = true;
+        }
+
+        void OnGUI()
+        {
+            Rect re = new Rect(Camera.main.pixelWidth - 100, 0, 100, 100);
+            GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
         }
     }
 }
