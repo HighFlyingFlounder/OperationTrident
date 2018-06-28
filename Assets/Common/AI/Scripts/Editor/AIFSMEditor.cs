@@ -162,8 +162,11 @@ namespace OperationTrident.Common.AI
                     initParamsObj.ApplyModifiedProperties();
                     EditorGUI.indentLevel--; // 取消缩进
                 }
-
             }
+
+            // 当编辑器中某个字段发生改变时，保存更改后的数据
+            if(GUI.changed)
+                EditorUtility.SetDirty(_currentFSM);
         }
 
         void AddStateToFSM(string stateName)
