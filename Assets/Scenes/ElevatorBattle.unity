@@ -282,6 +282,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 510696899}
+  - component: {fileID: 510696900}
   m_Layer: 0
   m_Name: Explosion Controller
   m_TagString: Untagged
@@ -296,12 +297,25 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 510696898}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.493933, y: -15.863377, z: 16.87925}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &510696900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 510696898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0350a3458eb272848a80f79396d97a01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosion: {fileID: 1471481800566158, guid: e9839bb3716a08146b91bc0cd3ad0b85, type: 2}
+  time: 5
 --- !u!1 &524646743 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1167451713629274, guid: bc2db6b85ec120c40a08ee5abfa74477,
@@ -366,6 +380,24 @@ Behaviour:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 524646743}
   m_Enabled: 1
+--- !u!114 &524646752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 524646743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b50f4d8356719fa4498ea52987e8343d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VibrateOnAwake: 1
+  StartingShakeDistance: {x: 0, y: 0, z: 0}
+  StartingRotationAmount: {x: 0, y: 0, z: 0, w: 0}
+  ShakeSpeed: 60
+  DecreaseMultiplier: 0.5
+  NumberOfShakes: 8
+  ShakeContinuous: 0
 --- !u!1001 &528221807
 Prefab:
   m_ObjectHideFlags: 0
@@ -1401,6 +1433,11 @@ Prefab:
     - target: {fileID: 114922599257231970, guid: a43e1ab2427cf5447b6ddece3a888fef,
         type: 2}
       propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114097977693310726, guid: a43e1ab2427cf5447b6ddece3a888fef,
+        type: 2}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
