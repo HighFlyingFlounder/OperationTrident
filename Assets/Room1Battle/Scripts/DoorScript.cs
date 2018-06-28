@@ -10,6 +10,10 @@ namespace OperationTrident.Room1
         // 标识三扇门的ID
         private static int totalId = 0;
 
+
+        [SerializeField]
+        private GameObject fragmentPrefab;
+
         private int thisId;
 
         // 门持续开多久
@@ -174,7 +178,7 @@ namespace OperationTrident.Room1
             {
                 for(int i = 0; i < amount / fragmentsInitPoints.Count; i++)
                 {
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject cube = Instantiate(fragmentPrefab) as GameObject;
                     cube.transform.localScale= new Vector3(
                         UnityEngine.Random.Range(0.2f, 0.5f),
                         UnityEngine.Random.Range(0.2f, 0.5f),
