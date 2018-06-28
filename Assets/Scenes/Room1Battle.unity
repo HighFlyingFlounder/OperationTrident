@@ -2947,7 +2947,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1565100445556678, guid: 9077581207c64644088787b14ab78d68,
     type: 2}
-  shootingSpeed: 500
+  shootingSpeed: 50
   jitterOn: 0
   jitterFactorX: 1
   jitterFactorY: 0.5

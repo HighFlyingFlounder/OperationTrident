@@ -60,8 +60,8 @@ namespace OperationTrident.Room1
                 Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
-                //ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
-                BulletGenerator.GeneratorBullet(ray, bulletPrefab,50.0F,-2.0f);
+                ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
+                //BulletGenerator.GeneratorBullet(ray, bulletPrefab,50.0F,-2.0f);
                 if(m_NetSyncController!=null)
                     m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
