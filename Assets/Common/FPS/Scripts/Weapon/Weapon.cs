@@ -187,12 +187,14 @@ namespace OperationTrident.Weapons {
         #region 后坐力
         //是否使用后坐力
         public bool UseRecoil = true;
-        //武器射击时的抖动范围
+        //射击时武器的抖动范围
         public float RecoilKickBackMin = 0.1f;
         public float RecoilKickBackMax = 0.3f;
-        //武器射击时的选择范围
+        //射击时武器的旋转范围
         public float RecoilRotationMin = 0.1f;
         public float RecoilRotationMax = 0.25f;
+        //射击时镜头往上抬的最大角度
+        public float RecoilMaxAngle = 1f;
         //武器射击后，恢复至正常位置的速度
         public float RecoilRecoveryRate = 0.01f;
         #endregion
@@ -277,6 +279,7 @@ namespace OperationTrident.Weapons {
         //武器是否能射击
         private bool m_CanFire = true;
 
+        private Hashtable m_RecoilParam;
 
         // Use this for initialization
         void Start() {
@@ -339,6 +342,12 @@ namespace OperationTrident.Weapons {
                 else
                     Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
             }
+
+            //初始化后坐力参数
+            m_RecoilParam = new Hashtable {
+                {"shootInterval", ActualROF },
+                {"maxAngle", RecoilMaxAngle }
+            };
         }
 
         void Update() {
@@ -1020,6 +1029,11 @@ namespace OperationTrident.Weapons {
             //让枪动起来
             WeaponModel.transform.Translate(new Vector3(0, 0, -kickBack), Space.Self);
             WeaponModel.transform.Rotate(new Vector3(-kickRot, 0, 0), Space.Self);
+
+            //只有射线武器才会有镜头的后坐力效果
+            if(Type == WeaponType.Raycast) {
+                SendMessageUpwards("RecoilEffect", m_RecoilParam, SendMessageOptions.DontRequireReceiver);
+            }
         }
 
         //获得一个GameObject的MeshRenderer，如果没有就返回其子Object或者父Object上的MeshRenderer

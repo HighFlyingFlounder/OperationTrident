@@ -101,7 +101,7 @@ public class WeaponEditor : Editor {
         }
 
 
-        //绘制"Rate Of Fire"折叠框
+        //绘制"Ammunition"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) {
             m_ShowAmmo = EditorGUILayout.Foldout(m_ShowAmmo, "Ammunition");
             if (m_ShowAmmo) {
@@ -119,7 +119,7 @@ public class WeaponEditor : Editor {
 
 
 
-        //绘制"Rate Of Fire"折叠框
+        //绘制"Accuracy"折叠框
         if (weapon.Type == WeaponType.Raycast) {
             m_ShowAccuracy = EditorGUILayout.Foldout(m_ShowAccuracy, "Accuracy");
             if (m_ShowAccuracy) {
@@ -130,7 +130,7 @@ public class WeaponEditor : Editor {
         }
 
 
-        //绘制"Rate Of Fire"折叠框
+        //绘制"Warmup"折叠框
         if ((weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) && weapon.AutoMode == Auto.Semi) {
             m_ShowWarmup = EditorGUILayout.Foldout(m_ShowWarmup, "Warmup");
             if (m_ShowWarmup) {
@@ -156,7 +156,7 @@ public class WeaponEditor : Editor {
         }
 
 
-        //绘制"Rate Of Fire"折叠框
+        //绘制"Recoil"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) {
             m_ShowRecoil = EditorGUILayout.Foldout(m_ShowRecoil, "Recoil");
             if (m_ShowRecoil) {
@@ -167,6 +167,7 @@ public class WeaponEditor : Editor {
                     weapon.RecoilKickBackMax = EditorGUILayout.FloatField("Recoil Move Max", weapon.RecoilKickBackMax);
                     weapon.RecoilRotationMin = EditorGUILayout.FloatField("Recoil Rotation Min", weapon.RecoilRotationMin);
                     weapon.RecoilRotationMax = EditorGUILayout.FloatField("Recoil Rotation Max", weapon.RecoilRotationMax);
+                    weapon.RecoilMaxAngle = EditorGUILayout.FloatField("Recoil Max Angle", weapon.RecoilMaxAngle);
                     weapon.RecoilRecoveryRate = EditorGUILayout.FloatField("Recoil Recovery Rate", weapon.RecoilRecoveryRate);
                 }
             }

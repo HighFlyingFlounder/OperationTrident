@@ -86,7 +86,6 @@ namespace OperationTrident.Weapons {
             transform.localRotation = m_OriginalLocalRotation;
         }
 
-
         private IEnumerator Shake() {
             m_OriginalLocalPosition = transform.localPosition;
             m_OriginalLocalRotation = transform.localRotation;
