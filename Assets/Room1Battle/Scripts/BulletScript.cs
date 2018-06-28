@@ -11,9 +11,11 @@ namespace OperationTrident.Room1 {
 
         public Vector3 direction;
 
+        private float timer;
+
         // Use this for initialization
         void Start() {
-
+            timer = 0.0f;
         }
 
         public void StartWithRay(Ray initRay,float speed=500.0f,float gravity=-9.8f)
@@ -21,45 +23,63 @@ namespace OperationTrident.Room1 {
             this.speed = speed;
             this.gravity = gravity;
             direction = initRay.direction;
-            transform.position = initRay.origin;
+            transform.position = initRay.origin + new Vector3(direction.x, direction.y, direction.z);
         }
 
         // Update is called once per frame
         void Update() {
+            try
+            {
+                timer += Time.deltaTime;
+                if (timer > 10.0f) Destroy(gameObject);
+                Vector3 originPoint = transform.position;
 
 
-            transform.localPosition =
-                new Vector3(
-                    transform.localPosition.x + speed * direction.x * Time.deltaTime,
-                    transform.localPosition.y + speed * direction.y * Time.deltaTime,
-                    transform.localPosition.z + speed * direction.z * Time.deltaTime);
-            transform.position =
-                new Vector3
-                (transform.position.x,
-                transform.position.y + gravity * Time.deltaTime,
-                transform.position.z);
+                transform.localPosition =
+                    new Vector3(
+                        transform.localPosition.x + speed * direction.x * Time.deltaTime,
+                        transform.localPosition.y + speed * direction.y * Time.deltaTime,
+                        transform.localPosition.z + speed * direction.z * Time.deltaTime);
+                transform.position =
+                    new Vector3
+                    (transform.position.x,
+                    transform.position.y + gravity * Time.deltaTime,
+                    transform.position.z);
+
+                Vector3 afterPoint = transform.position;
+                Vector3 directionFrame = afterPoint - originPoint;
+                Ray ray = new Ray(originPoint, directionFrame);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
+                {
+                    GameObject hitObject = hit.transform.gameObject;
+
+                    if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<ReactiveTarget>() != null)
+                    {
+                        hitObject.GetComponent<ReactiveTarget>().ReactToHit();
+                        Debug.Log("打中了敌人");
+                    }
+                    Destroy(gameObject);
+                    Destroy(this);
+                    return;
+                }
+            }
+            catch(System.Exception e)
+            {
+
+            }
         }
-
         public void OnTriggerEnter(Collider other)
         {
+            if (other.GetComponent<BulletScript>() != null) return;
+            if (other.CompareTag("Player")) return;
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-               other.GetComponent<ReactiveTarget>().ReactToHit();
+                other.GetComponent<ReactiveTarget>().ReactToHit();
                 Debug.Log("打中了敌人");
             }
             Destroy(this.gameObject);
         }
 
-        public void OnCollisionEnter(Collision collision)
-        {
-
-            Debug.Log("1242156146");
-            if (collision.gameObject.GetComponent<ReactiveTarget>() != null)
-            {
-                collision.gameObject.GetComponent<ReactiveTarget>().ReactToHit();
-                Debug.Log("打中了敌人");
-            }
-            Destroy(this.gameObject);
-        }
     }
 }
