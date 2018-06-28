@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23368766557205206}
   - component: {fileID: 114131555069627946}
   m_Layer: 0
-  m_Name: ForceField
+  m_Name: EMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
