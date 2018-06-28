@@ -1449,14 +1449,15 @@ namespace OperationTrident.Util
             frameTimerDSIGG += Time.deltaTime;
             transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
             DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
-            // 如果采用每一行的时间
+             //如果采用每一行的时间
             if (secondOfEachLine == 0.0f)
             {
-                // 达到时间了
+                 //达到时间了
                 if (frameTimerDSIGG >= secondOfEachWord * (subtitle.Length))
                 {
                     canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
                     transparentFactorDSIGG = 0;
+                    frameTimerDSIGG=0.0f;
                 }
             }
             else
@@ -1466,6 +1467,7 @@ namespace OperationTrident.Util
                 {
                     canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
                     transparentFactorDSIGG = 0;
+                    frameTimerDSIGG = 0.0f;
                 }
             }
         }
@@ -1530,6 +1532,15 @@ namespace OperationTrident.Util
         private static string[] rememberSubtitlesDSsIGGWT;
         private static int displayingSubtitlesIndexDSsIGGWT = 0;
         public static bool canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+        /// <summary>
+        /// 给定每一行的时间和间隔的时间，显示指定的字幕
+        /// </summary>
+        /// <param name="subtitles">字幕数组</param>
+        /// <param name="camera">相机</param>
+        /// <param name="fontSize">字体大小</param>
+        /// <param name="subtitleRatioHeight">字幕的相对高度</param>
+        /// <param name="secondsOfEachLine">每一行字幕显示的时间</param>
+        /// <param name="secondBetweenLine">行与行字幕显示的间隔时间</param>
         public static void DisplaySubtitlesInGivenGrammarWithTimeStamp(
             string[] subtitles,
             Camera camera,
@@ -1565,12 +1576,12 @@ namespace OperationTrident.Util
                 frameTimerDSsIGGWT += Time.deltaTime;
                 if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
                 {
-                    if (displayingSubtitlesIndexDSsIGGWT == subtitles.Length - 1)
+                    if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length-1)
                     {
                         canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = true;
                     }
                     displayingSubtitlesIndexDSsIGGWT = 
-                        Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
+                        Math.Min(displayingSubtitlesIndexDSsIGGWT + 1, subtitles.Length-1);
 
                     frameTimerDSsIGGWT = 0;
                 }
