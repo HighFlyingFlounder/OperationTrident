@@ -21,10 +21,12 @@ public class EnterNextScene : MonoBehaviour {
         {
             if (!arrived)
             {
-                SendSpaceArriveEnd();
-                arrived = true;
+                if(other.gameObject.name == GameMgr.instance.id)//是本地玩家到达
+                {
+                    SendSpaceArriveEnd();
+                    arrived = true;
+                }
             }
-                
         }
     }
 
