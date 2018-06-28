@@ -318,9 +318,12 @@ namespace OperationTrident.Room1
             //    secondOfEachWord: 0.2f,
             //    secondBetweenLine: 4.0f);
 
-            string[] toD = { "^w你好，^r一王^w，我是^b WindyIce", "^w你好，^r鸡王^w，我是^b WindyIce" };
-            float[] a1 = { 10.0f, 5.0f };
-            float[] a2 = { 5.0f, 10.0f };
+            string[] toD = {
+                "^w你好，^r一王^w，我是^b WindyIce",
+                "^w你好，^r鸡王^w，我是^b WindyIce" ,
+                "^w我们都要取回^b托卡马克之心" };
+            float[] a1 = { 10.0f, 5.0f ,10.0f};
+            float[] a2 = { 5.0f, 10.0f ,5.0f};
             GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
                 toD,
                 Camera.main,

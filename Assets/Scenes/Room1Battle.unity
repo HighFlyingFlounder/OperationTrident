@@ -2874,7 +2874,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5af2678c39ada4842a5d1dd75b1fa5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootingSpeed: 50
+  bulletPrefab: {fileID: 1565100445556678, guid: 9077581207c64644088787b14ab78d68,
+    type: 2}
+  shootingSpeed: 500
   jitterOn: 0
   jitterFactorX: 1
   jitterFactorY: 0.5
