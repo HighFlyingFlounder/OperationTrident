@@ -9,6 +9,8 @@ namespace OperationTrident.Room1
 {
     public class RayShooter : MonoBehaviour,NetSyncInterface
     {
+        [SerializeField]
+        private GameObject bulletPrefab;
 
         NetSyncController m_NetSyncController;
         // 射速：一秒钟能射多少枪
@@ -59,7 +61,9 @@ namespace OperationTrident.Room1
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
                 ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
-                m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
+                //BulletGenerator.GeneratorBullet(ray, bulletPrefab,50.0F,-2.0f);
+                if(m_NetSyncController!=null)
+                    m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {

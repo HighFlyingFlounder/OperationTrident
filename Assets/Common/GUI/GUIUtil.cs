@@ -1266,14 +1266,17 @@ namespace OperationTrident.Util
             foreach (var color in colors)
             {
                 int theLength = color.endIndex - color.startIndex + 1;
-                float theStartPositionX = startPositionX + color.startIndex * fontSize;
+                float stringTotalLength = GetTrueStringFontTotalSize(theTrueSubtitle.Substring(color.startIndex, theLength), fontSize);
+                float theStartPositionX;
+                if (startPositionX == 0) theStartPositionX = startPositionX;
+                else theStartPositionX = startPositionX + GetTrueStringFontTotalSize(theTrueSubtitle.Substring(0, color.startIndex), fontSize);
                 switch (color.color)
                 {
                     case SubtitleParser.YELLOW:
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleYellow
                             );
                         break;
@@ -1281,7 +1284,7 @@ namespace OperationTrident.Util
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleBlue
                             );
                         break;
@@ -1289,7 +1292,7 @@ namespace OperationTrident.Util
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleRed
                             );
                         break;
@@ -1297,7 +1300,7 @@ namespace OperationTrident.Util
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleGreen
                             );
                         break;
@@ -1305,7 +1308,7 @@ namespace OperationTrident.Util
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleWhite
                             );
                         break;
@@ -1313,7 +1316,7 @@ namespace OperationTrident.Util
                         GUI.Label(
                             new Rect(
                                 new Vector2(theStartPositionX, positionY),
-                                new Vector2(theLength * fontSize, fontSize)
+                                new Vector2(stringTotalLength, fontSize)
                                 ), theTrueSubtitle.Substring(color.startIndex, theLength), styleBlack
                             );
                         break;
@@ -1412,12 +1415,14 @@ namespace OperationTrident.Util
         /// <param name="fontSize" type="int">字体大小</param>
         /// <param name="subtitleRatioHeight" type="float">字幕距离屏幕上方的距离占整个屏幕高度的比例</param>
         /// <param name="secondOfEachWord" type="float">字幕每个字显示的时间</param>
+        /// <param name="secondOfEachLine" type="float">字幕这一行显示的时间，如果传这个值，那么就不采用上面那个</param>>
         public static void DisplaySubtitleInGivenGrammar(
             string subtitle,
             Camera camera,
             int fontSize, 
             float subtitleRatioHeight,
-            float secondOfEachWord)
+            float secondOfEachWord,
+            float secondOfEachLine=0.0f)
         {
             // 最开始的时候调用，这时候还没有初始化记下字幕的变量
             if (!hasInitRememberStringDSIGG)
@@ -1444,11 +1449,26 @@ namespace OperationTrident.Util
             frameTimerDSIGG += Time.deltaTime;
             transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
             DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
-            // 达到时间了
-            if (frameTimerDSIGG >= secondOfEachWord*(subtitle.Length))
+             //如果采用每一行的时间
+            if (secondOfEachLine == 0.0f)
             {
-                canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
-                transparentFactorDSIGG = 0;
+                 //达到时间了
+                if (frameTimerDSIGG >= secondOfEachWord * (subtitle.Length))
+                {
+                    canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
+                    transparentFactorDSIGG = 0;
+                    frameTimerDSIGG=0.0f;
+                }
+            }
+            else
+            {
+                // 达到时间了
+                if (frameTimerDSIGG >= secondOfEachLine)
+                {
+                    canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
+                    transparentFactorDSIGG = 0;
+                    frameTimerDSIGG = 0.0f;
+                }
             }
         }
 
@@ -1512,6 +1532,15 @@ namespace OperationTrident.Util
         private static string[] rememberSubtitlesDSsIGGWT;
         private static int displayingSubtitlesIndexDSsIGGWT = 0;
         public static bool canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+        /// <summary>
+        /// 给定每一行的时间和间隔的时间，显示指定的字幕
+        /// </summary>
+        /// <param name="subtitles">字幕数组</param>
+        /// <param name="camera">相机</param>
+        /// <param name="fontSize">字体大小</param>
+        /// <param name="subtitleRatioHeight">字幕的相对高度</param>
+        /// <param name="secondsOfEachLine">每一行字幕显示的时间</param>
+        /// <param name="secondBetweenLine">行与行字幕显示的间隔时间</param>
         public static void DisplaySubtitlesInGivenGrammarWithTimeStamp(
             string[] subtitles,
             Camera camera,
@@ -1540,18 +1569,19 @@ namespace OperationTrident.Util
                 subtitleRatioHeight: subtitleRatioHeight,
                 secondOfEachWord: 
                     secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]/
-                        subtitles[displayingSubtitlesIndexDSsIGGWT].Length);
+                        subtitles[displayingSubtitlesIndexDSsIGGWT].Length,
+                secondOfEachLine: secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]);
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
                 frameTimerDSsIGGWT += Time.deltaTime;
                 if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
                 {
-                    if (displayingSubtitlesIndexDSsIGGWT == subtitles.Length - 1)
+                    if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length-1)
                     {
                         canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = true;
                     }
                     displayingSubtitlesIndexDSsIGGWT = 
-                        Math.Min(displayingSubtitlesIndexDSsIGG + 1, subtitles.Length - 1);
+                        Math.Min(displayingSubtitlesIndexDSsIGGWT + 1, subtitles.Length-1);
 
                     frameTimerDSsIGGWT = 0;
                 }
