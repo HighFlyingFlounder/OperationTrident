@@ -62,7 +62,7 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    Messenger<int>.Broadcast(GameEvent.Enemy_Start, 0);
+                    Messenger.Broadcast(GameEvent.Enemy_Start);
                     state = ElevatorState.Fighting;
                     s_time = Time.time;
                     c_time = s_time;
@@ -81,7 +81,7 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.End:
-                    Messenger<int>.Broadcast(GameEvent.End, 0);
+                    Messenger.Broadcast(GameEvent.End);
 
                     if (change)
                     {
@@ -99,12 +99,12 @@ namespace OperationTrident.Elevator {
         //监听器
         private void Awake()
         {
-            Messenger<int>.AddListener(GameEvent.Push_Button, fight);
+            Messenger.AddListener(GameEvent.Push_Button, fight);
         }
 
         private void Destroy()
         {
-            Messenger<int>.RemoveListener(GameEvent.Push_Button, fight);
+            Messenger.RemoveListener(GameEvent.Push_Button, fight);
         }
 
         //网络同步
@@ -127,7 +127,7 @@ namespace OperationTrident.Elevator {
         {
             if (state == ElevatorState.Initing || state == ElevatorState.End)
             {
-                int number = SceneNetManager.instance.list.Count;
+                int number = 1;//SceneNetManager.instance.list.Count;
                 //进入关门
                 count++;
                 Debug.Log("Enter" + count);
@@ -154,7 +154,7 @@ namespace OperationTrident.Elevator {
             }
         }
 
-        private void fight(int id)
+        private void fight()
         {
             //点击按钮
             if (state == ElevatorState.FindingButton && !Door.state)
