@@ -38,7 +38,8 @@ namespace OperationTrident.Room1
             //被射击打中的动画效果
 
             //
-            if(GameMgr.instance.id == id)
+            if(GameMgr.instance==null) HitImplement(damage);
+            if (GameMgr.instance.id == id)
             {
                 HitImplement(damage);
                 m_NetSyncController.RPC(this, "HitImplement", damage);
