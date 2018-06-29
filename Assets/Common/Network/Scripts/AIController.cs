@@ -22,15 +22,26 @@ public class AIController : MonoBehaviour, NetSyncInterface
     void Awake()
     {
         instance = this;
-        is_master_client = GameMgr.instance.isMasterClient;
+        try
+        {
+            is_master_client = GameMgr.instance.isMasterClient;
+        }
+        catch(NullReferenceException ex)
+        {
+            Debug.Log("Exception:" + ex);
+        }
         AI_List = new Dictionary<string, GameObject>();
+    }
 
+    void Start()
+    {
     }
 
     public void createAI(int num, int type, string swopPoints, params object[] args)
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
+        int begin_id = AI_List.Count;
         for (int i = 0; i < num; i++)
         {
             swopTrans = sp.GetChild(i);
@@ -40,7 +51,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 return;
             }
             GameObject AI = (GameObject)Instantiate(AIPrefabs[type]);
-            AI.name = "AI" + i;
+            AI.name = "AI" + (i + begin_id);
             AI.transform.position = swopTrans.position;
             AI.transform.rotation = swopTrans.rotation;
             AI_List.Add(AI.name, AI);
