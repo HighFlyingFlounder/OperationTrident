@@ -22,11 +22,29 @@ public class AIController : MonoBehaviour, NetSyncInterface
     void Awake()
     {
         instance = this;
+        is_master_client = GameMgr.instance.isMasterClient;
+        AI_List = new Dictionary<string, GameObject>();
+
     }
 
-    public void createAI(int num, params object[] args)
+    public void createAI(int num, int type, string swopPoints, params object[] args)
     {
-
+        Transform sp = GameObject.Find(swopPoints).transform;
+        Transform swopTrans;
+        for (int i = 0; i < num; i++)
+        {
+            swopTrans = sp.GetChild(i);
+            if (swopTrans == null)
+            {
+                Debug.LogError("GeneratePlayer出生点错误！");
+                return;
+            }
+            GameObject AI = (GameObject)Instantiate(AIPrefabs[type]);
+            AI.name = "AI" + i;
+            AI.transform.position = swopTrans.position;
+            AI.transform.rotation = swopTrans.rotation;
+            AI_List.Add(AI.name, AI);
+        }
     }
 
     public void Update() 
@@ -50,9 +68,14 @@ public class AIController : MonoBehaviour, NetSyncInterface
         
     }
 
-    public void DestroyAI(int id)
+    public void DestroyAI(string AI_name)
     {
+        AI_List.Remove(AI_name);
+    }
 
+    public void ClearAI()
+    {
+        AI_List.Clear();
     }
 
     public void RecvData(SyncData data)
@@ -60,8 +83,16 @@ public class AIController : MonoBehaviour, NetSyncInterface
         foreach (var ai in AI_List)
         {
             string id = data.GetString();
-            AI_List[id].transform.position = (Vector3)data.Get(typeof(Vector3));
-            AI_List[id].transform.eulerAngles = (Vector3)data.Get(typeof(Vector3));
+            if (AI_List.ContainsKey(id))
+            {
+                AI_List[id].transform.position = (Vector3)data.Get(typeof(Vector3));
+                AI_List[id].transform.eulerAngles = (Vector3)data.Get(typeof(Vector3));
+            }
+            else
+            {
+                data.Get(typeof(Vector3));
+                data.Get(typeof(Vector3));
+            }
         }
     }
 
