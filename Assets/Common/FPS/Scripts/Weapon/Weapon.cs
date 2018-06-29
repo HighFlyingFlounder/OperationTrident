@@ -152,14 +152,15 @@ namespace OperationTrident.Weapons {
         public int AmmoCapacity = 12;
         //单次射击射出的子弹数
         public int ShotPerRound = 1;
-        //武器当前的弹药量
-        private int CurrentAmmo;
         //武器换弹时间
         public float ReloadTime = 2.0f;
         //是否显示武器当前的弹药量
         public bool ShowCurrentAmmo = true;
         //武器在弹药量用光时是否自动换弹
         public bool ReloadAutomatically = true;
+
+        //武器当前的弹药量
+        private int m_CurrentAmmo;
         #endregion
 
         #region 射击准度
@@ -296,7 +297,7 @@ namespace OperationTrident.Weapons {
             FireTimer = 0.0f;
 
             //初始化武器的当前弹药量
-            CurrentAmmo = AmmoCapacity;
+            m_CurrentAmmo = AmmoCapacity;
 
             //确保含有AudioSource组件
             if (GetComponent<AudioSource>() == null) {
@@ -366,7 +367,7 @@ namespace OperationTrident.Weapons {
             }
 
             //如果设置了自动换弹，弹药用光之后进行换弹
-            if (ReloadAutomatically && CurrentAmmo <= 0)
+            if (ReloadAutomatically && m_CurrentAmmo <= 0)
                 Reload();
 
             //从后坐力偏移恢复至起始位置
@@ -576,7 +577,7 @@ namespace OperationTrident.Weapons {
             //显示弹药量
             if (ShowCurrentAmmo) {
                 if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile)
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + CurrentAmmo);
+                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + m_CurrentAmmo);
                 else if (Type == Weapons.WeaponType.Beam)
                     GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
             }
@@ -595,14 +596,14 @@ namespace OperationTrident.Weapons {
                 m_CanFire = false;
 
             //判断当前是否仍有弹药
-            if (CurrentAmmo <= 0) {
+            if (m_CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
 
             //如果不是无线弹药模式，减少弹药量
             if (!InfiniteAmmo)
-                CurrentAmmo--;
+                m_CurrentAmmo--;
 
             //单次射击，射出shotPerRound颗子弹
             for (int i = 0; i < ShotPerRound; i++) {
@@ -765,6 +766,9 @@ namespace OperationTrident.Weapons {
 
             //播放射击音效
             GetComponent<AudioSource>().PlayOneShot(FireSound);
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         //抛射物武器，抛射
@@ -780,14 +784,14 @@ namespace OperationTrident.Weapons {
                 m_CanFire = false;
 
             //判断当前是否仍有弹药
-            if (CurrentAmmo <= 0) {
+            if (m_CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
 
             //如果不是无限弹药模式，减少弹药量
             if (!InfiniteAmmo)
-                CurrentAmmo--;
+                m_CurrentAmmo--;
 
             //单次射击，射出shotPerRound颗子弹
             for (int i = 0; i < ShotPerRound; i++) {
@@ -829,12 +833,15 @@ namespace OperationTrident.Weapons {
 
             //播放射击音效
             GetComponent<AudioSource>().PlayOneShot(FireSound);
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         //激光武器，发射激光
         void Beam() {
             // Send a messsage so that users can do other actions whenever this happens
-            SendMessageUpwards("OnEasyWeaponsBeaming", SendMessageOptions.DontRequireReceiver);
+            //SendMessageUpwards("OnEasyWeaponsBeaming", SendMessageOptions.DontRequireReceiver);
 
             //当前正在发射激光
             m_IsBeaming = true;
@@ -972,6 +979,9 @@ namespace OperationTrident.Weapons {
                 GetComponent<AudioSource>().clip = FireSound;
                 GetComponent<AudioSource>().Play();
             }
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         public void StopBeam() {
@@ -992,9 +1002,9 @@ namespace OperationTrident.Weapons {
 
 
         //补充弹药
-        void Reload() {
+        private void Reload() {
             //更新弹药量
-            CurrentAmmo = AmmoCapacity;
+            m_CurrentAmmo = AmmoCapacity;
             //停止计时器
             FireTimer = -ReloadTime;
             //播放换弹音效
@@ -1002,6 +1012,10 @@ namespace OperationTrident.Weapons {
 
             // Send a messsage so that users can do other actions whenever this happens
             SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
+        }
+
+        public int GetCurrentAmmunition() {
+            return m_CurrentAmmo;
         }
 
         //射击时没有弹药

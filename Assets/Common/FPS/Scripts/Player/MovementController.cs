@@ -91,7 +91,7 @@ namespace OperationTrident.Player {
                 }
             } else {
                 m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
-                Debug.Log(Physics.gravity);
+
             }
 
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
