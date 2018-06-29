@@ -8,7 +8,6 @@ using OperationTrident.Weapons;
 public class WeaponEditor : Editor {
     private bool m_ShowPluginSupport = false;
     private bool m_ShowGeneral = false;
-    private bool m_ShowMirror = false;
     private bool m_ShowAmmo = false;
     private bool m_ShowROF = false;
     private bool m_ShowPower = false;
@@ -72,23 +71,7 @@ public class WeaponEditor : Editor {
 
         }
 
-        //绘制"Mirror"折叠框
-        m_ShowMirror = EditorGUILayout.Foldout(m_ShowMirror, "Mirror");
-        if (m_ShowMirror) {
-            weapon.UseMirror = EditorGUILayout.Toggle("Use Mirror", weapon.UseMirror);
 
-            //根据选择的武器类型显示不同的选项
-            if (weapon.UseMirror) {
-                weapon.MirrorSpot = (Transform)EditorGUILayout.ObjectField("Mirror Spot", weapon.MirrorSpot, typeof(Transform), true);
-                weapon.UseMirrorCamera = EditorGUILayout.Toggle("Use Mirror Camera", weapon.UseMirrorCamera);
-
-
-                if (weapon.UseMirrorCamera) {
-                    weapon.MirrorCamera = (GameObject)EditorGUILayout.ObjectField("Mirror Camera", weapon.MirrorCamera, typeof(GameObject), true);
-                    weapon.MirrorRaycastingPoint = (Transform)EditorGUILayout.ObjectField("Mirror Raycasting Point", weapon.MirrorRaycastingPoint, typeof(Transform), true);
-                }
-            }
-        }
 
         //绘制"Power"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Beam) {
@@ -125,7 +108,6 @@ public class WeaponEditor : Editor {
                 weapon.InfiniteAmmo = EditorGUILayout.Toggle("Infinite Ammo", weapon.InfiniteAmmo);
 
                 if (!weapon.InfiniteAmmo) {
-                    weapon.TotalAmmunition = EditorGUILayout.IntField("Total Ammunition", weapon.TotalAmmunition);
                     weapon.AmmoCapacity = EditorGUILayout.IntField("Ammo Capacity", weapon.AmmoCapacity);
                     weapon.ReloadTime = EditorGUILayout.FloatField("Reload Time", weapon.ReloadTime);
                     weapon.ShowCurrentAmmo = EditorGUILayout.Toggle("Show Current Ammo", weapon.ShowCurrentAmmo);
