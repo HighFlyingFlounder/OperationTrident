@@ -102,11 +102,10 @@ namespace OperationTrident.EndingScene
                         "^g蓝星陆战队：^w指挥部，已取回托卡马克之心",
                         "^g蓝星陆战队：^w陆战队所有成员均已登上逃生舱，任务完成",
                         "^g地球指挥部：^w收到，尽快返回海神号进行任务简报。",
-                        "^g蓝星陆战队：^w收到。建军节快乐。",
                     };
 
-                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f,3.0f };
-                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f,1.0f};
+                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f };
+                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f};
                     GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
                         subtitles,m_CamFree,GUIUtil.DefaultFontSize, GUIUtil.DefaultSubtitleRatioHeight,subtitleTime, intervals);
 
@@ -137,9 +136,8 @@ namespace OperationTrident.EndingScene
                 //初始化第三人称观察的参数
                 m_DestLookat = m_CamDirected.transform.position + m_CamDirected.transform.forward;
                 m_DestCamPos = m_CamDirected.transform.position;
-                //m_CamFree.transform.position = m_CamDirected.transform.position;
                 m_ThirdPersonCamRotateRadius = (m_DestCamPos - m_EscapingCabin.transform.position).magnitude;
-                m_ThirdPersonCamOffsetEuler = m_CamFree.transform.eulerAngles;
+                m_ThirdPersonCamOffsetEuler = m_CamDirected.transform.eulerAngles;
             }
         }
 
