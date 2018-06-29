@@ -133,7 +133,7 @@ public class NetSyncController : MonoBehaviour
         string componentName = proto.GetString(start, ref start);
         string methodName = proto.GetString(start, ref start);
 
-        object[] parameters = (object[])proto.GetObjects(start);
+        object[] parameters = proto.GetObjects(start);
 
         //Debug.Log("componentName:" + componentName);
         //Debug.Log("methodName:" + methodName);
