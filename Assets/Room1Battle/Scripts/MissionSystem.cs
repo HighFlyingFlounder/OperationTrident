@@ -130,7 +130,7 @@ namespace OperationTrident.Room1
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
                     Camera.main,
-                    GUIUtil.brightGreenColor,
+                    GUIUtil.FadeAColor(GUIUtil.yellowColor,10.0f),
                     interval: appearInterval,
                     blingInterval:blingInterval,
                     fontSize: 16,

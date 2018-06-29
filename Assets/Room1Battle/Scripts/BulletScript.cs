@@ -66,7 +66,8 @@ namespace OperationTrident.Room1 {
             }
             catch(System.Exception e)
             {
-
+               other.GetComponent<ReactiveTarget>().OnHit("1",1);
+                Debug.Log("打中了敌人");
             }
         }
         public void OnTriggerEnter(Collider other)
@@ -75,7 +76,7 @@ namespace OperationTrident.Room1 {
             if (other.CompareTag("Player")) return;
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-                other.GetComponent<ReactiveTarget>().ReactToHit();
+                collision.gameObject.GetComponent<ReactiveTarget>().OnHit("1",1);
                 Debug.Log("打中了敌人");
             }
             Destroy(this.gameObject);
