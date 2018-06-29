@@ -19,7 +19,7 @@ namespace OperationTrident.Common.AI
         [System.Serializable]
         public class InitParams : InitParamsBase
         {
-            public Transform[] patrolLocations;
+            public Transform patrolLocations;
         }
 
         List<Vector3> _patrolLocations;
@@ -76,14 +76,14 @@ namespace OperationTrident.Common.AI
         {
             get
             {
-                object positions = _param.GetMassData("patrolLocations");
-                if (positions != null)
+                object locations = _param.GetMassData("patrolLocations");
+                if (locations != null)
                 {
-                    Transform[] tempPatrolLocations = (Transform[])positions;
+                    Transform[] tempPatrolLocations = (locations as Transform).GetComponentsInChildren<Transform>();
                     List<Vector3> result = new List<Vector3>();
-                    foreach (var p in tempPatrolLocations)
+                    for (int i = 1; i < tempPatrolLocations.Length; i++)
                     {
-                        result.Add(p.position);
+                        result.Add(tempPatrolLocations[i].position);
                     }
                     return result;
                 }

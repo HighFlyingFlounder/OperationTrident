@@ -14,11 +14,6 @@ namespace OperationTrident.Common.AI
             public static readonly string UNCONDITIONAL = "Unconditional";
         }
 
-        [System.Serializable]
-        public class InitParams : InitParamsBase
-        {
-        }
-
         public override string Execute()
         {
 			Debug.Log("Idle");

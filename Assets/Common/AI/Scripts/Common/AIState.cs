@@ -8,7 +8,7 @@ namespace OperationTrident.Common.AI
     public abstract class AIState : MonoBehaviour
     {
         [System.Serializable]
-        public class InitParamsBase : ScriptableObject {}
+        public class InitParamsBase {}
 
         // 当前状态下满足的转移条件，若为null，则不转移状态
         protected string _satisfy = null;

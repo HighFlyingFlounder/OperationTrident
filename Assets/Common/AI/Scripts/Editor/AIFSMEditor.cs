@@ -126,44 +126,6 @@ namespace OperationTrident.Common.AI
             string lastinitStateName = _currentFSM.initStateName;
             _currentFSM.initStateName = states.Count > 0 ? states[_currentFSM.initStateIndex] : null;
 
-            EditorGUILayout.Space();
-
-            UpdateAssetPath(_currentFSM.initParams != null);
-
-            // 根据初始状态动态显示该状态需要的初始化参数
-            if (lastinitStateName != _currentFSM.initStateName && _currentFSM.initStateName != null)
-            {
-                // 由于Unity的序列化不支持多态，采用ScriptableObject来序列化参数，并保存为asset
-                Type InitParams = _stateRegister.GetStateType(_currentFSM.initStateName).GetNestedType("InitParams");
-                _currentFSM.initParams = ScriptableObject.CreateInstance(InitParams) as AIState.InitParamsBase;
-                Utility.CreateFSMInitParamsAsset(_currentFSM.initParams, Utility.GetFSMInitParamsAssetPath(_currentFSM.assetPath));
-            }
-
-            // 当初始状态为空时，删除asset
-            if (_currentFSM.initStateName == null && _currentFSM.initParams != null)
-            {
-                ScriptableObject.DestroyImmediate(_currentFSM.initParams, true);
-                AssetDatabase.DeleteAsset(Utility.GetFSMInitParamsAssetPath(_currentFSM.assetPath));
-            }
-            else if (_currentFSM.initParams != null)
-            {
-                _currentFSM.showInitParams = EditorGUILayout.Foldout(_currentFSM.showInitParams, "Initial State Params", true);
-                if (_currentFSM.showInitParams)
-                {
-                    EditorGUI.indentLevel++; // 缩进
-                    FieldInfo[] fieldInfos = _currentFSM.initParams.GetType().GetFields();
-                    // 将ScriptableObject序列化
-                    SerializedObject initParamsObj = new SerializedObject(_currentFSM.initParams);
-                    initParamsObj.Update();
-                    foreach (var info in fieldInfos)
-                    {
-                        EditorGUILayout.PropertyField(initParamsObj.FindProperty(info.Name), true);
-                    }
-                    initParamsObj.ApplyModifiedProperties();
-                    EditorGUI.indentLevel--; // 取消缩进
-                }
-            }
-
             // 当编辑器中某个字段发生改变时，保存更改后的数据
             if(GUI.changed)
                 EditorUtility.SetDirty(_currentFSM);
@@ -256,27 +218,6 @@ namespace OperationTrident.Common.AI
                 rule.nextState = null;
                 _currentFSM.stateTransitionGraphNodes[stateIndex].stateTransitionRules.Add(rule);
             }
-        }
-
-        void UpdateAssetPath(bool hasInitParamsAsset)
-        {
-            // 获取当前状态机Asset路径
-            string currentFSMAssetPath = Utility.GetAssetPath(_currentFSM);
-            if (_currentFSM.assetPath == currentFSMAssetPath)
-                return;
-
-            _currentFSM.assetPath = currentFSMAssetPath;
-
-            // 还没创建InitParams Asset则返回
-            if (!hasInitParamsAsset)
-                return;
-
-            // 状态机Asset改名时，将对应的InitParams Asset改名
-            string currentInitParamsAssetPath = Utility.GetAssetPath(_currentFSM.initParams);
-            string newInitParamsAssetName = Utility.GetNewFSMInitParamsAssetName(_currentFSM.assetPath);
-
-            if (!currentInitParamsAssetPath.Contains(newInitParamsAssetName))
-                Utility.UpdateFSMInitParamsAssetPath(currentInitParamsAssetPath, newInitParamsAssetName);
         }
     }
 }

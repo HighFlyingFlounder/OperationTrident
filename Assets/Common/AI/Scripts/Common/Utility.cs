@@ -28,34 +28,6 @@ namespace OperationTrident.Common.AI
         {
             return Event.current.type == EventType.Layout || Event.current.type == EventType.Repaint;
         }
-
-        public static void CreateFSMInitParamsAsset(AIState.InitParamsBase initParams, string assetPath)
-        {
-            AssetDatabase.CreateAsset(initParams, assetPath);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        public static void UpdateFSMInitParamsAssetPath(string currentPath, string newPath)
-        {
-            string error = AssetDatabase.RenameAsset(currentPath, newPath);
-            if (error != "")
-                Debug.Log(error);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        public static string GetFSMInitParamsAssetPath(string FSMAssetPath)
-        {
-            return FSMAssetPath.Substring(0, FSMAssetPath.LastIndexOf('.')) + "InitParams.asset";
-        }
-
-        public static string GetNewFSMInitParamsAssetName(string FSMAssetPath)
-        {
-            int startIndex = FSMAssetPath.LastIndexOf('/') + 1;
-            int length = FSMAssetPath.LastIndexOf('.') - startIndex;
-            return FSMAssetPath.Substring(startIndex, length) + "InitParams";
-        }
 #endif
     }
 }

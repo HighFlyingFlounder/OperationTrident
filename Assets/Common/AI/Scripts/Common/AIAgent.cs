@@ -7,23 +7,25 @@ namespace OperationTrident.Common.AI
     public class AIAgent : MonoBehaviour
     {
 		public ScriptableObject AIFSMAsset = null;
+        protected AIState.InitParamsBase _initParams;
 
 		AIFSM FSM {
 			get {
 				if(AIFSMAsset != null)
 					return AIFSMAsset as AIFSM;
-				return ScriptableObject.CreateInstance<AIFSM>();
+                Debug.Log("没有设置AIFSM");
+                throw new System.NotImplementedException();
 			}
 		}
 
         // Use this for initialization
-        void Start()
+        protected void Start()
         {
-			FSM.Init(this.gameObject);
+			FSM.Init(this.gameObject, _initParams);
         }
 
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
 			FSM.Update();
         }

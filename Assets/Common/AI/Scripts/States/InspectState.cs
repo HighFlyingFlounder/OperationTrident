@@ -15,11 +15,6 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_INSPECTION = "Finish Inspection";
         }
 
-        [System.Serializable]
-        public class InitParams : InitParamsBase
-        {
-        }
-
 		public override void Init(AIStateParam param)
         {
             base.Init(param);

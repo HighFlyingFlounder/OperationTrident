@@ -20,6 +20,7 @@ namespace OperationTrident.Common.AI
         public string assetPath = null;
 #endif
 
+        // 用于设置状态转移图
         [System.Serializable]
         public struct StateTransitionGraphNode
         {
@@ -36,7 +37,6 @@ namespace OperationTrident.Common.AI
 
         public List<StateTransitionGraphNode> stateTransitionGraphNodes = new List<StateTransitionGraphNode>();
         public string initStateName = null;
-        public AIState.InitParamsBase initParams = null;
 
         Dictionary<string, Dictionary<string, string>> _stateTransitionGraph;
         string _currStateName = null;
@@ -68,7 +68,7 @@ namespace OperationTrident.Common.AI
             _stateRegister = Utility.GetAIStateRegister();
         }
 
-        public void Init(GameObject gameObject)
+        public void Init(GameObject gameObject, AIState.InitParamsBase initParams)
         {
             _gameObject = gameObject;
             // 在FSM所在GameObject添加状态脚本
