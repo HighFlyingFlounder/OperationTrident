@@ -44,7 +44,7 @@ namespace OperationTrident.Room1 {
         {
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-               other.GetComponent<ReactiveTarget>().ReactToHit();
+               other.GetComponent<ReactiveTarget>().OnHit("1",1);
                 Debug.Log("打中了敌人");
             }
             Destroy(this.gameObject);
@@ -56,7 +56,7 @@ namespace OperationTrident.Room1 {
             Debug.Log("1242156146");
             if (collision.gameObject.GetComponent<ReactiveTarget>() != null)
             {
-                collision.gameObject.GetComponent<ReactiveTarget>().ReactToHit();
+                collision.gameObject.GetComponent<ReactiveTarget>().OnHit("1",1);
                 Debug.Log("打中了敌人");
             }
             Destroy(this.gameObject);
