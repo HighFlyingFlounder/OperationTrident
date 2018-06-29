@@ -56,7 +56,7 @@ namespace OperationTrident.Room1 {
 
                     if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<ReactiveTarget>() != null)
                     {
-                        hitObject.GetComponent<ReactiveTarget>().ReactToHit();
+                        //hitObject.GetComponent<ReactiveTarget>().OnHit();
                         Debug.Log("打中了敌人");
                     }
                     Destroy(gameObject);
@@ -66,7 +66,7 @@ namespace OperationTrident.Room1 {
             }
             catch(System.Exception e)
             {
-               other.GetComponent<ReactiveTarget>().OnHit("1",1);
+                //other.GetComponent<ReactiveTarget>().OnHit("1",1);
                 Debug.Log("打中了敌人");
             }
         }
@@ -76,7 +76,7 @@ namespace OperationTrident.Room1 {
             if (other.CompareTag("Player")) return;
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-                collision.gameObject.GetComponent<ReactiveTarget>().OnHit("1",1);
+                //collision.gameObject.GetComponent<ReactiveTarget>().OnHit("1",1);
                 Debug.Log("打中了敌人");
             }
             Destroy(this.gameObject);
