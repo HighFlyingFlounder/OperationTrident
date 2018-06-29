@@ -66,25 +66,6 @@ namespace OperationTrident.Weapons {
         public Transform RaycastStartSpot;
         //延迟射击的时间
         public float DelayBeforeFire = 0.0f;
-        //抛射物武器射出的抛射物
-        public GameObject Projectile;
-        //抛射物射出的起始位置
-        public Transform ProjectileSpawnSpot;
-        #endregion
-
-        #region 瞄准镜
-        public bool UseMirror = false;
-        public Transform MirrorSpot;
-        public bool UseMirrorCamera = false;
-        public GameObject MirrorCamera;
-        public Transform MirrorRaycastingPoint;
-
-        //当前是否正在使用瞄准镜
-        private bool m_IsUsingMirror;
-        //武器的初始位置
-        private Vector3 m_OriginalPosition;
-        //武器的初始朝向
-        private Quaternion m_OriginalRotation;
         #endregion
 
         #region 蓄力射击
@@ -106,6 +87,11 @@ namespace OperationTrident.Weapons {
         //用于记录蓄力时间
         private float m_Heat = 0.0f;
         #endregion
+
+        //抛射物武器射出的抛射物
+        public GameObject Projectile;
+        //抛射物射出的起始位置
+        public Transform ProjectileSpawnSpot;
 
         #region 激光
         //激光能否反射
@@ -149,6 +135,7 @@ namespace OperationTrident.Weapons {
         public float Range = 9999.0f;
         #endregion
 
+
         #region 开枪频率
         //每秒钟开枪的次数
         public float RateOfFire = 10;
@@ -161,23 +148,18 @@ namespace OperationTrident.Weapons {
         #region 弹药
         //是否是无限弹药模式
         public bool InfiniteAmmo = false;
-        //弹药总量
-        public int TotalAmmunition = 100;
         //武器的弹药容量
         public int AmmoCapacity = 12;
         //单次射击射出的子弹数
         public int ShotPerRound = 1;
+        //武器当前的弹药量
+        private int CurrentAmmo;
         //武器换弹时间
         public float ReloadTime = 2.0f;
         //是否显示武器当前的弹药量
         public bool ShowCurrentAmmo = true;
         //武器在弹药量用光时是否自动换弹
         public bool ReloadAutomatically = true;
-
-        //武器当前的总弹药量
-        private int m_CurrentTotalAmmo;
-        //武器当前的弹药量
-        private int m_CurrentAmmo;
         #endregion
 
         #region 射击准度
@@ -296,10 +278,8 @@ namespace OperationTrident.Weapons {
 
         //武器是否能射击
         private bool m_CanFire = true;
-        //保存后坐力参数
+
         private Hashtable m_RecoilParam;
-        //发射射线的起点
-        private Transform m_CurrentShootPoint;
 
         // Use this for initialization
         void Start() {
@@ -315,16 +295,8 @@ namespace OperationTrident.Weapons {
             //重置计时器
             FireTimer = 0.0f;
 
-            //确保总弹药量大于弹夹弹药量
-            if (TotalAmmunition < AmmoCapacity) {
-                TotalAmmunition = AmmoCapacity;
-            }
-
-            //初始化武器的总弹药量
-            m_CurrentTotalAmmo = TotalAmmunition;
-
             //初始化武器的当前弹药量
-            m_CurrentAmmo = AmmoCapacity;
+            CurrentAmmo = AmmoCapacity;
 
             //确保含有AudioSource组件
             if (GetComponent<AudioSource>() == null) {
@@ -334,17 +306,6 @@ namespace OperationTrident.Weapons {
             //确保设置了射线起点
             if (RaycastStartSpot == null)
                 RaycastStartSpot = gameObject.transform;
-
-            //设置武器的射击起点
-            m_CurrentShootPoint = RaycastStartSpot;
-
-            //设置瞄准镜状态
-            MirrorCamera.SetActive(false);
-            //初始化开镜状态
-            m_IsUsingMirror = false;
-            //初始化武器的初始位置
-            m_OriginalPosition = this.transform.localPosition;
-            m_OriginalRotation = this.transform.localRotation;
 
             //确保设置了枪口火光的产生位置
             if (MuzzleEffectsPosition == null)
@@ -405,7 +366,7 @@ namespace OperationTrident.Weapons {
             }
 
             //如果设置了自动换弹，弹药用光之后进行换弹
-            if (ReloadAutomatically && m_CurrentAmmo <= 0)
+            if (ReloadAutomatically && CurrentAmmo <= 0)
                 Reload();
 
             //从后坐力偏移恢复至起始位置
@@ -497,10 +458,6 @@ namespace OperationTrident.Weapons {
             //如果是半自动武器，松开开火键时才能重新开火
             if (Input.GetButtonUp("Fire1"))
                 m_CanFire = true;
-
-            if (Input.GetButtonDown("Fire2")) {
-                SwitchMirrorState();
-            }
         }
 
         //非键盘输入触发武器开火，用于网络或者AI
@@ -597,8 +554,8 @@ namespace OperationTrident.Weapons {
                 CurrentAccuracy = Accuracy;
             }
 
-            //只在不开镜时绘制准星
-            if (ShowCrosshair && !m_IsUsingMirror) {
+            //绘制准星
+            if (ShowCrosshair) {
                 //准星的中心
                 Vector2 center = new Vector2(Screen.width / 2, Screen.height / 2);
 
@@ -619,7 +576,7 @@ namespace OperationTrident.Weapons {
             //显示弹药量
             if (ShowCurrentAmmo) {
                 if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile)
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + m_CurrentAmmo);
+                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + CurrentAmmo);
                 else if (Type == Weapons.WeaponType.Beam)
                     GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
             }
@@ -638,23 +595,20 @@ namespace OperationTrident.Weapons {
                 m_CanFire = false;
 
             //判断当前是否仍有弹药
-            if (m_CurrentAmmo <= 0) {
+            if (CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
 
             //如果不是无线弹药模式，减少弹药量
             if (!InfiniteAmmo)
-                m_CurrentAmmo--;
+                CurrentAmmo--;
 
             //单次射击，射出shotPerRound颗子弹
             for (int i = 0; i < ShotPerRound; i++) {
-                Vector3 direction = m_CurrentShootPoint.forward;
-
                 //计算当前的精确度
                 float accuracyVary = (100 - CurrentAccuracy) / 1000;
-                
-                //根据精确度确定散射范围
+                Vector3 direction = RaycastStartSpot.forward;
                 direction.x += UnityEngine.Random.Range(-accuracyVary, accuracyVary);
                 direction.y += UnityEngine.Random.Range(-accuracyVary, accuracyVary);
                 direction.z += UnityEngine.Random.Range(-accuracyVary, accuracyVary);
@@ -663,8 +617,7 @@ namespace OperationTrident.Weapons {
                     CurrentAccuracy = 0.0f;
 
                 //创建射线
-                Ray ray = new Ray(m_CurrentShootPoint.position, direction);
-
+                Ray ray = new Ray(RaycastStartSpot.position, direction);
                 RaycastHit hit;
 
                 if (Physics.Raycast(ray, out hit, Range)) {
@@ -827,14 +780,14 @@ namespace OperationTrident.Weapons {
                 m_CanFire = false;
 
             //判断当前是否仍有弹药
-            if (m_CurrentAmmo <= 0) {
+            if (CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
 
             //如果不是无限弹药模式，减少弹药量
             if (!InfiniteAmmo)
-                m_CurrentAmmo--;
+                CurrentAmmo--;
 
             //单次射击，射出shotPerRound颗子弹
             for (int i = 0; i < ShotPerRound; i++) {
@@ -881,7 +834,7 @@ namespace OperationTrident.Weapons {
         //激光武器，发射激光
         void Beam() {
             // Send a messsage so that users can do other actions whenever this happens
-            //SendMessageUpwards("OnEasyWeaponsBeaming", SendMessageOptions.DontRequireReceiver);
+            SendMessageUpwards("OnEasyWeaponsBeaming", SendMessageOptions.DontRequireReceiver);
 
             //当前正在发射激光
             m_IsBeaming = true;
@@ -1038,74 +991,17 @@ namespace OperationTrident.Weapons {
         }
 
 
-        //换弹
-        private void Reload() {
-            if(m_CurrentTotalAmmo == 0) {
-                return;
-            }
-
-            if (m_CurrentTotalAmmo >= AmmoCapacity) {
-                //更新弹药量
-                m_CurrentAmmo = AmmoCapacity;
-
-                //更新总弹药量
-                m_CurrentTotalAmmo -= AmmoCapacity;
-            } else {
-                //更新弹药量
-                m_CurrentAmmo = m_CurrentTotalAmmo;
-
-                //更新总弹药量
-                m_CurrentTotalAmmo = 0;
-            }
-
+        //补充弹药
+        void Reload() {
+            //更新弹药量
+            CurrentAmmo = AmmoCapacity;
             //停止计时器
             FireTimer = -ReloadTime;
             //播放换弹音效
             GetComponent<AudioSource>().PlayOneShot(ReloadSound);
 
-            //向上传递信息，更新弹药量
-            SendMessageUpwards("UpdateWeaponsTotalAmmunition", m_CurrentTotalAmmo, SendMessageOptions.DontRequireReceiver);
             // Send a messsage so that users can do other actions whenever this happens
-            //SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
-        }
-
-        //弹药补给
-        public int AmmunitionSupply() {
-            int supplyNum = TotalAmmunition - m_CurrentTotalAmmo;
-
-            m_CurrentTotalAmmo = TotalAmmunition;
-
-            return supplyNum;
-        }
-         
-        //切换瞄准镜的状态
-        private void SwitchMirrorState() {
-            if (!UseMirror) {
-                return;
-            }
-
-            Debug.Log("Mirror");
-            if (m_IsUsingMirror) {
-                this.transform.localPosition = m_OriginalPosition;
-                this.transform.localRotation = m_OriginalRotation;
-
-                m_IsUsingMirror = false;
-                m_CurrentShootPoint = RaycastStartSpot;
-
-                if (UseMirrorCamera) {
-                    MirrorCamera.SetActive(false);
-                }
-            } else {
-                this.transform.position = MirrorSpot.position;
-                this.transform.rotation = MirrorSpot.rotation;
-
-                m_IsUsingMirror = true;
-                m_CurrentShootPoint = MirrorRaycastingPoint;
-
-                if (UseMirrorCamera) {
-                    MirrorCamera.SetActive(true);
-                }
-            }
+            SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
         }
 
         //射击时没有弹药
