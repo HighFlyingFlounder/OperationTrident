@@ -49,7 +49,8 @@ public class SyncData : ProtocolBase
     //协议名称
     public override string GetName()
     {
-        return GetString(0);
+        return null;
+        //return GetString(0);
     }
 
     //描述
@@ -79,7 +80,7 @@ public class SyncData : ProtocolBase
     }
 
     //从字节数组的start处开始读取字符串
-    public string GetString(int start, ref int end)
+    public string GetString()
     {
         if (Bytes == null)
             return "";
@@ -89,14 +90,8 @@ public class SyncData : ProtocolBase
         if (Bytes.Length < start + sizeof(Int32) + strLen)
             return "";
         string str = System.Text.Encoding.UTF8.GetString(Bytes, start + sizeof(Int32), strLen);
-        end = start + sizeof(Int32) + strLen;
+        start  = start + sizeof(Int32) + strLen;
         return str;
-    }
-
-    public string GetString(int start)
-    {
-        int end = 0;
-        return GetString(start, ref end);
     }
 
     byte[] Object2Bytes(object obj)
