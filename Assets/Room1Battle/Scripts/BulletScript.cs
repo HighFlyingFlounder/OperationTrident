@@ -28,6 +28,7 @@ namespace OperationTrident.Room1 {
 
         // Update is called once per frame
         void Update() {
+            if (direction == new Vector3(0.0f, 0.0f, 0.0f) || direction == null) return;
             try
             {
                 timer += Time.deltaTime;
@@ -56,7 +57,7 @@ namespace OperationTrident.Room1 {
 
                     if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<ReactiveTarget>() != null)
                     {
-                        //hitObject.GetComponent<ReactiveTarget>().OnHit();
+                        hitObject.GetComponent<ReactiveTarget>().OnHit(gameObject.name,1);
                         Debug.Log("打中了敌人");
                     }
                     Destroy(gameObject);
@@ -66,8 +67,6 @@ namespace OperationTrident.Room1 {
             }
             catch(System.Exception e)
             {
-                //other.GetComponent<ReactiveTarget>().OnHit("1",1);
-                Debug.Log("打中了敌人");
             }
         }
         public void OnTriggerEnter(Collider other)
@@ -76,10 +75,10 @@ namespace OperationTrident.Room1 {
             if (other.CompareTag("Player")) return;
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-                //collision.gameObject.GetComponent<ReactiveTarget>().OnHit("1",1);
+                other.gameObject.GetComponent<ReactiveTarget>().OnHit(gameObject.name,1);
                 Debug.Log("打中了敌人");
             }
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
     }
