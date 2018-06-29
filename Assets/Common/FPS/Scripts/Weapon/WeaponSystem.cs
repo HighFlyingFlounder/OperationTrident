@@ -11,7 +11,7 @@ namespace OperationTrident.Weapons {
         //当前正在使用的武器索引
         private int m_WeaponIndex;
 
-        private int[] m_WeaponAmmunition;
+        private int[] m_WeaponsTotalAmmunition;
 
         // Use this for initialization
         void Start() {
@@ -72,21 +72,32 @@ namespace OperationTrident.Weapons {
         }
 
         private void InitWeaponsAmmunition() {
-            m_WeaponAmmunition = new int[Weapons.Length];
+            m_WeaponsTotalAmmunition = new int[Weapons.Length];
+            int ammo, totalAmmo;
 
             //确保其他武器都处于禁用状态
             for (int i = 0; i < Weapons.Length; i++) {
-                //初始化当前弹药量，默认都是最大容量
-                m_WeaponAmmunition[i] = Weapons[i].GetComponent<Weapon>().AmmoCapacity;
+                Weapon weapon = Weapons[i].GetComponent<Weapon>();
+                if (weapon.InfiniteAmmo) {
+                    //-1代表无限子弹
+                    m_WeaponsTotalAmmunition[i] = -1;
+                    return;
+                }
 
-                Debug.Log(m_WeaponAmmunition[i]);
+                ammo = weapon.AmmoCapacity;
+                totalAmmo = weapon.TotalAmmunition;
+
+                //初始化当前总弹药量
+                m_WeaponsTotalAmmunition[i] = totalAmmo >= ammo ? totalAmmo : ammo;
+
+                Debug.Log(m_WeaponsTotalAmmunition[i]);
             }
         }
 
-        private void UpdateWeaponsAmmunition(int ammo) {
-            m_WeaponAmmunition[m_WeaponIndex] = ammo;
+        private void UpdateWeaponsTotalAmmunition(int ammo) {
+            m_WeaponsTotalAmmunition[m_WeaponIndex] = ammo;
 
-            Debug.Log(m_WeaponIndex + " " + m_WeaponAmmunition[m_WeaponIndex]);
+            Debug.Log(m_WeaponIndex + " " + m_WeaponsTotalAmmunition[m_WeaponIndex]);
         }
     }
 }
