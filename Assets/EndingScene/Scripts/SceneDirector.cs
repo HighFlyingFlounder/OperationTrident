@@ -20,7 +20,7 @@ namespace OperationTrident.EndingScene
 
         //爆炸生成器
         public ExplosionGenerator m_ExplosionGenerator;
-
+        public LensFlare m_ExplosionLensFlare;//爆炸光亮的镜头光晕
         enum CameraState
         {
             ROAMING,//一开始缓慢移动,和靠近，用Timeline
@@ -58,6 +58,7 @@ namespace OperationTrident.EndingScene
             m_CamState = CameraState.ROAMING;
             m_SpaceRubbishInitialPos = m_SpaceRubbish.transform.position;
             m_LookingAtKunCamShakingAmp = 1.0f;
+            m_ExplosionLensFlare.brightness = 0.0f;
         }
 
         // Update is called once per frame
@@ -184,6 +185,8 @@ namespace OperationTrident.EndingScene
 
         private void Update_LookingAtKun()
         {
+            const float c_explodeStartTime = m_BgmBarTime * (8 + 16 + 16);
+
             //计算新的需要插值到的camera pos/lookat
             const float lerpScale = 2.0f;
 
@@ -201,10 +204,16 @@ namespace OperationTrident.EndingScene
 
             //爆炸特效（越来越密集的爆炸）
             m_ExplosionGenerator.GenerateExplosion();
+
+            //爆炸的镜头光晕(逐渐增大)
+            const float c_ExplodeLensFlareStartTime = m_BgmBarTime * (8 + 16 + 16);
+            float intensityRatio = ((float)m_Time - c_ExplodeLensFlareStartTime) / (m_BgmBarTime * 16);
+            m_ExplosionLensFlare.brightness = 20.0f * Mathf.Pow(intensityRatio, 20);
+
             //每2个小节改变一点参数
             for(int i=0;i<8;++i)
             {
-                if(m_Time > m_BgmBarTime * (8 + 16 + 16 + i*2 ))
+                if(m_Time > c_explodeStartTime + m_BgmBarTime * i*2 )
                 {
                     m_ExplosionGenerator.SetExplodeMaxInterval(0.5f - 0.05f * i);
                     m_LookingAtKunCamShakingAmp = 3f *(i+1);
@@ -213,7 +222,7 @@ namespace OperationTrident.EndingScene
 
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
-            if (m_Time > m_BgmBarTime * (8 + 16 +16+ 14))
+            if (m_Time > c_explodeStartTime +m_BgmBarTime *14)
             {
                 m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 2));
 
