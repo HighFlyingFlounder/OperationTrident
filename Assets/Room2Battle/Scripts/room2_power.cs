@@ -114,7 +114,10 @@ namespace room2Battle
             if (GameMgr.instance)//联网状态
                 playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
             else
+            {
                 playerCamera = player.transform.Find("Head").transform.Find("Pivot").transform.Find("Camera").gameObject;
+                //playerCamera = player.transform.Find("Camera").gameObject;
+            }
 
             if (playerCamera)
             {
