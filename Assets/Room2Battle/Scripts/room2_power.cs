@@ -42,7 +42,7 @@ namespace room2Battle
         //挂载相机的对象，联网可用
         protected GameObject playerCamera = null;
 
-        protected GameObject playerMirror = null;
+        //protected GameObject playerMirror = null;
 
         //挂载脚本的shader，包括dark和depth sensor
         //[SerializeField]
@@ -89,13 +89,13 @@ namespace room2Battle
             playerCamera.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<becomeDark>().enabled = false;
 
-            playerMirror.GetComponent<depthSensor>().enabled = false;
-            playerMirror.GetComponent<becomeDark>().enabled = false;
+            //playerMirror.GetComponent<depthSensor>().enabled = false;
+            //playerMirror.GetComponent<becomeDark>().enabled = false;
 
             Destroy(playerCamera.GetComponent<depthSensor>());
             Destroy(playerCamera.GetComponent<becomeDark>());
-            Destroy(playerMirror.GetComponent<depthSensor>());
-            Destroy(playerMirror.GetComponent<becomeDark>());
+            //Destroy(playerMirror.GetComponent<depthSensor>());
+            //Destroy(playerMirror.GetComponent<becomeDark>());
 
             //@TODO: 替换成老Y的AI
             foreach (GameObject obj in enemyList)
@@ -114,12 +114,12 @@ namespace room2Battle
             if (GameMgr.instance)//联网状态
                 playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
             else
-                playerCamera = player.transform.Find("Camera").gameObject;
+                playerCamera = player.transform.Find("Head").transform.Find("Pivot").transform.Find("Camera").gameObject;
 
             if (playerCamera)
             {
-                GameObject gun = playerCamera.transform.Find("Gun").gameObject;
-                playerMirror = gun.transform.Find("Mirror").gameObject;
+                //GameObject gun = playerCamera.transform.Find("Gun").gameObject;
+                //playerMirror = gun.transform.Find("Mirror").gameObject;
             }
 
             //@TODO: 替换成老Y的AI
@@ -225,8 +225,8 @@ namespace room2Battle
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
 
-                    playerMirror.GetComponent<depthSensor>().enabled = true;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
+                    //playerMirror.GetComponent<depthSensor>().enabled = true;
+                    //playerMirror.GetComponent<becomeDark>().enabled = false;
 
                     isOpenDepthSensor = true;
                 }
@@ -235,10 +235,10 @@ namespace room2Battle
                     if (!isSwitchOpen)
                     {
                         playerCamera.GetComponent<becomeDark>().enabled = true;
-                        playerMirror.GetComponent<becomeDark>().enabled = true;
+                        //playerMirror.GetComponent<becomeDark>().enabled = true;
                     }
                     playerCamera.GetComponent<depthSensor>().enabled = false;
-                    playerMirror.GetComponent<depthSensor>().enabled = false;
+                    //playerMirror.GetComponent<depthSensor>().enabled = false;
                     isOpenDepthSensor = false;
                 }
             }
@@ -246,7 +246,7 @@ namespace room2Battle
             if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;
-                playerMirror.GetComponent<becomeDark>().enabled = false;
+                //playerMirror.GetComponent<becomeDark>().enabled = false;
             }
 
         }

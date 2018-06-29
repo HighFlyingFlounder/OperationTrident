@@ -18,7 +18,7 @@ namespace room2Battle
         [SerializeField]
         protected GameObject player;
 
-        protected GameObject playerMirror;
+        //protected GameObject playerMirror;
 
         //挂载脚本的shader，包括dark和depth sensor
         [SerializeField]
@@ -93,7 +93,7 @@ namespace room2Battle
                 //初始化
                 if (isInit)
                 {
-                    playerMirror.GetComponent<becomeDark>().enabled = true;
+                    //playerMirror.GetComponent<becomeDark>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = true;
                 }
             }
@@ -175,16 +175,16 @@ namespace room2Battle
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
 
-                    playerMirror.GetComponent<depthSensor>().enabled = true;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
+                    //playerMirror.GetComponent<depthSensor>().enabled = true;
+                    //playerMirror.GetComponent<becomeDark>().enabled = false;
                 }
                 else
                 {
                     playerCamera.GetComponent<depthSensor>().enabled = false;
                     playerCamera.GetComponent<becomeDark>().enabled = true;
 
-                    playerMirror.GetComponent<depthSensor>().enabled = false;
-                    playerMirror.GetComponent<becomeDark>().enabled = true;
+                   // playerMirror.GetComponent<depthSensor>().enabled = false;
+                    //playerMirror.GetComponent<becomeDark>().enabled = true;
                 }
             }
 
@@ -215,20 +215,19 @@ namespace room2Battle
                     if (GameMgr.instance)//联网状态
                         playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
                     else
-                        playerCamera = player.transform.Find("Camera").gameObject;
-
+                        playerCamera = player.transform.Find("Head").transform.Find("Pivot").transform.Find("Camera").gameObject;
+                    
                     if (playerCamera)
                     {
-                        GameObject gun = playerCamera.transform.Find("Gun").gameObject;
-                        playerMirror = gun.transform.Find("Mirror").gameObject;
+                        //GameObject gun = playerCamera.transform.Find("Gun").gameObject;
+                        //playerMirror = gun.transform.Find("Mirror").gameObject;
                     }
-
+                   
                     playerCamera.AddComponent<becomeDark>();
                     playerCamera.AddComponent<depthSensor>();
-                    playerCamera.AddComponent<RayShooter>();
 
-                    playerMirror.AddComponent<becomeDark>();
-                    playerMirror.AddComponent<depthSensor>();
+                    //playerMirror.AddComponent<becomeDark>();
+                   // playerMirror.AddComponent<depthSensor>();
                     //初始化脚本参数
                     (playerCamera.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
@@ -237,7 +236,7 @@ namespace room2Battle
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
                     playerCamera.GetComponent<depthSensor>().enabled = false;
-
+                    /*
                     (playerMirror.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
                     playerMirror.GetComponent<becomeDark>().enabled = false;
 
@@ -245,7 +244,7 @@ namespace room2Battle
                     (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
                     (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
                     playerMirror.GetComponent<depthSensor>().enabled = false;
-
+                    */
                     isInit = true;
                 }
             }
