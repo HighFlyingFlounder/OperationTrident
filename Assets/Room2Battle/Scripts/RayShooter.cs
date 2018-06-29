@@ -5,12 +5,10 @@ using UnityEngine.EventSystems;
 using OperationTrident.EventSystem;
 using OperationTrident.Util;
 
-namespace OperationTrident.Room1
+namespace room2Battle
 {
     public class RayShooter : MonoBehaviour,NetSyncInterface
     {
-        [SerializeField]
-        private GameObject bulletPrefab;
 
         NetSyncController m_NetSyncController;
         // 射速：一秒钟能射多少枪
@@ -60,14 +58,9 @@ namespace OperationTrident.Room1
                 Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
-                //ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
-                ShootWithRay(direction, origin);
-                //BulletGenerator.GeneratorBullet(ray, bulletPrefab,50.0F,-2.0f);
-                if (m_NetSyncController != null)
-                {
-                    //m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
-                    m_NetSyncController.RPC(this, "ShootWithRay", direction, origin);
-                }
+                ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
+                if(m_NetSyncController!=null)
+                    m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {
@@ -79,12 +72,11 @@ namespace OperationTrident.Room1
                 }
             }
         }
-
-        //public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
-        public void ShootWithRay(Vector3 direction, Vector3 origin)
+        //public void ShootWithRay(Vector3 direction,Vector3 origin)
+        public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
         {
-            //Vector3 origin = new Vector3(o_x, o_y, o_z);
-            //Vector3 direction = new Vector3(d_x, d_y, d_z);
+            Vector3 origin = new Vector3(o_x, o_y, o_z);
+            Vector3 direction = new Vector3(d_x, d_y, d_z);
 
             Ray ray = new Ray(origin, direction);
             RaycastHit hit;//射线交叉信息的包装
@@ -92,17 +84,8 @@ namespace OperationTrident.Room1
             if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
             {
                 //hit.point:射线击中的坐标
-                GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
-                if (target != null)   //检查对象上是否有ReactiveTarget组件
-                {
-                    target.ReactToHit();
-                    //Messenger.Broadcast(GameEvent.ENEMY_HIT);
-                }
-                else
-                {
-                    StartCoroutine(SphereIndicator(hit.point));//响应击中
-                }
+
+                StartCoroutine(SphereIndicator(hit.point));//响应击中
             }
         }
         //onGUI在每帧被渲染之后执行
