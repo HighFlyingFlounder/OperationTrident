@@ -15,6 +15,7 @@ public class ElevatorBattleNetManager : SceneNetManager {
             {
                 playerCamera.AddComponent<ElevatorMissionSystem>();
                 playerCamera.AddComponent<RayShooter>();
+                playerCamera.AddComponent<RenderDepth>();
             }
         }
     }

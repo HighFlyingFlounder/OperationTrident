@@ -12,13 +12,19 @@ namespace OperationTrident.EndingScene
         public Transform m_KunTransform;
 
         //随机取得一个时间阈值，过了这个阈值就在box里面随机位置生成一个新的爆炸粒子系统
-        private float m_ExplodeMaxInterval = 0.05f;
-        private float m_Time=0.0f;
+        private float m_ExplodeMaxInterval;
+        private float m_CurrentTimeThrehold;
+        private float m_Time;
+
+        void Start()
+        {
+            m_ExplodeMaxInterval = 0.0f;
+        }
 
         // Update is called once per frame
         public void GenerateExplosion() {
             m_Time += Time.deltaTime;
-            if (m_Time > m_ExplodeMaxInterval)
+            if (m_Time > m_CurrentTimeThrehold)
             {
                 //敌人在某个位置隔壁一定box范围内生成
                 Vector3 boxSize = new Vector3(700, 250, 350);
@@ -32,7 +38,7 @@ namespace OperationTrident.EndingScene
 
                 //重置一下爆炸的计时器
                 m_Time = 0.0f;
-                m_ExplodeMaxInterval = Random.Range(0,0.05f);
+                m_CurrentTimeThrehold = Random.Range(0, m_ExplodeMaxInterval);
             }
         }
 

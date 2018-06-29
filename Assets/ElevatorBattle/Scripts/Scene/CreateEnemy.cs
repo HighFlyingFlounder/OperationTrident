@@ -93,7 +93,7 @@ namespace OperationTrident.Elevator
         }
 
         //RPC
-        private void Operate(int id)
+        private void Operate()
         {
             Operate_Imp();
             m_controller.RPC(this, "Operate_Imp");
@@ -107,7 +107,7 @@ namespace OperationTrident.Elevator
             isStart = true;
         }
 
-        public void End(int id)
+        public void End()
         {
             foreach (GameObject enemy in list)
             {
@@ -118,16 +118,16 @@ namespace OperationTrident.Elevator
         private void Awake()
         {
             //开始生成敌人
-            Messenger<int>.AddListener(GameEvent.Enemy_Start, Operate);
+            Messenger.AddListener(GameEvent.Enemy_Start, Operate);
             //开始销毁所有敌人 
-            Messenger<int>.AddListener(GameEvent.End, End);
+            Messenger.AddListener(GameEvent.End, End);
         }
 
         private void Destroy()
         {
             //移除
-            Messenger<int>.RemoveListener(GameEvent.Enemy_Start, Operate);
-            Messenger<int>.AddListener(GameEvent.End, End);
+            Messenger.RemoveListener(GameEvent.Enemy_Start, Operate);
+            Messenger.AddListener(GameEvent.End, End);
         }
     }
 }
