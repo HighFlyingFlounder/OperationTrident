@@ -6,29 +6,48 @@ using UnityEngine;
 
 public class AIController : MonoBehaviour, NetSyncInterface
 {
-
+    public static AIController instance;
+    //时间间隔
+    float delta = 1;
+    //上次发送的时间
+    private float lastSendInfoTime = float.MinValue;
+    //上次接收的时间
+    float lastRecvInfoTime = float.MinValue;
+    bool is_master_client = false;
     private float syncPerSecond = 10;
-    private List<GameObject> AI_List;
+    private Dictionary<string,GameObject> AI_List;
     public GameObject[] AIPrefabs;
-    public NetSyncController m_NetSyncController;
+    private NetSyncController m_NetSyncController;
 
+    void Awake()
+    {
+        instance = this;
+    }
 
     public void createAI(int num, params object[] args)
     {
 
     }
 
-    public void Update()
+    public void Update() 
     {
         if (syncPerSecond == 0f)
         {
             return;
         }
-        if (Time.time - syncPerSecond > 1.0f / syncPerSecond)
+        if (is_master_client)//master_client发布信息
         {
-            m_NetSyncController.SyncVariables();
-            syncPerSecond = Time.time;
+            if (Time.time - lastSendInfoTime > 1.0f / syncPerSecond)
+            {
+                m_NetSyncController.SyncVariables();
+                lastSendInfoTime = Time.time;
+            }
         }
+        else //非master_client接受网络同步并预测更新
+        {
+            //NetUpdate();
+        }
+        
     }
 
     public void DestroyAI(int id)
@@ -38,13 +57,23 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void RecvData(SyncData data)
     {
-        
+        foreach (var ai in AI_List)
+        {
+            string id = data.GetString();
+            AI_List[id].transform.position = (Vector3)data.Get(typeof(Vector3));
+            AI_List[id].transform.eulerAngles = (Vector3)data.Get(typeof(Vector3));
+        }
     }
 
     public SyncData SendData()
     {
         SyncData data = new SyncData();
-        //data.Add();
+        foreach(var ai in AI_List)
+        {
+            data.AddString(ai.Key);
+            data.Add(ai.Value.transform.position);
+            data.Add(ai.Value.transform.eulerAngles);
+        }
         return data;
     }
 
