@@ -6,45 +6,105 @@ using UnityEngine;
 
 public class AIController : MonoBehaviour, NetSyncInterface
 {
-
+    public static AIController instance;
+    //时间间隔
+    float delta = 1;
+    //上次发送的时间
+    private float lastSendInfoTime = float.MinValue;
+    //上次接收的时间
+    float lastRecvInfoTime = float.MinValue;
+    bool is_master_client = false;
     private float syncPerSecond = 10;
-    private List<GameObject> AI_List;
+    private Dictionary<string,GameObject> AI_List;
     public GameObject[] AIPrefabs;
-    public NetSyncController m_NetSyncController;
+    private NetSyncController m_NetSyncController;
 
-
-    public void createAI(int num, params object[] args)
+    void Awake()
     {
+        instance = this;
+        is_master_client = GameMgr.instance.isMasterClient;
+        AI_List = new Dictionary<string, GameObject>();
 
     }
 
-    public void Update()
+    public void createAI(int num, int type, string swopPoints, params object[] args)
+    {
+        Transform sp = GameObject.Find(swopPoints).transform;
+        Transform swopTrans;
+        for (int i = 0; i < num; i++)
+        {
+            swopTrans = sp.GetChild(i);
+            if (swopTrans == null)
+            {
+                Debug.LogError("GeneratePlayer出生点错误！");
+                return;
+            }
+            GameObject AI = (GameObject)Instantiate(AIPrefabs[type]);
+            AI.name = "AI" + i;
+            AI.transform.position = swopTrans.position;
+            AI.transform.rotation = swopTrans.rotation;
+            AI_List.Add(AI.name, AI);
+        }
+    }
+
+    public void Update() 
     {
         if (syncPerSecond == 0f)
         {
             return;
         }
-        if (Time.time - syncPerSecond > 1.0f / syncPerSecond)
+        if (is_master_client)//master_client发布信息
         {
-            m_NetSyncController.SyncVariables();
-            syncPerSecond = Time.time;
+            if (Time.time - lastSendInfoTime > 1.0f / syncPerSecond)
+            {
+                m_NetSyncController.SyncVariables();
+                lastSendInfoTime = Time.time;
+            }
         }
+        else //非master_client接受网络同步并预测更新
+        {
+            //NetUpdate();
+        }
+        
     }
 
-    public void DestroyAI(int id)
+    public void DestroyAI(string AI_name)
     {
+        AI_List.Remove(AI_name);
+    }
 
+    public void ClearAI()
+    {
+        AI_List.Clear();
     }
 
     public void RecvData(SyncData data)
     {
-        
+        foreach (var ai in AI_List)
+        {
+            string id = data.GetString();
+            if (AI_List.ContainsKey(id))
+            {
+                AI_List[id].transform.position = (Vector3)data.Get(typeof(Vector3));
+                AI_List[id].transform.eulerAngles = (Vector3)data.Get(typeof(Vector3));
+            }
+            else
+            {
+                data.Get(typeof(Vector3));
+                data.Get(typeof(Vector3));
+            }
+        }
     }
 
     public SyncData SendData()
     {
         SyncData data = new SyncData();
-        //data.Add();
+        foreach(var ai in AI_List)
+        {
+            data.AddString(ai.Key);
+            data.Add(ai.Value.transform.position);
+            data.Add(ai.Value.transform.eulerAngles);
+        }
         return data;
     }
 
