@@ -10,8 +10,9 @@ namespace OperationTrident.Room5
     public class InteractiveObject:MonoBehaviour
     {
         //画进度条的纯色texture
-        [SerializeField]
-        private Texture m_TextureGrey;
+        //[SerializeField]
+        //private Texture m_TextureGrey;
+        private Texture2D m_TextureGrey;
 
         //用于碰撞的Tag
         private string m_ObjectTag;
@@ -54,6 +55,10 @@ namespace OperationTrident.Room5
             m_Cam = guiCam;
             m_PlayerLookingPromptText = lookingPromptText;
             m_PlayerInteractingPromptText = interactingPromptText;
+
+            m_TextureGrey = new Texture2D(1, 1);
+            m_TextureGrey.SetPixel(0, 0, Color.grey);
+            m_TextureGrey.Apply();
         }
 
         //不是MonoBehaviour，需要被调用（为了不迷惑，就不叫Update()了）
