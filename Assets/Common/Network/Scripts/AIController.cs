@@ -35,13 +35,17 @@ public class AIController : MonoBehaviour, NetSyncInterface
             Debug.Log("Exception:" + ex);
         }
         AI_List = new Dictionary<string, GameObject>();
+        AI_fPosition_List = new Dictionary<string, Vector3>();
+        AI_lPosition_List = new Dictionary<string, Vector3>();
+        AI_fRotation_List = new Dictionary<string, Vector3>();
+        AI_lRotation_List = new Dictionary<string, Vector3>();
     }
 
     void Start()
     {
     }
 
-    public void createAI(int num, int type, string swopPoints, params object[] args)
+    public void createAI(int num, int type, string swopPoints)
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
@@ -62,7 +66,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 AI.GetComponent<WanderAIAgent>().enabled = false;
                 //AI.GetComponent<NavMeshAgent>().enabled = false;
             }
-            
+
             //创建的AI初始化信息
             AI.name = "AI" + (i + begin_id);
             AI.transform.position = swopTrans.position;
@@ -148,6 +152,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void RecvData(SyncData data)
     {
+        int notnull = (int)data.Get(typeof(int));
         foreach (var ai in AI_List)
         {
             string id = data.GetString();
@@ -173,6 +178,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public SyncData SendData()
     {
         SyncData data = new SyncData();
+        data.Add(1);//防止空
         foreach (var ai in AI_List)
         {
             data.AddString(ai.Key);

@@ -84,7 +84,6 @@ public class RoomPanel : PanelBase
             if (isOwner == 1)
             {
                 str += "【房主】";
-                GameMgr.instance.isMasterClient = true;
                 NetSyncController.isMasterClient = true;
             }
                 
