@@ -33,12 +33,16 @@ namespace OperationTrident.Player {
 
         //用于判断当前是在跑步还是走路
         private bool m_IsWalking;
+        //用于判断当前是否蹲下
+        private bool m_IsUnderarming;
         //判断当前是否在按了跳跃键
         private bool m_Jump;
         //判断当前是否处于跳跃状态
         private bool m_Jumping;
         //获取用户输入
         private Vector2 m_Input;
+        //保存用户的速度
+        private float m_Speed;
         //角色移动的方向
         private Vector3 m_MoveDir = Vector3.zero;
 
@@ -61,11 +65,12 @@ namespace OperationTrident.Player {
             m_StepCycle = 0f;
             m_NextStep = m_StepCycle / 2f;
             m_Jumping = false;
+            m_IsUnderarming = false;
+
         }
 
         private void FixedUpdate() {
-            float speed;
-            GetInput(out speed);
+            GetInput();
 
             // always move along the camera forward as it is the direction that it being aimed at
             Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
@@ -76,18 +81,25 @@ namespace OperationTrident.Player {
                                m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-            m_MoveDir.x = desiredMove.x * speed;
-            m_MoveDir.z = desiredMove.z * speed;
+            m_MoveDir.x = desiredMove.x * m_Speed;
+            m_MoveDir.z = desiredMove.z * m_Speed;
 
 
             if (m_CharacterController.isGrounded) {
                 m_MoveDir.y = -m_StickToGroundForce;
 
                 if (m_Jump) {
-                    m_MoveDir.y = m_JumpSpeed;
-                    PlayJumpSound();
+                    //蹲下时不能直接起跳，需要先站起来
+                    if (m_IsUnderarming) {
+                        StandUp();
+                    } else {
+                        m_MoveDir.y = m_JumpSpeed;
+                        PlayJumpSound();
+                        m_Jumping = true;
+                    }
+
                     m_Jump = false;
-                    m_Jumping = true;
+
                 }
             } else {
                 m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
@@ -96,11 +108,22 @@ namespace OperationTrident.Player {
 
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
 
-            ProgressStepCycle(speed);
+            ProgressStepCycle(m_Speed);
         }
+
+
 
         // Update is called once per frame
         private void Update() {
+            //站立和蹲下
+            if (Input.GetKeyDown(KeyCode.X)) {
+                if (m_IsUnderarming) {
+                    StandUp();
+                } else {
+                    Underarm();
+                }
+            }
+
             // 在跳跃的过程中不能重复跳跃
             if (!m_Jump) {
                 m_Jump = Input.GetButtonDown("Jump");
@@ -119,6 +142,22 @@ namespace OperationTrident.Player {
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+        }
+
+        //蹲下函数
+        private void Underarm() {
+            //碰撞体高度减少一半
+            m_CharacterController.height /= 2;
+
+            m_IsUnderarming = true;
+
+        }
+
+        private void StandUp() {
+            //碰撞体高度减少一半
+            m_CharacterController.height *= 2;
+
+            m_IsUnderarming = false;
         }
 
         //播放落地的音效
@@ -165,7 +204,7 @@ namespace OperationTrident.Player {
             m_FootstepSounds[0] = m_AudioSource.clip;
         }
 
-        private void GetInput(out float speed) {
+        private void GetInput() {
             // 获取用户输入
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
@@ -176,7 +215,12 @@ namespace OperationTrident.Player {
             m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
 #endif
             // 根据当前的状态设置速度
-            speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+            m_Speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+
+            //如果是蹲着，那么速度减半
+            if (m_IsUnderarming) {
+                m_Speed /= 2;
+            }
 
             // 归一化用户的输入
             if (m_Input.sqrMagnitude > 1) {
