@@ -36,9 +36,7 @@ public class testSyncAI : MonoBehaviour, NetSyncInterface
         {
             try
             {
-                m_NetSyncController.RPC(this, "createAIImpl", 1, 0, "AISwopPoints");
-                createAIImpl(1, 0, "AISwopPoints");
-                //AIController.instance.createAI(1, 0, "AISwopPoints");
+                AIController.instance.createAI(1, 0, "AISwopPoints");
             }
             catch (NullReferenceException ex)
             {

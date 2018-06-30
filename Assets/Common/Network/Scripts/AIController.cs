@@ -43,12 +43,20 @@ public class AIController : MonoBehaviour, NetSyncInterface
         AI_fRotation_List = new Dictionary<string, Vector3>();
         AI_lRotation_List = new Dictionary<string, Vector3>();
     }
-
-    void Start()
-    {
-    }
-
+    /// <summary> 
+    /// 在所有客户端，在名字为swopPoints的节点的子节点创建num个类型为type的AI，该事件会自动RPC同步，无需在调用的时候使用RPC来调用
+    /// </summary> 
+    /// <param name="num">创建的AI数量，应与swopPoints的节点的子节点数量一一对应</param> 
+    /// <param name="type">AI Prefabs中的种类，索引从0开始</param>  
+    /// <param name="swopPoints">场景中AI的生成点的节点名字，其子节点数量应与num对应</param>         
+    /// <returns></returns> 
     public void createAI(int num, int type, string swopPoints)
+    {
+        createAIImpl(num, type, swopPoints);
+        m_NetSyncController.RPC(this, "createAIImpl", num, type, swopPoints);
+    }
+    //本地创建AI，不同步
+    public void createAIImpl(int num, int type, string swopPoints)
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
