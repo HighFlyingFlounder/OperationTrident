@@ -174,8 +174,11 @@ namespace OperationTrident.Weapons {
         //武器在弹药量用光时是否自动换弹
         public bool ReloadAutomatically = true;
 
+<<<<<<< HEAD
+=======
         //武器当前的总弹药量
         private int m_CurrentTotalAmmo;
+>>>>>>> dev
         //武器当前的弹药量
         private int m_CurrentAmmo;
         #endregion
@@ -812,6 +815,9 @@ namespace OperationTrident.Weapons {
 
             //播放射击音效
             GetComponent<AudioSource>().PlayOneShot(FireSound);
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         //抛射物武器，抛射
@@ -876,6 +882,9 @@ namespace OperationTrident.Weapons {
 
             //播放射击音效
             GetComponent<AudioSource>().PlayOneShot(FireSound);
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         //激光武器，发射激光
@@ -1019,6 +1028,9 @@ namespace OperationTrident.Weapons {
                 GetComponent<AudioSource>().clip = FireSound;
                 GetComponent<AudioSource>().Play();
             }
+
+            //向上传递信息，更新弹药量
+            SendMessageUpwards("UpdateWeaponsAmmunition", m_CurrentAmmo, SendMessageOptions.DontRequireReceiver);
         }
 
         public void StopBeam() {
@@ -1038,6 +1050,12 @@ namespace OperationTrident.Weapons {
         }
 
 
+<<<<<<< HEAD
+        //补充弹药
+        private void Reload() {
+            //更新弹药量
+            m_CurrentAmmo = AmmoCapacity;
+=======
         //换弹
         private void Reload() {
             if(m_CurrentTotalAmmo == 0) {
@@ -1058,6 +1076,7 @@ namespace OperationTrident.Weapons {
                 m_CurrentTotalAmmo = 0;
             }
 
+>>>>>>> dev
             //停止计时器
             FireTimer = -ReloadTime;
             //播放换弹音效
@@ -1106,6 +1125,10 @@ namespace OperationTrident.Weapons {
                     MirrorCamera.SetActive(true);
                 }
             }
+        }
+
+        public int GetCurrentAmmunition() {
+            return m_CurrentAmmo;
         }
 
         //射击时没有弹药
