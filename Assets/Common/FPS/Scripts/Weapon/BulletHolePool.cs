@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     [System.Serializable]
     public class BulletHolePool : MonoBehaviour {
         //保存所有弹孔Object
