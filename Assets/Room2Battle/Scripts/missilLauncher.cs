@@ -29,13 +29,13 @@ namespace room2Battle
         protected Vector3 launcherEulerAfter;
 
         //摆正前导弹的rotation
-        protected Quaternion rocketEulerAfter;
+        protected Quaternion rocketRotationAfter;
 
         //摆正钱发射架的rotation
         protected Vector3 launcherEulerBefore;
 
         //摆正后导弹的rotation
-        protected Quaternion rocketEulerBefore;
+        protected Quaternion rocketRotationBefore;
 
         //是否正在发射
         protected bool isLaunching = false;
@@ -47,25 +47,30 @@ namespace room2Battle
                 targetTransform = pos;
         }
 
+
         public void launch()
         {
             if (!isLaunching)
             {
-                
+                //将t挂载到tempLauncherTransform的子节点上
                 Transform tempLauncherTransform = transform;
                 Transform t = transform.Find("Rocket launcher");
-                t.SetParent(tempLauncherTransform);
 
+                //保存旧的
                 launcherEulerBefore = transform.eulerAngles;
-                rocketEulerBefore = t.rotation;
+                //父节点lookat
                 tempLauncherTransform.LookAt(targetTransform.position);
-                rocketEulerAfter = tempLauncherTransform.rotation;
+                
+                //记录父节点新的
                 launcherEulerAfter = new Vector3(270, tempLauncherTransform.eulerAngles.y, 0);
                 launchQuaternion = tempLauncherTransform.rotation;
-                tempLauncherTransform.eulerAngles = new Vector3(270, tempLauncherTransform.eulerAngles.y, 0);
+                tempLauncherTransform.eulerAngles = launcherEulerAfter;
 
-               
-                Debug.Log(rocketEulerBefore+"================"+rocketEulerAfter);
+                rocketRotationBefore = t.rotation;
+                t.LookAt(targetTransform.position, t.up);
+                t.localEulerAngles = new Vector3(t.localEulerAngles.x + 90, t.localEulerAngles.y, t.localEulerAngles.z);
+                rocketRotationAfter = t.rotation;
+
                 StartCoroutine(launchImpl());
             }
         }
@@ -79,13 +84,23 @@ namespace room2Battle
             while (totalTime < 1.0f)
             {
                 transform.eulerAngles = Vector3.Lerp(launcherEulerBefore, launcherEulerAfter, totalTime / 1.0f);
-                transform.Find("Rocket launcher").rotation = Quaternion.Lerp(rocketEulerBefore, rocketEulerAfter, totalTime / 1.0f);
 
                 totalTime += Time.deltaTime;
                 yield return new WaitForFixedUpdate();
             }
             transform.eulerAngles = launcherEulerAfter;
-            transform.Find("Rocket launcher").rotation = rocketEulerAfter;
+
+            Transform t = transform.Find("Rocket launcher");
+
+            while (totalTime < 1.0f)
+            {
+                 t.rotation= Quaternion.Lerp(rocketRotationBefore, rocketRotationAfter, totalTime / 1.0f);
+
+                totalTime += Time.deltaTime;
+                yield return new WaitForFixedUpdate();
+            }
+            t.rotation = rocketRotationAfter;
+
 
             Instantiate(missilePrefabs, rocketInitPos.position, launchQuaternion);
 
