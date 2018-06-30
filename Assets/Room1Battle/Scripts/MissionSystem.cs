@@ -138,7 +138,7 @@ namespace OperationTrident.Room1
             }
 
 
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.brightPurpleColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
             // 指定颜色
             if (toDisplayTheMissionPoint)
