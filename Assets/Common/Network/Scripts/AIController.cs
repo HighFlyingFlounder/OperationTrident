@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using OperationTrident.Common.AI;
+using UnityEngine.AI;
+
 public class AIController : MonoBehaviour, NetSyncInterface
 {
     public static AIController instance;
@@ -14,6 +16,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     //上次接收的时间
     float lastRecvInfoTime = float.MinValue;
     bool is_master_client = false;
+    [SerializeField]
     private float syncPerSecond = 10;
     private Dictionary<string, GameObject> AI_List;
     private Dictionary<string, Vector3> AI_fPosition_List;
@@ -62,9 +65,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
             //非master_client需要对AI进行裁剪或者增添
             if (!is_master_client)
             {
-                //禁用掉非master_client的ai组件
-                AI.GetComponent<WanderAIAgent>().enabled = false;
-                //AI.GetComponent<NavMeshAgent>().enabled = false;
+                //尝试禁用掉非master_client的ai组件
+                if (AI.GetComponent<WanderAIAgent>() != null)
+                    AI.GetComponent<WanderAIAgent>().enabled = false;
+                if (AI.GetComponent<NavMeshAgent>() != null)
+                    AI.GetComponent<NavMeshAgent>().enabled = false;
             }
 
             //创建的AI初始化信息
@@ -122,12 +127,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
             AI_fPosition_List[id] = nPos;
             AI_fRotation_List[id] = nRot;
         }
-        //时间
-        delta = Time.time - lastRecvInfoTime;
         //更新
         AI_lPosition_List[id] = nPos;
         AI_lRotation_List[id] = nRot;
-        lastRecvInfoTime = Time.time;
+
     }
 
     public void NetUpdate()
@@ -136,6 +139,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
         {
             //当前ai的key
             string id = ai.Key;
+            //Debug.Log("NetUpdate" + id);
             //当前位置
             Vector3 pos = ai.Value.transform.position;
             Vector3 rot = ai.Value.transform.eulerAngles;
@@ -153,6 +157,8 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void RecvData(SyncData data)
     {
         int notnull = (int)data.Get(typeof(int));
+        //时间
+        delta = Time.time - lastRecvInfoTime;
         foreach (var ai in AI_List)
         {
             string id = data.GetString();
@@ -165,6 +171,8 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 //预测同步
                 Vector3 nPosition = (Vector3)data.Get(typeof(Vector3));
                 Vector3 nRotation = (Vector3)data.Get(typeof(Vector3));
+                //Debug.Log("RecvData" + id);
+
                 NetForecastInfo(id, nPosition, nRotation);
             }
             else
@@ -173,6 +181,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 data.Get(typeof(Vector3));
             }
         }
+        lastRecvInfoTime = Time.time;
     }
 
     public SyncData SendData()
