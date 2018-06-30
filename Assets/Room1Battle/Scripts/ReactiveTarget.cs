@@ -39,7 +39,7 @@ namespace OperationTrident.Room1
 
             //
             if(GameMgr.instance==null) HitImplement(damage);
-            if (GameMgr.instance.id == id)
+            else if (GameMgr.instance.id == id)
             {
                 HitImplement(damage);
                 m_NetSyncController.RPC(this, "HitImplement", damage);
