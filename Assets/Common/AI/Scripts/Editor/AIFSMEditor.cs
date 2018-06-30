@@ -123,7 +123,6 @@ namespace OperationTrident.Common.AI
             _currentFSM.initStateIndex = EditorGUILayout.Popup("Initial State", _currentFSM.initStateIndex, states.ToArray());
             _currentFSM.initStateIndex = _currentFSM.initStateIndex < states.Count ? _currentFSM.initStateIndex : 0;
             // 当前状态机中没有状态时，设置为null
-            string lastinitStateName = _currentFSM.initStateName;
             _currentFSM.initStateName = states.Count > 0 ? states[_currentFSM.initStateIndex] : null;
 
             // 当编辑器中某个字段发生改变时，保存更改后的数据

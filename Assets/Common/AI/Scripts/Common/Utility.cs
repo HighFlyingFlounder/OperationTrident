@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace OperationTrident.Common.AI
 {
@@ -15,12 +18,7 @@ namespace OperationTrident.Common.AI
 
         public static AIStateRegister GetAIStateRegister()
         {
-            return AssetDatabase.LoadAssetAtPath(AIStateRegister.assetPath, typeof(AIStateRegister)) as AIStateRegister;
-        }
-
-        public static string GetAssetPath(ScriptableObject obj)
-        {
-            return AssetDatabase.GetAssetPath(obj);
+            return Resources.Load<AIStateRegister>("AIStateRegister");
         }
 
 #if UNITY_EDITOR
