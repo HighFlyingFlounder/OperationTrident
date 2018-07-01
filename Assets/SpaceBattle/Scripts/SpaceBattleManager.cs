@@ -11,6 +11,7 @@ public class SpaceBattleManager : MonoBehaviour
     public Dictionary<string, GameObject> list;
     public Dictionary<string, Hinder> rock_list;
     private GameObject[] rocks;
+    public Camera camera = null;
     void Awake()
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
@@ -109,13 +110,15 @@ public class SpaceBattleManager : MonoBehaviour
 
         if (id == GameMgr.instance.id)
         {
+            //找到camera，然后把该playerObj
+            camera.GetComponent<FlyerTracker>().setFollowObject(playerObj);
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.player;
         }
         else
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
+            //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            //playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
         }
     }
 

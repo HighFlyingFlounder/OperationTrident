@@ -29,16 +29,6 @@ public class PlayerState : MonoBehaviour {
             Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 80f);//往反方向推
             Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
         }
-        else if (other.collider.tag == "BigHinder")
-        {
-            ChangeHp(other.gameObject.GetComponent<BigHinder>().damage);
-            Vector3 Force = this.transform.position - other.transform.position;
-            //Flyer.GetComponent<UserController>().m_RigidBody.velocity = Force * 2f;//往反方向推
-            Flyer.GetComponent<UserController>().m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
-            Flyer.GetComponent<UserController>().m_RigidBody.AddForce(Force * 80f);//往反方向推
-            //Flyer.GetComponent<UserController>().movementSettings.isPushed = true;
-            Flyer.GetComponent<UserController>().HitRock();
-        }
         if (Hp == 0f)
         {
             this.GetComponent<Collider>().enabled = false;
