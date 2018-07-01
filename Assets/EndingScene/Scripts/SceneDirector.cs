@@ -7,6 +7,9 @@ namespace OperationTrident.EndingScene
 {
     public class SceneDirector : MonoBehaviour
     {
+        //淡入淡出的GUI Utility
+        public FadeInOutUtil m_FadeInOutUtil; 
+
         //逃生舱
         public GameObject m_EscapingCabin;
 
@@ -20,7 +23,7 @@ namespace OperationTrident.EndingScene
 
         //爆炸生成器
         public ExplosionGenerator m_ExplosionGenerator;
-
+        public LensFlare m_ExplosionLensFlare;//爆炸光亮的镜头光晕
         enum CameraState
         {
             ROAMING,//一开始缓慢移动,和靠近，用Timeline
@@ -57,7 +60,11 @@ namespace OperationTrident.EndingScene
         {
             m_CamState = CameraState.ROAMING;
             m_SpaceRubbishInitialPos = m_SpaceRubbish.transform.position;
-            m_LookingAtKunCamShakingAmp = 1.0f;
+            m_LookingAtKunCamShakingAmp = 0.0f;
+            m_ExplosionLensFlare.brightness = 0.0f;
+
+            //启动淡入
+            m_FadeInOutUtil.FadeIn(5.0f, Color.black);
         }
 
         // Update is called once per frame
@@ -101,11 +108,10 @@ namespace OperationTrident.EndingScene
                         "^g蓝星陆战队：^w指挥部，已取回托卡马克之心",
                         "^g蓝星陆战队：^w陆战队所有成员均已登上逃生舱，任务完成",
                         "^g地球指挥部：^w收到，尽快返回海神号进行任务简报。",
-                        "^g蓝星陆战队：^w收到。建军节快乐。",
                     };
 
-                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f,3.0f };
-                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f,1.0f};
+                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f };
+                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f};
                     GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
                         subtitles,m_CamFree,GUIUtil.DefaultFontSize, GUIUtil.DefaultSubtitleRatioHeight,subtitleTime, intervals);
 
@@ -136,9 +142,8 @@ namespace OperationTrident.EndingScene
                 //初始化第三人称观察的参数
                 m_DestLookat = m_CamDirected.transform.position + m_CamDirected.transform.forward;
                 m_DestCamPos = m_CamDirected.transform.position;
-                //m_CamFree.transform.position = m_CamDirected.transform.position;
                 m_ThirdPersonCamRotateRadius = (m_DestCamPos - m_EscapingCabin.transform.position).magnitude;
-                m_ThirdPersonCamOffsetEuler = m_CamFree.transform.eulerAngles;
+                m_ThirdPersonCamOffsetEuler = m_CamDirected.transform.eulerAngles;
             }
         }
 
@@ -184,6 +189,8 @@ namespace OperationTrident.EndingScene
 
         private void Update_LookingAtKun()
         {
+            const float c_explodeStartTime = m_BgmBarTime * (8 + 16 + 16);
+
             //计算新的需要插值到的camera pos/lookat
             const float lerpScale = 2.0f;
 
@@ -201,10 +208,16 @@ namespace OperationTrident.EndingScene
 
             //爆炸特效（越来越密集的爆炸）
             m_ExplosionGenerator.GenerateExplosion();
+
+            //爆炸的镜头光晕(逐渐增大)
+            const float c_ExplodeLensFlareStartTime = m_BgmBarTime * (8 + 16 + 16);
+            float intensityRatio = ((float)m_Time - c_ExplodeLensFlareStartTime) / (m_BgmBarTime * 16);
+            m_ExplosionLensFlare.brightness = 20.0f * Mathf.Pow(intensityRatio, 20);
+
             //每2个小节改变一点参数
             for(int i=0;i<8;++i)
             {
-                if(m_Time > m_BgmBarTime * (8 + 16 + 16 + i*2 ))
+                if(m_Time > c_explodeStartTime + m_BgmBarTime * i*2 )
                 {
                     m_ExplosionGenerator.SetExplodeMaxInterval(0.5f - 0.05f * i);
                     m_LookingAtKunCamShakingAmp = 3f *(i+1);
@@ -213,7 +226,7 @@ namespace OperationTrident.EndingScene
 
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
-            if (m_Time > m_BgmBarTime * (8 + 16 +16+ 14))
+            if (m_Time > c_explodeStartTime +m_BgmBarTime *14)
             {
                 m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 2));
 
