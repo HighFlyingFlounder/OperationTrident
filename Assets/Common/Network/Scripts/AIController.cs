@@ -50,10 +50,19 @@ public class AIController : MonoBehaviour, NetSyncInterface
     /// <param name="type">AI Prefabs中的种类，索引从0开始</param>  
     /// <param name="swopPoints">场景中AI的生成点的节点名字，其子节点数量应与num对应</param>         
     /// <returns></returns> 
-    public void createAI(int num, int type, string swopPoints)
+    public void CreateAI(int num, int type, string swopPoints)
     {
-        createAIImpl(num, type, swopPoints);
-        m_NetSyncController.RPC(this, "createAIImpl", num, type, swopPoints);
+        if (!GameMgr.instance)//离线状态
+        {
+            createAIImpl(num, type, swopPoints);
+            return;
+        }
+
+        if (GameMgr.instance.isMasterClient)
+        {
+            createAIImpl(num, type, swopPoints);
+            m_NetSyncController.RPC(this, "createAIImpl", num, type, swopPoints);
+        }
     }
     //本地创建AI，不同步
     public void createAIImpl(int num, int type, string swopPoints)
