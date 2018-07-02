@@ -7,8 +7,10 @@ using OperationTrident.Player;
 public class SceneNetManager : MonoBehaviour
 {
     public static SceneNetManager instance;
-    //玩家预设
-    public GameObject[] PlayerPrefabs;
+    //本地玩家实体预设
+    public GameObject[] LocalPlayerPrefabs;
+    //其他玩家实体预设
+    public GameObject[] NetPlayerPrefabs;
     //游戏中给所有的角色
     public Dictionary<string, GameObject> list;
 
@@ -68,7 +70,6 @@ public class SceneNetManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
-            Debug.Log("id = " + id);
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
@@ -86,8 +87,17 @@ public class SceneNetManager : MonoBehaviour
             Debug.LogError("GeneratePlayer出生点错误！");
             return;
         }
-        //产生玩家角色 0暂时代表只有一种玩家prefab
-        GameObject playerObj = (GameObject)Instantiate(PlayerPrefabs[0]);
+        //产生玩家角色
+        GameObject playerObj;
+        if (id == GameMgr.instance.id)//本地玩家
+        {
+            playerObj = Instantiate(LocalPlayerPrefabs[0]);
+        }
+        else
+        {
+            playerObj = Instantiate(NetPlayerPrefabs[0]);
+        }
+        
         playerObj.name = id;
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
