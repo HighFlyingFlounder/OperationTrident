@@ -34,6 +34,9 @@ namespace room2Battle {
 
         public string[] line = {"" };
 
+        [SerializeField]
+        protected GameObject boss;
+
         public override void notify(int i)
         {
             
@@ -58,7 +61,8 @@ namespace room2Battle {
         public override void onSubsceneInit()
         {
             //Debug.Log(director.isActiveAndEnabled);
-            director.Play();
+            //director.Play();
+            boss.SetActive(true);
         }
 
         void Update()

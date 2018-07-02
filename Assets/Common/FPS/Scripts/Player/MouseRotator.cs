@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OperationTrident.Player {
+namespace OperationTrident.FPS.Player {
     public enum RotationAxes {
         AxesX,
         AxesY,

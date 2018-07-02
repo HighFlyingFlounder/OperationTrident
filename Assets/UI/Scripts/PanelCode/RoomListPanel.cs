@@ -211,6 +211,7 @@ public class RoomListPanel : PanelBase
         {
             PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
             PanelMgr.instance.OpenPanel<RoomPanel>("");
+            GameMgr.instance.isMasterClient = true;
             Close();
         }
         else
