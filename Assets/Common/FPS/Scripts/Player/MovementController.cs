@@ -6,7 +6,6 @@ namespace OperationTrident.FPS.Player {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(AudioSource))]
     public class MovementController : MonoBehaviour {
-        
         //走路的速度
         [SerializeField] private float m_WalkSpeed;
         //跑步的速度
@@ -81,20 +80,21 @@ namespace OperationTrident.FPS.Player {
         private void FixedUpdate() {
             GetInput();
 
-            // always move along the camera forward as it is the direction that it being aimed at
-            Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
-
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
-            m_MoveDir.x = desiredMove.x * m_Speed;
-            m_MoveDir.z = desiredMove.z * m_Speed;
-
-
             if (m_CharacterController.isGrounded) {
+                //只有站在地面上时才能移动
+                Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+
+                // get a normal for the surface that is being touched to move along it
+                RaycastHit hitInfo;
+                Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                                   m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+                //确定x和z方向上移动的距离
+                m_MoveDir.x = desiredMove.x * m_Speed;
+                m_MoveDir.z = desiredMove.z * m_Speed;
+
+
+                //保持Player贴在地面上
                 m_MoveDir.y = -m_StickToGroundForce;
 
                 if (m_Jump) {
