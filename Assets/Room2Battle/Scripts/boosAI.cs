@@ -4,8 +4,24 @@ using UnityEngine;
 
 namespace room2Battle
 {
+
     public class boosAI : MonoBehaviour
     {
+        public enum fireState
+        {
+            OpenFire = 1, //开火
+            Idle = 0, //思考人生
+            KeepFire = 2, //机枪开火
+            RightFire = 3, //抬起另一只手的机枪
+            KeepFireAgain = 4, //另一只手继续射击
+            StopFire = 5,
+            MissileLaunch = 6
+        };
+
+        protected fireState currentState = fireState.Idle;
+
+        protected float thinkTime = 0.0f;
+
         [SerializeField]
         protected GameObject[] Missiles;
 
@@ -18,22 +34,132 @@ namespace room2Battle
         [SerializeField]
         protected float radius = 5.0f;
 
+        protected Animator animator;
+
         //导弹齐射完毕与否
         protected bool isShotDone = true;
 
+        //左手前的位置
+        [SerializeField]
+        protected Transform leftHand;
+
+        //右手前的位置
+        [SerializeField]
+        protected Transform rightHand;
+
+        //调整转向
+        protected bool beginTurnAround = false;
+
+
+        private void Start()
+        {
+            animator = GetComponent<Animator>();
+        }
+
         void Update()
         {
+            AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
-            foreach (missilLauncher rocket in pos)
+            Debug.Log(currentState);
+
+            switch (currentState)
             {
-                float r = 3.0f;
-                Transform temp = target;
-                //temp.position = new Vector3(target.position.x + Random.Range(-r, r), target.position.y , target.position.z + Random.Range(-r, r));
+                //停住
+                case fireState.Idle:
+                    {
+                        if (thinkTime < 2.0f)
+                        {
+                            thinkTime += Time.deltaTime;
+                        }
+                        else
+                        {
+                            //开始抬手
+                            currentState = fireState.OpenFire;
+                            animator.SetBool("handup", true);
+                            thinkTime = 0.0f;
+                        }
+                    }
+                    break;
+                //抬起手为止
+                case fireState.OpenFire:
+                    {
+                        //切换完毕了
+                        if (stateInfo.IsName("shoot"))
+                        {
+                            //开火
+                            if (stateInfo.normalizedTime >= 0.8f)
+                            {
+                                animator.SetBool("handup", false);
+                                animator.SetBool("shoot", true);
+                                currentState = fireState.KeepFire;
+                            }
+                        }
+                    }
+                    break;
+                //抬手到播完再换手
+                case fireState.KeepFire:
+                    {
+                        if (stateInfo.IsName("keepShooting"))
+                        {
+                            //直到开火完毕，抬起另一只手
+                            if (stateInfo.normalizedTime >= 0.8f)
+                            {
+                                animator.SetBool("rightHandup", true);
+                                animator.SetBool("shoot", false);
+                                currentState = fireState.RightFire;
+                            }
+                        }
+                    }
+                    break;
+                //另一只手抬起完成
+                case fireState.RightFire:
+                    {
+                        //切换完毕了
+                        if (stateInfo.IsName("shootback"))
+                        {
+                            //开火
+                            Debug.Log("fire");
+                            if (stateInfo.normalizedTime >= 0.8f)
+                            {
+                                animator.SetBool("rightHandup", false);
+                                animator.SetBool("shootAgain", true);
+                                currentState = fireState.KeepFireAgain;
+                            }
+                        }
+                    }
+                    break;
+                case fireState.KeepFireAgain:
+                    {
+                        //开火
+                        Debug.Log("right fire");
 
-                rocket.SetTargetPostion(temp);
-                rocket.launch();
+                        if (stateInfo.IsName("keepShootingBack"))
+                        {
+                            //直到开火完毕
+                            if (stateInfo.normalizedTime >= 0.8f)
+                            {
+                                animator.SetBool("StopFire", true);
+                                animator.SetBool("shootAgain", false);
+                                currentState = fireState.StopFire;
+                            }
+                        }
+
+                    }
+                    break;
+                case fireState.StopFire:
+                    {
+                        Debug.Log("end of fire");
+                        if (!beginTurnAround)
+                        {
+                            StartCoroutine(turnAround());
+                            currentState = fireState.Idle;
+                        }
+                    }
+                    break;
+                default:
+                    return;
             }
-
 
         }
         /*
@@ -82,5 +208,46 @@ namespace room2Battle
             isShotDone = true;
         }
         */
+
+        IEnumerator turnAround()
+        {
+            beginTurnAround = true;
+
+            Transform temp = transform;
+            Quaternion originRotation = transform.rotation;
+
+            temp.LookAt(target);
+
+            Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
+
+
+            Quaternion newRotatio = Quaternion.Euler(newAngle);
+
+            float totalTime = 0.0f;
+            while (totalTime < 1.0f)
+            {
+                transform.rotation = Quaternion.Lerp(originRotation, newRotatio, totalTime / 1.0f);
+                totalTime += Time.deltaTime;
+                yield return new WaitForFixedUpdate();
+            }
+            transform.eulerAngles = newAngle;
+
+            beginTurnAround = false;
+        }
+
+        void OnAnimatorMove()
+        {
+            switch (currentState)
+            {
+                case fireState.OpenFire:
+                //case fireState.KeepFire:
+                    transform.Rotate(transform.up, 1.0f);
+                    break;
+                case fireState.RightFire:
+                //case fireState.KeepFireAgain:
+                    transform.Rotate(transform.up, -1.0f);
+                    break;
+            }
+        }
     }
 }

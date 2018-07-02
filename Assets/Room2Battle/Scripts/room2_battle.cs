@@ -67,7 +67,6 @@ namespace room2Battle {
 
         void Update()
         {
-            Debug.Log(isTimelinePaused);
             if (!isTimelinePaused)
             {
                 if (director.state != UnityEngine.Playables.PlayState.Playing)
