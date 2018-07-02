@@ -93,27 +93,6 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
         Hp = Mathf.Clamp(Hp, 0f, 100f);
     }
 
-    void OnCollisionEnter(Collision other)
-    {
-        //只有本地玩家才会触发这些事件
-        if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
-        {
-            ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
-            //ChangeHp(-40.0f);
-            Vector3 Force = this.transform.position - other.transform.position;
-            //m_RigidBody.velocity = Force * 2f;//往反方向推
-            m_RigidBody.velocity = new Vector3(0f, 0f, 0f);
-            m_RigidBody.AddForce(Force * 80f);//往反方向推
-            isPushed = true;
-            m_NetSyncController.SyncVariables();
-        }
-        if (Hp == 0f)
-        {
-            this.GetComponent<Collider>().enabled = false;
-            SendDead();
-        }
-    }
-
     public void RecvData(SyncData data)
     {
         isPushed = (bool)(data.Get(typeof(bool)));
@@ -134,6 +113,21 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
 
     private void OnTriggerEnter(Collider other)
     {
+        //只有本地玩家才会触发这些事件
+        if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
+        {
+            ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
+            //ChangeHp(-40.0f);
+            /*Vector3 Force = this.transform.position - other.transform.position;
+            m_RigidBody.AddForce(Force * 80f);//往反方向推
+            isPushed = true;*/
+            m_NetSyncController.SyncVariables();
+        }
+        if (Hp == 0f)
+        {
+            this.GetComponent<Collider>().enabled = false;
+            SendDead();
+        }
         //只有本地玩家才会触发这些事件
         if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {

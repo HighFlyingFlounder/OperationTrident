@@ -10,6 +10,7 @@ public class Hinder : MonoBehaviour
     //public GameObject stone;
     public float tumble = 1.0f;
     public float damage = -40.0f;
+    private Transform cam;
 
     public void Boom()
     {
@@ -42,12 +43,21 @@ public class Hinder : MonoBehaviour
     void Start()
     {
         GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble;
+        cam = GameObject.FindWithTag("MainCamera").transform;
     }
 
-    void OnCollisionEnter(Collision other)
+    private void FixedUpdate()
+    {
+        if (transform.position.x < cam.position.x - 150f)
+        {
+            transform.position += new Vector3(5000f, 0f, 0f);
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
     {
         //只有本地玩家才会触发撞击事件并发送协议，其他玩家在本地玩家客户端是不会触发这些事件的。
-        if (other.collider.tag == "Player" && other.collider.transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
+        if (other.tag == "Player" && other.transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             SendHitRock();
             Boom();
