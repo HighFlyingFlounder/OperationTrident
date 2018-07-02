@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OperationTrident.Player {
+namespace OperationTrident.FPS.Player {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(AudioSource))]
     public class MovementController : MonoBehaviour {
@@ -41,8 +41,12 @@ namespace OperationTrident.Player {
         private bool m_Jumping;
         //获取用户输入
         private Vector2 m_Input;
+        //保存用户上一帧的输入
+        private Vector2 m_PreInput;
         //保存用户的速度
         private float m_Speed;
+        //保存用户上一帧的速度
+        private float m_PreSpeed;
         //角色移动的方向
         private Vector3 m_MoveDir = Vector3.zero;
 
@@ -67,6 +71,11 @@ namespace OperationTrident.Player {
             m_Jumping = false;
             m_IsUnderarming = false;
 
+            m_Input = Vector2.zero;
+            m_PreInput = Vector2.zero;
+
+            m_Speed = 0f;
+            m_PreSpeed = 0f;
         }
 
         private void FixedUpdate() {
@@ -226,6 +235,35 @@ namespace OperationTrident.Player {
             if (m_Input.sqrMagnitude > 1) {
                 m_Input.Normalize();
             }
+
+            ////停下来，速度为0
+            //if (m_Input.magnitude == 0f) {
+            //    m_Speed = 0f;
+            //}
+
+            //速度改变，发送速度改变的请求
+            if (m_Speed != m_PreSpeed) {
+                BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
+
+                //进入跑步状态
+                if (m_Speed == m_RunSpeed) {
+                    BroadcastMessage("StartRunning", SendMessageOptions.DontRequireReceiver);
+                }
+            }
+
+            //发送开始行走的消息
+            if (m_Input.magnitude > 0f && m_PreInput.magnitude == 0f) {
+                BroadcastMessage("StartWalking", SendMessageOptions.DontRequireReceiver);
+            }
+
+            //停止行走
+            if (m_PreInput.magnitude > 0f && m_Input.magnitude == 0f) {
+                BroadcastMessage("StopWalking", SendMessageOptions.DontRequireReceiver);
+            }
+
+            m_PreSpeed = m_Speed;
+            m_PreInput = m_Input;
+            
         }
 
         //碰到物体时让玩家往后退

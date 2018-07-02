@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     public class Vibration : MonoBehaviour {
         //是否在初始化的时候震动
         public bool VibrateOnAwake = true;
