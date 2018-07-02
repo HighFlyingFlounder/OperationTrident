@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     public class BulletHole : MonoBehaviour {
         //拥有弹孔Mesh的Object
         public GameObject bulletHoleMesh;
