@@ -15,8 +15,31 @@ namespace OperationTrident.StartScene {
         /// </summary>
         public void OnGameStart()
         {
-            Debug.Log("HonShu");
             Messenger.Broadcast(GAME_START);
+        }
+
+        /// <summary>
+        /// 帮助界面按钮回调
+        /// </summary>
+        public void OnHelp()
+        {
+            Messenger.Broadcast(HELP);
+        }
+
+        /// <summary>
+        /// 打赏界面按钮回调
+        /// </summary>
+        public void OnGiveMoney()
+        {
+            Messenger.Broadcast(GIVE_MONEY);
+        }
+
+        /// <summary>
+        /// 退出界面按钮回调
+        /// </summary>
+        public void OnExitGame()
+        {
+            Messenger.Broadcast(EXIT_GAME);
         }
     }
 }
