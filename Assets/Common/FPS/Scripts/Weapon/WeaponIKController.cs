@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace OperationTrident.FPS.Weapons {
-    [RequireComponent(typeof(Animator))]
     public class WeaponIKController : MonoBehaviour {
         public Transform LootAtTarget;
         public Transform RightHandTarget;
         public Transform LeftHandTarget;
 
+        //Player Model对象
         public GameObject PlayerModel;
 
         private Animator m_Animator;
@@ -16,32 +16,31 @@ namespace OperationTrident.FPS.Weapons {
         // Use this for initialization
         void Start() {
             m_Animator = PlayerModel.GetComponent<Animator>();
+            //动态复制Animator
+            Animator animator = this.gameObject.AddComponent<Animator>();
+            animator.avatar = m_Animator.avatar;
+            animator.runtimeAnimatorController = m_Animator.runtimeAnimatorController;
         }
 
         private void OnAnimatorIK(int layerIndex) {
-            if (LookAtObj != null) {
+            if (LootAtTarget != null) {
                 m_Animator.SetLookAtWeight(1);
-                m_Animator.SetLookAtPosition(LookAtObj.position);
+                m_Animator.SetLookAtPosition(LootAtTarget.position);
             }
 
-            if (RightHandObj != null) {
+            if (RightHandTarget != null) {
                 m_Animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
                 m_Animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-                m_Animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandObj.position);
-                m_Animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandObj.rotation);
+                m_Animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandTarget.position);
+                m_Animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandTarget.rotation);
             }
 
-            if (LeftHandObj != null) {
+            if (LeftHandTarget != null) {
                 m_Animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
                 m_Animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-                m_Animator.SetIKPosition(AvatarIKGoal.LeftHand, LeftHandObj.position);
-                m_Animator.SetIKRotation(AvatarIKGoal.LeftHand, LeftHandObj.rotation);
-            }
-        }
-
-        // Update is called once per frame
-        void Update() {
-
+                m_Animator.SetIKPosition(AvatarIKGoal.LeftHand, LeftHandTarget.position);
+                m_Animator.SetIKRotation(AvatarIKGoal.LeftHand, LeftHandTarget.rotation);
+            }  
         }
     }
 }

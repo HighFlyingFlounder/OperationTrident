@@ -43,7 +43,8 @@ public class WeaponEditor : Editor {
         //绘制"General"折叠框
         m_ShowGeneral = EditorGUILayout.Foldout(m_ShowGeneral, new GUIContent("General", "武器的通用参数"));
         if (m_ShowGeneral) {
-            weapon.PlayerWeapon = EditorGUILayout.Toggle(new GUIContent("Player's Weapon", "能否被用户输入控制"), weapon.PlayerWeapon);
+            weapon.IsLocalObject = EditorGUILayout.Toggle(new GUIContent("Local Object", "当前的Object是否为本地Object，如果不是，则只接受网络同步信息"), weapon.IsLocalObject);
+            weapon.PlayerWeapon = EditorGUILayout.Toggle(new GUIContent("Player's Weapon", "是否为Player使用的武器"), weapon.PlayerWeapon);
             if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile)
                 weapon.AutoMode = (Auto)EditorGUILayout.EnumPopup(new GUIContent("Auto Type", "开枪模式，全自动或者半自动"), weapon.AutoMode);
             weapon.WeaponModel = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Weapon Model", "武器模型对象"), weapon.WeaponModel, typeof(GameObject), true);
@@ -81,11 +82,10 @@ public class WeaponEditor : Editor {
             if (weapon.UseMirror) {
                 weapon.MirrorSpot = (Transform)EditorGUILayout.ObjectField(new GUIContent("Mirror Spot", "开镜时枪的位置和朝向"), weapon.MirrorSpot, typeof(Transform), true);
                 weapon.UseMirrorCamera = EditorGUILayout.Toggle(new GUIContent("Use Mirror Camera", "开镜时是否使用其它的Camera"), weapon.UseMirrorCamera);
-
+                weapon.MirrorRaycastingPoint = (Transform)EditorGUILayout.ObjectField(new GUIContent("Mirror Raycasting Point", "开镜时子弹发射的位置和方向"), weapon.MirrorRaycastingPoint, typeof(Transform), true);
 
                 if (weapon.UseMirrorCamera) {
                     weapon.MirrorCamera = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Mirror Camera", "开镜时使用的Camera对象"), weapon.MirrorCamera, typeof(GameObject), true);
-                    weapon.MirrorRaycastingPoint = (Transform)EditorGUILayout.ObjectField(new GUIContent("Mirror Raycasting Point", "开镜时子弹发射的位置和方向"), weapon.MirrorRaycastingPoint, typeof(Transform), true);
                 }
             }
         }

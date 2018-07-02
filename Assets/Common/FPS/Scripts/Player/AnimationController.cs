@@ -26,5 +26,13 @@ namespace OperationTrident.FPS.Player {
                 Debug.Log(param.type);
             }
         }
+
+        private void SetWalkAnimationParamters(Vector2 input) {
+            m_Animator.SetFloat("speed", input.magnitude);
+        }
+
+        private void SetUnderarmAnimationParamters(bool isUnderarming) {
+            m_Animator.SetBool("isUnderarming", isUnderarming);
+        }
     }
 }
