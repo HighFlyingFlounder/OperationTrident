@@ -36,7 +36,7 @@ public class testSyncAI : MonoBehaviour, NetSyncInterface
         {
             try
             {
-                AIController.instance.createAI(1, 0, "AISwopPoints");
+                AIController.instance.CreateAI(1, 0, "AISwopPoints");
             }
             catch (NullReferenceException ex)
             {
@@ -47,6 +47,6 @@ public class testSyncAI : MonoBehaviour, NetSyncInterface
 
     public void createAIImpl(int num, int type, string swopPoints)
     {
-        AIController.instance.createAI(num, type, swopPoints);
+        AIController.instance.CreateAI(num, type, swopPoints);
     }
 }
