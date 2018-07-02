@@ -2,79 +2,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
 using UnityEngine;
 
 namespace OperationTrident.Common.AI
 {
-    // [DisallowMultipleComponent]
-    [CreateAssetMenu]
-    public class AIFSM : ScriptableObject
+    public class AIFSM
     {
-#if UNITY_EDITOR
-        public bool showStateTransitionGraph = true;
-        public int addStateIndex = 0;
-        public List<bool> showStateTransitionConditions = new List<bool>();
-        public int initStateIndex = 0;
-        public bool showInitParams = true;
-        public string assetPath = null;
-#endif
-
-        // 用于设置状态转移图
-        [System.Serializable]
-        public struct StateTransitionGraphNode
-        {
-            [System.Serializable]
-            public struct StateTransitionRule
-            {
-                public string condition;
-                public string nextState;
-            };
-
-            public string currentState;
-            public List<StateTransitionRule> stateTransitionRules;
-        }
-
-        public List<StateTransitionGraphNode> stateTransitionGraphNodes = new List<StateTransitionGraphNode>();
-        public string initStateName = null;
-
-        Dictionary<string, Dictionary<string, string>> _stateTransitionGraph;
         string _currStateName = null;
         AIState _currState = null;
         AIStateRegister _stateRegister = null;
         GameObject _gameObject = null;
+        AIFSMData _fsm = null;
 
-        void OnEnable()
+        public AIFSMData FSMData
         {
-            // 将序列化的结构数组转换为Dictionary，方便之后进行索引
-            if (stateTransitionGraphNodes != null)
+            set
             {
-                _stateTransitionGraph = new Dictionary<string, Dictionary<string, string>>();
-
-                foreach (var node in stateTransitionGraphNodes)
-                {
-                    if (node.stateTransitionRules != null)
-                    {
-                        Dictionary<string, string> rules = new Dictionary<string, string>();
-                        foreach (var rule in node.stateTransitionRules)
-                        {
-                            rules.Add(rule.condition, rule.nextState);
-                        }
-
-                        _stateTransitionGraph.Add(node.currentState, rules);
-                    }
-                }
+                _fsm = value;
             }
-            _stateRegister = Utility.GetAIStateRegister();
         }
 
         public void Init(GameObject gameObject, AIState.InitParamsBase initParams)
         {
             _gameObject = gameObject;
+            _stateRegister = Utility.GetAIStateRegister();
+            
             // 在FSM所在GameObject添加状态脚本
-            if (_stateTransitionGraph != null)
+            if (_fsm.StateTransitionGraph != null)
             {
-                foreach (var node in _stateTransitionGraph)
+                foreach (var node in _fsm.StateTransitionGraph)
                 {
                     Type state = _stateRegister.GetStateType(node.Key);
                     if (state != null && !_gameObject.GetComponent(state))
@@ -85,11 +46,11 @@ namespace OperationTrident.Common.AI
             }
 
             // 设置当前状态，并初始化
-            Type initStateType = _stateRegister.GetStateType(initStateName);
+            Type initStateType = _stateRegister.GetStateType(_fsm.initStateName);
             if (initStateType != null)
             {
                 _currState = (_gameObject.GetComponent(initStateType) as AIState);
-                _currStateName = initStateName;
+                _currStateName = _fsm.initStateName;
 
                 AIStateParam stateParams = new AIStateParam();
                 FieldInfo[] fieldInfos = initParams.GetType().GetFields();
@@ -116,14 +77,14 @@ namespace OperationTrident.Common.AI
                     // 进行状态转移
                     nextState.Init(_currState.Transition());
                     _currState = nextState;
-                    _currStateName = _stateTransitionGraph[_currStateName][condition];
+                    _currStateName = _fsm.StateTransitionGraph[_currStateName][condition];
                 }
             }
         }
 
         AIState GetNextState(string currentState, string condition)
         {
-            string nextState = _stateTransitionGraph[currentState][condition];
+            string nextState = _fsm.StateTransitionGraph[currentState][condition];
             Type nextStateScriptType = _stateRegister.GetStateType(nextState);
             return nextStateScriptType == null ? null : _gameObject.GetComponent(nextStateScriptType) as AIState;
         }

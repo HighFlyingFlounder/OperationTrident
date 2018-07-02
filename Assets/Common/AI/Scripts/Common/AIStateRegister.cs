@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
 using System;
 using System.Reflection;
 
@@ -11,15 +15,15 @@ namespace OperationTrident.Common.AI
     public class AIStateRegister : ScriptableObject
     {
         [SerializeField]
-        MonoScript[] AIStateScripts;
-        Dictionary<string, MonoScript> AIStateDictionary;
-        public static string assetPath = "Assets/Common/AI/Scripts/States/AIStateRegister.asset";
+        UnityEngine.Object[] AIStateScripts;
+        Dictionary<string, Type> AIStateDictionary;
 
         void OnEnable()
         {
             BuildDictionary();
         }
 
+#if UNITY_EDITOR
         void OnValidate()
         {
             BuildDictionary();
@@ -27,8 +31,9 @@ namespace OperationTrident.Common.AI
 
         private void Reset()
         {
-            AIStateDictionary = new Dictionary<string, MonoScript>();
+            AIStateDictionary = new Dictionary<string, Type>();
         }
+#endif
 
         public List<string> GetStates()
         {
@@ -38,13 +43,13 @@ namespace OperationTrident.Common.AI
         public Type GetStateType(string stateName)
         {
             if (AIStateDictionary.ContainsKey(stateName))
-                return AIStateDictionary[stateName].GetClass();
+                return AIStateDictionary[stateName];
             return null;
         }
 
         void BuildDictionary()
         {
-            AIStateDictionary = new Dictionary<string, MonoScript>();
+            AIStateDictionary = new Dictionary<string, Type>();
 
             if (AIStateScripts != null)
             {
@@ -79,7 +84,7 @@ namespace OperationTrident.Common.AI
                         Debug.Log(stateName + "已存在");
                         continue;
                     }
-                    AIStateDictionary.Add(stateName, script);
+                    AIStateDictionary.Add(stateName, stateType);
                 }
             }
         }

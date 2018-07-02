@@ -9,7 +9,7 @@ public class GameMgr : MonoBehaviour
 
     public string startScene = "SpaceBattle";
 
-    [HideInInspector]
+    //[HideInInspector]
     public bool isMasterClient = false;//暂时用isOwner（房主）来定master_client
     //服务器信息
     public string host = "127.0.0.1";
