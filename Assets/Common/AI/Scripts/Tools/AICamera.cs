@@ -27,7 +27,7 @@ namespace OperationTrident.Common.AI
 #endif
 
         Vector3 leftDirection, rightDirection, upDirection, downDirection;
-        float halfWidth, halfHeight;
+        float halfWidth;
 
 #if UNITY_EDITOR
         void Update()
@@ -42,7 +42,7 @@ namespace OperationTrident.Common.AI
         /// <summary>
         /// 在进行检测前先更新摄像机的参数 
         /// </summary>
-        public void UpdateCamera() 
+        public void UpdateCamera()
         {
             Quaternion leftAngle = Quaternion.AngleAxis(-horizontalFOV / 2, transform.up);
             Quaternion rightAngle = Quaternion.AngleAxis(horizontalFOV / 2, transform.up);
@@ -55,7 +55,6 @@ namespace OperationTrident.Common.AI
             downDirection = downAngle * transform.forward;
 
             halfWidth = sightDistance * Mathf.Tan(horizontalFOV * Mathf.Deg2Rad / 2);
-            halfHeight = sightDistance * Mathf.Tan(verticalFOV * Mathf.Deg2Rad/ 2);
         }
 
         /// <summary>
@@ -68,26 +67,22 @@ namespace OperationTrident.Common.AI
         public bool DetectTarget(Transform target)
         {
             Vector3 targetDirection = target.transform.position - transform.position;
-            Vector3 targetDistance = new Vector3(upDirection.x, leftDirection.y, targetDirection.z);
+            float targetDistance = Vector3.Dot(targetDirection, transform.forward);
 
-            // 判断目标是否在背面
-            if(Vector3.Dot(targetDirection, transform.forward) < 0)
-                return false;
-
-            // 判断目标是否在视线距离内
-            if(targetDistance.sqrMagnitude > sightDistance * sightDistance)
+            // 判断目标是否在camera的远近平面内
+            if (targetDistance < 0 || targetDistance > sightDistance)
                 return false;
 
             // 根据目标点的方向，求出目标方向在水平、竖直方向上的分量，然后判断在不在视角内
             // 判断是否在水平视角内
-            Vector3 targetHorizontal = new Vector3(targetDirection.x, leftDirection.y, targetDirection.z); // 水平方向
+            Vector3 targetHorizontal = Vector3.Dot(targetDirection, transform.right) * transform.right + transform.forward * targetDistance; // 水平方向
             Vector3 leftCross = Vector3.Cross(targetHorizontal, leftDirection);
             Vector3 rightCross = Vector3.Cross(targetHorizontal, rightDirection);
             if (Vector3.Dot(leftCross, rightCross) > 0)
                 return false;
 
             // 判断是否在垂直视角内
-            Vector3 targetVertical = new Vector3(upDirection.x, targetDirection.y, targetDirection.z); // 竖直方向
+            Vector3 targetVertical = Vector3.Dot(targetDirection, transform.up) * transform.up + transform.forward * targetDistance; // 竖直方向
             Vector3 upCross = Vector3.Cross(targetVertical, upDirection);
             Vector3 downCross = Vector3.Cross(targetVertical, downDirection);
             if (Vector3.Dot(upCross, downCross) > 0)
@@ -95,14 +90,14 @@ namespace OperationTrident.Common.AI
 
             // 用射线检测是否有障碍在中间
             Ray ray = new Ray(transform.position, targetDirection);
-            RaycastHit hit;  
-            if(Physics.Raycast(ray, out hit))  
-            {  
-                Debug.DrawLine(ray.origin, hit.point, Color.red); 
-                if(hit.collider.name != target.name)
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.DrawLine(ray.origin, hit.point, Color.red);
+                if (hit.collider.name != target.name)
                     return false;
             }
-            
+
             return true;
         }
 
