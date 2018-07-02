@@ -61,23 +61,44 @@ namespace room2Battle
             AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
-            Debug.Log(currentState);
-
             switch (currentState)
             {
                 //停住
                 case fireState.Idle:
                     {
-                        if (thinkTime < 2.0f)
+                        animator.SetBool("StopFire", false);
+
+                        if (thinkTime < 4.0f)
                         {
                             thinkTime += Time.deltaTime;
                         }
                         else
                         {
+                            int choice = (int)Random.Range(0, 3);
                             //开始抬手
-                            currentState = fireState.OpenFire;
-                            animator.SetBool("handup", true);
-                            thinkTime = 0.0f;
+                            switch (choice)
+                            {
+                                case 0:
+                                    {
+                                        thinkTime = 0.0f;
+                                    }
+                                    break;
+                                case 1:
+                                    {
+                                        currentState = fireState.OpenFire;
+                                        animator.SetBool("handup", true);
+                                        thinkTime = 0.0f;
+
+                                    }
+                                    break;
+                                case 2:
+                                    {
+                                        currentState = fireState.MissileLaunch;
+                                        animator.SetBool("missileLaunch", true);
+                                        thinkTime = 0.0f;
+                                    }
+                                    break;
+                            }
                         }
                     }
                     break;
@@ -87,6 +108,7 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shoot"))
                         {
+                            Instantiate(Missiles[0], leftHand.position, transform.rotation);
                             //开火
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
@@ -100,6 +122,7 @@ namespace room2Battle
                 //抬手到播完再换手
                 case fireState.KeepFire:
                     {
+                        Instantiate(Missiles[0], leftHand.position, transform.rotation);
                         if (stateInfo.IsName("keepShooting"))
                         {
                             //直到开火完毕，抬起另一只手
@@ -115,9 +138,10 @@ namespace room2Battle
                 //另一只手抬起完成
                 case fireState.RightFire:
                     {
+                        Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
-                        {
+                        {         
                             //开火
                             Debug.Log("fire");
                             if (stateInfo.normalizedTime >= 0.8f)
@@ -133,9 +157,9 @@ namespace room2Battle
                     {
                         //开火
                         Debug.Log("right fire");
-
+                        Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         if (stateInfo.IsName("keepShootingBack"))
-                        {
+                        {   
                             //直到开火完毕
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
@@ -144,16 +168,35 @@ namespace room2Battle
                                 currentState = fireState.StopFire;
                             }
                         }
-
                     }
                     break;
                 case fireState.StopFire:
                     {
-                        Debug.Log("end of fire");
-                        if (!beginTurnAround)
+                        if (stateInfo.IsName("keepShootingBack"))
                         {
-                            StartCoroutine(turnAround());
-                            currentState = fireState.Idle;
+                            Debug.Log("end of fire");
+                            if (!beginTurnAround)
+                            {
+                                StartCoroutine(turnAround());
+                                currentState = fireState.Idle;
+                            }
+                        }
+                    }
+                    break;
+                case fireState.MissileLaunch:
+                    {
+                        if (stateInfo.IsName("missileLaunch"))
+                        {
+                            if (stateInfo.normalizedTime >= 1.0f)
+                            {
+                                animator.SetBool("missileLaunch", false);
+                                foreach (missilLauncher a in pos)
+                                {
+                                    a.SetTargetPostion(target);
+                                    a.launch();
+                                }
+                                currentState = fireState.Idle;
+                            }
                         }
                     }
                     break;
@@ -240,11 +283,11 @@ namespace room2Battle
             switch (currentState)
             {
                 case fireState.OpenFire:
-                //case fireState.KeepFire:
+                case fireState.KeepFire:
                     transform.Rotate(transform.up, 1.0f);
                     break;
                 case fireState.RightFire:
-                //case fireState.KeepFireAgain:
+                case fireState.KeepFireAgain:
                     transform.Rotate(transform.up, -1.0f);
                     break;
             }
