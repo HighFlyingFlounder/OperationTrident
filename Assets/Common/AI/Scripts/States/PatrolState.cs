@@ -7,9 +7,9 @@ namespace OperationTrident.Common.AI
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(NavMeshAgent))]
-    public class WanderState : AIState
+    public class PatrolState : AIState
     {
-        public static readonly string STATE_NAME = "Wander";
+        public static readonly string STATE_NAME = "Patrol";
 
         public class Conditions
         {

@@ -6,7 +6,7 @@ namespace OperationTrident.Common.AI
 {
     public class WanderAIAgent : AIAgent
     {
-		public WanderState.InitParams initParams;
+		public PatrolState.InitParams initParams;
 
         void Awake()
 		{
