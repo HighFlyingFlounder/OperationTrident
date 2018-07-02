@@ -55,6 +55,7 @@ namespace OperationTrident.Room1
                 if (!dead)
                 {
                     dead = true;
+                    AIController.instance.DestroyAI(gameObject.name);
                     StartCoroutine(Die());
                 }
             }
@@ -62,9 +63,9 @@ namespace OperationTrident.Room1
 
         private IEnumerator Die()
         {
-            this.transform.Rotate(-75, 0, 0);
+            transform.Rotate(-75, 0, 0);
             yield return new WaitForSeconds(1.5f);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
         public void RecvData(SyncData data)

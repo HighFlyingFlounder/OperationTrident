@@ -39,13 +39,13 @@ namespace OperationTrident.Room1
         private void OnSpeedChanged(float value)
         {
             speed = baseSpeed * value;
-            Debug.Log("value: " + value);
-            Debug.Log("speed: " + speed);
+            //Debug.Log("value: " + value);
+            //Debug.Log("speed: " + speed);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            Debug.Log(collision.collider.gameObject.name);
+            //Debug.Log(collision.collider.gameObject.name);
             if (collision.collider.gameObject.name == "Floor")
                 onFloor = true;
         }
