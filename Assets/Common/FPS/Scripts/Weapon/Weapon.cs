@@ -46,6 +46,7 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(WeaponBobbing))]
     public class Weapon : MonoBehaviour {
         //武器射击的方式
         public WeaponType Type = Weapons.WeaponType.Projectile;
