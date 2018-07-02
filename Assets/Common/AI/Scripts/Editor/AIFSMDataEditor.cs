@@ -126,7 +126,7 @@ namespace OperationTrident.Common.AI
             _currentFSMData.initStateName = states.Count > 0 ? states[_currentFSMData.initStateIndex] : null;
 
             // 当编辑器中某个字段发生改变时，保存更改后的数据
-            if(GUI.changed)
+            if(GUILayout.Button("SAVE") && GUI.changed)
                 EditorUtility.SetDirty(_currentFSMData);
         }
 
