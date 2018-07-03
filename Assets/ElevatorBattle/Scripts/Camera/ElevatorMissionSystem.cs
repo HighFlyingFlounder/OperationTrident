@@ -76,11 +76,8 @@ namespace OperationTrident.Elevator
                     display = true;
                     targetWorldPosition = new Vector3(16, 2, 5);
                     break;
-                case SceneController.ElevatorState.FindingButton:
-                    missionContentsIndex = 2;
-                    display = true;
-                    targetWorldPosition = SceneController.ButtonPosition;
-                    missionLabelOffset = 0.1f;
+                case SceneController.ElevatorState.Ready:
+                    display = false;
                     break;
                 case SceneController.ElevatorState.Start_Fighting:
                     display = false;

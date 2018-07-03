@@ -24,7 +24,7 @@ namespace OperationTrident.Elevator
         {
             switch (SceneController.state)
             {
-                case SceneController.ElevatorState.FindingButton:
+                case SceneController.ElevatorState.Ready:
                     break;
                 case SceneController.ElevatorState.Start_Fighting:
                     break;
