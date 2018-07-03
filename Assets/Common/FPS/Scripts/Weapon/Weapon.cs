@@ -59,7 +59,9 @@ namespace OperationTrident.FPS.Weapons {
         public Auto AutoMode = Auto.Full;
 
         #region 通用
-        //能否被用户输入控制
+        //当前的Object是否为本地Object
+        public bool IsLocalObject = true;
+        //是否为Player使用的武器
         public bool PlayerWeapon = true;
         //武器的模型
         public GameObject WeaponModel;
@@ -351,15 +353,25 @@ namespace OperationTrident.FPS.Weapons {
 
             //如果使用瞄准镜，设置瞄准镜的状态
             if (UseMirror) {
-                //设置瞄准镜状态
-                MirrorCamera.SetActive(false);
+                //如果没有设置开静后的射击位置，默认为不开镜的射击位置
+                if (MirrorRaycastingPoint == null) {
+                    Debug.LogWarning("Please set the MirrorRaycastingPoint...");
+                    MirrorRaycastingPoint = RaycastStartSpot;
+                }
+
+                //如果使用了瞄准镜，就设置瞄准镜的状态
+                if (UseMirrorCamera) {
+                    if(MirrorCamera == null) {
+                        Debug.LogWarning("Please set the MirrorCamera...");
+                    } else {
+                        //设置瞄准镜状态
+                        MirrorCamera.SetActive(false);
+                    }
+                }
+
+
                 //初始化开镜状态
                 m_IsUsingMirror = false;
-
-                if(MirrorRaycastingPoint == null) {
-                    Debug.LogWarning("Please set the MirrorRaycastingPoint...");
-                    MirrorRaycastingPoint = MirrorCamera.transform;
-                }
             }
 
             //初始化武器的初始位置
@@ -419,6 +431,11 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         void Update() {
+            //如果不是本地Object，不执行任何操作
+            if (!IsLocalObject) {
+                return;
+            }
+
             //计算当前武器射击精度
             CurrentAccuracy = Mathf.Lerp(CurrentAccuracy, Accuracy, AccuracyRecoverRate * Time.deltaTime);
 
@@ -449,6 +466,46 @@ namespace OperationTrident.FPS.Weapons {
                     StopBeam();
                 //当前没有发射激光
                 m_IsBeaming = false;
+            }
+        }
+
+        //UI绘制函数
+        private void OnGUI() {
+            //如果不是本地Object，不执行任何操作
+            if (!IsLocalObject) {
+                return;
+            }
+
+            // Crosshairs
+            if (Type == Weapons.WeaponType.Projectile || Type == Weapons.WeaponType.Beam) {
+                CurrentAccuracy = Accuracy;
+            }
+
+            //只在不开镜时绘制准星
+            if (ShowCrosshair && !m_IsUsingMirror) {
+                //准星的中心
+                Vector2 center = new Vector2(Screen.width / 2, Screen.height / 2);
+
+                //左边
+                Rect leftRect = new Rect(center.x - CrosshairLength - CurrentCrosshairSize, center.y - (CrosshairWidth / 2), CrosshairLength, CrosshairWidth);
+                GUI.DrawTexture(leftRect, CrosshairTexture, ScaleMode.StretchToFill);
+                //右边
+                Rect rightRect = new Rect(center.x + CurrentCrosshairSize, center.y - (CrosshairWidth / 2), CrosshairLength, CrosshairWidth);
+                GUI.DrawTexture(rightRect, CrosshairTexture, ScaleMode.StretchToFill);
+                //上边
+                Rect topRect = new Rect(center.x - (CrosshairWidth / 2), center.y - CrosshairLength - CurrentCrosshairSize, CrosshairWidth, CrosshairLength);
+                GUI.DrawTexture(topRect, CrosshairTexture, ScaleMode.StretchToFill);
+                //下边
+                Rect bottomRect = new Rect(center.x - (CrosshairWidth / 2), center.y + CurrentCrosshairSize, CrosshairWidth, CrosshairLength);
+                GUI.DrawTexture(bottomRect, CrosshairTexture, ScaleMode.StretchToFill);
+            }
+
+            //显示弹药量
+            if (ShowCurrentAmmo) {
+                if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile)
+                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + m_CurrentAmmo);
+                else if (Type == Weapons.WeaponType.Beam)
+                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
             }
         }
 
@@ -524,17 +581,21 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //按下换弹键，直接换弹
-            if (Input.GetButtonDown("Reload"))
+            if (Input.GetButtonDown("Reload")) {
                 Reload();
+            }
 
             //如果是半自动武器，松开开火键时才能重新开火
-            if (Input.GetButtonUp("Fire1"))
+            if (Input.GetButtonUp("Fire1")) {
                 m_CanFire = true;
+            }
 
             if (Input.GetButtonDown("Fire2")) {
                 SwitchMirrorState();
             }
         }
+
+        
 
         //非键盘输入触发武器开火，用于网络或者AI
         public void RemoteFire() {
@@ -623,41 +684,7 @@ namespace OperationTrident.FPS.Weapons {
             Beam();
         }
 
-        //UI绘制函数
-        void OnGUI() {
-            // Crosshairs
-            if (Type == Weapons.WeaponType.Projectile || Type == Weapons.WeaponType.Beam) {
-                CurrentAccuracy = Accuracy;
-            }
-
-            //只在不开镜时绘制准星
-            if (ShowCrosshair && !m_IsUsingMirror) {
-                //准星的中心
-                Vector2 center = new Vector2(Screen.width / 2, Screen.height / 2);
-
-                //左边
-                Rect leftRect = new Rect(center.x - CrosshairLength - CurrentCrosshairSize, center.y - (CrosshairWidth / 2), CrosshairLength, CrosshairWidth);
-                GUI.DrawTexture(leftRect, CrosshairTexture, ScaleMode.StretchToFill);
-                //右边
-                Rect rightRect = new Rect(center.x + CurrentCrosshairSize, center.y - (CrosshairWidth / 2), CrosshairLength, CrosshairWidth);
-                GUI.DrawTexture(rightRect, CrosshairTexture, ScaleMode.StretchToFill);
-                //上边
-                Rect topRect = new Rect(center.x - (CrosshairWidth / 2), center.y - CrosshairLength - CurrentCrosshairSize, CrosshairWidth, CrosshairLength);
-                GUI.DrawTexture(topRect, CrosshairTexture, ScaleMode.StretchToFill);
-                //下边
-                Rect bottomRect = new Rect(center.x - (CrosshairWidth / 2), center.y + CurrentCrosshairSize, CrosshairWidth, CrosshairLength);
-                GUI.DrawTexture(bottomRect, CrosshairTexture, ScaleMode.StretchToFill);
-            }
-
-            //显示弹药量
-            if (ShowCurrentAmmo) {
-                if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile)
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + m_CurrentAmmo);
-                else if (Type == Weapons.WeaponType.Beam)
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
-            }
-        }
-
+        #region RPC函数
         //射线武器，开火
         void Fire() {
             SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
@@ -1073,10 +1100,9 @@ namespace OperationTrident.FPS.Weapons {
             SendMessageUpwards("OnEasyWeaponsStopBeaming", SendMessageOptions.DontRequireReceiver);
         }
 
-
         //换弹
         private void Reload() {
-            if(m_CurrentTotalAmmo == 0) {
+            if (m_CurrentTotalAmmo == 0) {
                 return;
             }
 
@@ -1113,7 +1139,7 @@ namespace OperationTrident.FPS.Weapons {
 
             return supplyNum;
         }
-         
+
         //切换瞄准镜的状态
         private void SwitchMirrorState() {
             if (!UseMirror) {
@@ -1149,7 +1175,11 @@ namespace OperationTrident.FPS.Weapons {
         void DryFire() {
             GetComponent<AudioSource>().PlayOneShot(DryFireSound);
         }
+        #endregion
 
+        public int GetTotalAmmunition() {
+            return m_CurrentTotalAmmo;
+        }
 
         //后坐力函数
         void Recoil() {
