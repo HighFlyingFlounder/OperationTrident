@@ -64,7 +64,16 @@ namespace room2Battle
 
         void Update()
         {
-            
+            if (GameMgr.instance)//联机状态
+            {
+                if (GameMgr.instance.isMasterClient)
+                {
+                    foreach(var player in SceneNetManager.instance.list)//遍历每个玩家
+                    {
+
+                    }
+                }
+            }
 
         }
         /*
