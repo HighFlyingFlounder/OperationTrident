@@ -67,6 +67,8 @@ namespace OperationTrident.Common.AI
                 AIState nextState = GetNextState(_currStateName, condition);
                 if (nextState != null)
                 {
+                    // 退出当前状态
+                    _currState.Exit();
                     // 进行状态转移
                     nextState.Init();
                     _currState = nextState;

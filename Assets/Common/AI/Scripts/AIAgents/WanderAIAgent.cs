@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace OperationTrident.Common.AI
 {
@@ -14,17 +15,17 @@ namespace OperationTrident.Common.AI
         [Tooltip("设置水平FOV角度")]
         [SerializeField]
         [Range(0, 180)]
-        float _cameraHorizontalFOV = 120f;
+        float _horizontalFOV = 120f;
 
         [Tooltip("设置垂直FOV角度")]
         [SerializeField]
         [Range(0, 180)]
-        float _cameraVerticalFOV = 60f;
+        float _verticalFOV = 60f;
 
         [Tooltip("设置视线距离")]
         [SerializeField]
         [Range(0, 500)]
-        float _cameraSightDistance = 100f;
+        float _sightDistance = 100f;
 
         public override Vector3[] PatrolLocations
         {
@@ -42,37 +43,53 @@ namespace OperationTrident.Common.AI
             }
         }
 
+        public override NavMeshAgent PathfindingAgent
+        {
+            get
+            {
+                return transform.GetComponent<NavMeshAgent>();
+            }
+        }
+
+        public override AICamera Camera
+        {
+            get
+            {
+                return transform.GetComponentInChildren<AICamera>();
+            }
+        }
+
         public override float CameraHorizontalFOV
         {
             get
             {
-                return _cameraHorizontalFOV;
+                return _horizontalFOV;
             }
             set
             {
-                _cameraHorizontalFOV = Mathf.Clamp(value, 0, 180);
+                _horizontalFOV = Mathf.Clamp(value, 0, 180);
             }
         }
         public override float CameraVerticalFOV
         {
             get
             {
-                return _cameraVerticalFOV;
+                return _verticalFOV;
             }
             set
             {
-                _cameraVerticalFOV = Mathf.Clamp(value, 0, 180);
+                _verticalFOV = Mathf.Clamp(value, 0, 180);
             }
         }
         public override float CameraSightDistance
         {
             get
             {
-                return _cameraSightDistance;
+                return _sightDistance;
             }
             set
             {
-                _cameraSightDistance = Mathf.Clamp(value, 0, 500);
+                _sightDistance = Mathf.Clamp(value, 0, 500);
             }
         }
 
@@ -83,7 +100,7 @@ namespace OperationTrident.Common.AI
 
         private void Awake()
         {
-            
+            Camera.InitCamera(CameraHorizontalFOV, CameraVerticalFOV, CameraSightDistance);
         }
     }
 }

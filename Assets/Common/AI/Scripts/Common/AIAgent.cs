@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace OperationTrident.Common.AI
 {
@@ -8,9 +9,11 @@ namespace OperationTrident.Common.AI
     {
         public ScriptableObject AIFSMAsset = null;
         protected AIFSM FSM = new AIFSM();
-        Vector3 _targetPosition;
+        Transform _target;
 
         public virtual Vector3[] PatrolLocations { get; set; }
+        public virtual NavMeshAgent PathfindingAgent { get; set; }
+        public virtual AICamera Camera { get; set; }
         public virtual float CameraHorizontalFOV { get; set; }
         public virtual float CameraVerticalFOV { get; set; }
         public virtual float CameraSightDistance { get; set; }
@@ -26,16 +29,16 @@ namespace OperationTrident.Common.AI
             }
         }
 
-        public Vector3 TargetPosition
+        public Transform Target
         {
             get
             {
-                return _targetPosition;
+                return _target;
             }
 
             set
             {
-                _targetPosition = value;
+                _target = value;
             }
         }
 

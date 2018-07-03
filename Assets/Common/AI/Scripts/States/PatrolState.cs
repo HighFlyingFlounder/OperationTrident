@@ -47,9 +47,9 @@ namespace OperationTrident.Common.AI
                 _patrolLocations = GetComponent<AIAgent>().PatrolLocations;
                 if(_patrolLocations == null)
                     Debug.Log("没有设置巡逻路径");
-                _navAgent = transform.GetComponent<NavMeshAgent>();
-                _animator = transform.GetComponent<Animator>();
-                _camera = transform.GetComponentInChildren<AICamera>();
+                _navAgent = GetComponent<AIAgent>().PathfindingAgent;
+                _animator = GetComponent<Animator>();
+                _camera = GetComponent<AIAgent>().Camera;
             }
         }
 
@@ -59,6 +59,7 @@ namespace OperationTrident.Common.AI
             {
                 // 设置寻路目标点
                 _navAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
+                _navAgent.isStopped = false;
                 _isMoving = true;
             }
 
@@ -74,17 +75,13 @@ namespace OperationTrident.Common.AI
                 }
             }
 
-            _camera.UpdateCamera();
-
-            Transform[] players = Utility.GetPlayersPosition();
-            foreach (var player in players)
+            Transform target = Utility.DetectPlayers(_camera);
+            if(target != null)
             {
-                if (_camera.DetectTarget(player))
-                {
-                    GetComponent<AIAgent>().TargetPosition = Utility.GetPlayerShootedTarget(player);
-                    _satisfy = Conditions.SIGHT_PLAYER;
-                    return _satisfy;
-                }
+                GetComponent<AIAgent>().Target = target;
+                _navAgent.isStopped = true;
+                _satisfy = Conditions.SIGHT_PLAYER;
+                return _satisfy;
             }
 
             // 移动时的动画

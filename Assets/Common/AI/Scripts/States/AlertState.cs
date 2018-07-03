@@ -1,30 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace OperationTrident.Common.AI
 {
-    [DisallowMultipleComponent]
-    public class InspectState : AIState
+    public class AlertState : AIState
     {
-        public static readonly string STATE_NAME = "Inspect";
+        public static readonly string STATE_NAME = "Alert";
 
         public class Conditions
         {
             public static readonly string SIGHT_PLAYER = "Sight Player";
-            public static readonly string FINISH_INSPECTION = "Finish Inspection";
+            public static readonly string LOST_PLAYER = "Lost Player";
         }
-
         AICamera _camera = null;
         Animator _animator;
-        float _duration;
 
         public override void Init()
         {
             base.Init();
             InitOnce();
-            _animator.SetBool("FindTarget", true);
-            _duration = 8f;
+            _animator.SetBool("TargetDetected", true);
         }
 
         public override void InitOnce()
@@ -39,26 +36,26 @@ namespace OperationTrident.Common.AI
 
         public override string Execute()
         {
-            _duration -= Time.deltaTime;
-            if (_duration < 0)
-            {
-                _satisfy = Conditions.FINISH_INSPECTION;
-            }
+            transform.LookAt(GetComponent<AIAgent>().Target);
+            _camera.UpdateCamera();
 
-            Transform target = Utility.DetectPlayers(_camera);
-            if(target != null)
+            if (_camera.DetectTarget(GetComponent<AIAgent>().Target))
             {
-                GetComponent<AIAgent>().Target = target;
-                _satisfy = Conditions.SIGHT_PLAYER;
-                return _satisfy;
+                // Debug.Log(Conditions.SIGHT_PLAYER);
+                // _satisfy = Conditions.SIGHT_PLAYER;
+            }
+            else
+            {
+                Debug.Log(Conditions.LOST_PLAYER);
+                _satisfy = Conditions.LOST_PLAYER;
             }
 
             return _satisfy;
         }
 
-        public override void Exit() 
+        public override void Exit()
         {
-            _animator.SetBool("FindTarget", false);
+            _animator.SetBool("TargetDetected", false);
         }
     }
 }

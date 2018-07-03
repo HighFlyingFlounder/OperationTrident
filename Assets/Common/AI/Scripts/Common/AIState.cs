@@ -14,14 +14,11 @@ namespace OperationTrident.Common.AI
         protected bool _firstInit = true;
 
         /// <summary>
-        /// 初始化状态，其中_paramParser需要在子类设置特定的解析器
+        /// 初始化状态
         /// </summary>
-        /// <param name="param">由另一个状态传入的参数</param>
         public virtual void Init()
         {
             _satisfy = null;
-            // _params = new AIStateParam();
-            // _paramParser = null;
         }
 
         /// <summary>
@@ -37,5 +34,12 @@ namespace OperationTrident.Common.AI
         /// </summary>
         /// <returns>返回状态转移已满足的条件，若为null，则不满足状态条件</returns>
         public abstract string Execute();
+
+        /// <summary>
+        /// 退出当前状态
+        /// </summary>
+        public virtual void Exit()
+        {
+        }
     }
 }

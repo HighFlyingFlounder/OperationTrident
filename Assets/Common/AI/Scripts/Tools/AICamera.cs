@@ -74,7 +74,7 @@ namespace OperationTrident.Common.AI
         /// </returns>
         public bool DetectTarget(Transform target)
         {
-            Vector3 targetDirection = target.transform.position - transform.position;
+            Vector3 targetDirection = target.position - transform.position;
             float targetDistance = Vector3.Dot(targetDirection, transform.forward);
 
             // 判断目标是否在camera的远近平面内
@@ -102,7 +102,7 @@ namespace OperationTrident.Common.AI
             if (Physics.Raycast(ray, out hit))
             {
                 Debug.DrawLine(ray.origin, hit.point, Color.red);
-                if (hit.collider.name != target.name)
+                if (hit.collider.tag != "Player")
                     return false;
             }
 

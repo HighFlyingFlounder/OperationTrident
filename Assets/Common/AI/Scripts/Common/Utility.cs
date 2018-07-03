@@ -27,14 +27,23 @@ namespace OperationTrident.Common.AI
             Transform[] result = new Transform[players.Length];
             for (int i = 0; i < players.Length; i++)
             {
-                result[i] = players[i].transform;
+                result[i] = players[i].transform.Find("ShootedTarget");
             }
             return result;
         }
 
-        public static Vector3 GetPlayerShootedTarget(Transform player)
+        public static Transform DetectPlayers(AICamera camera)
         {
-            return player.Find("ShootedTarget").position;
+            camera.UpdateCamera();
+            Transform[] players = Utility.GetPlayersPosition();
+            foreach (var player in players)
+            {
+                if (camera.DetectTarget(player))
+                {
+                    return player;
+                }
+            }
+            return null;
         }
 
 #if UNITY_EDITOR
