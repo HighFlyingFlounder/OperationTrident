@@ -104,16 +104,16 @@ public class SceneNetManager : MonoBehaviour
 
         list.Add(id, playerObj);
         //玩家通用处理
-        //NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
+        NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
         if (id == GameMgr.instance.id)
         {
-            //netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
+            netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
             //playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
 
-            //netsyn.ctrlType = NetSyncTransform.CtrlType.net;
+            netsyn.ctrlType = NetSyncTransform.CtrlType.net;
             //playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
             //playerObj.GetComponent<PlayerController>().enabled = false;
             //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
