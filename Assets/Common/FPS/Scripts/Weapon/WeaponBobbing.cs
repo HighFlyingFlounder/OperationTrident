@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.FPS.Common;
 
 namespace OperationTrident.FPS.Weapons {
+    [RequireComponent(typeof(Weapon))]
     public class WeaponBobbing : MonoBehaviour {
         [Tooltip("将枪移动到跑步位置所需要的时间")]
         public float SwitchTime = 0.5f;

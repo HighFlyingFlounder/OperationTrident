@@ -6,10 +6,11 @@ namespace OperationTrident.FPS.Player {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(AudioSource))]
     public class MovementController : MonoBehaviour {
-        
-        //走路的速度
+        [Tooltip("当前的Object是否为本地Object，如果不是，则只接受网络同步信息")]
+        public bool IsLocalObject;
+        [Tooltip("走路的速度")]
         [SerializeField] private float m_WalkSpeed;
-        //跑步的速度
+        [Tooltip("跑步的速度")]
         [SerializeField] private float m_RunSpeed;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         //跳跃的速度
@@ -79,22 +80,29 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void FixedUpdate() {
-            GetInput();
+            //不是本地玩家，不执行任何操作
+            if (!IsLocalObject) {
+                return;
+            }
 
-            // always move along the camera forward as it is the direction that it being aimed at
-            Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
-
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-
-            m_MoveDir.x = desiredMove.x * m_Speed;
-            m_MoveDir.z = desiredMove.z * m_Speed;
-
-
+            //只有站在地面上时才能移动
             if (m_CharacterController.isGrounded) {
+                //获取用户的输入
+                GetInput();
+
+                //用户即将移动的方向
+                Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+
+                // get a normal for the surface that is being touched to move along it
+                RaycastHit hitInfo;
+                Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                                   m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+                //确定x和z方向上移动的距离
+                m_MoveDir.x = desiredMove.x * m_Speed;
+                m_MoveDir.z = desiredMove.z * m_Speed;
+
+                //保持Player贴在地面上
                 m_MoveDir.y = -m_StickToGroundForce;
 
                 if (m_Jump) {
@@ -106,17 +114,14 @@ namespace OperationTrident.FPS.Player {
                         PlayJumpSound();
                         m_Jumping = true;
                     }
-
                     m_Jump = false;
 
                 }
             } else {
                 m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
-
             }
 
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
-
             ProgressStepCycle(m_Speed);
         }
 
@@ -124,18 +129,9 @@ namespace OperationTrident.FPS.Player {
 
         // Update is called once per frame
         private void Update() {
-            //站立和蹲下
-            if (Input.GetKeyDown(KeyCode.X)) {
-                if (m_IsUnderarming) {
-                    StandUp();
-                } else {
-                    Underarm();
-                }
-            }
-
-            // 在跳跃的过程中不能重复跳跃
-            if (!m_Jump) {
-                m_Jump = Input.GetButtonDown("Jump");
+            //不是本地玩家，不执行任何操作
+            if (!IsLocalObject) {
+                return;
             }
 
             //跳跃后刚刚落地
@@ -153,29 +149,12 @@ namespace OperationTrident.FPS.Player {
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
         }
 
-        //蹲下函数
-        private void Underarm() {
-            //碰撞体高度减少一半
-            m_CharacterController.height /= 2;
-
-            m_IsUnderarming = true;
-
-        }
-
-        private void StandUp() {
-            //碰撞体高度减少一半
-            m_CharacterController.height *= 2;
-
-            m_IsUnderarming = false;
-        }
-
         //播放落地的音效
         private void PlayLandingSound() {
             m_AudioSource.clip = m_LandSound;
             m_AudioSource.Play();
             m_NextStep = m_StepCycle + 0.5f;
         }
-
 
         //处理跳跃的函数
         private void PlayJumpSound() {
@@ -214,10 +193,29 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void GetInput() {
-            // 获取用户输入
+            //站立和蹲下
+            if (Input.GetKeyDown(KeyCode.X)) {
+                if (m_IsUnderarming) {
+                    //这里需要调用RPC
+                    StandUp();
+                } else {
+                    //这里需要调用RPC
+                    Underarm();
+                }
+            }
+
+            // 在跳跃的过程中不能重复跳跃
+            if (!m_Jump) {
+                m_Jump = Input.GetButtonDown("Jump");
+            }
+
+
+            //水平移动
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
             m_Input = new Vector2(horizontal, vertical);
+            //这里需要调用RPC
+            Walk();
 
 #if !MOBILE_INPUT
             // 按住shift键进入跑步状态
@@ -231,15 +229,10 @@ namespace OperationTrident.FPS.Player {
                 m_Speed /= 2;
             }
 
-            // 归一化用户的输入
+            //归一化用户的输入
             if (m_Input.sqrMagnitude > 1) {
                 m_Input.Normalize();
             }
-
-            ////停下来，速度为0
-            //if (m_Input.magnitude == 0f) {
-            //    m_Speed = 0f;
-            //}
 
             //速度改变，发送速度改变的请求
             if (m_Speed != m_PreSpeed) {
@@ -261,9 +254,9 @@ namespace OperationTrident.FPS.Player {
                 BroadcastMessage("StopWalking", SendMessageOptions.DontRequireReceiver);
             }
 
+            //重置变量
             m_PreSpeed = m_Speed;
             m_PreInput = m_Input;
-            
         }
 
         //碰到物体时让玩家往后退
@@ -278,5 +271,38 @@ namespace OperationTrident.FPS.Player {
             }
             body.AddForceAtPosition(m_CharacterController.velocity * 0.1f, hit.point, ForceMode.Impulse);
         }
+
+        #region RPC函数
+        //行走函数
+        private void Walk() {
+            SendMessage("SetWalkAnimationParamters", m_Input, SendMessageOptions.DontRequireReceiver);
+        }
+
+        //站立函数
+        private void StandUp() {
+            //碰撞体高度减少一半
+            m_CharacterController.height *= 2;
+            m_CharacterController.center *= 2;
+
+            m_IsUnderarming = false;
+
+            SendMessage("SetUnderarmAnimationParamters", m_IsUnderarming, SendMessageOptions.DontRequireReceiver);
+            BroadcastMessage("MoveWeaponUp", SendMessageOptions.DontRequireReceiver);
+        }
+
+        //蹲下函数
+        private void Underarm() {
+            float distacne = m_CharacterController.height / 2;
+            //碰撞体高度减少一半
+            m_CharacterController.height -= distacne;
+            m_CharacterController.center /= 2;
+
+            m_IsUnderarming = true;
+
+            SendMessage("SetUnderarmAnimationParamters", m_IsUnderarming, SendMessageOptions.DontRequireReceiver);
+            BroadcastMessage("MoveWeaponDown", distacne, SendMessageOptions.DontRequireReceiver);
+        }
+
+        #endregion
     }
 }
