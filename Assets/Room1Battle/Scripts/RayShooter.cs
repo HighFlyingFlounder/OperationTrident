@@ -31,7 +31,7 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = Camera.main;
+            camera = Camera.current;
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

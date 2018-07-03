@@ -94,7 +94,7 @@ namespace OperationTrident.StartScene
             titleCanvas.enabled = false;
             roomCanvas.enabled = true;
             titleTextCanvas.enabled = false;
-            GetComponent<RoomSceneController>().Init();
+            GetComponent<RoomSceneController>().InitRoomListScene();
         }
     }
 }
