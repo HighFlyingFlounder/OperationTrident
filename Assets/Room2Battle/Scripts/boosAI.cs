@@ -97,6 +97,7 @@ namespace room2Battle
                 }
                 else
                 {
+                    Debug.Log("client");
                     //根据同步的bool设置动画
                     animator.SetBool("shoot", shoot);
                     animator.SetBool("handup", handup);
@@ -174,6 +175,7 @@ namespace room2Battle
                 //停住
                 case fireState.Idle:
                     {
+                        Debug.Log("idle");
                         animator.SetBool("StopFire", false);
 
                         if (thinkTime < 2.0f)
@@ -204,6 +206,7 @@ namespace room2Battle
                                         //同步
                                         handup = true;
                                         animator.SetBool("handup", true);
+                                        Debug.Log("SyncVariables");
                                         netSyncController.SyncVariables();
                                         //充值思考时间
                                         thinkTime = 0.0f;
@@ -216,6 +219,7 @@ namespace room2Battle
                                         //同步
                                         animator.SetBool("missileLaunch", true);
                                         missilLaunch = true;
+                                        Debug.Log("SyncVariables");
                                         netSyncController.SyncVariables();
                                         //充值思考时间
                                         thinkTime = 0.0f;
@@ -228,6 +232,8 @@ namespace room2Battle
                 //抬起手为止
                 case fireState.OpenFire:
                     {
+                        Debug.Log("openfire");
+
                         //切换完毕了
                         if (stateInfo.IsName("shoot"))
                         {
@@ -243,6 +249,7 @@ namespace room2Battle
                                 handup = false;
                                 shoot = true;
 
+                                Debug.Log("SyncVariables");
                                 netSyncController.SyncVariables();
                                 //转移状态
                                 currentState = fireState.KeepFire;
@@ -252,7 +259,8 @@ namespace room2Battle
                     break;
                 //抬手到播完再换手
                 case fireState.KeepFire:
-                    { 
+                    {
+                        Debug.Log("fire");
                         if (stateInfo.IsName("keepShooting"))
                         {
                             //开火
@@ -267,6 +275,7 @@ namespace room2Battle
                                 rightHandup = true;
                                 shoot = false;
                                 //同步
+                                Debug.Log("SyncVariables");
                                 netSyncController.SyncVariables();
                                 //下一个状态
                                 currentState = fireState.RightFire;
@@ -277,6 +286,7 @@ namespace room2Battle
                 //另一只手抬起完成
                 case fireState.RightFire:
                     {
+                        Debug.Log("fire");
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
                         {
@@ -292,6 +302,7 @@ namespace room2Battle
                                 rightHandup = false;
                                 shoot = true;
                                 //同步
+                                Debug.Log("SyncVariables");
                                 netSyncController.SyncVariables();
                                 //下一个状态
                                 currentState = fireState.KeepFireAgain;
@@ -301,6 +312,7 @@ namespace room2Battle
                     break;
                 case fireState.KeepFireAgain:
                     {
+                        Debug.Log("fire");
                         if (stateInfo.IsName("keepShootingBack"))
                         {
                             rightHandFireImpl();
@@ -314,6 +326,7 @@ namespace room2Battle
                                 stopFire = true;
                                 shoot = false;
                                 //同步
+                                Debug.Log("SyncVariables");
                                 netSyncController.SyncVariables();
 
                                 currentState = fireState.StopFire;
@@ -323,6 +336,7 @@ namespace room2Battle
                     break;
                 case fireState.StopFire:
                     {
+                        Debug.Log("stop");
                         if (stateInfo.IsName("idle"))
                         {
                             Debug.Log("end of fire");
@@ -336,6 +350,7 @@ namespace room2Battle
                     break;
                 case fireState.MissileLaunch:
                     {
+                        Debug.Log("aunch");
                         if (stateInfo.IsName("missileLaunch"))
                         {
                             if (stateInfo.normalizedTime >= 0.8f)

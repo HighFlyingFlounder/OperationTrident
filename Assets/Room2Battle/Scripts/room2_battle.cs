@@ -37,6 +37,11 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+        private void Start()
+        {
+            AIController.instance.AddAIObject(boss);
+        }
+
         public override void notify(int i)
         {
             
@@ -78,8 +83,7 @@ namespace room2Battle {
                         GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
                         enemyList.Add(obj);
                     }
-                    //让Boss同步，以master_Client为准
-                    AIController.instance.AddAIObject(boss);
+                    //让Boss同步，以master_Client为准    
                 }
             }
             else {
