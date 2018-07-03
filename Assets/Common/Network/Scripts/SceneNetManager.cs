@@ -7,8 +7,10 @@ using OperationTrident.Player;
 public class SceneNetManager : MonoBehaviour
 {
     public static SceneNetManager instance;
-    //玩家预设
-    public GameObject[] PlayerPrefabs;
+    //本地玩家实体预设
+    public GameObject[] LocalPlayerPrefabs;
+    //其他玩家实体预设
+    public GameObject[] NetPlayerPrefabs;
     //游戏中给所有的角色
     public Dictionary<string, GameObject> list;
 
@@ -68,7 +70,6 @@ public class SceneNetManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
-            Debug.Log("id = " + id);
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
@@ -86,28 +87,37 @@ public class SceneNetManager : MonoBehaviour
             Debug.LogError("GeneratePlayer出生点错误！");
             return;
         }
-        //产生玩家角色 0暂时代表只有一种玩家prefab
-        GameObject playerObj = (GameObject)Instantiate(PlayerPrefabs[0]);
+        //产生玩家角色
+        GameObject playerObj;
+        if (id == GameMgr.instance.id)//本地玩家
+        {
+            playerObj = Instantiate(LocalPlayerPrefabs[0]);
+        }
+        else
+        {
+            playerObj = Instantiate(NetPlayerPrefabs[0]);
+        }
+        
         playerObj.name = id;
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
 
         list.Add(id, playerObj);
         //玩家通用处理
-        NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
+        //NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
         if (id == GameMgr.instance.id)
         {
-            netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
+            //netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
+            //playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
 
-            netsyn.ctrlType = NetSyncTransform.CtrlType.net;
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
-            playerObj.GetComponent<PlayerController>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
+            //netsyn.ctrlType = NetSyncTransform.CtrlType.net;
+            //playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
+            //playerObj.GetComponent<PlayerController>().enabled = false;
+            //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            //playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
         }
         //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
         HandlePlayer(id,playerObj);
