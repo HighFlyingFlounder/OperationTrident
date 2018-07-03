@@ -68,6 +68,8 @@ namespace room2Battle
         protected bool stopFire = false;
         protected bool missilLaunch = false;
 
+        protected float fireFromLastTime = 0.0f;
+
         /// <summary>
         /// 初始化函数
         /// 初始化animator，其他玩家的信息
@@ -237,9 +239,17 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shoot"))
                         {
-                            //开火
-                            leftHandFireImpl();
-                            netSyncController.RPC(this, "leftHandFireImpl");
+                            if (fireFromLastTime > 0.1f)
+                            {
+                                //开火
+                                leftHandFireImpl();
+                                netSyncController.RPC(this, "leftHandFireImpl");
+                                fireFromLastTime = 0.0f;
+                            }
+                            else
+                            {
+                                fireFromLastTime += Time.deltaTime;
+                            }
                             //动画状态转移，同步
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
@@ -264,8 +274,17 @@ namespace room2Battle
                         if (stateInfo.IsName("keepShooting"))
                         {
                             //开火
-                            leftHandFireImpl();
-                            netSyncController.RPC(this, "leftHandFireImpl");
+                            if (fireFromLastTime > 0.1f)
+                            {
+                                //开火
+                                leftHandFireImpl();
+                                netSyncController.RPC(this, "leftHandFireImpl");
+                                fireFromLastTime = 0.0f;
+                            }
+                            else
+                            {
+                                fireFromLastTime += Time.deltaTime;
+                            }
                             //直到开火完毕，抬起另一只手
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
@@ -290,8 +309,17 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
                         {
-                            rightHandFireImpl();
-                            netSyncController.RPC(this, "leftHandFireImpl");
+                            if (fireFromLastTime > 0.1f)
+                            {
+                                //开火
+                                rightHandFireImpl();
+                                netSyncController.RPC(this, "rightHandFireImpl");
+                                fireFromLastTime = 0.0f;
+                            }
+                            else
+                            {
+                                fireFromLastTime += Time.deltaTime;
+                            }
                             //开火
                             Debug.Log("fire");
                             if (stateInfo.normalizedTime >= 0.8f)
@@ -315,8 +343,17 @@ namespace room2Battle
                         Debug.Log("fire");
                         if (stateInfo.IsName("keepShootingBack"))
                         {
-                            rightHandFireImpl();
-                            netSyncController.RPC(this, "leftHandFireImpl");
+                            if (fireFromLastTime > 0.1f)
+                            {
+                                //开火
+                                rightHandFireImpl();
+                                netSyncController.RPC(this, "rightHandFireImpl");
+                                fireFromLastTime = 0.0f;
+                            }
+                            else
+                            {
+                                fireFromLastTime += Time.deltaTime;
+                            }
                             //直到开火完毕
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
