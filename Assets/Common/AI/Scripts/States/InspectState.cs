@@ -15,9 +15,9 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_INSPECTION = "Finish Inspection";
         }
 
-		public override void Init(AIStateParam param)
+		public override void Init()
         {
-            base.Init(param);
+            base.Init();
             transform.GetComponent<Animator>().SetFloat("Speed", -1f);
 			StartCoroutine(FindPlayer());
         }

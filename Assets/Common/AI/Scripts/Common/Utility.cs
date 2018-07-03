@@ -21,6 +21,22 @@ namespace OperationTrident.Common.AI
             return Resources.Load<AIStateRegister>("AIStateRegister");
         }
 
+        public static Transform[] GetPlayersPosition()
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            Transform[] result = new Transform[players.Length];
+            for (int i = 0; i < players.Length; i++)
+            {
+                result[i] = players[i].transform;
+            }
+            return result;
+        }
+
+        public static Vector3 GetPlayerShootedTarget(Transform player)
+        {
+            return player.Find("ShootedTarget").position;
+        }
+
 #if UNITY_EDITOR
         public static bool CanDrawEditor()
         {

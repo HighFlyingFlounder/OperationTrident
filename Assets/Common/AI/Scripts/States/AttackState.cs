@@ -14,20 +14,13 @@ namespace OperationTrident.Common.AI
             public static readonly string LOSE_TARGET = "Lose Target";
         }
 
-        [System.Serializable]
-        public class InitParams : InitParamsBase
+        public override void Init()
         {
-            public Vector3 targetPosition;
-        }
-
-        public override void Init(AIStateParam param)
-        {
-            base.Init(param);
-            _paramParser = new AttackStateParamParser(param);
+            base.Init();
         }
         public override string Execute()
         {
-            Debug.Log("Attack player in " + (_paramParser as AttackStateParamParser).TargetPosition);
+            // Debug.Log("Attack player in " + (_paramParser as AttackStateParamParser).TargetPosition);
 
             // Ray ray = new Ray(transform.position, transform.forward);
             // RaycastHit hit;
@@ -42,28 +35,6 @@ namespace OperationTrident.Common.AI
             // }
 
             return _satisfy;
-        }
-    }
-
-    public class AttackStateParamParser : AIStateParamParserBase
-    {
-        public AttackStateParamParser(AIStateParam param) : base(param) { }
-
-        public Vector3 TargetPosition
-        {
-            get
-            {
-                object position = _param.GetMassData("targetPosition");
-                if (position != null)
-                {
-                    return (Vector3)position;
-                }
-                else
-                {
-                    Debug.Log("Can not get 'targetPosition' in 'AttackStateParamParser'.");
-                    throw new System.NotImplementedException();
-                }
-            }
         }
     }
 }

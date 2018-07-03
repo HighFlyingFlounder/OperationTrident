@@ -8,17 +8,11 @@ namespace OperationTrident.Common.AI
     public class AICamera : MonoBehaviour
     {
         // 设置水平FOV角度
-        [SerializeField]
-        [Range(0, 180)]
-        float horizontalFOV = 120f;
+        float _horizontalFOV;
         // 设置垂直FOV角度
-        [SerializeField]
-        [Range(0, 180)]
-        float verticalFOV = 60f;
+        float _verticalFOV;
         // 设置视线距离
-        [SerializeField]
-        [Range(0, 500)]
-        float sightDistance = 100f;
+        float _sightDistance;
 
 #if UNITY_EDITOR
         // 目标点（测试用）
@@ -32,29 +26,43 @@ namespace OperationTrident.Common.AI
 #if UNITY_EDITOR
         void Update()
         {
+            AIAgent agent = GetComponentInParent<AIAgent>();
+            InitCamera(agent.CameraHorizontalFOV, agent.CameraVerticalFOV, agent.CameraSightDistance);
             UpdateCamera();
             DrawViewableArea();
-            // Debug.Log(DetectTarget(_testTarget));
-            DetectTarget(_testTarget);
+            // DetectTarget(_testTarget);
         }
 #endif
+
+        /// <summary>
+        /// 初始化camera参数 
+        /// </summary>
+        /// <param name="horizontalFOV">水平可视角度</param>
+        /// <param name="verticalFOV">垂直可视角度</param>
+        /// <param name="sightDistance">视线距离</param>
+        public void InitCamera(float horizontalFOV, float verticalFOV, float sightDistance)
+        {
+            _horizontalFOV = horizontalFOV;
+            _verticalFOV = verticalFOV;
+            _sightDistance = sightDistance;
+        }
 
         /// <summary>
         /// 在进行检测前先更新摄像机的参数 
         /// </summary>
         public void UpdateCamera()
         {
-            Quaternion leftAngle = Quaternion.AngleAxis(-horizontalFOV / 2, transform.up);
-            Quaternion rightAngle = Quaternion.AngleAxis(horizontalFOV / 2, transform.up);
-            Quaternion upAngle = Quaternion.AngleAxis(-verticalFOV / 2, transform.right);
-            Quaternion downAngle = Quaternion.AngleAxis(verticalFOV / 2, transform.right);
+            Quaternion leftAngle = Quaternion.AngleAxis(-_horizontalFOV / 2, transform.up);
+            Quaternion rightAngle = Quaternion.AngleAxis(_horizontalFOV / 2, transform.up);
+            Quaternion upAngle = Quaternion.AngleAxis(-_verticalFOV / 2, transform.right);
+            Quaternion downAngle = Quaternion.AngleAxis(_verticalFOV / 2, transform.right);
 
             leftDirection = leftAngle * transform.forward;
             rightDirection = rightAngle * transform.forward;
             upDirection = upAngle * transform.forward;
             downDirection = downAngle * transform.forward;
 
-            halfWidth = sightDistance * Mathf.Tan(horizontalFOV * Mathf.Deg2Rad / 2);
+            halfWidth = _sightDistance * Mathf.Tan(_horizontalFOV * Mathf.Deg2Rad / 2);
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace OperationTrident.Common.AI
             float targetDistance = Vector3.Dot(targetDirection, transform.forward);
 
             // 判断目标是否在camera的远近平面内
-            if (targetDistance < 0 || targetDistance > sightDistance)
+            if (targetDistance < 0 || targetDistance > _sightDistance)
                 return false;
 
             // 根据目标点的方向，求出目标方向在水平、竖直方向上的分量，然后判断在不在视角内
@@ -105,7 +113,7 @@ namespace OperationTrident.Common.AI
         void DrawViewableArea()
         {
             Vector3 origin = transform.position;
-            float verticalDistance = sightDistance / Mathf.Cos(verticalFOV * Mathf.Deg2Rad / 2);
+            float verticalDistance = _sightDistance / Mathf.Cos(_verticalFOV * Mathf.Deg2Rad / 2);
             Vector3 right = halfWidth * transform.right;
 
             Vector3 topLeft = origin + upDirection * verticalDistance - right;

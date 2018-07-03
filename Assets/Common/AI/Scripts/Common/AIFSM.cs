@@ -27,7 +27,7 @@ namespace OperationTrident.Common.AI
             }
         }
 
-        public void Init(GameObject gameObject, AIState.InitParamsBase initParams)
+        public void Init(GameObject gameObject)
         {
             _gameObject = gameObject;
             _stateRegister = Utility.GetAIStateRegister();
@@ -51,14 +51,7 @@ namespace OperationTrident.Common.AI
             {
                 _currState = (_gameObject.GetComponent(initStateType) as AIState);
                 _currStateName = _fsm.initStateName;
-
-                AIStateParam stateParams = new AIStateParam();
-                FieldInfo[] fieldInfos = initParams.GetType().GetFields();
-                foreach (var info in fieldInfos)
-                {
-                    stateParams.SetMassData(info.Name, info.GetValue(initParams));
-                }
-                _currState.Init(stateParams);
+                _currState.Init();
             }
         }
 
@@ -75,7 +68,7 @@ namespace OperationTrident.Common.AI
                 if (nextState != null)
                 {
                     // 进行状态转移
-                    nextState.Init(_currState.Transition());
+                    nextState.Init();
                     _currState = nextState;
                     _currStateName = _fsm.StateTransitionGraph[_currStateName][condition];
                 }

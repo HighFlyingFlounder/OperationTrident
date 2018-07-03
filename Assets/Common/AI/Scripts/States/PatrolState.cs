@@ -17,14 +17,8 @@ namespace OperationTrident.Common.AI
             public static readonly string SIGHT_PLAYER = "Sight Player";
         }
 
-        [System.Serializable]
-        public class InitParams : InitParamsBase
-        {
-            public Transform patrolLocations;
-        }
-
         // 巡逻点列表，AI会在这些地点中循环移动
-        List<Vector3> _patrolLocations;
+        Vector3[] _patrolLocations;
         // 记录下一个巡逻点
         int _nextPatrolLocationIndex = 0;
         // 寻路代理
@@ -33,13 +27,13 @@ namespace OperationTrident.Common.AI
         bool _isMoving = false;
         // 到下一个巡逻点的距离
         float _remainDistance = Mathf.Infinity;
+        AICamera _camera = null;
         // 用于控制动画（之后会换成控制器）
         Animator _animator;
 
-        public override void Init(AIStateParam param)
+        public override void Init()
         {
-            base.Init(param);
-            _paramParser = new WanderStateParamParser(param);
+            base.Init();
             _isMoving = false;
 
             InitOnce();
@@ -50,9 +44,12 @@ namespace OperationTrident.Common.AI
             if (_firstInit)
             {
                 base.InitOnce();
-                _patrolLocations = (_paramParser as WanderStateParamParser).PatrolLocations;
+                _patrolLocations = GetComponent<AIAgent>().PatrolLocations;
+                if(_patrolLocations == null)
+                    Debug.Log("没有设置巡逻路径");
                 _navAgent = transform.GetComponent<NavMeshAgent>();
                 _animator = transform.GetComponent<Animator>();
+                _camera = transform.GetComponentInChildren<AICamera>();
             }
         }
 
@@ -72,8 +69,21 @@ namespace OperationTrident.Common.AI
                 && _navAgent.pathStatus == NavMeshPathStatus.PathComplete)
                 {
                     // 当到达一个巡逻点时，设置下一个巡逻点，并返回已满足ARRIVE_AT_LOCATION条件
-                    _nextPatrolLocationIndex = (_nextPatrolLocationIndex + 1) % _patrolLocations.Count;
+                    _nextPatrolLocationIndex = (_nextPatrolLocationIndex + 1) % _patrolLocations.Length;
                     _satisfy = Conditions.ARRIVE_AT_LOCATION;
+                }
+            }
+
+            _camera.UpdateCamera();
+
+            Transform[] players = Utility.GetPlayersPosition();
+            foreach (var player in players)
+            {
+                if (_camera.DetectTarget(player))
+                {
+                    GetComponent<AIAgent>().TargetPosition = Utility.GetPlayerShootedTarget(player);
+                    _satisfy = Conditions.SIGHT_PLAYER;
+                    return _satisfy;
                 }
             }
 
@@ -81,34 +91,6 @@ namespace OperationTrident.Common.AI
             _animator.SetFloat("Speed", _navAgent.speed);
 
             return _satisfy;
-        }
-    }
-
-    public class WanderStateParamParser : AIStateParamParserBase
-    {
-        public WanderStateParamParser(AIStateParam param) : base(param) { }
-
-        public List<Vector3> PatrolLocations
-        {
-            get
-            {
-                object locations = _param.GetMassData("patrolLocations");
-                if (locations != null)
-                {
-                    Transform[] tempPatrolLocations = (locations as Transform).GetComponentsInChildren<Transform>();
-                    List<Vector3> result = new List<Vector3>();
-                    for (int i = 1; i < tempPatrolLocations.Length; i++)
-                    {
-                        result.Add(tempPatrolLocations[i].position);
-                    }
-                    return result;
-                }
-                else
-                {
-                    Debug.Log("Can not get 'patrolLocations' in 'WanderStateParamParser'.");
-                    throw new System.NotImplementedException();
-                }
-            }
         }
     }
 }
