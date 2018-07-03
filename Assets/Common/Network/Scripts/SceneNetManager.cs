@@ -104,20 +104,20 @@ public class SceneNetManager : MonoBehaviour
 
         list.Add(id, playerObj);
         //玩家通用处理
-        NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
+        //NetSyncTransform netsyn = playerObj.GetComponent<NetSyncTransform>();
         if (id == GameMgr.instance.id)
         {
-            netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
+            //netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
+            //playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
 
-            netsyn.ctrlType = NetSyncTransform.CtrlType.net;
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
-            playerObj.GetComponent<PlayerController>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
+            //netsyn.ctrlType = NetSyncTransform.CtrlType.net;
+            //playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
+            //playerObj.GetComponent<PlayerController>().enabled = false;
+            //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            //playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
         }
         //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
         HandlePlayer(id,playerObj);
