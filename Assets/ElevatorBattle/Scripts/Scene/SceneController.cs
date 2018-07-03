@@ -130,6 +130,8 @@ namespace OperationTrident.Elevator {
         {
             if (state == ElevatorState.Initing || state == ElevatorState.End)
             {
+                //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
+                    //return;
                 int number = 1;//SceneNetManager.instance.list.Count;
 
                 count++;
