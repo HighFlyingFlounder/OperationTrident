@@ -300,7 +300,7 @@ namespace room2Battle
                                 animator.SetBool("shootAgain", true);
 
                                 rightHandup = false;
-                                shoot = true;
+                                shootAgain = true;
                                 //同步
                                 Debug.Log("SyncVariables");
                                 netSyncController.SyncVariables();
