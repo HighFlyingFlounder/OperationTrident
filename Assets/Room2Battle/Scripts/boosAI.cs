@@ -374,7 +374,7 @@ namespace room2Battle
             }
         }
 
-        void missileLaunchImpl(Vector3 positon)
+        public void missileLaunchImpl(Vector3 positon)
         {
             foreach (missilLauncher a in pos)
             {
@@ -386,12 +386,12 @@ namespace room2Battle
         /// <summary>
         /// 开枪
         /// </summary>
-        void leftHandFireImpl()
+        public void leftHandFireImpl()
         {
             Instantiate(Missiles[0], leftHand.position, transform.rotation);
         }
 
-        void rightHandFireImpl()
+        public void rightHandFireImpl()
         {
             Instantiate(Missiles[0], rightHand.position, transform.rotation);
         }
@@ -445,7 +445,7 @@ namespace room2Battle
         /// <summary>
         /// 扫射时随机转动
         /// </summary>
-        void randomTurnImpl()
+        public void randomTurnImpl()
         {
             switch (currentState)
             {
