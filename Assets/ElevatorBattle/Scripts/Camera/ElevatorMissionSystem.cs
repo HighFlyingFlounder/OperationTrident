@@ -126,7 +126,8 @@ namespace OperationTrident.Elevator
             {
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent,
+                GUIUtil.DisplayMissionTargetInMessSequently(
+                    missionContent,
                     Camera.main,
                     GUIUtil.brightGreenColor,
                     interval: appearInterval,

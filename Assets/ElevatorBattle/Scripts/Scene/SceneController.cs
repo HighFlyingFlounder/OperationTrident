@@ -59,7 +59,7 @@ namespace OperationTrident.Elevator {
                         c_time = s_time;
                         e_time = s_time + r_time;
 
-                        bcollider.size = new Vector3(bcollider.size.x, bcollider.size.y, 1);
+                        bcollider.size = new Vector3(40, bcollider.size.y, bcollider.size.z);
 
                         change = false;
                     }
