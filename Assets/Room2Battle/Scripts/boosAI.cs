@@ -70,6 +70,8 @@ namespace room2Battle
 
         protected float fireFromLastTime = 0.0f;
 
+        protected float intervalBetweenShot = 0.3f;
+
         /// <summary>
         /// 初始化函数
         /// 初始化animator，其他玩家的信息
@@ -239,7 +241,7 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shoot"))
                         {
-                            if (fireFromLastTime > 0.1f)
+                            if (fireFromLastTime > intervalBetweenShot)
                             {
                                 //开火
                                 leftHandFireImpl();
@@ -274,7 +276,7 @@ namespace room2Battle
                         if (stateInfo.IsName("keepShooting"))
                         {
                             //开火
-                            if (fireFromLastTime > 0.1f)
+                            if (fireFromLastTime > intervalBetweenShot)
                             {
                                 //开火
                                 leftHandFireImpl();
@@ -309,7 +311,7 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
                         {
-                            if (fireFromLastTime > 0.1f)
+                            if (fireFromLastTime > intervalBetweenShot)
                             {
                                 //开火
                                 rightHandFireImpl();
@@ -343,7 +345,7 @@ namespace room2Battle
                         Debug.Log("fire");
                         if (stateInfo.IsName("keepShootingBack"))
                         {
-                            if (fireFromLastTime > 0.1f)
+                            if (fireFromLastTime > intervalBetweenShot)
                             {
                                 //开火
                                 rightHandFireImpl();
