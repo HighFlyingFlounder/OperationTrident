@@ -111,15 +111,19 @@ public class SpaceBattleManager : MonoBehaviour
         if (id == GameMgr.instance.id)
         {
             //找到camera，然后把该playerObj
-            camera.GetComponent<FlyerTracker>().setFollowObject(playerObj);
+            //camera.GetComponent<FlyerTracker>().setFollowObject(playerObj);
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.player;
+            stone.cam = playerObj.transform;
+            Hinder.cam = playerObj.transform;
         }
         else
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
             //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
+            playerObj.transform.Find("Camera").gameObject.SetActive(false);
             //playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
         }
+        
     }
 
     public void RecvHitRock(ProtocolBase protocol)

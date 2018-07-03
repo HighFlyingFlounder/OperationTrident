@@ -10,13 +10,13 @@ public class Hinder : MonoBehaviour
     //public GameObject stone;
     public float tumble = 1.0f;
     public float damage = -40.0f;
-    private Transform cam;
+    public static Transform cam;
 
     public void Boom()
     {
         //在陨石的位置实例化出爆炸
 
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Instantiate(explosion, transform.position, transform.rotation);
         //Instantiate(stone, transform.position, transform.rotation);
         //Instantiate(stone, transform.position + new Vector3(1f, 1f, 1f), transform.rotation);
@@ -43,14 +43,17 @@ public class Hinder : MonoBehaviour
     void Start()
     {
         GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble;
-        cam = GameObject.FindWithTag("MainCamera").transform;
+        //cam = GameObject.FindWithTag("MainCamera").transform;
     }
 
     private void FixedUpdate()
     {
-        if (transform.position.x < cam.position.x - 150f)
+        if (cam)
         {
-            transform.position += new Vector3(5000f, 0f, 0f);
+            if (transform.position.x < cam.position.x - 50f)
+            {
+                transform.position += new Vector3(1800f, 0f, 0f);
+            }
         }
     }
 
