@@ -42,12 +42,6 @@ namespace room2Battle
         //挂载相机的对象，联网可用
         protected GameObject playerCamera = null;
 
-        //protected GameObject playerMirror = null;
-
-        //挂载脚本的shader，包括dark和depth sensor
-        //[SerializeField]
-        //protected Shader shader_dark = null;
-
         //挂载相机的对象，单机可用
         [SerializeField]
         protected GameObject player;
@@ -89,13 +83,9 @@ namespace room2Battle
             playerCamera.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<becomeDark>().enabled = false;
 
-            //playerMirror.GetComponent<depthSensor>().enabled = false;
-            //playerMirror.GetComponent<becomeDark>().enabled = false;
 
             Destroy(playerCamera.GetComponent<depthSensor>());
             Destroy(playerCamera.GetComponent<becomeDark>());
-            //Destroy(playerMirror.GetComponent<depthSensor>());
-            //Destroy(playerMirror.GetComponent<becomeDark>());
 
             //@TODO: 替换成老Y的AI
             foreach (GameObject obj in enemyList)
@@ -115,14 +105,6 @@ namespace room2Battle
                 playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
             else
                 playerCamera = player.transform.Find("Camera").gameObject;
-
-            /*
-            if (playerCamera)
-            {
-                GameObject gun = playerCamera.transform.Find("Gun").gameObject;
-                playerMirror = gun.transform.Find("Mirror").gameObject;
-            }
-            */
 
             //@TODO: 替换成老Y的AI
             for (int i = 0; i < maxEnemyNum; ++i)

@@ -494,7 +494,7 @@ namespace room2Battle
                     break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 1.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-3.0f, 1.0f));
                     break;
             }
         }
