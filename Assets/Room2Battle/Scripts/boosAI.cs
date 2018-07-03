@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace room2Battle
 {
 
-    public class boosAI : MonoBehaviour
+    public class boosAI : MonoBehaviour,NetSyncInterface
     {
         public enum fireState
         {
@@ -50,10 +51,15 @@ namespace room2Battle
         //调整转向
         protected bool beginTurnAround = false;
 
+        protected GameObject[] players;
 
+        /// <summary>
+        /// 初始化函数
+        /// 初始化animator，其他玩家的信息
+        /// </summary>
         private void Start()
         {
-            animator = GetComponent<Animator>();
+            
         }
 
         void Update()
@@ -107,6 +113,7 @@ namespace room2Battle
             isShotDone = true;
         }
         */
+
 
         /// <summary>
         /// 状态机
@@ -300,6 +307,22 @@ namespace room2Battle
                     transform.Rotate(transform.up, Random.Range(-2.0f,1.0f));
                     break;
             }
+        }
+
+        public void RecvData(SyncData data)
+        {
+            
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            
         }
     }
 }
