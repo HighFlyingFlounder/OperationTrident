@@ -48,7 +48,7 @@ namespace room2Battle
         //调整转向
         protected bool beginTurnAround = false;
 
-        protected ArrayList players = new ArrayList();
+        protected GameObject player;
 
         protected NetSyncController netSyncController;
 
@@ -193,7 +193,7 @@ namespace room2Battle
                             {
                                 //随机搞
                                 //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
-                                target = transform;
+                                target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
                             }
                             //开始抬手
                             switch (choice)

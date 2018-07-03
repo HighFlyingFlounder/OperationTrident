@@ -108,7 +108,7 @@ namespace room2Battle {
                 {
                     GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
                     OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                          Camera.main,
+                          Camera.current,
                           OperationTrident.Util.
                           GUIUtil.yellowColor,
                           0.5f, 0.1f, 16);

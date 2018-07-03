@@ -23,11 +23,8 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (Camera.main)
-            {
-                Rect re = new Rect(Camera.main.pixelWidth - 100, 0, 100, 100);
-                GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
-            }
+            Rect re = new Rect(Camera.current.pixelWidth - 100, 0, 100, 100);
+            GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
         }
     }
 }

@@ -18,8 +18,6 @@ namespace room2Battle
         [SerializeField]
         protected GameObject player;
 
-        protected GameObject playerMirror;
-
         //挂载脚本的shader，包括dark和depth sensor
         [SerializeField]
         protected Shader shader_dark = null;
@@ -87,13 +85,10 @@ namespace room2Battle
             if (i == 1)
             {
                 isNear = true;
-                // player.GetComponent<becomeDark>().enabled = true;
                 m_controller.SyncVariables();
-                //m_controller.RPC(this,"method_need_to_sync",1,"string for param2");
                 //初始化
                 if (isInit)
                 {
-                    playerMirror.GetComponent<becomeDark>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = true;
                 }
             }
@@ -108,7 +103,7 @@ namespace room2Battle
         {
             GUIUtil.DisplayMissionDetailDefault(
                             missionDetails,
-                            Camera.main,
+                            Camera.current,
                             GUIUtil.yellowColor,
                             wordTransparentInterval: wordTransparentInterval,
                             wordAppearanceInterval: wordAppearanceInterval,
@@ -118,7 +113,7 @@ namespace room2Battle
             if (!isNear)
             {
                 GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
-                    Camera.main,
+                    Camera.current,
                     GUIUtil.yellowColor,
                     0.5f, 0.1f, 16);
             }
@@ -127,7 +122,7 @@ namespace room2Battle
                 //深度摄像头是否开启
                 bool open = playerCamera.GetComponent<depthSensor>().enabled;
                 GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
-                    Camera.main,
+                    Camera.current,
                     GUIUtil.yellowColor,
                     0.5f, 0.1f, 16);
                 if (!open)
@@ -136,7 +131,7 @@ namespace room2Battle
             }
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(roomPos.position, Camera.main);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(roomPos.position, Camera.current);
             // 指定颜色
             if (isShowTarget)
             {
@@ -174,17 +169,11 @@ namespace room2Battle
                 {
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
-
-                    playerMirror.GetComponent<depthSensor>().enabled = true;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
                 }
                 else
                 {
                     playerCamera.GetComponent<depthSensor>().enabled = false;
                     playerCamera.GetComponent<becomeDark>().enabled = true;
-
-                    playerMirror.GetComponent<depthSensor>().enabled = false;
-                    playerMirror.GetComponent<becomeDark>().enabled = true;
                 }
             }
 
@@ -213,22 +202,14 @@ namespace room2Battle
                 if (this.enabled)
                 {
                     if (GameMgr.instance)//联网状态
-                        playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+                        playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Head").Find("Pivot").Find("Camera").gameObject;
                     else
-                        playerCamera = player.transform.Find("Camera").gameObject;
-
-                    if (playerCamera)
-                    {
-                        GameObject gun = playerCamera.transform.Find("Gun").gameObject;
-                        playerMirror = gun.transform.Find("Mirror").gameObject;
-                    }
+                        playerCamera = player.transform.Find("Head").Find("Pivot").Find("Camera").gameObject;
 
                     playerCamera.AddComponent<becomeDark>();
                     playerCamera.AddComponent<depthSensor>();
                     playerCamera.AddComponent<RayShooter>();
 
-                    playerMirror.AddComponent<becomeDark>();
-                    playerMirror.AddComponent<depthSensor>();
                     //初始化脚本参数
                     (playerCamera.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
@@ -237,14 +218,6 @@ namespace room2Battle
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
                     (playerCamera.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
                     playerCamera.GetComponent<depthSensor>().enabled = false;
-
-                    (playerMirror.GetComponent<becomeDark>() as becomeDark).m_Shader = shader_dark;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
-
-                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_Shader = shader_depthSensor;
-                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveColorTexture = waveTexture;
-                    (playerMirror.GetComponent<depthSensor>() as depthSensor).m_WaveMaskTexture = waveMaskTexture;
-                    playerMirror.GetComponent<depthSensor>().enabled = false;
 
                     isInit = true;
                 }
