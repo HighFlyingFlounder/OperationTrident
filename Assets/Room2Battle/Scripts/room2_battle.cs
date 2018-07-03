@@ -79,7 +79,7 @@ namespace room2Battle {
                         enemyList.Add(obj);
                     }
                     //让Boss同步，以master_Client为准
-                    //AIController.instance.AddAIObject();
+                    AIController.instance.AddAIObject(boss);
                 }
             }
             else {
@@ -100,11 +100,15 @@ namespace room2Battle {
         {
             if (isTimelinePaused)
             {
-                GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                      Camera.main,
-                      OperationTrident.Util.GUIUtil.yellowColor,
-                      0.5f, 0.1f, 16);
+                if (Camera.main)
+                {
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
+                    OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                          Camera.main,
+                          OperationTrident.Util.
+                          GUIUtil.yellowColor,
+                          0.5f, 0.1f, 16);
+                }
             }
             if (!isTimelinePaused)
             {

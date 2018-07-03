@@ -80,11 +80,7 @@ namespace room2Battle
             {
                 if (GameMgr.instance.isMasterClient)
                 {
-                    //获取玩家
-                    foreach (var player in SceneNetManager.instance.list)//遍历每个玩家
-                    {
-                        players.Add(player.Value);
-                    }
+                    Debug.Log("start");
                 }
             }
         }
@@ -95,7 +91,10 @@ namespace room2Battle
             {
                 //主机才思考
                 if (GameMgr.instance.isMasterClient)
+                {
+                    Debug.Log("think");
                     mind();
+                }
                 else
                 {
                     //根据同步的bool设置动画
@@ -187,7 +186,8 @@ namespace room2Battle
                             if (GameMgr.instance)
                             {
                                 //随机搞
-                                target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
+                                //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
+                                target = transform;
                             }
                             //开始抬手
                             switch (choice)
