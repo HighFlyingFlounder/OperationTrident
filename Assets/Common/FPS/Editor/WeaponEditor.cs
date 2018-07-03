@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using OperationTrident.Weapons;
+using OperationTrident.FPS.Weapons;
 
 [CustomEditor(typeof(Weapon))]
 public class WeaponEditor : Editor {
@@ -25,7 +25,7 @@ public class WeaponEditor : Editor {
         Weapon weapon = (Weapon)target;
 
         //武器种类
-        weapon.Type = (WeaponType)EditorGUILayout.EnumPopup("Weapon Type", weapon.Type);
+        weapon.Type = (WeaponType)EditorGUILayout.EnumPopup(new GUIContent("Weapon Type", "武器射击的方式"), weapon.Type);
 
         ////绘制"3rd Party Plugin Support"折叠框
         //m_ShowPluginSupport = EditorGUILayout.Foldout(m_ShowPluginSupport, "3rd Party Plugin Support");
@@ -41,97 +41,97 @@ public class WeaponEditor : Editor {
         //}
 
         //绘制"General"折叠框
-        m_ShowGeneral = EditorGUILayout.Foldout(m_ShowGeneral, "General");
+        m_ShowGeneral = EditorGUILayout.Foldout(m_ShowGeneral, new GUIContent("General", "武器的通用参数"));
         if (m_ShowGeneral) {
-            weapon.PlayerWeapon = EditorGUILayout.Toggle("Player's Weapon", weapon.PlayerWeapon);
+            weapon.IsLocalObject = EditorGUILayout.Toggle(new GUIContent("Local Object", "当前的Object是否为本地Object，如果不是，则只接受网络同步信息"), weapon.IsLocalObject);
+            weapon.PlayerWeapon = EditorGUILayout.Toggle(new GUIContent("Player's Weapon", "是否为Player使用的武器"), weapon.PlayerWeapon);
             if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile)
-                weapon.AutoMode = (Auto)EditorGUILayout.EnumPopup("Auto Type", weapon.AutoMode);
-            weapon.WeaponModel = (GameObject)EditorGUILayout.ObjectField("Weapon Model", weapon.WeaponModel, typeof(GameObject), true);
+                weapon.AutoMode = (Auto)EditorGUILayout.EnumPopup(new GUIContent("Auto Type", "开枪模式，全自动或者半自动"), weapon.AutoMode);
+            weapon.WeaponModel = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Weapon Model", "武器模型对象"), weapon.WeaponModel, typeof(GameObject), true);
             if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Beam)
-                weapon.RaycastStartSpot = (Transform)EditorGUILayout.ObjectField("Raycasting Point", weapon.RaycastStartSpot, typeof(Transform), true);
+                weapon.RaycastStartSpot = (Transform)EditorGUILayout.ObjectField(new GUIContent("Raycasting Point", "发射的起点和方向"), weapon.RaycastStartSpot, typeof(Transform), true);
 
             //根据选择的武器类型显示不同的选项
             if (weapon.Type == WeaponType.Projectile) {
-                weapon.Projectile = (GameObject)EditorGUILayout.ObjectField("Projectile", weapon.Projectile, typeof(GameObject), false);
-                weapon.ProjectileSpawnSpot = (Transform)EditorGUILayout.ObjectField("Projectile Spawn Point", weapon.ProjectileSpawnSpot, typeof(Transform), true);
+                weapon.Projectile = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Projectile", "被射出的抛射物"), weapon.Projectile, typeof(GameObject), false);
+                weapon.ProjectileSpawnSpot = (Transform)EditorGUILayout.ObjectField(new GUIContent("Projectile Spawn Point", "抛射物射出的起始位置和方向"), weapon.ProjectileSpawnSpot, typeof(Transform), true);
             }
             if (weapon.Type == WeaponType.Beam) {
-                weapon.Reflect = EditorGUILayout.Toggle("Reflect", weapon.Reflect);
-                weapon.ReflectionMaterial = (Material)EditorGUILayout.ObjectField("Reflection Material", weapon.ReflectionMaterial, typeof(Material), false);
-                weapon.MaxReflections = EditorGUILayout.IntField("Max Reflections", weapon.MaxReflections);
-                weapon.BeamTypeName = EditorGUILayout.TextField("Beam Effect Name", weapon.BeamTypeName);
-                weapon.MaxBeamHeat = EditorGUILayout.FloatField("Max Heat", weapon.MaxBeamHeat);
-                weapon.InfiniteBeam = EditorGUILayout.Toggle("Infinite", weapon.InfiniteBeam);
-                weapon.BeamMaterial = (Material)EditorGUILayout.ObjectField("Material", weapon.BeamMaterial, typeof(Material), false);
-                weapon.BeamColor = EditorGUILayout.ColorField("Color", weapon.BeamColor);
-                weapon.StartBeamWidth = EditorGUILayout.FloatField("Start Width", weapon.StartBeamWidth);
-                weapon.EndBeamWidth = EditorGUILayout.FloatField("End Width", weapon.EndBeamWidth);
+                weapon.Reflect = EditorGUILayout.Toggle(new GUIContent("Reflect", "能否进行反射"), weapon.Reflect);
+                weapon.ReflectionMaterial = (Material)EditorGUILayout.ObjectField(new GUIContent("Reflection Material", "能反射激光的材质"), weapon.ReflectionMaterial, typeof(Material), false);
+                weapon.MaxReflections = EditorGUILayout.IntField(new GUIContent("Max Reflections", "最大反射次数"), weapon.MaxReflections);
+                weapon.BeamTypeName = EditorGUILayout.TextField(new GUIContent("Beam Effect Name", "激光名称，非必需"), weapon.BeamTypeName);
+                weapon.MaxBeamHeat = EditorGUILayout.FloatField(new GUIContent("Max Heat", "激光最长持续时间"), weapon.MaxBeamHeat);
+                weapon.InfiniteBeam = EditorGUILayout.Toggle(new GUIContent("Infinite", "能否无限发射激光"), weapon.InfiniteBeam);
+                weapon.BeamMaterial = (Material)EditorGUILayout.ObjectField(new GUIContent("Material", "激光使用的材质"), weapon.BeamMaterial, typeof(Material), false);
+                weapon.BeamColor = EditorGUILayout.ColorField(new GUIContent("Color", "激光的颜色"), weapon.BeamColor);
+                weapon.StartBeamWidth = EditorGUILayout.FloatField(new GUIContent("Start Width", "激光初始粗细"), weapon.StartBeamWidth);
+                weapon.EndBeamWidth = EditorGUILayout.FloatField(new GUIContent("End Width", "激光最终粗细"), weapon.EndBeamWidth);
             }
             if (weapon.Type == WeaponType.Beam)
-                weapon.ShowCurrentAmmo = EditorGUILayout.Toggle("Show Current Heat", weapon.ShowCurrentAmmo);
+                weapon.ShowCurrentAmmo = EditorGUILayout.Toggle(new GUIContent("Show Current Heat", ""), weapon.ShowCurrentAmmo);
 
         }
 
         //绘制"Mirror"折叠框
-        m_ShowMirror = EditorGUILayout.Foldout(m_ShowMirror, "Mirror");
+        m_ShowMirror = EditorGUILayout.Foldout(m_ShowMirror, new GUIContent("Mirror", "武器的瞄准镜参数"));
         if (m_ShowMirror) {
-            weapon.UseMirror = EditorGUILayout.Toggle("Use Mirror", weapon.UseMirror);
+            weapon.UseMirror = EditorGUILayout.Toggle(new GUIContent("Use Mirror", "是否使用瞄准镜"), weapon.UseMirror);
 
             //根据选择的武器类型显示不同的选项
             if (weapon.UseMirror) {
-                weapon.MirrorSpot = (Transform)EditorGUILayout.ObjectField("Mirror Spot", weapon.MirrorSpot, typeof(Transform), true);
-                weapon.UseMirrorCamera = EditorGUILayout.Toggle("Use Mirror Camera", weapon.UseMirrorCamera);
-
+                weapon.MirrorSpot = (Transform)EditorGUILayout.ObjectField(new GUIContent("Mirror Spot", "开镜时枪的位置和朝向"), weapon.MirrorSpot, typeof(Transform), true);
+                weapon.UseMirrorCamera = EditorGUILayout.Toggle(new GUIContent("Use Mirror Camera", "开镜时是否使用其它的Camera"), weapon.UseMirrorCamera);
+                weapon.MirrorRaycastingPoint = (Transform)EditorGUILayout.ObjectField(new GUIContent("Mirror Raycasting Point", "开镜时子弹发射的位置和方向"), weapon.MirrorRaycastingPoint, typeof(Transform), true);
 
                 if (weapon.UseMirrorCamera) {
-                    weapon.MirrorCamera = (GameObject)EditorGUILayout.ObjectField("Mirror Camera", weapon.MirrorCamera, typeof(GameObject), true);
-                    weapon.MirrorRaycastingPoint = (Transform)EditorGUILayout.ObjectField("Mirror Raycasting Point", weapon.MirrorRaycastingPoint, typeof(Transform), true);
+                    weapon.MirrorCamera = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Mirror Camera", "开镜时使用的Camera对象"), weapon.MirrorCamera, typeof(GameObject), true);
                 }
             }
         }
 
         //绘制"Power"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Beam) {
-            m_ShowPower = EditorGUILayout.Foldout(m_ShowPower, "Power");
+            m_ShowPower = EditorGUILayout.Foldout(m_ShowPower, new GUIContent("Power", "武器的威力参数"));
             if (m_ShowPower) {
                 if (weapon.Type == WeaponType.Raycast)
-                    weapon.Power = EditorGUILayout.FloatField("Power", weapon.Power);
+                    weapon.Power = EditorGUILayout.FloatField(new GUIContent("Power", "武器的伤害大小"), weapon.Power);
                 else
-                    weapon.BeamPower = EditorGUILayout.FloatField("Power", weapon.BeamPower);
+                    weapon.BeamPower = EditorGUILayout.FloatField(new GUIContent("Power", "武器的伤害大小"), weapon.BeamPower);
 
-                weapon.ForceMultiplier = EditorGUILayout.FloatField("Force Multiplier", weapon.ForceMultiplier);
-                weapon.Range = EditorGUILayout.FloatField("Range", weapon.Range);
+                weapon.ForceMultiplier = EditorGUILayout.FloatField(new GUIContent("Force Multiplier", "武器击退力的增幅系数"), weapon.ForceMultiplier);
+                weapon.Range = EditorGUILayout.FloatField(new GUIContent("Range", "武器的射击距离"), weapon.Range);
             }
         }
 
 
         //绘制"Rate Of Fire"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) {
-            m_ShowROF = EditorGUILayout.Foldout(m_ShowROF, "Rate Of Fire");
+            m_ShowROF = EditorGUILayout.Foldout(m_ShowROF, new GUIContent("Rate Of Fire", "武器的射速参数"));
             if (m_ShowROF) {
-                weapon.RateOfFire = EditorGUILayout.FloatField("Rate Of Fire", weapon.RateOfFire);
-                weapon.DelayBeforeFire = EditorGUILayout.FloatField("Delay Before Fire", weapon.DelayBeforeFire);
+                weapon.RateOfFire = EditorGUILayout.FloatField(new GUIContent("Rate Of Fire", "每秒钟开枪的次数"), weapon.RateOfFire);
+                weapon.DelayBeforeFire = EditorGUILayout.FloatField(new GUIContent("Delay Before Fire", "射击前等待的时间"), weapon.DelayBeforeFire);
   
-                weapon.BurstRate = EditorGUILayout.IntField("Burst Rate", weapon.BurstRate);
-                weapon.BurstPause = EditorGUILayout.FloatField("Burst Pause", weapon.BurstPause);
+                weapon.BurstRate = EditorGUILayout.IntField(new GUIContent("Burst Rate", "触发卡壳的子弹数"), weapon.BurstRate);
+                weapon.BurstPause = EditorGUILayout.FloatField(new GUIContent("Burst Pause", "卡壳时不能射击的时长"), weapon.BurstPause);
             }
         }
 
 
         //绘制"Ammunition"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) {
-            m_ShowAmmo = EditorGUILayout.Foldout(m_ShowAmmo, "Ammunition");
+            m_ShowAmmo = EditorGUILayout.Foldout(m_ShowAmmo, new GUIContent("Ammunition", "武器的弹药参数"));
             if (m_ShowAmmo) {
-                weapon.InfiniteAmmo = EditorGUILayout.Toggle("Infinite Ammo", weapon.InfiniteAmmo);
+                weapon.InfiniteAmmo = EditorGUILayout.Toggle(new GUIContent("Infinite Ammo", "是否能无限射击"), weapon.InfiniteAmmo);
 
                 if (!weapon.InfiniteAmmo) {
-                    weapon.TotalAmmunition = EditorGUILayout.IntField("Total Ammunition", weapon.TotalAmmunition);
-                    weapon.AmmoCapacity = EditorGUILayout.IntField("Ammo Capacity", weapon.AmmoCapacity);
-                    weapon.ReloadTime = EditorGUILayout.FloatField("Reload Time", weapon.ReloadTime);
-                    weapon.ShowCurrentAmmo = EditorGUILayout.Toggle("Show Current Ammo", weapon.ShowCurrentAmmo);
-                    weapon.ReloadAutomatically = EditorGUILayout.Toggle("Reload Automatically", weapon.ReloadAutomatically);
+                    weapon.TotalAmmunition = EditorGUILayout.IntField(new GUIContent("Total Ammunition", "背包弹药总量"), weapon.TotalAmmunition);
+                    weapon.AmmoCapacity = EditorGUILayout.IntField(new GUIContent("Ammo Capacity", "武器的弹夹容量"), weapon.AmmoCapacity);
+                    weapon.ReloadTime = EditorGUILayout.FloatField(new GUIContent("Reload Time", "更换弹夹的时间"), weapon.ReloadTime);
+                    weapon.ShowCurrentAmmo = EditorGUILayout.Toggle(new GUIContent("Show Current Ammo", "是否显示当前弹夹剩余的弹药量"), weapon.ShowCurrentAmmo);
+                    weapon.ReloadAutomatically = EditorGUILayout.Toggle(new GUIContent("Reload Automatically", "在弹药量用光时是否自动更换弹夹"), weapon.ReloadAutomatically);
                 }
-                weapon.ShotPerRound = EditorGUILayout.IntField("Shots Per Round", weapon.ShotPerRound);
+                weapon.ShotPerRound = EditorGUILayout.IntField(new GUIContent("Shots Per Round", "单次射击（弹药量减一）射出的子弹数"), weapon.ShotPerRound);
             }
         }
 
@@ -139,36 +139,37 @@ public class WeaponEditor : Editor {
 
         //绘制"Accuracy"折叠框
         if (weapon.Type == WeaponType.Raycast) {
-            m_ShowAccuracy = EditorGUILayout.Foldout(m_ShowAccuracy, "Accuracy");
+            m_ShowAccuracy = EditorGUILayout.Foldout(m_ShowAccuracy, new GUIContent("Accuracy", "武器的散射参数"));
             if (m_ShowAccuracy) {
-                weapon.Accuracy = EditorGUILayout.FloatField("Accuracy", weapon.Accuracy);
-                weapon.AccuracyDropPerShot = EditorGUILayout.FloatField("Accuracy Drop Per Shot", weapon.AccuracyDropPerShot);
-                weapon.AccuracyRecoverRate = EditorGUILayout.FloatField("Accuracy Recover Rate", weapon.AccuracyRecoverRate);
+                //weapon.Accuracy = EditorGUILayout.FloatField(new GUIContent("Accuracy", "最高射击准度"), weapon.Accuracy);
+                weapon.Accuracy = EditorGUILayout.Slider(new GUIContent("Accuracy", "最高射击准度"), weapon.Accuracy, 0f, 100f);
+                weapon.AccuracyDropPerShot = EditorGUILayout.FloatField(new GUIContent("Accuracy Drop Per Shot", "单次射击射击准度下降的幅度"), weapon.AccuracyDropPerShot);
+                weapon.AccuracyRecoverRate = EditorGUILayout.FloatField(new GUIContent("Accuracy Recover Rate", "射击后射击准度的恢复速度"), weapon.AccuracyRecoverRate);
             }
         }
 
 
         //绘制"Warmup"折叠框
         if ((weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) && weapon.AutoMode == Auto.Semi) {
-            m_ShowWarmup = EditorGUILayout.Foldout(m_ShowWarmup, "Warmup");
+            m_ShowWarmup = EditorGUILayout.Foldout(m_ShowWarmup, new GUIContent("Warmup", "武器的蓄力射击参数"));
             if (m_ShowWarmup) {
-                weapon.Warmup = EditorGUILayout.Toggle("Warmup", weapon.Warmup);
+                weapon.Warmup = EditorGUILayout.Toggle(new GUIContent("Warmup", "是否开启蓄力射击"), weapon.Warmup);
 
                 if (weapon.Warmup) {
-                    weapon.MaxWarmup = EditorGUILayout.FloatField("Max Warmup", weapon.MaxWarmup);
+                    weapon.MaxWarmup = EditorGUILayout.FloatField(new GUIContent("Max Warmup", "最长蓄力时间"), weapon.MaxWarmup);
 
                     if (weapon.Type == WeaponType.Projectile) {
-                        weapon.MultiplyForce = EditorGUILayout.Toggle("Multiply Force", weapon.MultiplyForce);
+                        weapon.MultiplyForce = EditorGUILayout.Toggle(new GUIContent("Multiply Force", "蓄力是否提高击退力"), weapon.MultiplyForce);
                         if (weapon.MultiplyForce)
-                            weapon.InitialForceMultiplier = EditorGUILayout.FloatField("Initial Force Multiplier", weapon.InitialForceMultiplier);
+                            weapon.InitialForceMultiplier = EditorGUILayout.FloatField(new GUIContent("Initial Force Multiplier", "初始击退力增幅系数"), weapon.InitialForceMultiplier);
 
-                        weapon.MultiplyPower = EditorGUILayout.Toggle("Multiply Power", weapon.MultiplyPower);
+                        weapon.MultiplyPower = EditorGUILayout.Toggle(new GUIContent("Multiply Power", "蓄力能否提高伤害"), weapon.MultiplyPower);
                         if (weapon.MultiplyPower)
-                            weapon.PowerMultiplier = EditorGUILayout.FloatField("Power Multiplier", weapon.PowerMultiplier);
+                            weapon.PowerMultiplier = EditorGUILayout.FloatField(new GUIContent("Power Multiplier", "武器伤害增幅系数"), weapon.PowerMultiplier);
                     } else {
-                        weapon.PowerMultiplier = EditorGUILayout.FloatField("Power Multiplier", weapon.PowerMultiplier);
+                        weapon.PowerMultiplier = EditorGUILayout.FloatField(new GUIContent("Power Multiplier", "武器伤害增幅系数"), weapon.PowerMultiplier);
                     }
-                    weapon.AllowCancel = EditorGUILayout.Toggle("Allow Cancel", weapon.AllowCancel);
+                    weapon.AllowCancel = EditorGUILayout.Toggle(new GUIContent("Allow Cancel", "蓄力时是否允许取消射击"), weapon.AllowCancel);
                 }
             }
         }
@@ -176,41 +177,41 @@ public class WeaponEditor : Editor {
 
         //绘制"Recoil"折叠框
         if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile) {
-            m_ShowRecoil = EditorGUILayout.Foldout(m_ShowRecoil, "Recoil");
+            m_ShowRecoil = EditorGUILayout.Foldout(m_ShowRecoil, new GUIContent("Recoil", "武器的后坐力参数"));
             if (m_ShowRecoil) {
-                weapon.UseRecoil = EditorGUILayout.Toggle("Recoil", weapon.UseRecoil);
+                weapon.UseRecoil = EditorGUILayout.Toggle(new GUIContent("Use Recoil", "是否使用后坐力"), weapon.UseRecoil);
 
                 if (weapon.UseRecoil) {
-                    weapon.RecoilKickBackMin = EditorGUILayout.FloatField("Recoil Move Min", weapon.RecoilKickBackMin);
-                    weapon.RecoilKickBackMax = EditorGUILayout.FloatField("Recoil Move Max", weapon.RecoilKickBackMax);
-                    weapon.RecoilRotationMin = EditorGUILayout.FloatField("Recoil Rotation Min", weapon.RecoilRotationMin);
-                    weapon.RecoilRotationMax = EditorGUILayout.FloatField("Recoil Rotation Max", weapon.RecoilRotationMax);
-                    weapon.RecoilMaxAngle = EditorGUILayout.FloatField("Recoil Max Angle", weapon.RecoilMaxAngle);
-                    weapon.RecoilRecoveryRate = EditorGUILayout.FloatField("Recoil Recovery Rate", weapon.RecoilRecoveryRate);
+                    weapon.RecoilKickBackMin = EditorGUILayout.FloatField(new GUIContent("Recoil Move Min", "射击时武器抖动最近距离"), weapon.RecoilKickBackMin);
+                    weapon.RecoilKickBackMax = EditorGUILayout.FloatField(new GUIContent("Recoil Move Max", "射击时武器抖动最远距离"), weapon.RecoilKickBackMax);
+                    weapon.RecoilRotationMin = EditorGUILayout.FloatField(new GUIContent("Recoil Rotation Min", "射击时武器选择的最小角度"), weapon.RecoilRotationMin);
+                    weapon.RecoilRotationMax = EditorGUILayout.FloatField(new GUIContent("Recoil Rotation Max", "射击时武器选择的最大角度"), weapon.RecoilRotationMax);
+                    weapon.RecoilMaxAngle = EditorGUILayout.FloatField(new GUIContent("Recoil Max Angle", "单次射击镜头上抬的角度"), weapon.RecoilMaxAngle);
+                    weapon.RecoilRecoveryRate = EditorGUILayout.FloatField(new GUIContent("Recoil Recovery Rate", "射击后恢复至初始位置的速度"), weapon.RecoilRecoveryRate);
                 }
             }
         }
 
 
-        //绘制"Rate Of Fire"折叠框
-        m_ShowEffects = EditorGUILayout.Foldout(m_ShowEffects, "Effects");
+        //绘制"Effects"折叠框
+        m_ShowEffects = EditorGUILayout.Foldout(m_ShowEffects, new GUIContent("Effects", "武器的特效参数"));
         if (m_ShowEffects) {
-            weapon.UseSpitShells = EditorGUILayout.Toggle("Spit Shells", weapon.UseSpitShells);
+            weapon.UseSpitShells = EditorGUILayout.Toggle(new GUIContent("Spit Shells", "射击时是否抛出弹壳"), weapon.UseSpitShells);
             if (weapon.UseSpitShells) {
-                weapon.Shell = (GameObject)EditorGUILayout.ObjectField("Shell", weapon.Shell, typeof(GameObject), false);
-                weapon.ShellSpitForce = EditorGUILayout.FloatField("Shell Spit Force", weapon.ShellSpitForce);
-                weapon.ShellForceRandom = EditorGUILayout.FloatField("Force Variant", weapon.ShellForceRandom);
-                weapon.ShellSpitTorqueX = EditorGUILayout.FloatField("X Torque", weapon.ShellSpitTorqueX);
-                weapon.ShellSpitTorqueY = EditorGUILayout.FloatField("Y Torque", weapon.ShellSpitTorqueY);
-                weapon.ShellTorqueRandom = EditorGUILayout.FloatField("Torque Variant", weapon.ShellTorqueRandom);
-                weapon.ShellSpitPosition = (Transform)EditorGUILayout.ObjectField("Shell Spit Point", weapon.ShellSpitPosition, typeof(Transform), true);
+                weapon.Shell = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Shell", "射击时是否吐出弹壳"), weapon.Shell, typeof(GameObject), false);
+                weapon.ShellSpitForce = EditorGUILayout.FloatField(new GUIContent("Shell Spit Force", "抛出弹壳的力"), weapon.ShellSpitForce);
+                weapon.ShellForceRandom = EditorGUILayout.FloatField(new GUIContent("Force Variant", "抛出弹壳的力的变化范围"), weapon.ShellForceRandom);
+                weapon.ShellSpitTorqueX = EditorGUILayout.FloatField(new GUIContent("X Torque", "弹壳抛出时在x轴上的初始旋转角度"), weapon.ShellSpitTorqueX);
+                weapon.ShellSpitTorqueY = EditorGUILayout.FloatField(new GUIContent("Y Torque", "弹壳抛出时在y轴上的初始旋转角度"), weapon.ShellSpitTorqueY);
+                weapon.ShellTorqueRandom = EditorGUILayout.FloatField(new GUIContent("Torque Variant", "弹壳抛出时旋转角度的变化范围"), weapon.ShellTorqueRandom);
+                weapon.ShellSpitPosition = (Transform)EditorGUILayout.ObjectField(new GUIContent("Shell Spit Point", "弹壳抛出时旋转角度的变化范围"), weapon.ShellSpitPosition, typeof(Transform), true);
             }
 
             //枪口特效
             EditorGUILayout.Separator();
-            weapon.MakeMuzzleEffects = EditorGUILayout.Toggle("Muzzle Effects", weapon.MakeMuzzleEffects);
+            weapon.MakeMuzzleEffects = EditorGUILayout.Toggle(new GUIContent("Muzzle Effects", "是否使用枪口火光特效"), weapon.MakeMuzzleEffects);
             if (weapon.MakeMuzzleEffects) {
-                weapon.MuzzleEffectsPosition = (Transform)EditorGUILayout.ObjectField("Muzzle FX Spawn Point", weapon.MuzzleEffectsPosition, typeof(Transform), true);
+                weapon.MuzzleEffectsPosition = (Transform)EditorGUILayout.ObjectField(new GUIContent("Muzzle FX Spawn Point", "枪口火光特效产生的位置"), weapon.MuzzleEffectsPosition, typeof(Transform), true);
 
                 if (GUILayout.Button("Add")) {
                     List<GameObject> temp = new List<GameObject>(weapon.MuzzleEffects);
@@ -220,7 +221,7 @@ public class WeaponEditor : Editor {
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < weapon.MuzzleEffects.Length; i++) {
                     EditorGUILayout.BeginHorizontal();
-                    weapon.MuzzleEffects[i] = (GameObject)EditorGUILayout.ObjectField("Muzzle FX Prefabs", weapon.MuzzleEffects[i], typeof(GameObject), false);
+                    weapon.MuzzleEffects[i] = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Muzzle FX Prefabs", "枪口火光特效对象"), weapon.MuzzleEffects[i], typeof(GameObject), false);
                     if (GUILayout.Button("Remove")) {
                         List<GameObject> temp = new List<GameObject>(weapon.MuzzleEffects);
                         temp.Remove(temp[i]);
@@ -234,7 +235,7 @@ public class WeaponEditor : Editor {
             //击中特效
             if (weapon.Type != WeaponType.Projectile) {
                 EditorGUILayout.Separator();
-                weapon.MakeHitEffects = EditorGUILayout.Toggle("Hit Effects", weapon.MakeHitEffects);
+                weapon.MakeHitEffects = EditorGUILayout.Toggle(new GUIContent("Hit Effects", "子弹打中物体时是否产生特效"), weapon.MakeHitEffects);
                 if (weapon.MakeHitEffects) {
                     if (GUILayout.Button("Add")) {
                         List<GameObject> temp = new List<GameObject>(weapon.HitEffects);
@@ -244,7 +245,7 @@ public class WeaponEditor : Editor {
                     EditorGUI.indentLevel++;
                     for (int i = 0; i < weapon.HitEffects.Length; i++) {
                         EditorGUILayout.BeginHorizontal();
-                        weapon.HitEffects[i] = (GameObject)EditorGUILayout.ObjectField("Hit FX Prefabs", weapon.HitEffects[i], typeof(GameObject), false);
+                        weapon.HitEffects[i] = (GameObject)EditorGUILayout.ObjectField(new GUIContent("Hit FX Prefabs", "子弹打中时产生的特效"), weapon.HitEffects[i], typeof(GameObject), false);
                         if (GUILayout.Button("Remove")) {
                             List<GameObject> temp = new List<GameObject>(weapon.HitEffects);
                             temp.Remove(temp[i]);
@@ -258,15 +259,15 @@ public class WeaponEditor : Editor {
         }
 
 
-        //绘制"Rate Of Fire"折叠框
+        //绘制"Bullet Holes"折叠框
         if (weapon.Type == WeaponType.Raycast) {
-            m_ShowBulletHoles = EditorGUILayout.Foldout(m_ShowBulletHoles, "Bullet Holes");
+            m_ShowBulletHoles = EditorGUILayout.Foldout(m_ShowBulletHoles, new GUIContent("Bullet Holes", "武器的弹孔参数"));
             if (m_ShowBulletHoles) {
 
-                weapon.MakeBulletHoles = EditorGUILayout.Toggle("Bullet Holes", weapon.MakeBulletHoles);
+                weapon.MakeBulletHoles = EditorGUILayout.Toggle(new GUIContent("Bullet Holes", "是否产生弹孔"), weapon.MakeBulletHoles);
 
                 if (weapon.MakeBulletHoles) {
-                    weapon.BHSystem = (BulletHoleSystem)EditorGUILayout.EnumPopup("Determined By", weapon.BHSystem);
+                    weapon.BHSystem = (BulletHoleSystem)EditorGUILayout.EnumPopup(new GUIContent("Determined By", "产生弹孔的条件"), weapon.BHSystem);
 
                     if (GUILayout.Button("Add")) {
                         weapon.BulletHoleGroups.Add(new SmartBulletHoleGroup());
@@ -301,7 +302,7 @@ public class WeaponEditor : Editor {
 
                     //绘制标题"Default Bullet Holes"
                     EditorGUILayout.Separator();
-                    EditorGUILayout.LabelField("Default Bullet Holes");
+                    EditorGUILayout.LabelField(new GUIContent("Default Bullet Holes", "默认弹孔"));
 
                     //绘制添加按钮
                     if (GUILayout.Button("Add")) {
@@ -325,7 +326,7 @@ public class WeaponEditor : Editor {
 
                     //绘制标题"Exceptions"
                     EditorGUILayout.Separator();
-                    EditorGUILayout.LabelField("Exceptions");
+                    EditorGUILayout.LabelField(new GUIContent("Exceptions", "不产生弹孔的条件"));
 
                     if (GUILayout.Button("Add")) {
                         weapon.BulletHoleExceptions.Add(new SmartBulletHoleGroup());
@@ -354,7 +355,7 @@ public class WeaponEditor : Editor {
                     EditorGUILayout.EndVertical();
 
                     if (weapon.BulletHoleGroups.Count > 0) {
-                        EditorGUILayout.HelpBox("Assign bullet hole prefabs corresponding with tags, materials, or physic materials.  If you assign multiple bullet holes to the same parameter, one of them will be chosen at random.  The default bullet hole will be used when something is hit that doesn't match any of the other parameters.  The exceptions define parameters for which no bullet holes will be instantiated.", MessageType.None);
+                        EditorGUILayout.HelpBox("设置弹孔参数时，首选选择弹孔产生的条件，然后点击Add按钮，创建一个弹孔产生条件，其中第一个参数为触发弹孔产生的条件（如果选择Tag（Material、PhysicalMaterial），那么则是能产生弹孔的GameObject对应的TagTag（Material、PhysicalMaterial）），第二个参数为相应的弹孔池对象名（一个弹孔池有很多相同类型的弹孔子对象）。当打中的物体不满足任何一个已创建的条件时，并且也不满足不产生弹孔的条件时，将会产生默认弹孔，点击Add按钮，然后输入默认弹孔池对象名即可设置默认弹孔。Exceptions（不产生弹孔的条件）设置和产生弹孔的条件一样。", MessageType.None);
                     }
                 }
 
@@ -363,24 +364,24 @@ public class WeaponEditor : Editor {
 
 
         //绘制"Crosshairs"折叠框
-        m_ShowCrosshairs = EditorGUILayout.Foldout(m_ShowCrosshairs, "Crosshairs");
+        m_ShowCrosshairs = EditorGUILayout.Foldout(m_ShowCrosshairs, new GUIContent("Crosshairs", "武器的准星参数"));
         if (m_ShowCrosshairs) {
-            weapon.ShowCrosshair = EditorGUILayout.Toggle("Show Crosshairs", weapon.ShowCrosshair);
+            weapon.ShowCrosshair = EditorGUILayout.Toggle(new GUIContent("Show Crosshairs", "是否绘制准星"), weapon.ShowCrosshair);
             if (weapon.ShowCrosshair) {
-                weapon.CrosshairTexture = (Texture2D)EditorGUILayout.ObjectField("Crosshair Texture", weapon.CrosshairTexture, typeof(Texture2D), false);
-                weapon.CrosshairLength = EditorGUILayout.IntField("Crosshair Length", weapon.CrosshairLength);
-                weapon.CrosshairWidth = EditorGUILayout.IntField("Crosshair Width", weapon.CrosshairWidth);
-                weapon.StartingCrosshairSize = EditorGUILayout.FloatField("Start Crosshair Size", weapon.StartingCrosshairSize);
+                weapon.CrosshairTexture = (Texture2D)EditorGUILayout.ObjectField(new GUIContent("Crosshair Texture", "用于绘制准星的贴图"), weapon.CrosshairTexture, typeof(Texture2D), false);
+                weapon.CrosshairLength = EditorGUILayout.IntField(new GUIContent("Crosshair Length", "准星的长度"), weapon.CrosshairLength);
+                weapon.CrosshairWidth = EditorGUILayout.IntField(new GUIContent("Crosshair Width", "准星的宽度"), weapon.CrosshairWidth);
+                weapon.StartingCrosshairSize = EditorGUILayout.FloatField(new GUIContent("Start Crosshair Size", "准星的初始大小"), weapon.StartingCrosshairSize);
             }
         }
 
 
         //绘制"Audio"折叠框
-        m_ShowAudio = EditorGUILayout.Foldout(m_ShowAudio, "Audio");
+        m_ShowAudio = EditorGUILayout.Foldout(m_ShowAudio, new GUIContent("Audio", "武器的音效设置"));
         if (m_ShowAudio) {
-            weapon.FireSound = (AudioClip)EditorGUILayout.ObjectField("Fire", weapon.FireSound, typeof(AudioClip), false);
-            weapon.ReloadSound = (AudioClip)EditorGUILayout.ObjectField("Reload", weapon.ReloadSound, typeof(AudioClip), false);
-            weapon.DryFireSound = (AudioClip)EditorGUILayout.ObjectField("Out of Ammo", weapon.DryFireSound, typeof(AudioClip), false);
+            weapon.FireSound = (AudioClip)EditorGUILayout.ObjectField(new GUIContent("Fire", "射击音效"), weapon.FireSound, typeof(AudioClip), false);
+            weapon.ReloadSound = (AudioClip)EditorGUILayout.ObjectField(new GUIContent("Reload", "补充弹药音效"), weapon.ReloadSound, typeof(AudioClip), false);
+            weapon.DryFireSound = (AudioClip)EditorGUILayout.ObjectField(new GUIContent("Out of Ammo", "弹夹没有弹药时射击的音效"), weapon.DryFireSound, typeof(AudioClip), false);
         }
 
 

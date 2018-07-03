@@ -8,11 +8,12 @@ namespace OperationTrident.Common.AI
     {
 		public ScriptableObject AIFSMAsset = null;
         protected AIState.InitParamsBase _initParams;
+        protected AIFSM FSM = new AIFSM();
 
-		AIFSM FSM {
+		AIFSMData FSMData {
 			get {
 				if(AIFSMAsset != null)
-					return AIFSMAsset as AIFSM;
+					return AIFSMAsset as AIFSMData;
                 Debug.Log("没有设置AIFSM");
                 throw new System.NotImplementedException();
 			}
@@ -21,6 +22,7 @@ namespace OperationTrident.Common.AI
         // Use this for initialization
         protected void Start()
         {
+            FSM.FSMData = FSMData;
 			FSM.Init(this.gameObject, _initParams);
         }
 
