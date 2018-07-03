@@ -159,15 +159,6 @@ namespace room2Battle
                 }
             }
 
-            //@TODO: 替换成老Y的AI
-            for (int i = 0; i < enemyList.Count; ++i)
-            {
-                if (enemyList[i] == null)
-                {
-                    enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                    break;
-                }
-            }
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2;
 
@@ -211,9 +202,6 @@ namespace room2Battle
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
 
-                    //playerMirror.GetComponent<depthSensor>().enabled = true;
-                    //playerMirror.GetComponent<becomeDark>().enabled = false;
-
                     isOpenDepthSensor = true;
                 }
                 else
@@ -221,10 +209,8 @@ namespace room2Battle
                     if (!isSwitchOpen)
                     {
                         playerCamera.GetComponent<becomeDark>().enabled = true;
-                        //playerMirror.GetComponent<becomeDark>().enabled = true;
                     }
                     playerCamera.GetComponent<depthSensor>().enabled = false;
-                    //playerMirror.GetComponent<depthSensor>().enabled = false;
                     isOpenDepthSensor = false;
                 }
             }
@@ -232,7 +218,6 @@ namespace room2Battle
             if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;
-                //playerMirror.GetComponent<becomeDark>().enabled = false;
             }
 
         }

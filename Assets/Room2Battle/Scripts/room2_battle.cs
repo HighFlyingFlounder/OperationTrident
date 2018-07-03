@@ -77,26 +77,10 @@ namespace room2Battle {
                 if (director.state != UnityEngine.Playables.PlayState.Playing)
                 {
                     isTimelinePaused = true;
-                    //播放完动画在生成敌人
-                    for (int i = 0; i < maxEnemyNum; ++i)
-                    {
-                        GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        enemyList.Add(obj);
-                    }
-                    //让Boss同步，以master_Client为准    
                 }
             }
             else {
                 nextScene_.SetActive(true);
-                //补充敌人
-                for (int i = 0; i < enemyList.Count; ++i)
-                {
-                    if (enemyList[i] == null)
-                    {
-                        enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        break;
-                    }
-                }
             }
         }
 
