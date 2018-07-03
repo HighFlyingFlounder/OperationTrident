@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     public class Explosion : MonoBehaviour {
         //public bool shooterAISupport = false; 
         //public bool bloodyMessSupport = false;

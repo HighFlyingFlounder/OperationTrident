@@ -4,8 +4,12 @@ using UnityEngine;
 
 namespace OperationTrident.Room1
 {
-    public class ReactiveTarget : MonoBehaviour
+    public class ReactiveTarget : MonoBehaviour,NetSyncInterface
     {
+        NetSyncController m_NetSyncController;
+        //  血量
+        public int health = 5;
+
         // 是否死亡
         private bool dead;
 
@@ -29,20 +33,54 @@ namespace OperationTrident.Room1
 
         }
 
-        public void ReactToHit()
+        public void OnHit(string id,int damage)
         {
-            if (!dead)
+            //被射击打中的动画效果
+
+            //
+            if(GameMgr.instance==null) HitImplement(damage);
+            else if (GameMgr.instance.id == id)
             {
-                dead = true;
-                StartCoroutine(Die());
+                HitImplement(damage);
+                m_NetSyncController.RPC(this, "HitImplement", damage);
+            }
+        }
+
+        public void HitImplement(int damage)
+        {
+            health -= damage;
+            Debug.Log(health);
+            if (health <= 0)
+            {
+                if (!dead)
+                {
+                    dead = true;
+                    AIController.instance.DestroyAI(gameObject.name);
+                    StartCoroutine(Die());
+                }
             }
         }
 
         private IEnumerator Die()
         {
-            this.transform.Rotate(-75, 0, 0);
+            transform.Rotate(-75, 0, 0);
             yield return new WaitForSeconds(1.5f);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+        }
+
+        public void RecvData(SyncData data)
+        {
+        }
+
+        public SyncData SendData()
+        {
+            SyncData data = new SyncData();
+            return data;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            m_NetSyncController = controller;
         }
     }
 }

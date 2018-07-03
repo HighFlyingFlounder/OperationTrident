@@ -130,7 +130,7 @@ namespace OperationTrident.Room1
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
                     Camera.main,
-                    GUIUtil.brightGreenColor,
+                    GUIUtil.FadeAColor(GUIUtil.yellowColor,10.0f),
                     interval: appearInterval,
                     blingInterval:blingInterval,
                     fontSize: 16,
@@ -138,7 +138,7 @@ namespace OperationTrident.Room1
             }
 
 
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.brightPurpleColor,60.0f));
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
             // 指定颜色
             if (toDisplayTheMissionPoint)
