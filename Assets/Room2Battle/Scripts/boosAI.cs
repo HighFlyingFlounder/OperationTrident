@@ -30,9 +30,6 @@ namespace room2Battle
         protected missilLauncher[] pos;
 
         [SerializeField]
-        protected Transform target;
-
-        [SerializeField]
         protected float radius = 5.0f;
 
         protected Animator animator;
@@ -51,7 +48,25 @@ namespace room2Battle
         //调整转向
         protected bool beginTurnAround = false;
 
-        protected GameObject[] players;
+        protected ArrayList players = new ArrayList();
+
+        protected NetSyncController netSyncController;
+
+
+        //==================================================
+        //=====================     需要同步的状态量 =======
+        //==================================================
+        //目标位置
+        [SerializeField]
+        protected Transform target;
+
+        //动画状态相关bool值
+        protected bool shoot = false;
+        protected bool handup = false;
+        protected bool rightHandup = false;
+        protected bool shootAgain = false;
+        protected bool stopFire = false;
+        protected bool missilLaunch = false;
 
         /// <summary>
         /// 初始化函数
@@ -59,20 +74,42 @@ namespace room2Battle
         /// </summary>
         private void Start()
         {
-            
-        }
+            animator = GetComponent<Animator>();
 
-        void Update()
-        {
             if (GameMgr.instance)//联机状态
             {
                 if (GameMgr.instance.isMasterClient)
                 {
-                    foreach(var player in SceneNetManager.instance.list)//遍历每个玩家
+                    //获取玩家
+                    foreach (var player in SceneNetManager.instance.list)//遍历每个玩家
                     {
-
+                        players.Add(player.Value);
                     }
                 }
+            }
+        }
+
+        void Update()
+        {
+            if (GameMgr.instance)
+            {
+                //主机才思考
+                if (GameMgr.instance.isMasterClient)
+                    mind();
+                else
+                {
+                    //根据同步的bool设置动画
+                    animator.SetBool("shoot", shoot);
+                    animator.SetBool("handup", handup);
+                    animator.SetBool("rightHandup", rightHandup);
+                    animator.SetBool("shootAgain", shootAgain);
+                    animator.SetBool("StopFire", stopFire);
+                    animator.SetBool("missileLaunch", missilLaunch);
+                }
+            }
+            else // 离线
+            {
+                mind();
             }
 
         }
@@ -124,6 +161,7 @@ namespace room2Battle
         */
 
 
+
         /// <summary>
         /// 状态机
         /// </summary>
@@ -139,13 +177,18 @@ namespace room2Battle
                     {
                         animator.SetBool("StopFire", false);
 
-                        if (thinkTime < 4.0f)
+                        if (thinkTime < 2.0f)
                         {
                             thinkTime += Time.deltaTime;
                         }
                         else
                         {
-                            int choice = (int)Random.Range(0, 3);
+                            int choice = (int)UnityEngine.Random.Range(0, 3);
+                            if (GameMgr.instance)
+                            {
+                                //随机搞
+                                target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
+                            }
                             //开始抬手
                             switch (choice)
                             {
@@ -156,16 +199,25 @@ namespace room2Battle
                                     break;
                                 case 1:
                                     {
+                                        //转移到下一个状态
                                         currentState = fireState.OpenFire;
+                                        //同步
+                                        handup = true;
                                         animator.SetBool("handup", true);
+                                        netSyncController.SyncVariables();
+                                        //充值思考时间
                                         thinkTime = 0.0f;
-
                                     }
                                     break;
                                 case 2:
                                     {
+                                        //转移到下一个状态
                                         currentState = fireState.MissileLaunch;
+                                        //同步
                                         animator.SetBool("missileLaunch", true);
+                                        missilLaunch = true;
+                                        netSyncController.SyncVariables();
+                                        //充值思考时间
                                         thinkTime = 0.0f;
                                     }
                                     break;
@@ -179,12 +231,20 @@ namespace room2Battle
                         //切换完毕了
                         if (stateInfo.IsName("shoot"))
                         {
-                            Instantiate(Missiles[0], leftHand.position, transform.rotation);
                             //开火
+                            leftHandFireImpl();
+                            netSyncController.RPC(this, "leftHandFireImpl");
+                            //动画状态转移，同步
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("handup", false);
                                 animator.SetBool("shoot", true);
+
+                                handup = false;
+                                shoot = true;
+
+                                netSyncController.SyncVariables();
+                                //转移状态
                                 currentState = fireState.KeepFire;
                             }
                         }
@@ -192,15 +252,23 @@ namespace room2Battle
                     break;
                 //抬手到播完再换手
                 case fireState.KeepFire:
-                    {
-                        Instantiate(Missiles[0], leftHand.position, transform.rotation);
+                    { 
                         if (stateInfo.IsName("keepShooting"))
                         {
+                            //开火
+                            leftHandFireImpl();
+                            netSyncController.RPC(this, "leftHandFireImpl");
                             //直到开火完毕，抬起另一只手
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("rightHandup", true);
                                 animator.SetBool("shoot", false);
+
+                                rightHandup = true;
+                                shoot = false;
+                                //同步
+                                netSyncController.SyncVariables();
+                                //下一个状态
                                 currentState = fireState.RightFire;
                             }
                         }
@@ -209,16 +277,23 @@ namespace room2Battle
                 //另一只手抬起完成
                 case fireState.RightFire:
                     {
-                        Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
                         {
+                            rightHandFireImpl();
+                            netSyncController.RPC(this, "leftHandFireImpl");
                             //开火
                             Debug.Log("fire");
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("rightHandup", false);
                                 animator.SetBool("shootAgain", true);
+
+                                rightHandup = false;
+                                shoot = true;
+                                //同步
+                                netSyncController.SyncVariables();
+                                //下一个状态
                                 currentState = fireState.KeepFireAgain;
                             }
                         }
@@ -226,16 +301,21 @@ namespace room2Battle
                     break;
                 case fireState.KeepFireAgain:
                     {
-                        //开火
-                        Debug.Log("right fire");
-                        Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         if (stateInfo.IsName("keepShootingBack"))
                         {
+                            rightHandFireImpl();
+                            netSyncController.RPC(this, "leftHandFireImpl");
                             //直到开火完毕
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("StopFire", true);
                                 animator.SetBool("shootAgain", false);
+
+                                stopFire = true;
+                                shoot = false;
+                                //同步
+                                netSyncController.SyncVariables();
+
                                 currentState = fireState.StopFire;
                             }
                         }
@@ -261,11 +341,14 @@ namespace room2Battle
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("missileLaunch", false);
-                                foreach (missilLauncher a in pos)
-                                {
-                                    a.SetTargetPostion(target);
-                                    a.launch();
-                                }
+
+                                missilLaunch = false;
+                                //同步
+                                netSyncController.SyncVariables();
+
+                                missileLaunchImpl(target.position);
+                                netSyncController.RPC(this, "missileLaunchImpl",target.position);
+
                                 currentState = fireState.Idle;
                             }
                         }
@@ -274,6 +357,28 @@ namespace room2Battle
                 default:
                     return;
             }
+        }
+
+        void missileLaunchImpl(Vector3 positon)
+        {
+            foreach (missilLauncher a in pos)
+            {
+                a.SetTargetPostion(positon);
+                a.launch();
+            }
+        }
+
+        /// <summary>
+        /// 开枪
+        /// </summary>
+        void leftHandFireImpl()
+        {
+            Instantiate(Missiles[0], leftHand.position, transform.rotation);
+        }
+
+        void rightHandFireImpl()
+        {
+            Instantiate(Missiles[0], rightHand.position, transform.rotation);
         }
 
         //转向玩家
@@ -303,35 +408,68 @@ namespace room2Battle
             beginTurnAround = false;
         }
 
+        /// <summary>
+        /// 动画时改变位置
+        /// </summary>
         void OnAnimatorMove()
+        {
+            //主机移动，别人同步
+            if (GameMgr.instance)
+            {
+                if (GameMgr.instance.isMasterClient)
+                {
+                    randomTurnImpl();
+                }
+            }
+            else
+            {
+                randomTurnImpl();
+            }
+        }
+
+        /// <summary>
+        /// 扫射时随机转动
+        /// </summary>
+        void randomTurnImpl()
         {
             switch (currentState)
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, Random.Range(-1.0f, 2.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-1.0f, 2.0f));
                     break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, Random.Range(-2.0f,1.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 1.0f));
                     break;
             }
         }
 
         public void RecvData(SyncData data)
         {
-            
+            shoot = (bool)data.Get(typeof(bool));
+            handup = (bool)data.Get(typeof(bool));
+            rightHandup = (bool)data.Get(typeof(bool));
+            shootAgain = (bool)data.Get(typeof(bool));
+            stopFire = (bool)data.Get(typeof(bool));
+            missilLaunch = (bool)data.Get(typeof(bool));
         }
 
         public SyncData SendData()
         {
             SyncData data = new SyncData();
+            data.Add(shoot);
+            data.Add(handup);
+            data.Add(rightHandup);
+            data.Add(shootAgain);
+            data.Add(stopFire);
+            data.Add(missilLaunch);
             return data;
         }
 
         public void Init(NetSyncController controller)
         {
-            
+            netSyncController = controller;
         }
     }
 }
