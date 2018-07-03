@@ -58,6 +58,61 @@ namespace room2Battle
 
         void Update()
         {
+            
+
+        }
+        /*
+        /// <summary>
+        /// 使用携程隔一段时间发一枚导弹
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator shotTogether()
+        {
+            isShotDone = false;
+            float r = radius;
+            for (int j = 0; j < 3; ++j)
+            {
+                r += 3;
+                for (int i = 0; i < pos.Length; ++i)
+                {
+                    Vector3 pos_ = target.position;
+                    pos_.x += Random.Range(-r, r);
+                    pos_.y += Random.Range(-r, r);
+
+                    //Quaternion targetRotation = Quaternion.LookRotation(target.position - pos[i].position);
+
+
+                    //pos[i].rotation = targetRotation;
+                    Transform p = pos[i];   
+                    p.LookAt(pos_);
+
+                    Vector3 vec = new Vector3(p.eulerAngles.x, p.eulerAngles.y, p.eulerAngles.z);
+                    Quaternion ro = p.rotation;
+
+                    p.eulerAngles = new Vector3(-90,p.eulerAngles.y,0);
+
+                    Transform t = pos[i].Find("Rocket launcher");
+
+                    t.LookAt(pos_, t.up);
+                    t.localEulerAngles = new Vector3(t.localEulerAngles.x+90, t.localEulerAngles.y, t.localEulerAngles.z);
+
+
+
+                    Instantiate(Missiles[Random.Range(0, Missiles.Length)], p.position,ro);
+
+
+                    yield return new WaitForSeconds(Random.Range(1.0f,2.0f));
+                }
+            }
+            isShotDone = true;
+        }
+        */
+
+        /// <summary>
+        /// 状态机
+        /// </summary>
+        void mind()
+        {
             AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
@@ -141,7 +196,7 @@ namespace room2Battle
                         Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         //切换完毕了
                         if (stateInfo.IsName("shootback"))
-                        {         
+                        {
                             //开火
                             Debug.Log("fire");
                             if (stateInfo.normalizedTime >= 0.8f)
@@ -159,7 +214,7 @@ namespace room2Battle
                         Debug.Log("right fire");
                         Instantiate(Missiles[0], rightHand.position, transform.rotation);
                         if (stateInfo.IsName("keepShootingBack"))
-                        {   
+                        {
                             //直到开火完毕
                             if (stateInfo.normalizedTime >= 0.8f)
                             {
@@ -172,7 +227,7 @@ namespace room2Battle
                     break;
                 case fireState.StopFire:
                     {
-                        if (stateInfo.IsName("keepShootingBack"))
+                        if (stateInfo.IsName("idle"))
                         {
                             Debug.Log("end of fire");
                             if (!beginTurnAround)
@@ -187,7 +242,7 @@ namespace room2Battle
                     {
                         if (stateInfo.IsName("missileLaunch"))
                         {
-                            if (stateInfo.normalizedTime >= 1.0f)
+                            if (stateInfo.normalizedTime >= 0.8f)
                             {
                                 animator.SetBool("missileLaunch", false);
                                 foreach (missilLauncher a in pos)
@@ -203,55 +258,9 @@ namespace room2Battle
                 default:
                     return;
             }
-
         }
-        /*
-        /// <summary>
-        /// 使用携程隔一段时间发一枚导弹
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator shotTogether()
-        {
-            isShotDone = false;
-            float r = radius;
-            for (int j = 0; j < 3; ++j)
-            {
-                r += 3;
-                for (int i = 0; i < pos.Length; ++i)
-                {
-                    Vector3 pos_ = target.position;
-                    pos_.x += Random.Range(-r, r);
-                    pos_.y += Random.Range(-r, r);
 
-                    //Quaternion targetRotation = Quaternion.LookRotation(target.position - pos[i].position);
-
-
-                    //pos[i].rotation = targetRotation;
-                    Transform p = pos[i];   
-                    p.LookAt(pos_);
-
-                    Vector3 vec = new Vector3(p.eulerAngles.x, p.eulerAngles.y, p.eulerAngles.z);
-                    Quaternion ro = p.rotation;
-
-                    p.eulerAngles = new Vector3(-90,p.eulerAngles.y,0);
-
-                    Transform t = pos[i].Find("Rocket launcher");
-
-                    t.LookAt(pos_, t.up);
-                    t.localEulerAngles = new Vector3(t.localEulerAngles.x+90, t.localEulerAngles.y, t.localEulerAngles.z);
-
-
-
-                    Instantiate(Missiles[Random.Range(0, Missiles.Length)], p.position,ro);
-
-
-                    yield return new WaitForSeconds(Random.Range(1.0f,2.0f));
-                }
-            }
-            isShotDone = true;
-        }
-        */
-
+        //转向玩家
         IEnumerator turnAround()
         {
             beginTurnAround = true;
@@ -284,11 +293,11 @@ namespace room2Battle
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, 1.0f);
+                    transform.Rotate(transform.up, Random.Range(-1.0f, 2.0f));
                     break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, -1.0f);
+                    transform.Rotate(transform.up, Random.Range(-2.0f,1.0f));
                     break;
             }
         }
