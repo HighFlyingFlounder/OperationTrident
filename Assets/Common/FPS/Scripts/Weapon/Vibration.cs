@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     public class Vibration : MonoBehaviour {
         //是否在初始化的时候震动
         public bool VibrateOnAwake = true;
@@ -34,7 +34,7 @@ namespace OperationTrident.Weapons {
         //震动开始前的初始朝向
         private Quaternion m_OriginalLocalRotation;
 
-        void Awake() {
+        void Start() {
             //初始化位置和朝向
             m_OriginalLocalPosition = transform.localPosition;
             m_OriginalLocalRotation = transform.localRotation;

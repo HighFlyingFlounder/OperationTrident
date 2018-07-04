@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace OperationTrident.Weapons {
+namespace OperationTrident.FPS.Weapons {
     public enum ProjectileType {
         Standard,
         //追踪特定Tag的物体

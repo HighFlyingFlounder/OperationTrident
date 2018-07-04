@@ -189,6 +189,9 @@ namespace OperationTrident.Room1
             door2 = Instantiate(DoorPrefab) as GameObject;
             door2.transform.localPosition = Door2Position;
             door2.transform.localScale = new Vector3(3.8f, 5.0f, 0.2f);
+
+            //生成AI
+            AIController.instance.CreateAI(2,0, "AIborn1");
         }
 
         private void OnKeyGot(int id)
@@ -312,7 +315,7 @@ namespace OperationTrident.Room1
         {
             GUIUtil.DisplaySubtitlesInGivenGrammar(
                 subtitlesToDisplay,
-                Camera.main,
+                Camera.current,
                 fontSize: 16,
                 subtitleRatioHeight: 0.9f,
                 secondOfEachWord: 0.2f,
