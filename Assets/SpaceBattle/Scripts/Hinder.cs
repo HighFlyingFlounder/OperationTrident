@@ -10,12 +10,13 @@ public class Hinder : MonoBehaviour
     //public GameObject stone;
     public float tumble = 1.0f;
     public float damage = -40.0f;
+    public static Transform cam;
 
     public void Boom()
     {
         //在陨石的位置实例化出爆炸
 
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         Instantiate(explosion, transform.position, transform.rotation);
         //Instantiate(stone, transform.position, transform.rotation);
         //Instantiate(stone, transform.position + new Vector3(1f, 1f, 1f), transform.rotation);
@@ -42,12 +43,24 @@ public class Hinder : MonoBehaviour
     void Start()
     {
         GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble;
+        //cam = GameObject.FindWithTag("MainCamera").transform;
     }
 
-    void OnCollisionEnter(Collision other)
+    private void FixedUpdate()
+    {
+        if (cam)
+        {
+            if (transform.position.x < cam.position.x - 50f)
+            {
+                transform.position += new Vector3(1800f, 0f, 0f);
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
     {
         //只有本地玩家才会触发撞击事件并发送协议，其他玩家在本地玩家客户端是不会触发这些事件的。
-        if (other.collider.tag == "Player" && other.collider.transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
+        if (other.tag == "Player" && other.transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             SendHitRock();
             Boom();

@@ -15,7 +15,7 @@ public class End : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" && other.gameObject.transform.parent.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
+        if (other.gameObject.tag == "Player" && other.gameObject.transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
             if (!arrived)
             {
