@@ -137,5 +137,14 @@ namespace OperationTrident.Common.AI
         {
             Camera.InitCamera(CameraHorizontalFOV, CameraVerticalFOV, CameraSightDistance);
         }
+
+        private new void Update()
+        {
+            if(!ReactiveTarget.IsAlive){
+                PathfindingAgent.enabled = false;
+            }
+            
+            base.Update();
+        }
     }
 }

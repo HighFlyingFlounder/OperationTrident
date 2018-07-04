@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OperationTrident.Common.AI
 {
-    public class AIActionController : MonoBehaviour
+    public abstract class AIActionController : MonoBehaviour
     {
         public virtual void Move(bool isStart) { }
 
@@ -15,5 +15,7 @@ namespace OperationTrident.Common.AI
         public virtual void Shoot(Vector3 shootingPoint) { }
 
         public virtual void LookAt(Vector3 interestPoint) { }
+
+        public abstract IEnumerator Destroy();
     }
 }

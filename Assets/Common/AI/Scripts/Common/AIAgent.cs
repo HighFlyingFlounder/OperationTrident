@@ -9,10 +9,12 @@ namespace OperationTrident.Common.AI
     {
         public ScriptableObject AIFSMAsset = null;
         public AIActionController ActionController = null;
+        public Component AIReactiveTarget = null;
 
         protected AIFSM FSM = new AIFSM();
         Transform _target;
         Vector3 _targetPosition;
+        bool _isDestory = false;
 
         public virtual Vector3[] PatrolLocations { get; set; }
         public virtual NavMeshAgent PathfindingAgent { get; set; }
@@ -60,6 +62,14 @@ namespace OperationTrident.Common.AI
             }
         }
 
+        public AIReacitiveInterface ReactiveTarget
+        {
+            get
+            {
+                return AIReactiveTarget as AIReacitiveInterface;
+            }
+        }
+
         // Use this for initialization
         protected void Start()
         {
@@ -70,6 +80,15 @@ namespace OperationTrident.Common.AI
         // Update is called once per frame
         protected void Update()
         {
+            if (!ReactiveTarget.IsAlive && !_isDestory)
+            {
+                _isDestory = true;
+                StartCoroutine(ActionController.Destroy());
+            }
+
+            if (ReactiveTarget.IsParalyzed || !ReactiveTarget.IsAlive)
+                return;
+
             FSM.Update();
         }
     }

@@ -110,7 +110,7 @@ namespace OperationTrident.Common.AI
             // 用射线检测是否有障碍在中间
             Ray ray = new Ray(transform.position, targetDirection);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~LayerMask.GetMask("IgnoreBullets")))
             {
                 Debug.DrawLine(ray.origin, hit.point, Color.red);
                 if (hit.collider.tag != "Player")

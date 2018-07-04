@@ -36,5 +36,17 @@ namespace OperationTrident.Common.AI
         {
             transform.forward = Utility.GetDirectionOnXOZ(transform.position, interestPoint);
         }
+
+        public override IEnumerator Destroy()
+        {
+            int duration = 15;
+            for (int i = 0; i < duration; i++)
+            {
+                transform.Rotate(-90 / duration, 0, 0);
+                yield return null;
+            }
+            yield return new WaitForSeconds(.2f);
+            Destroy(gameObject);
+        }
     }
 }
