@@ -164,16 +164,19 @@ namespace room2Battle
             //按G打开夜视仪
             if (Input.GetKeyDown(KeyCode.G))
             {
-                //通过只有一个后处理，减少post processing的pass
-                if (playerCamera.GetComponent<becomeDark>().enabled)
+                if (isInit)
                 {
-                    playerCamera.GetComponent<depthSensor>().enabled = true;
-                    playerCamera.GetComponent<becomeDark>().enabled = false;
-                }
-                else
-                {
-                    playerCamera.GetComponent<depthSensor>().enabled = false;
-                    playerCamera.GetComponent<becomeDark>().enabled = true;
+                    //通过只有一个后处理，减少post processing的pass
+                    if (playerCamera.GetComponent<becomeDark>().enabled)
+                    {
+                        playerCamera.GetComponent<depthSensor>().enabled = true;
+                        playerCamera.GetComponent<becomeDark>().enabled = false;
+                    }
+                    else
+                    {
+                        playerCamera.GetComponent<depthSensor>().enabled = false;
+                        playerCamera.GetComponent<becomeDark>().enabled = true;
+                    }
                 }
             }
 

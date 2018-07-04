@@ -52,6 +52,8 @@ namespace room2Battle
 
         protected NetSyncController netSyncController;
 
+        protected float animationCurrentTime = 0.0f;
+
 
         //==================================================
         //=====================     需要同步的状态量 =======
@@ -288,7 +290,8 @@ namespace room2Battle
                                 fireFromLastTime += Time.deltaTime;
                             }
                             //直到开火完毕，抬起另一只手
-                            if (stateInfo.normalizedTime >= 0.8f)
+                            //if (stateInfo.normalizedTime >= 0.8f)
+                            if (animationCurrentTime >= 2.0f)
                             {
                                 animator.SetBool("rightHandup", true);
                                 animator.SetBool("shoot", false);
@@ -300,6 +303,12 @@ namespace room2Battle
                                 netSyncController.SyncVariables();
                                 //下一个状态
                                 currentState = fireState.RightFire;
+
+                                animationCurrentTime = 0.0f;
+                            }
+                            else
+                            {
+                               animationCurrentTime += Time.deltaTime;
                             }
                         }
                     }
@@ -357,7 +366,8 @@ namespace room2Battle
                                 fireFromLastTime += Time.deltaTime;
                             }
                             //直到开火完毕
-                            if (stateInfo.normalizedTime >= 0.8f)
+                            //if (stateInfo.normalizedTime >= 0.8f)
+                            if (animationCurrentTime >= 2.0f)
                             {
                                 animator.SetBool("StopFire", true);
                                 animator.SetBool("shootAgain", false);
@@ -369,6 +379,12 @@ namespace room2Battle
                                 netSyncController.SyncVariables();
 
                                 currentState = fireState.StopFire;
+
+                                animationCurrentTime = 0.0f;
+                            }
+                            else
+                            {
+                                animationCurrentTime += Time.deltaTime;
                             }
                         }
                     }
