@@ -10,7 +10,7 @@ namespace OperationTrident.StartScene
 
         private new Camera camera;
 
-        public float rotateSpeed = 0.02f;
+        public const float rotateSpeed = 0.02f;
         // Use this for initialization
         void Start()
         {
