@@ -15,16 +15,11 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_INSPECTION = "Finish Inspection";
         }
 
-        Animator _animator;
         float _duration;
 
         public override void Init()
         {
-            if (IsFirstInit)
-            {
-                _animator = GetComponent<Animator>();
-            }
-            _animator.SetBool("FindTarget", true);
+            _agent.ActionController.FindTarget(true);
             _duration = 8f;
         }
 
@@ -48,7 +43,7 @@ namespace OperationTrident.Common.AI
 
         public override void Exit()
         {
-            _animator.SetBool("FindTarget", false);
+            _agent.ActionController.FindTarget(false);
         }
     }
 }

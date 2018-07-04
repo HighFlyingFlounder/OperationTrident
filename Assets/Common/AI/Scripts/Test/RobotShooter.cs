@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestShoot : MonoBehaviour
+public class RobotShooter : MonoBehaviour
 {
     [SerializeField]
     Transform[] _weaponList;

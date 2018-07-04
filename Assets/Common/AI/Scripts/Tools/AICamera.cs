@@ -120,7 +120,7 @@ namespace OperationTrident.Common.AI
             return true;
         }
 
-        public bool GetShootPoint(float precisionAngle, float precisionRadius, Vector3 targetPoint, out Vector3 shootPoint)
+        public bool GetShootPoint(float precisionAngle, float precisionRadius, Vector3 targetPoint, out Vector3 shootingPoint)
         {
             Vector3 result = Vector3.zero;
             Vector3 origin = transform.position;
@@ -133,7 +133,7 @@ namespace OperationTrident.Common.AI
 #endif
             if (precisionOffset > precisionRadius)
             {
-                shootPoint = result;
+                shootingPoint = result;
                 return false;
             }
 
@@ -144,13 +144,13 @@ namespace OperationTrident.Common.AI
             {
                 float angle = 360f * Random.Range(0, 1000f) / 1000f;
                 Quaternion offsetAngle = Quaternion.AngleAxis(angle, transform.forward);
-                shootPoint = targetDirection + offsetAngle * (precisionOffset * transform.up);
+                shootingPoint = targetDirection + offsetAngle * (precisionOffset * transform.up);
             }
             else
             {
-                shootPoint = targetPoint;
+                shootingPoint = targetPoint;
             }
-            shootPoint += origin;
+            shootingPoint += origin;
             return true;
         }
 

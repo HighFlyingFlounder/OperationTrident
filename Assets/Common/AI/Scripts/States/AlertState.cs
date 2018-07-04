@@ -15,20 +15,15 @@ namespace OperationTrident.Common.AI
             public static readonly string SIGHT_PLAYER = "Sight Player";
             public static readonly string LOST_PLAYER = "Lost Player";
         }
-        Animator _animator;
 
         public override void Init()
         {
-            if (IsFirstInit)
-            {
-                _animator = GetComponent<Animator>();
-            }
-            _animator.SetBool("TargetDetected", true);
+            _agent.ActionController.DetectedTarget(true);
         }
 
         public override string Execute()
         {
-            transform.forward = Utility.GetDirectionOnXOZ(transform.position, _agent.Target.position);
+            _agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
             if (_agent.Camera.DetectTarget(_agent.Target))
@@ -39,13 +34,11 @@ namespace OperationTrident.Common.AI
             {
                 return Conditions.LOST_PLAYER;
             }
-
-            // return _satisfy;
         }
 
         public override void Exit()
         {
-            _animator.SetBool("TargetDetected", false);
+            _agent.ActionController.DetectedTarget(false);
         }
     }
 }

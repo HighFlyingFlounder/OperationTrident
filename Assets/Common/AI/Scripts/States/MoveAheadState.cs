@@ -16,7 +16,6 @@ namespace OperationTrident.Common.AI
             public static readonly string SIGHT_PLAYER = "Sight Player";
         }
 
-        Animator _animator;
 		float _remainDistance;
 
         public override void Init()
@@ -24,8 +23,7 @@ namespace OperationTrident.Common.AI
 			// 设置寻路目标点
             _agent.PathfindingAgent.SetDestination(_agent.TargetPosition);
             _agent.PathfindingAgent.isStopped = false;
-            _animator = GetComponent<Animator>();
-			_animator.SetFloat("Speed", 1);
+            _agent.ActionController.Move(true);
         }
 
         public override string Execute()
@@ -52,9 +50,7 @@ namespace OperationTrident.Common.AI
 		public override void Exit()
 		{
             _agent.PathfindingAgent.isStopped = true;
-			_animator.SetFloat("Speed", -1);
+            _agent.ActionController.Move(false);
 		}
-
-
     }
 }

@@ -8,6 +8,8 @@ namespace OperationTrident.Common.AI
     public class AIAgent : MonoBehaviour
     {
         public ScriptableObject AIFSMAsset = null;
+        public AIActionController ActionController = null;
+
         protected AIFSM FSM = new AIFSM();
         Transform _target;
         Vector3 _targetPosition;

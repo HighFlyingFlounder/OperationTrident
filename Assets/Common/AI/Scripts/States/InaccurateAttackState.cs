@@ -32,28 +32,28 @@ namespace OperationTrident.Common.AI
         public override string Execute()
         {
             string satisfy = null;
-            transform.forward = Utility.GetDirectionOnXOZ(transform.position, _agent.Target.position);
+            _agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
 
-            Vector3 shootPoint;
+            Vector3 shootingPoint;
             // 先判断是否在射击范围内，若不在，先追击敌人，等敌人进入射击范围后，开始射击
-            if(!_agent.Camera.GetShootPoint(_precisionAngle, _precisionRadius, _agent.Target.position, out shootPoint))
+            if(!_agent.Camera.GetShootPoint(_precisionAngle, _precisionRadius, _agent.Target.position, out shootingPoint))
             {
                 _agent.PathfindingAgent.SetDestination(_agent.Target.position);
                 _agent.PathfindingAgent.isStopped = false;
+                _agent.ActionController.Move(true);
             }
             else
             {
-                _agent.PathfindingAgent.isStopped = true;
-                GetComponent<TestShoot>().Shoot(shootPoint);
+                _agent.ActionController.Shoot(shootingPoint);
+			    _agent.ActionController.Move(false);
                 satisfy = Conditions.FINISH_ONCE_SHOOT;
             }
 
             // 敌人可能已死亡或躲到障碍后
             if (!_agent.Camera.DetectTarget(_agent.Target))
             {
-                _agent.PathfindingAgent.isStopped = true;
                 _agent.TargetPosition = _agent.Target.position;
 #if UNITY_EDITOR
                 _agent.Camera.DrawDefaultAttackPrecisionRange();
@@ -66,7 +66,8 @@ namespace OperationTrident.Common.AI
 
         public override void Exit()
 		{
-			
+			_agent.PathfindingAgent.isStopped = true;
+            _agent.ActionController.Move(false);
 		}
     }
 }
