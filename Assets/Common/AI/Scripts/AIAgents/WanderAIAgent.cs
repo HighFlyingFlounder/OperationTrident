@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 namespace OperationTrident.Common.AI
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class WanderAIAgent : AIAgent
     {
         [Header("初始化参数")]

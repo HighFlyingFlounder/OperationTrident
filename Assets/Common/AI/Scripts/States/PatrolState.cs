@@ -6,7 +6,6 @@ using UnityEngine.AI;
 namespace OperationTrident.Common.AI
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(NavMeshAgent))]
     public class PatrolState : AIState
     {
         public static readonly string STATE_NAME = "Patrol";
@@ -21,35 +20,23 @@ namespace OperationTrident.Common.AI
         Vector3[] _patrolLocations;
         // 记录下一个巡逻点
         int _nextPatrolLocationIndex = 0;
-        // 寻路代理
-        NavMeshAgent _navAgent = null;
         // 用于判断是否正在移动
         bool _isMoving = false;
         // 到下一个巡逻点的距离
         float _remainDistance = Mathf.Infinity;
-        AICamera _camera = null;
         // 用于控制动画（之后会换成控制器）
         Animator _animator;
 
         public override void Init()
         {
-            base.Init();
             _isMoving = false;
 
-            InitOnce();
-        }
-
-        public override void InitOnce()
-        {
-            if (_firstInit)
+            if (IsFirstInit)
             {
-                base.InitOnce();
-                _patrolLocations = GetComponent<AIAgent>().PatrolLocations;
+                _patrolLocations = _agent.PatrolLocations;
                 if(_patrolLocations == null)
                     Debug.Log("没有设置巡逻路径");
-                _navAgent = GetComponent<AIAgent>().PathfindingAgent;
                 _animator = GetComponent<Animator>();
-                _camera = GetComponent<AIAgent>().Camera;
             }
         }
 
@@ -58,36 +45,35 @@ namespace OperationTrident.Common.AI
             if (!_isMoving)
             {
                 // 设置寻路目标点
-                _navAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
-                _navAgent.isStopped = false;
+                _agent.PathfindingAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
+                _agent.PathfindingAgent.isStopped = false;
                 _isMoving = true;
             }
 
-            if (!_navAgent.pathPending)
+            Transform target = Utility.DetectPlayers(_agent.Camera);
+            if(target != null)
             {
-                _remainDistance = _navAgent.remainingDistance;
-                if (_remainDistance != Mathf.Infinity && _remainDistance - _navAgent.stoppingDistance <= float.Epsilon
-                && _navAgent.pathStatus == NavMeshPathStatus.PathComplete)
+                _agent.Target = target;
+                _agent.PathfindingAgent.isStopped = true;
+                return Conditions.SIGHT_PLAYER;
+            }
+
+            if (!_agent.PathfindingAgent.pathPending)
+            {
+                _remainDistance = _agent.PathfindingAgent.remainingDistance;
+                if (_remainDistance != Mathf.Infinity && _remainDistance - _agent.PathfindingAgent.stoppingDistance <= float.Epsilon
+                && _agent.PathfindingAgent.pathStatus == NavMeshPathStatus.PathComplete)
                 {
                     // 当到达一个巡逻点时，设置下一个巡逻点，并返回已满足ARRIVE_AT_LOCATION条件
                     _nextPatrolLocationIndex = (_nextPatrolLocationIndex + 1) % _patrolLocations.Length;
-                    _satisfy = Conditions.ARRIVE_AT_LOCATION;
+                    return Conditions.ARRIVE_AT_LOCATION;
                 }
             }
 
-            Transform target = Utility.DetectPlayers(_camera);
-            if(target != null)
-            {
-                GetComponent<AIAgent>().Target = target;
-                _navAgent.isStopped = true;
-                _satisfy = Conditions.SIGHT_PLAYER;
-                return _satisfy;
-            }
-
             // 移动时的动画
-            _animator.SetFloat("Speed", _navAgent.speed);
+            _animator.SetFloat("Speed", _agent.PathfindingAgent.speed);
 
-            return _satisfy;
+            return null;
         }
     }
 }

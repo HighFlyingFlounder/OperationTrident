@@ -17,61 +17,49 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_ONCE_SHOOT = "Finish Once Shoot";
         }
 
-        AICamera _camera = null;
-        NavMeshAgent _navAgent = null;
-
         float _precisionAngle;
         float _precisionRadius;
 
         public override void Init()
         {
-            base.Init();
-            InitOnce();
-        }
-
-        public override void InitOnce()
-        {
-            if (_firstInit)
+            if (IsFirstInit)
             {
-                base.InitOnce();
-                _camera = GetComponent<AIAgent>().Camera;
-                _navAgent = GetComponent<AIAgent>().PathfindingAgent;
-                _precisionAngle = GetComponent<AIAgent>().AttackPrecisionAngle;
-                _precisionRadius = GetComponent<AIAgent>().AttackPrecisionRadius;
+                _precisionAngle = _agent.AttackPrecisionAngle;
+                _precisionRadius = _agent.AttackPrecisionRadius;
             }
         }
+
         public override string Execute()
         {
-            transform.forward = Utility.GetDirectionOnXOZ(transform.position, GetComponent<AIAgent>().Target.position);
+            transform.forward = Utility.GetDirectionOnXOZ(transform.position, _agent.Target.position);
 
-            _camera.UpdateCamera();
+            _agent.Camera.UpdateCamera();
 
             Vector3 shootPoint;
             // 先判断是否在射击范围内，若不在，先追击敌人，等敌人进入射击范围后，开始射击
-            if(!_camera.GetShootPoint(_precisionAngle, _precisionRadius, GetComponent<AIAgent>().Target.position, out shootPoint))
+            if(!_agent.Camera.GetShootPoint(_precisionAngle, _precisionRadius, _agent.Target.position, out shootPoint))
             {
-                _navAgent.SetDestination(GetComponent<AIAgent>().Target.position);
-                _navAgent.isStopped = false;
+                _agent.PathfindingAgent.SetDestination(_agent.Target.position);
+                _agent.PathfindingAgent.isStopped = false;
             }
             else
             {
-                _navAgent.isStopped = true;
+                _agent.PathfindingAgent.isStopped = true;
                 GetComponent<TestShoot>().Shoot(shootPoint);
-                _satisfy = Conditions.FINISH_ONCE_SHOOT;
+                return Conditions.FINISH_ONCE_SHOOT;
             }
 
             // 敌人可能已死亡或躲到障碍后
-            if (!_camera.DetectTarget(GetComponent<AIAgent>().Target))
+            if (!_agent.Camera.DetectTarget(_agent.Target))
             {
-                _navAgent.isStopped = true;
-                _satisfy = Conditions.LOST_TARGET;
+                _agent.PathfindingAgent.isStopped = true;
 #if UNITY_EDITOR
-                _camera.DrawDefaultAttackPrecisionRange();
+                _agent.Camera.DrawDefaultAttackPrecisionRange();
 #endif
-                return _satisfy;
+                return Conditions.LOST_TARGET;
             }
 
-            return _satisfy;
+            return null;
         }
     }
 }

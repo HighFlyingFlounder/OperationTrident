@@ -15,48 +15,38 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_INSPECTION = "Finish Inspection";
         }
 
-        AICamera _camera = null;
         Animator _animator;
         float _duration;
 
         public override void Init()
         {
-            base.Init();
-            InitOnce();
+            if (IsFirstInit)
+            {
+                _animator = GetComponent<Animator>();
+            }
             _animator.SetBool("FindTarget", true);
             _duration = 8f;
         }
 
-        public override void InitOnce()
-        {
-            if (_firstInit)
-            {
-                base.InitOnce();
-                _animator = GetComponent<Animator>();
-                _camera = GetComponent<AIAgent>().Camera;
-            }
-        }
-
         public override string Execute()
         {
+            Transform target = Utility.DetectPlayers(_agent.Camera);
+            if (target != null)
+            {
+                _agent.Target = target;
+                return Conditions.SIGHT_PLAYER;
+            }
+
             _duration -= Time.deltaTime;
             if (_duration < 0)
             {
-                _satisfy = Conditions.FINISH_INSPECTION;
+                return Conditions.FINISH_INSPECTION;
             }
 
-            Transform target = Utility.DetectPlayers(_camera);
-            if(target != null)
-            {
-                GetComponent<AIAgent>().Target = target;
-                _satisfy = Conditions.SIGHT_PLAYER;
-                return _satisfy;
-            }
-
-            return _satisfy;
+            return null;
         }
 
-        public override void Exit() 
+        public override void Exit()
         {
             _animator.SetBool("FindTarget", false);
         }
