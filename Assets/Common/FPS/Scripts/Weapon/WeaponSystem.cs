@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace OperationTrident.FPS.Weapons {
-    public class WeaponSystem : MonoBehaviour {
+    public class WeaponSystem : MonoBehaviour, NetSyncInterface {
         public bool IsLocalObject = true;
 
         //保存武器对象的数组
@@ -17,6 +17,8 @@ namespace OperationTrident.FPS.Weapons {
         //保存所有武器的弹药量
         private int[] m_WeaponsTotalAmmunition;
         private Weapon[] m_Weapons;
+
+        private NetSyncController m_NetSyncController;
 
         void Start() {
             //初始化武器系统
@@ -109,6 +111,11 @@ namespace OperationTrident.FPS.Weapons {
         #region RPC函数
         //切换下一把武器
         public void NextWeapon() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "NextWeapon");
+            }
+
             m_WeaponIndex++;
             if (m_WeaponIndex > m_WeaponNumber - 1)
                 m_WeaponIndex = 0;
@@ -118,11 +125,28 @@ namespace OperationTrident.FPS.Weapons {
 
         //切换上一把武器
         public void PreviousWeapon() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "PreviousWeapon");
+            }
+
             m_WeaponIndex--;
             if (m_WeaponIndex < 0)
                 m_WeaponIndex = m_WeaponNumber - 1;
 
             SetActiveWeapon(m_WeaponIndex);
+        }
+
+        public void RecvData(SyncData data) {
+            throw new System.NotImplementedException();
+        }
+
+        public SyncData SendData() {
+            return new SyncData();
+        }
+
+        public void Init(NetSyncController controller) {
+            m_NetSyncController = controller;
         }
         #endregion
     }

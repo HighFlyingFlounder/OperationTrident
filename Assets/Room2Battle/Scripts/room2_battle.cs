@@ -37,6 +37,7 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+
         private void Start()
         {
             AIController.instance.AddAIObject(boss);
@@ -67,7 +68,7 @@ namespace room2Battle {
         {
             //Debug.Log(director.isActiveAndEnabled);
             //director.Play();
-            boss.SetActive(true);
+            
         }
 
         void Update()
@@ -80,6 +81,7 @@ namespace room2Battle {
                 }
             }
             else {
+                boss.SetActive(true);
                 nextScene_.SetActive(true);
             }
         }
@@ -88,7 +90,7 @@ namespace room2Battle {
         {
             if (isTimelinePaused)
             {
-                if (Camera.main)
+                if (Camera.current)
                 {
                     GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
                     OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
