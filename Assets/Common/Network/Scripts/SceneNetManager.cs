@@ -99,6 +99,11 @@ public class SceneNetManager : MonoBehaviour
         }
         
         playerObj.name = id;
+        //playerObj所有子节点都得改名
+        NetSyncController[] net_sync_controllers = playerObj.GetComponentsInChildren<NetSyncController>();
+        foreach (var temp in net_sync_controllers) {
+            temp.name = id + temp.name;
+        }
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
 
