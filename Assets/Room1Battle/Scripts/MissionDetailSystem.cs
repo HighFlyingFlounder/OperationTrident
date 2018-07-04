@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Room1;
 
 namespace OperationTrident.Util
 {
@@ -62,7 +63,7 @@ namespace OperationTrident.Util
         {
                     GUIUtil.DisplayMissionDetailDefault(
                             missionDetails,
-                            Camera.main,
+                            Room1.Util.GetCamera(),
                             theColor,
                             wordTransparentInterval: wordTransparentInterval,
                             wordAppearanceInterval: wordAppearanceInterval,

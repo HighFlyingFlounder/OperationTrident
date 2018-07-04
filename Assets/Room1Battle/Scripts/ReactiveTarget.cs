@@ -21,6 +21,17 @@ namespace OperationTrident.Room1
             }
         }
 
+        [SerializeField]
+        private bool isPlayer;
+
+        public bool IsPlayer
+        {
+            get
+            {
+                return isPlayer;
+            }
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -64,8 +75,15 @@ namespace OperationTrident.Room1
         private IEnumerator Die()
         {
             transform.Rotate(-75, 0, 0);
-            yield return new WaitForSeconds(1.5f);
-            Destroy(gameObject);
+            if (!isPlayer)
+            {
+                yield return new WaitForSeconds(1.5f);
+                Destroy(gameObject);
+            }
+            else
+            {
+
+            }
         }
 
         public void RecvData(SyncData data)

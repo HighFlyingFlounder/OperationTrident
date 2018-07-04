@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 namespace OperationTrident.FPS.Weapons {
     //武器类型
     public enum WeaponType {
@@ -317,7 +318,8 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         // Use this for initialization
-        void Start() {
+        private void Start() {
+
             //计算开火的频率
             if (RateOfFire != 0)
                 ActualROF = 1.0f / RateOfFire;
@@ -430,6 +432,7 @@ namespace OperationTrident.FPS.Weapons {
                 {"shootInterval", ActualROF },
                 {"maxAngle", RecoilMaxAngle }
             };
+
         }
 
         void Update() {
@@ -742,6 +745,15 @@ namespace OperationTrident.FPS.Weapons {
                     if (Warmup) {
                         damage *= m_Heat * PowerMultiplier;
                         m_Heat = 0.0f;
+                    }
+
+                    //hit.point:射线击中的坐标
+                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                    OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<OperationTrident.Room1.ReactiveTarget>();
+
+                    if (target != null)   //检查对象上是否有ReactiveTarget组件
+                    {
+                        target.OnHit(gameObject.name, 1);
                     }
 
                     ////造成伤害
@@ -1233,6 +1245,7 @@ namespace OperationTrident.FPS.Weapons {
             WeaponModel.transform.Translate(new Vector3(0, 0, -kickBack), Space.Self);
             WeaponModel.transform.Rotate(new Vector3(-kickRot, 0, 0), Space.Self);
 
+            Debug.Log(m_RecoilParam);
             //只有射线武器才会有镜头的后坐力效果
             if(Type == WeaponType.Raycast) {
                 SendMessageUpwards("RecoilEffect", m_RecoilParam, SendMessageOptions.DontRequireReceiver);

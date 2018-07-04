@@ -103,8 +103,9 @@ namespace OperationTrident.Room1
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
             }
-            Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            
+            Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = Util.GetCamera().ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetWorldPosition - GameObject.FindWithTag("Player").transform.position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
@@ -130,7 +131,7 @@ namespace OperationTrident.Room1
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
-                    Camera.main,
+                    Util.GetCamera(),
                     GUIUtil.FadeAColor(GUIUtil.yellowColor,10.0f),
                     interval: appearInterval,
                     blingInterval:blingInterval,
@@ -140,7 +141,7 @@ namespace OperationTrident.Room1
 
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.brightPurpleColor,60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Util.GetCamera());
             // 指定颜色
             if (toDisplayTheMissionPoint)
             {
