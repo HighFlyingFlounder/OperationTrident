@@ -58,6 +58,11 @@ namespace OperationTrident.Room1
         [SerializeField]
         private Vector3 Door2Position; // = new Vectir3(-58.12f, 2.05f, 74.87f); 初始化时Scale的x值要变成3. 开门也是向x轴负半轴移动
 
+        [NonSerialized]
+        public static Vector3 escapePosition;
+        [SerializeField]
+        private GameObject escapeGameObject;
+
         public static Vector3 Key1WorldPosition;
         public static Vector3 Key2WorldPosition;
         public static Vector3 CropseWorldPosition;
@@ -190,8 +195,10 @@ namespace OperationTrident.Room1
             door2.transform.localPosition = Door2Position;
             door2.transform.localScale = new Vector3(3.8f, 5.0f, 0.2f);
 
+            escapeGameObject.SetActive(false);
+
             //生成AI
-            AIController.instance.CreateAI(2,0, "AIborn1");
+            AIController.instance.CreateAI(5,0, "AIborn1");
         }
 
         private void OnKeyGot(int id)
@@ -219,6 +226,8 @@ namespace OperationTrident.Room1
                     {
                         Destroy(key2);
                         state = Room1State.TryingToOpenRoom;
+                        AIController.instance.CreateAI(2, 0, "AIborn4");
+                        AIController.instance.CreateAI(4, 0, "AIborn5");
                     }
                     break;
                 // ID卡（也当成钥匙了）
@@ -227,6 +236,8 @@ namespace OperationTrident.Room1
                     {
                         Destroy(IDCard);
                         state = Room1State.EscapingRoom;
+                        escapeGameObject.SetActive(true);
+                        escapePosition = escapeGameObject.transform.position;
                     }
                     break;
             }
@@ -251,6 +262,9 @@ namespace OperationTrident.Room1
                         Debug.Log("WindyIce");
                         doorStart.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.ZNegative);
                         doorStart.GetComponent<HintableObject>().DestroyThis();
+
+                        AIController.instance.CreateAI(5, 0, "AIborn2");
+                        AIController.instance.CreateAI(2, 0, "AIborn3");
                     }
                     break;
                 // 第二扇门
@@ -315,7 +329,7 @@ namespace OperationTrident.Room1
         {
             GUIUtil.DisplaySubtitlesInGivenGrammar(
                 subtitlesToDisplay,
-                Camera.current,
+                Camera.main,
                 fontSize: 16,
                 subtitleRatioHeight: 0.9f,
                 secondOfEachWord: 0.2f,

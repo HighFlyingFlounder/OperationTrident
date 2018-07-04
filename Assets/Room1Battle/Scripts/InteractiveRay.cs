@@ -14,7 +14,6 @@ namespace OperationTrident.Room1
         private float distanceQuota = 3.0f;
 
         // 附加在这个游戏对象上的摄像头
-        private new Camera camera;
 
         // 是否提示玩家按下某个键
         public bool toNotify = true;
@@ -27,7 +26,6 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = Camera.current;
             hintToDisplay = string.Empty;
         }
 
@@ -37,8 +35,8 @@ namespace OperationTrident.Room1
             // 提示玩家按键
             if (toNotify)
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Camera.main.ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
@@ -64,8 +62,8 @@ namespace OperationTrident.Room1
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Camera.main.ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
@@ -114,9 +112,9 @@ namespace OperationTrident.Room1
             if (toDisplayHint)
             {
                 if (usingGrammar)
-                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, camera, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Camera.main, hintFontSize, 0.5f);
                 else
-                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, camera, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Camera.main, hintFontSize, 0.5f);
             }
         }
     }
