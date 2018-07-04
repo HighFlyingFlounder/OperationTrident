@@ -5,7 +5,7 @@ using UnityEngine;
 namespace OperationTrident.FPS.Player {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(AudioSource))]
-    public class MovementController : MonoBehaviour, NetSyncInterface {
+    public class MovementController : MonoBehaviour {
         [Tooltip("当前的Object是否为本地Object，如果不是，则只接受网络同步信息")]
         public bool IsLocalObject;
         [Tooltip("走路的速度")]
@@ -57,8 +57,6 @@ namespace OperationTrident.FPS.Player {
         private Vector3 m_OriginalCameraPosition;
         private float m_StepCycle;
         private float m_NextStep;
-
-        private NetSyncController m_NetSyncController;
 
         private void Awake() {
             m_CharacterController = GetComponent<CharacterController>();
@@ -126,6 +124,8 @@ namespace OperationTrident.FPS.Player {
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
             ProgressStepCycle(m_Speed);
         }
+
+
 
         // Update is called once per frame
         private void Update() {
@@ -209,6 +209,7 @@ namespace OperationTrident.FPS.Player {
                 m_Jump = Input.GetButtonDown("Jump");
             }
 
+
             //水平移动
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
@@ -278,12 +279,7 @@ namespace OperationTrident.FPS.Player {
         }
 
         //站立函数
-        public void StandUp() {
-            //调用RPC
-            if (IsLocalObject) {
-                m_NetSyncController.RPC(this, "StandUp");
-            }
-
+        private void StandUp() {
             //碰撞体高度减少一半
             m_CharacterController.height *= 2;
             m_CharacterController.center *= 2;
@@ -295,12 +291,7 @@ namespace OperationTrident.FPS.Player {
         }
 
         //蹲下函数
-        public void Underarm() {
-            //调用RPC
-            if (IsLocalObject) {
-                m_NetSyncController.RPC(this, "Underarm");
-            }
-
+        private void Underarm() {
             float distacne = m_CharacterController.height / 2;
             //碰撞体高度减少一半
             m_CharacterController.height -= distacne;
@@ -311,18 +302,7 @@ namespace OperationTrident.FPS.Player {
             SendMessage("SetUnderarmAnimationParamters", m_IsUnderarming, SendMessageOptions.DontRequireReceiver);
             BroadcastMessage("MoveWeaponDown", distacne, SendMessageOptions.DontRequireReceiver);
         }
+
         #endregion
-
-        public void RecvData(SyncData data) {
-            throw new System.NotImplementedException();
-        }
-
-        public SyncData SendData() {
-            return new SyncData();
-        }
-
-        public void Init(NetSyncController controller) {
-            m_NetSyncController = controller;
-        }
     }
 }
