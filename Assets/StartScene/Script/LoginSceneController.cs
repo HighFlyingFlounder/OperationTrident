@@ -62,9 +62,7 @@ namespace OperationTrident.StartScene
             Debug.Log("发送 " + protocol.GetDesc());
             NetMgr.srvConn.Send(protocol, OnLoginBack);
 
-            loginCanvas.enabled = false;
-            titleCanvas.enabled = true;
-            roomCanvas.enabled = false;
+
         }
 
         public void OnLoginBack(ProtocolBase protocol)
@@ -80,6 +78,9 @@ namespace OperationTrident.StartScene
                 // TODO 打开开始游戏场景
 
                 GameMgr.instance.id = idInput.text;
+                loginCanvas.enabled = false;
+                titleCanvas.enabled = true;
+                roomCanvas.enabled = false;
             }
             else
             {
@@ -93,6 +94,7 @@ namespace OperationTrident.StartScene
             titleCanvas.enabled = false;
             roomCanvas.enabled = true;
             titleTextCanvas.enabled = false;
+            GetComponent<RoomSceneController>().InitRoomListScene();
         }
     }
 }

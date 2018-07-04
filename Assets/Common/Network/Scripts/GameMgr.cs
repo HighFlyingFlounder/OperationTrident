@@ -12,7 +12,7 @@ public class GameMgr : MonoBehaviour
     //[HideInInspector]
     public bool isMasterClient = false;//暂时用isOwner（房主）来定master_client
     //服务器信息
-    public string host = "127.0.0.1";
+    public string host = "116.56.136.22";
     public int port = 8000;
 
     // Use this for initialization

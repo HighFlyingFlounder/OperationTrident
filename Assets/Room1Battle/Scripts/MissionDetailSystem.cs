@@ -62,7 +62,7 @@ namespace OperationTrident.Util
         {
                     GUIUtil.DisplayMissionDetailDefault(
                             missionDetails,
-                            Camera.main,
+                            Camera.current,
                             theColor,
                             wordTransparentInterval: wordTransparentInterval,
                             wordAppearanceInterval: wordAppearanceInterval,

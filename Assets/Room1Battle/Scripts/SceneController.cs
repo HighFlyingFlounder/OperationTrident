@@ -315,7 +315,7 @@ namespace OperationTrident.Room1
         {
             GUIUtil.DisplaySubtitlesInGivenGrammar(
                 subtitlesToDisplay,
-                Camera.main,
+                Camera.current,
                 fontSize: 16,
                 subtitleRatioHeight: 0.9f,
                 secondOfEachWord: 0.2f,

@@ -24,18 +24,11 @@ public class MotionBlurEffects : MonoBehaviour
     [Range(0f, 10f)]
     private float blurWidth = 1f;
 
-    private float t1 = 0.0f;//计时器,在模糊程度改变时使用
-    private float t2 = 0.0f;//计时器,在模糊程度改变时使用
-
     public static float ChangeValue;
-    public static float ChangeValueDash;
     public static float ChangeValue2;
     public static float ChangeValue3;
     public static float ChangeValue4;
     public static float ChangeValue5;
-    private bool isRun = false;
-    public float Par = 2.0f;
-    private GameObject Flyer;
     #endregion
 
 
@@ -54,11 +47,6 @@ public class MotionBlurEffects : MonoBehaviour
         }
     }
     #endregion
-
-    void Awake()
-    {
-        Flyer = transform.parent.gameObject;
-    }
 
     //-----------------------------------------【Start()函数】---------------------------------------------  
     // 说明：此函数仅在Update函数第一次被调用前被调用
@@ -82,7 +70,6 @@ public class MotionBlurEffects : MonoBehaviour
             return;
         }
     }
-
 
     //-------------------------------------【OnRenderImage()函数】------------------------------------  
     // 说明：此函数在当完成所有渲染图片后被调用，用来渲染图片后期效果
@@ -132,35 +119,11 @@ public class MotionBlurEffects : MonoBehaviour
     //-------------------------------------------------------------------------------------------------------- 
     void Update()
     {
-        /*
-        if (Input.GetKeyDown(RunKey))
-            {
-                isRun = true;
-            }
-            if (Input.GetKeyUp(RunKey))
-            {
-                isRun = false;
-            }
-        */
-        isRun = Flyer.GetComponent<UserController>().movementSettings.isRun;
         if (Application.isPlaying)
         {
             //赋值
             IterationNumber = ChangeValue5;
-            if (isRun)
-            {
-                t2 = 0f;
-                t1 += Time.deltaTime;
-                t1 = t1 > 1.0f ? 1.0f : t1;
-                Intensity = Mathf.Lerp(Intensity, ChangeValue * Par, t1);
-            }
-            else
-            {
-                t1 = 0f;
-                t2 += Time.deltaTime;
-                t2 = t2 > 1.0f ? 1.0f : t2;
-                Intensity = Mathf.Lerp(Intensity, ChangeValue , t2);
-            }
+            Intensity = ChangeValue;
             OffsetX = ChangeValue2;
             OffsetY = ChangeValue3;
             blurWidth = ChangeValue4;

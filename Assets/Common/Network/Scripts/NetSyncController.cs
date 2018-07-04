@@ -53,6 +53,10 @@ public class NetSyncController : MonoBehaviour
         {
             Component temp = sync_scripts[i];
             SyncData data = (temp as NetSyncInterface).SendData();
+            //加入空检测
+            if(data == null) {
+                continue;
+            }
             proto.AddSyncData(data);
         }
         NetMgr.srvConn.Send(proto);
