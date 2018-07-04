@@ -107,6 +107,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void Update()
     {
+        if (!GameMgr.instance)//单机状态
+        {
+            return;
+        }
         if (syncPerSecond == 0f)
         {
             return;

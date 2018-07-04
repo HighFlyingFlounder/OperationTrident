@@ -70,15 +70,17 @@ namespace OperationTrident.Room1
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                    Debug.Log("物体" + hitObject.name);
+                    Debug.Log("距离: "+Vector3.Distance(this.transform.position, hitObject.transform.position));
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
                     {
-                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         return;
                     }
                     KeyScript target =
                         hitObject.GetComponent<KeyScript>();
                     if (target != null)   //检查对象上是否有KeyScript组件
                     {
+                        Debug.Log("1113");
                         Messenger<int>.Broadcast(GameEvent.KEY_GOT, target.ThisId);
                         return;
                     }
