@@ -31,6 +31,7 @@ namespace OperationTrident.Common.AI
 
         public override string Execute()
         {
+            string satisfy = null;
             transform.forward = Utility.GetDirectionOnXOZ(transform.position, _agent.Target.position);
 
             _agent.Camera.UpdateCamera();
@@ -46,20 +47,26 @@ namespace OperationTrident.Common.AI
             {
                 _agent.PathfindingAgent.isStopped = true;
                 GetComponent<TestShoot>().Shoot(shootPoint);
-                return Conditions.FINISH_ONCE_SHOOT;
+                satisfy = Conditions.FINISH_ONCE_SHOOT;
             }
 
             // 敌人可能已死亡或躲到障碍后
             if (!_agent.Camera.DetectTarget(_agent.Target))
             {
                 _agent.PathfindingAgent.isStopped = true;
+                _agent.TargetPosition = _agent.Target.position;
 #if UNITY_EDITOR
                 _agent.Camera.DrawDefaultAttackPrecisionRange();
 #endif
                 return Conditions.LOST_TARGET;
             }
 
-            return null;
+            return satisfy;
         }
+
+        public override void Exit()
+		{
+			
+		}
     }
 }

@@ -10,6 +10,7 @@ namespace OperationTrident.Common.AI
         public ScriptableObject AIFSMAsset = null;
         protected AIFSM FSM = new AIFSM();
         Transform _target;
+        Vector3 _targetPosition;
 
         public virtual Vector3[] PatrolLocations { get; set; }
         public virtual NavMeshAgent PathfindingAgent { get; set; }
@@ -41,6 +42,19 @@ namespace OperationTrident.Common.AI
             set
             {
                 _target = value;
+            }
+        }
+
+        public Vector3 TargetPosition
+        {
+            get
+            {
+                return _targetPosition;
+            }
+
+            set
+            {
+                _targetPosition = value;
             }
         }
 

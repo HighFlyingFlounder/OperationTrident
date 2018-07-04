@@ -46,8 +46,6 @@ namespace OperationTrident.Common.AI
         /// <summary>
         /// 退出当前状态
         /// </summary>
-        public virtual void Exit()
-        {
-        }
+        public abstract void Exit();
     }
 }

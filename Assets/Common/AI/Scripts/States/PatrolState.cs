@@ -75,5 +75,10 @@ namespace OperationTrident.Common.AI
 
             return null;
         }
+
+        public override void Exit()
+		{
+			
+		}
     }
 }
