@@ -58,7 +58,6 @@ public class UserController : MonoBehaviour,NetSyncInterface
     public MovementSettings movementSettings;
     private MouseLook mouseLook;
     public GameObject RunParticle;
-    private float hp = 100f;
     private float t = 0.0f;//计时器,在喷射系统从零开始加速时使用
 
     public Rigidbody m_RigidBody;
@@ -93,7 +92,6 @@ public class UserController : MonoBehaviour,NetSyncInterface
     {
         movementSettings.isPushed = true;
         m_NetSyncController.SyncVariables();
-
     }
 
     private void FixedUpdate()
