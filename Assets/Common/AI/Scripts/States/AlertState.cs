@@ -36,17 +36,15 @@ namespace OperationTrident.Common.AI
 
         public override string Execute()
         {
-            transform.LookAt(GetComponent<AIAgent>().Target);
-            _camera.UpdateCamera();
+            transform.forward = Utility.GetDirectionOnXOZ(transform.position, GetComponent<AIAgent>().Target.position);
 
+            _camera.UpdateCamera();
             if (_camera.DetectTarget(GetComponent<AIAgent>().Target))
             {
-                // Debug.Log(Conditions.SIGHT_PLAYER);
-                // _satisfy = Conditions.SIGHT_PLAYER;
+                _satisfy = Conditions.SIGHT_PLAYER;
             }
             else
             {
-                Debug.Log(Conditions.LOST_PLAYER);
                 _satisfy = Conditions.LOST_PLAYER;
             }
 

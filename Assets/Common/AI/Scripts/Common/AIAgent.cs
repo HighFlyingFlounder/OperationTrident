@@ -17,6 +17,8 @@ namespace OperationTrident.Common.AI
         public virtual float CameraHorizontalFOV { get; set; }
         public virtual float CameraVerticalFOV { get; set; }
         public virtual float CameraSightDistance { get; set; }
+        public virtual float AttackPrecisionAngle { get; set; }
+        public virtual float AttackPrecisionRadius { get; set; }
 
         AIFSMData FSMData
         {

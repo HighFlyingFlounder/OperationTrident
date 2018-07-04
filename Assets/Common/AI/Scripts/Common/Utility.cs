@@ -46,6 +46,13 @@ namespace OperationTrident.Common.AI
             return null;
         }
 
+        public static Vector3 GetDirectionOnXOZ(Vector3 origin, Vector3 target)
+        {
+            Vector3 result = target - origin;
+            result.y = 0;
+            return result.normalized;
+        }
+
 #if UNITY_EDITOR
         public static bool CanDrawEditor()
         {

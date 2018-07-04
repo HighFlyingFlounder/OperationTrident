@@ -27,6 +27,16 @@ namespace OperationTrident.Common.AI
         [Range(0, 500)]
         float _sightDistance = 100f;
 
+        [Tooltip("设置射击精度范围角度")]
+        [SerializeField]
+        [Range(0, 10)]
+        float _precisionAngle = 5f;
+
+        [Tooltip("设置射击精度范围半径")]
+        [SerializeField]
+        [Range(0, 5)]
+        float _precisionRadius = 1f;
+
         public override Vector3[] PatrolLocations
         {
             get
@@ -90,6 +100,30 @@ namespace OperationTrident.Common.AI
             set
             {
                 _sightDistance = Mathf.Clamp(value, 0, 500);
+            }
+        }
+
+        public override float AttackPrecisionAngle
+        {
+            get
+            {
+                return _precisionAngle;
+            }
+            set
+            {
+                _precisionAngle = Mathf.Clamp(value, 0, 10);
+            }
+        }
+
+        public override float AttackPrecisionRadius
+        {
+            get
+            {
+                return _precisionRadius;
+            }
+            set
+            {
+                _precisionRadius = Mathf.Clamp(value, 0, 5);
             }
         }
 

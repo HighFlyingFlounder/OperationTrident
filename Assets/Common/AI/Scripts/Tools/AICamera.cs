@@ -18,6 +18,8 @@ namespace OperationTrident.Common.AI
         // 目标点（测试用）
         [SerializeField]
         Transform _testTarget;
+        Vector3 _forward;
+        bool _useDefaultForward = true;
 #endif
 
         Vector3 leftDirection, rightDirection, upDirection, downDirection;
@@ -30,6 +32,15 @@ namespace OperationTrident.Common.AI
             InitCamera(agent.CameraHorizontalFOV, agent.CameraVerticalFOV, agent.CameraSightDistance);
             UpdateCamera();
             DrawViewableArea();
+            if (!Application.isPlaying)
+                DrawAttackPrecisionRange(agent.AttackPrecisionAngle, agent.AttackPrecisionRadius, transform.forward);
+            else
+            {
+                if (_useDefaultForward)
+                    DrawAttackPrecisionRange(agent.AttackPrecisionAngle, agent.AttackPrecisionRadius, transform.forward);
+                else
+                    DrawAttackPrecisionRange(agent.AttackPrecisionAngle, agent.AttackPrecisionRadius, _forward);
+            }
             // DetectTarget(_testTarget);
         }
 #endif
@@ -109,6 +120,40 @@ namespace OperationTrident.Common.AI
             return true;
         }
 
+        public bool GetShootPoint(float precisionAngle, float precisionRadius, Vector3 targetPoint, out Vector3 shootPoint)
+        {
+            Vector3 result = Vector3.zero;
+            Vector3 origin = transform.position;
+            Vector3 targetDirection = targetPoint - origin;
+            float precisionOffset = targetDirection.magnitude * Mathf.Tan(precisionAngle * Mathf.Deg2Rad / 2f);
+
+#if UNITY_EDITOR
+            _forward = targetDirection;
+            _useDefaultForward = false;
+#endif
+            if (precisionOffset > precisionRadius)
+            {
+                shootPoint = result;
+                return false;
+            }
+
+            precisionOffset *= Random.Range(0, 1000f);
+            precisionOffset /= 1000f;
+
+            if (precisionOffset != 0)
+            {
+                float angle = 360f * Random.Range(0, 1000f) / 1000f;
+                Quaternion offsetAngle = Quaternion.AngleAxis(angle, transform.forward);
+                shootPoint = targetDirection + offsetAngle * (precisionOffset * transform.up);
+            }
+            else
+            {
+                shootPoint = targetPoint;
+            }
+            shootPoint += origin;
+            return true;
+        }
+
 #if UNITY_EDITOR
         void DrawViewableArea()
         {
@@ -130,6 +175,47 @@ namespace OperationTrident.Common.AI
             Debug.DrawLine(bottomLeft, bottomRight);
             Debug.DrawLine(topLeft, bottomLeft);
             Debug.DrawLine(topRight, bottomRight);
+        }
+
+        void DrawAttackPrecisionRange(float precisionAngle, float precisionRadius, Vector3 direction)
+        {
+            if (precisionAngle == 0)
+            {
+                Debug.DrawRay(transform.position, transform.forward * GetComponentInParent<AIAgent>().CameraSightDistance, Color.red);
+                return;
+            }
+            float forwardLength = precisionRadius / Mathf.Tan(precisionAngle * Mathf.Deg2Rad / 2);
+            Vector3 origin = transform.position;
+            Vector3 forward = direction.normalized;
+            Vector3 center = origin + forwardLength * forward;
+            Debug.DrawLine(origin, center, Color.red);
+
+            float sliceCount = 10;
+            Vector3 temp = Vector3.zero;
+            Vector3 first = Vector3.zero;
+            for (int i = 0; i < sliceCount; i++)
+            {
+                Quaternion rotationAngle = Quaternion.AngleAxis(360 / sliceCount * i, forward);
+                Vector3 slicePoint = center + rotationAngle * transform.up * precisionRadius;
+                Debug.DrawLine(center, slicePoint, Color.cyan);
+                Debug.DrawLine(origin, slicePoint, Color.cyan);
+
+                if (i != 0)
+                {
+                    Debug.DrawLine(temp, slicePoint, Color.cyan);
+                }
+                else
+                {
+                    first = slicePoint;
+                }
+                temp = slicePoint;
+            }
+            Debug.DrawLine(temp, first, Color.cyan);
+        }
+
+        public void DrawDefaultAttackPrecisionRange()
+        {
+            _useDefaultForward = true;  
         }
 #endif
     }
