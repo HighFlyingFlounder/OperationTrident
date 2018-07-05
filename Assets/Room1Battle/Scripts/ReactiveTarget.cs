@@ -15,6 +15,7 @@ namespace OperationTrident.Room1
 
         // 是否死亡
         private bool dead;
+        private bool sendDeadMessage = false;
 
         public bool Dead
         {
@@ -71,7 +72,7 @@ namespace OperationTrident.Room1
         public void HitImplement(int damage)
         {
             health -= damage;
-            Debug.Log(health);
+            //Debug.Log(health);
             if (health <= 0)
             {
                 if (!dead)
@@ -97,8 +98,22 @@ namespace OperationTrident.Room1
             {
                 GetComponent<FPS.Player.MovementController>().enabled = false;
                 GetComponent<FPS.Player.MouseRotator>().enabled = false;
-                Messenger.Broadcast(DieHandler.PLAYER_DIE);
+                if (!sendDeadMessage)
+                {
+                    SendDead();
+                    sendDeadMessage = true;
+                }
+
+                
             }
+        }
+
+        public void SendDead()
+        {
+            ProtocolBytes proto = new ProtocolBytes();
+            Debug.Log("dead");
+            proto.AddString("Dead");
+            NetMgr.srvConn.Send(proto);
         }
 
 

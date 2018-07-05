@@ -172,7 +172,6 @@ public class SpaceBattleManager : MonoBehaviour
         {
             timeline.SetActive(true);
         }
-        
     }
 
     public void RecvStartFight(ProtocolBase protocol)
