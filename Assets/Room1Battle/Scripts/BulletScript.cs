@@ -13,17 +13,23 @@ namespace OperationTrident.Room1 {
 
         private float timer;
 
+        private string attacker;
+
+        private bool fromAI;
+
         // Use this for initialization
         void Start() {
             timer = 0.0f;
         }
 
-        public void StartWithRay(Ray initRay,float speed=500.0f,float gravity=-9.8f)
+        public void StartWithRay(Ray initRay,string _attacker,bool _fromAI,float speed=500.0f,float gravity=-9.8f)
         {
             this.speed = speed;
             this.gravity = gravity;
             direction = initRay.direction;
             transform.position = initRay.origin + new Vector3(direction.x, direction.y, direction.z);
+            attacker = _attacker;
+            fromAI = _fromAI;
         }
 
         // Update is called once per frame
@@ -57,7 +63,7 @@ namespace OperationTrident.Room1 {
 
                     if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<ReactiveTarget>() != null)
                     {
-                        hitObject.GetComponent<ReactiveTarget>().OnHit(gameObject.name,1);
+                        hitObject.GetComponent<ReactiveTarget>().OnHit(attacker, fromAI, 1);
                         Debug.Log("打中了敌人");
                     }
                     Destroy(gameObject);
@@ -75,7 +81,7 @@ namespace OperationTrident.Room1 {
             if (other.CompareTag("Player")) return;
             if (other.GetComponent<ReactiveTarget>() != null)
             {
-                other.gameObject.GetComponent<ReactiveTarget>().OnHit(gameObject.name,1);
+                other.gameObject.GetComponent<ReactiveTarget>().OnHit(attacker,fromAI,1);
                 Debug.Log("打中了敌人");
             }
             Destroy(gameObject);

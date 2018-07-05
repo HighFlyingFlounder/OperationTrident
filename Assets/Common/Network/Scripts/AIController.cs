@@ -25,6 +25,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     private Dictionary<string, Vector3> AI_lRotation_List;
     public GameObject[] AIPrefabs;
     private NetSyncController m_NetSyncController;
+    private int begin_id = 0;
 
     void Awake()
     {
@@ -87,7 +88,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
-        int begin_id = AI_List.Count;
+        
         for (int i = 0; i < num; i++)
         {
             swopTrans = sp.GetChild(i);
@@ -108,7 +109,8 @@ public class AIController : MonoBehaviour, NetSyncInterface
             }
 
             //创建的AI初始化信息
-            AI.name = "AI" + (i + begin_id);
+            begin_id++;
+            AI.name = "AI" + begin_id;
             AI.transform.position = swopTrans.position;
             AI.transform.rotation = swopTrans.rotation;
             AI_List.Add(AI.name, AI);
@@ -123,6 +125,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void Update()
     {
+        if (!GameMgr.instance)//单机状态
+        {
+            return;
+        }
         if (syncPerSecond == 0f)
         {
             return;
@@ -145,6 +151,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void DestroyAI(string AI_name)
     {
         AI_List.Remove(AI_name);
+        AI_fPosition_List.Remove(AI_name);
+        AI_lPosition_List.Remove(AI_name);
+        AI_fRotation_List.Remove(AI_name);
+        AI_lRotation_List.Remove(AI_name);
     }
 
     public void ClearAI()

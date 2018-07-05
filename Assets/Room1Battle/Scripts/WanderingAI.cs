@@ -73,16 +73,8 @@ namespace OperationTrident.Room1
                         player = hitObject;
                         if (bullet == null)
                         {
-                            bullet = Instantiate(bulletPrefab) as GameObject;
-                            if (bullet.GetComponent<BulletScript>() != null)
-                            {
-                                bullet.GetComponent<BulletScript>().StartWithRay(ray, 10.0f, 1.0f);
-                            }
-                            else
-                            {
-                                bullet.transform.position = transform.TransformPoint(Vector3.forward * 1.5f);
-                                bullet.transform.rotation = transform.rotation;
-                            }
+                            //bullet = Instantiate(bulletPrefab) as GameObject;
+                            BulletGenerator.GeneratorBullet(ray, bulletPrefab, gameObject.name, true);
                         }
 
                     }
