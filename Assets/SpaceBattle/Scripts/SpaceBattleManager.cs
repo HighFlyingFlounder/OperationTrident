@@ -11,6 +11,7 @@ public class SpaceBattleManager : MonoBehaviour
     public Dictionary<string, GameObject> list;
     public Dictionary<string, Hinder> rock_list;
     private GameObject[] rocks;
+    public GameObject timeline;
     public Camera camera = null;
     void Awake()
     {
@@ -164,7 +165,8 @@ public class SpaceBattleManager : MonoBehaviour
         NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
         ClearBattle();
 
-        SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
+        //SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
+        timeline.SetActive(true);
     }
 
     public void RecvStartFight(ProtocolBase protocol)
