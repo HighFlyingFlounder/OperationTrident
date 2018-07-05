@@ -47,7 +47,7 @@ namespace OperationTrident.FPS.Weapons {
 
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(WeaponBobbing))]
-    public class Weapon : MonoBehaviour {
+    public class Weapon : MonoBehaviour,NetSyncInterface {
         //武器射击的方式
         public WeaponType Type = Weapons.WeaponType.Projectile;
 
@@ -309,6 +309,8 @@ namespace OperationTrident.FPS.Weapons {
         private Hashtable m_RecoilParam;
         //发射射线的起点
         private Transform m_CurrentShootPoint;
+
+        private NetSyncController m_NetSyncController;
 
         private void OnEnable() {
             WeaponModel.SetActive(true);
@@ -686,7 +688,12 @@ namespace OperationTrident.FPS.Weapons {
 
         #region RPC函数
         //射线武器，开火
-        void Fire() {
+        public void Fire() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Fire");
+            }
+
             SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //重置计时器
@@ -877,7 +884,12 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //抛射物武器，抛射
-        public void Launch() {
+        public void Launch() {            
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Launch");
+            }
+
             SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //重置计时器
@@ -943,7 +955,12 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //激光武器，发射激光
-        void Beam() {
+        public void Beam() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Beam");
+            }
+
             SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //当前正在发射激光
@@ -1085,6 +1102,11 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         public void StopBeam() {
+            //调用RPC函数
+            if (IsLocalObject && Type == WeaponType.Beam) {
+                m_NetSyncController.RPC(this, "StopBeam");
+            }
+
             // Restart the beam timer
             m_BeamHeat -= Time.deltaTime;
             if (m_BeamHeat < 0)
@@ -1102,6 +1124,11 @@ namespace OperationTrident.FPS.Weapons {
 
         //换弹
         private void Reload() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Reload");
+            }
+
             if (m_CurrentTotalAmmo == 0) {
                 return;
             }
@@ -1142,6 +1169,11 @@ namespace OperationTrident.FPS.Weapons {
 
         //切换瞄准镜的状态
         private void SwitchMirrorState() {
+            //调用RPC函数
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "SwitchMirrorState");
+            }
+
             if (!UseMirror) {
                 return;
             }
@@ -1231,6 +1263,18 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             return hitMesh;
+        }
+
+        public void RecvData(SyncData data) {
+            throw new System.NotImplementedException();
+        }
+
+        public SyncData SendData() {
+            return new SyncData();
+        }
+
+        public void Init(NetSyncController controller) {
+            m_NetSyncController = controller;
         }
     }
 }
