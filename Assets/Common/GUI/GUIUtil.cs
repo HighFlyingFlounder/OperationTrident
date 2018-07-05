@@ -1224,6 +1224,20 @@ namespace OperationTrident.Util
             
         }
 
+
+        public static void DisplayMissionDetailInGivenTime(
+            string[] missionDetails,
+            Camera camera,
+            Color color,
+            float lastTime,
+            int fontSize = defaultFontSize,
+            float wordTransparentInterval = 0.005f,  // 字变得透明的速度
+            float wordAppearanceInterval = 0.5f,  // 字出现的速度
+            float lineSubsequentlyInterval = defaultMissionDetailInterval ) // 每一行出现的速度)
+        {
+
+        }
+
         //================================================================================
         //==        显示字幕，要用指定的文法的                                         ===============================
         //==        文法示例：                                                        =========================

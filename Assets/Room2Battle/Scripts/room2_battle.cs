@@ -37,6 +37,12 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+
+        private void Start()
+        {
+            AIController.instance.AddAIObject(boss);
+        }
+
         public override void notify(int i)
         {
             
@@ -62,36 +68,21 @@ namespace room2Battle {
         {
             //Debug.Log(director.isActiveAndEnabled);
             //director.Play();
-            boss.SetActive(true);
+            
         }
 
         void Update()
         {
-            Debug.Log(isTimelinePaused);
             if (!isTimelinePaused)
             {
                 if (director.state != UnityEngine.Playables.PlayState.Playing)
                 {
                     isTimelinePaused = true;
-                    //播放完动画在生成敌人
-                    for (int i = 0; i < maxEnemyNum; ++i)
-                    {
-                        GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        enemyList.Add(obj);
-                    }
                 }
             }
             else {
+                boss.SetActive(true);
                 nextScene_.SetActive(true);
-                //补充敌人
-                for (int i = 0; i < enemyList.Count; ++i)
-                {
-                    if (enemyList[i] == null)
-                    {
-                        enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        break;
-                    }
-                }
             }
         }
 
@@ -99,11 +90,15 @@ namespace room2Battle {
         {
             if (isTimelinePaused)
             {
-                GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                      Camera.main,
-                      OperationTrident.Util.GUIUtil.yellowColor,
-                      0.5f, 0.1f, 16);
+                if (Camera.current)
+                {
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
+                    OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                          Camera.current,
+                          OperationTrident.Util.
+                          GUIUtil.yellowColor,
+                          0.5f, 0.1f, 16);
+                }
             }
             if (!isTimelinePaused)
             {

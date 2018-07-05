@@ -25,6 +25,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     private Dictionary<string, Vector3> AI_lRotation_List;
     public GameObject[] AIPrefabs;
     private NetSyncController m_NetSyncController;
+    private int begin_id = 0;
 
     void Awake()
     {
@@ -43,6 +44,24 @@ public class AIController : MonoBehaviour, NetSyncInterface
         AI_fRotation_List = new Dictionary<string, Vector3>();
         AI_lRotation_List = new Dictionary<string, Vector3>();
     }
+    /// <summary> 
+    /// 不会自动同步！将obj添加进AIController的管理，将确保AI的位置在所有客户端一致，以master-Client为准
+    /// </summary> 
+    /// <param name="obj">要添加的AI GameObject</param>     
+    /// <returns></returns> 
+    public void AddAIObject(GameObject obj)
+    {
+        if (!GameMgr.instance)//离线状态
+        {
+            return;
+        }
+        AI_List.Add(obj.name, obj);
+        AI_fPosition_List.Add(obj.name, obj.transform.position);
+        AI_lPosition_List.Add(obj.name, obj.transform.position);
+        AI_fRotation_List.Add(obj.name, obj.transform.eulerAngles);
+        AI_lRotation_List.Add(obj.name, obj.transform.eulerAngles);
+    }
+
     /// <summary> 
     /// 在所有客户端，在名字为swopPoints的节点的子节点创建num个类型为type的AI，该事件会自动RPC同步，无需在调用的时候使用RPC来调用
     /// </summary> 
@@ -69,7 +88,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
-        int begin_id = AI_List.Count;
+        
         for (int i = 0; i < num; i++)
         {
             swopTrans = sp.GetChild(i);
@@ -90,7 +109,8 @@ public class AIController : MonoBehaviour, NetSyncInterface
             }
 
             //创建的AI初始化信息
-            AI.name = "AI" + (i + begin_id);
+            begin_id++;
+            AI.name = "AI" + begin_id;
             AI.transform.position = swopTrans.position;
             AI.transform.rotation = swopTrans.rotation;
             AI_List.Add(AI.name, AI);
@@ -105,6 +125,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void Update()
     {
+        if (!GameMgr.instance)//单机状态
+        {
+            return;
+        }
         if (syncPerSecond == 0f)
         {
             return;
@@ -127,6 +151,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void DestroyAI(string AI_name)
     {
         AI_List.Remove(AI_name);
+        AI_fPosition_List.Remove(AI_name);
+        AI_lPosition_List.Remove(AI_name);
+        AI_fRotation_List.Remove(AI_name);
+        AI_lRotation_List.Remove(AI_name);
     }
 
     public void ClearAI()
