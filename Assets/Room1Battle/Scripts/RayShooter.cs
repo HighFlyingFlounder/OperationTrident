@@ -26,12 +26,9 @@ namespace OperationTrident.Room1
         public bool isLocalPlayer = true;
 
 
-        // 附加在这个东西上的摄像机
-        private new Camera camera;
         // Use this for initialization
         void Start()
         {
-            camera = Camera.current;
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -56,8 +53,8 @@ namespace OperationTrident.Room1
                 )
             {
                 StartCoroutine(ShootRoutine());
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
                 //ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
@@ -72,10 +69,10 @@ namespace OperationTrident.Room1
                 if (jitterOn)
                 {
                     // 镜头随机的抖动！！
-                    float rotationX = camera.transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
-                    float rotationY = camera.transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
-                    float rotationZ = camera.transform.localEulerAngles.z;
-                    camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
+                    float rotationX = Util.GetCamera().transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
+                    float rotationY = Util.GetCamera().transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
+                    float rotationZ = Util.GetCamera().transform.localEulerAngles.z;
+                    Util.GetCamera().transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
                 }
             }
         }
@@ -96,7 +93,7 @@ namespace OperationTrident.Room1
                 OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
                 if (target != null)   //检查对象上是否有ReactiveTarget组件
                 {
-                     target.OnHit(gameObject.name,1);
+                     target.OnHit(gameObject.name,false,1);
                 }
                 else
                 {
@@ -107,8 +104,8 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            float posX = camera.pixelWidth / 2;
-            float posY = camera.pixelHeight / 2; ;
+            float posX = Util.GetCamera().pixelWidth / 2;
+            float posY = Util.GetCamera().pixelHeight / 2; ;
 
             // 红色的准心
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.redColor);

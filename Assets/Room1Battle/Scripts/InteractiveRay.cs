@@ -14,7 +14,6 @@ namespace OperationTrident.Room1
         private float distanceQuota = 3.0f;
 
         // 附加在这个游戏对象上的摄像头
-        private new Camera camera;
 
         // 是否提示玩家按下某个键
         public bool toNotify = true;
@@ -27,7 +26,6 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = Camera.current;
             hintToDisplay = string.Empty;
         }
 
@@ -37,8 +35,8 @@ namespace OperationTrident.Room1
             // 提示玩家按键
             if (toNotify)
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
@@ -64,23 +62,25 @@ namespace OperationTrident.Room1
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                    Debug.Log("物体" + hitObject.name);
+                    Debug.Log("距离: "+Vector3.Distance(this.transform.position, hitObject.transform.position));
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
                     {
-                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         return;
                     }
                     KeyScript target =
                         hitObject.GetComponent<KeyScript>();
                     if (target != null)   //检查对象上是否有KeyScript组件
                     {
+                        Debug.Log("1113");
                         Messenger<int>.Broadcast(GameEvent.KEY_GOT, target.ThisId);
                         return;
                     }
@@ -114,9 +114,9 @@ namespace OperationTrident.Room1
             if (toDisplayHint)
             {
                 if (usingGrammar)
-                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, camera, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
                 else
-                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, camera, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
             }
         }
     }
