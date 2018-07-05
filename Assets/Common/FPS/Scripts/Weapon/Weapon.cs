@@ -753,7 +753,7 @@ namespace OperationTrident.FPS.Weapons {
 
                     if (target != null)   //检查对象上是否有ReactiveTarget组件
                     {
-                        target.OnHit(gameObject.name, 1);
+                        target.OnHit(gameObject.name,false, 1);
                     }
 
                     ////造成伤害

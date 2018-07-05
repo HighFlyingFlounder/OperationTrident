@@ -93,7 +93,7 @@ namespace OperationTrident.Room1
                 OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
                 if (target != null)   //检查对象上是否有ReactiveTarget组件
                 {
-                     target.OnHit(gameObject.name,1);
+                     target.OnHit(gameObject.name,false,1);
                 }
                 else
                 {

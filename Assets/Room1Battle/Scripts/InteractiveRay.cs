@@ -35,8 +35,8 @@ namespace OperationTrident.Room1
             // 提示玩家按键
             if (toNotify)
             {
-                Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = Camera.main.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
@@ -62,8 +62,8 @@ namespace OperationTrident.Room1
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
             {
-                Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = Camera.main.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
@@ -114,9 +114,9 @@ namespace OperationTrident.Room1
             if (toDisplayHint)
             {
                 if (usingGrammar)
-                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Camera.main, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
                 else
-                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Camera.main, hintFontSize, 0.5f);
+                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
             }
         }
     }

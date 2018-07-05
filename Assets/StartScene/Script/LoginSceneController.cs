@@ -28,10 +28,20 @@ namespace OperationTrident.StartScene
         // Use this for initialization
         void Start()
         {
-            loginCanvas.enabled = true;
-            titleCanvas.enabled = false;
-            roomCanvas.enabled = false;
-            titleTextCanvas.enabled = true;
+            if (StartSceneEvent.startSceneState == StartSceneEvent.StartSceneState.Login)
+            {
+                loginCanvas.enabled = true;
+                titleCanvas.enabled = false;
+                roomCanvas.enabled = false;
+                titleTextCanvas.enabled = true;
+            }
+            else
+            {
+                loginCanvas.enabled = false;
+                titleCanvas.enabled = true;
+                roomCanvas.enabled = false;
+                titleTextCanvas.enabled = true;
+            }
         }
 
         // Update is called once per frame
@@ -81,6 +91,7 @@ namespace OperationTrident.StartScene
                 loginCanvas.enabled = false;
                 titleCanvas.enabled = true;
                 roomCanvas.enabled = false;
+                StartSceneEvent.startSceneState = StartSceneEvent.StartSceneState.Title;
             }
             else
             {
@@ -94,6 +105,7 @@ namespace OperationTrident.StartScene
             titleCanvas.enabled = false;
             roomCanvas.enabled = true;
             titleTextCanvas.enabled = false;
+            StartSceneEvent.startSceneState = StartSceneEvent.StartSceneState.RoomList;
             GetComponent<RoomSceneController>().InitRoomListScene();
         }
     }
