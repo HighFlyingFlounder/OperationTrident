@@ -20,7 +20,7 @@ namespace room2Battle
         protected GameObject missilePrefabs;
 
         //目标位置
-        public Transform targetTransform;
+        public Vector3 targetTransformPosition;
 
         //发射角度角度
         protected Quaternion launchQuaternion;
@@ -40,11 +40,11 @@ namespace room2Battle
         //是否正在发射
         protected bool isLaunching = false;
 
-        public void SetTargetPostion(Transform pos)
+        public void SetTargetPostion(Vector3 pos)
         {
             //不能中途修改目标
             if(!isLaunching)
-                targetTransform = pos;
+                targetTransformPosition = pos;
         }
 
 
@@ -59,7 +59,7 @@ namespace room2Battle
                 //保存旧的
                 launcherEulerBefore = transform.eulerAngles;
                 //父节点lookat
-                tempLauncherTransform.LookAt(targetTransform.position);
+                tempLauncherTransform.LookAt(targetTransformPosition);
                 
                 //记录父节点新的
                 launcherEulerAfter = new Vector3(270, tempLauncherTransform.eulerAngles.y, 0);
@@ -67,7 +67,7 @@ namespace room2Battle
                 tempLauncherTransform.eulerAngles = launcherEulerAfter;
 
                 rocketRotationBefore = t.rotation;
-                t.LookAt(targetTransform.position, t.up);
+                t.LookAt(targetTransformPosition, t.up);
                 t.localEulerAngles = new Vector3(t.localEulerAngles.x + 90, t.localEulerAngles.y, t.localEulerAngles.z);
                 rocketRotationAfter = t.rotation;
 

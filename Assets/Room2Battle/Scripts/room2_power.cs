@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
 
+using OperationTrident.FPS.Common;
+
 namespace room2Battle
 {
     //能源房大战
@@ -41,12 +43,10 @@ namespace room2Battle
         protected bool isOpenDepthSensor = false;
         //挂载相机的对象，联网可用
         protected GameObject playerCamera = null;
-
-        protected GameObject playerMirror = null;
-
-        //挂载脚本的shader，包括dark和depth sensor
-        //[SerializeField]
-        //protected Shader shader_dark = null;
+        //倍镜
+        protected List<GameObject> playerCameraMirror = new List<GameObject>();
+        //获取camera
+        protected GetCamera getCamera;
 
         //挂载相机的对象，单机可用
         [SerializeField]
@@ -89,13 +89,9 @@ namespace room2Battle
             playerCamera.GetComponent<depthSensor>().enabled = false;
             playerCamera.GetComponent<becomeDark>().enabled = false;
 
-            playerMirror.GetComponent<depthSensor>().enabled = false;
-            playerMirror.GetComponent<becomeDark>().enabled = false;
 
             Destroy(playerCamera.GetComponent<depthSensor>());
             Destroy(playerCamera.GetComponent<becomeDark>());
-            Destroy(playerMirror.GetComponent<depthSensor>());
-            Destroy(playerMirror.GetComponent<becomeDark>());
 
             //@TODO: 替换成老Y的AI
             foreach (GameObject obj in enemyList)
@@ -112,14 +108,22 @@ namespace room2Battle
             //RenderSettings.ambientIntensity = 0.1f;
             //添加脚本
             if (GameMgr.instance)//联网状态
-                playerCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
-            else
-                playerCamera = player.transform.Find("Camera").gameObject;
-
-            if (playerCamera)
             {
-                GameObject gun = playerCamera.transform.Find("Gun").gameObject;
-                playerMirror = gun.transform.Find("Mirror").gameObject;
+                getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
+                playerCamera = getCamera.MainCamera;
+                foreach (GameObject cam in getCamera.MirrorCameras)
+                {
+                    playerCameraMirror.Add(cam);
+                }
+            }
+            else
+            {
+                getCamera = player.GetComponent<GetCamera>();
+                playerCamera = getCamera.MainCamera;
+                foreach (GameObject cam in getCamera.MirrorCameras)
+                {
+                    playerCameraMirror.Add(cam);
+                }
             }
 
             //@TODO: 替换成老Y的AI
@@ -148,6 +152,8 @@ namespace room2Battle
 
         void Update()
         {
+            mCamera = getCamera.GetCurrentUsedCamera();
+
             Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
 
             Ray ray = mCamera.ScreenPointToRay(point);
@@ -173,15 +179,6 @@ namespace room2Battle
                 }
             }
 
-            //@TODO: 替换成老Y的AI
-            for (int i = 0; i < enemyList.Count; ++i)
-            {
-                if (enemyList[i] == null)
-                {
-                    enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                    break;
-                }
-            }
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2;
 
@@ -225,8 +222,11 @@ namespace room2Battle
                     playerCamera.GetComponent<depthSensor>().enabled = true;
                     playerCamera.GetComponent<becomeDark>().enabled = false;
 
-                    playerMirror.GetComponent<depthSensor>().enabled = true;
-                    playerMirror.GetComponent<becomeDark>().enabled = false;
+                    foreach (GameObject mirror in playerCameraMirror)
+                    {
+                        mirror.GetComponent<depthSensor>().enabled = true;
+                        mirror.GetComponent<becomeDark>().enabled = false;
+                    }
 
                     isOpenDepthSensor = true;
                 }
@@ -235,10 +235,17 @@ namespace room2Battle
                     if (!isSwitchOpen)
                     {
                         playerCamera.GetComponent<becomeDark>().enabled = true;
-                        playerMirror.GetComponent<becomeDark>().enabled = true;
+
+                        foreach (GameObject mirror in playerCameraMirror)
+                        {
+                            mirror.GetComponent<becomeDark>().enabled = true;
+                        }
                     }
                     playerCamera.GetComponent<depthSensor>().enabled = false;
-                    playerMirror.GetComponent<depthSensor>().enabled = false;
+                    foreach (GameObject mirror in playerCameraMirror)
+                    {
+                        mirror.GetComponent<depthSensor>().enabled = false;
+                    }
                     isOpenDepthSensor = false;
                 }
             }
@@ -246,7 +253,10 @@ namespace room2Battle
             if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;
-                playerMirror.GetComponent<becomeDark>().enabled = false;
+                foreach (GameObject mirror in playerCameraMirror)
+                {
+                    mirror.GetComponent<becomeDark>().enabled = false;
+                }
             }
 
         }
@@ -256,7 +266,7 @@ namespace room2Battle
         {
             if (isFocus)
             {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", Camera.main, 16);
+                GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", mCamera, 16);
                 float posX = mCamera.pixelWidth / 2 - 50;
                 float posY = mCamera.pixelHeight / 2 - 50;
                 //交互提示
@@ -275,7 +285,7 @@ namespace room2Battle
             if (!isSwitchOpen)
             {
                 GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
-                   Camera.main,
+                   mCamera,
                    GUIUtil.yellowColor,
                    0.5f, 0.1f, 16);
                 if (!open2 && open)
@@ -296,9 +306,9 @@ namespace room2Battle
             {
                 if (!isIntoSecondFloor)
                 {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16,0.9f,0.2f,1.2f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
                     GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
-                       Camera.main,
+                       mCamera,
                        GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
                     GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));

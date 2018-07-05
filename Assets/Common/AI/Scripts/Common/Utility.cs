@@ -21,6 +21,38 @@ namespace OperationTrident.Common.AI
             return Resources.Load<AIStateRegister>("AIStateRegister");
         }
 
+        public static Transform[] GetPlayersPosition()
+        {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            Transform[] result = new Transform[players.Length];
+            for (int i = 0; i < players.Length; i++)
+            {
+                result[i] = players[i].transform.Find("ShootedTarget");
+            }
+            return result;
+        }
+
+        public static Transform DetectPlayers(AICamera camera)
+        {
+            camera.UpdateCamera();
+            Transform[] players = Utility.GetPlayersPosition();
+            foreach (var player in players)
+            {
+                if (camera.DetectTarget(player))
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
+
+        public static Vector3 GetDirectionOnXOZ(Vector3 origin, Vector3 target)
+        {
+            Vector3 result = target - origin;
+            result.y = 0;
+            return result.normalized;
+        }
+
 #if UNITY_EDITOR
         public static bool CanDrawEditor()
         {

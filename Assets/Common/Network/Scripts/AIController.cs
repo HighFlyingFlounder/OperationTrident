@@ -45,6 +45,24 @@ public class AIController : MonoBehaviour, NetSyncInterface
         AI_lRotation_List = new Dictionary<string, Vector3>();
     }
     /// <summary> 
+    /// 不会自动同步！将obj添加进AIController的管理，将确保AI的位置在所有客户端一致，以master-Client为准
+    /// </summary> 
+    /// <param name="obj">要添加的AI GameObject</param>     
+    /// <returns></returns> 
+    public void AddAIObject(GameObject obj)
+    {
+        if (!GameMgr.instance)//离线状态
+        {
+            return;
+        }
+        AI_List.Add(obj.name, obj);
+        AI_fPosition_List.Add(obj.name, obj.transform.position);
+        AI_lPosition_List.Add(obj.name, obj.transform.position);
+        AI_fRotation_List.Add(obj.name, obj.transform.eulerAngles);
+        AI_lRotation_List.Add(obj.name, obj.transform.eulerAngles);
+    }
+
+    /// <summary> 
     /// 在所有客户端，在名字为swopPoints的节点的子节点创建num个类型为type的AI，该事件会自动RPC同步，无需在调用的时候使用RPC来调用
     /// </summary> 
     /// <param name="num">创建的AI数量，应与swopPoints的节点的子节点数量一一对应</param> 
