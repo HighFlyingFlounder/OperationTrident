@@ -12,8 +12,6 @@ namespace OperationTrident.Room1
             //playerObj.GetComponent<NetSyncController>().sync_scripts.Add(ray_shooter);
             //playerObj.GetComponent<NetSyncController>().AddSyncScripts(ray_shooter);
             playerObj.AddComponent<InteractiveRay>();
-            if (id != GameMgr.instance.id)
-                playerObj.GetComponent<RayShooter>().isLocalPlayer = false;
         }
     }
 }
