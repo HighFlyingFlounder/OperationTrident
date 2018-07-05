@@ -15,22 +15,35 @@ namespace OperationTrident.Common.AI
             public static readonly string FINISH_INSPECTION = "Finish Inspection";
         }
 
-		public override void Init(AIStateParam param)
+        float _duration;
+
+        public override void Init()
         {
-            base.Init(param);
-            transform.GetComponent<Animator>().SetFloat("Speed", -1f);
-			StartCoroutine(FindPlayer());
+            _agent.ActionController.FindTarget(true);
+            _duration = 8f;
         }
 
         public override string Execute()
         {
-			return _satisfy;
+            Transform target = Utility.DetectPlayers(_agent.Camera);
+            if (target != null)
+            {
+                _agent.Target = target;
+                return Conditions.SIGHT_PLAYER;
+            }
+
+            _duration -= Time.deltaTime;
+            if (_duration < 0)
+            {
+                return Conditions.FINISH_INSPECTION;
+            }
+
+            return null;
         }
 
-        IEnumerator FindPlayer()
+        public override void Exit()
         {
-            yield return new WaitForSeconds(8f);
-			_satisfy = Conditions.FINISH_INSPECTION;
+            _agent.ActionController.FindTarget(false);
         }
     }
 }
