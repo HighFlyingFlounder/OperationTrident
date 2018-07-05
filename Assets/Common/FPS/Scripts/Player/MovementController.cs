@@ -33,9 +33,9 @@ namespace OperationTrident.FPS.Player {
         private AudioSource m_AudioSource;
 
         //用于判断当前是在跑步还是走路
-        private bool m_IsWalking;
+        private bool m_IsRunning;
         //用于判断当前是否蹲下
-        private bool m_IsUnderarming;
+        private bool m_IsCrouching;
         //判断当前是否在按了跳跃键
         private bool m_Jump;
         //判断当前是否处于跳跃状态
@@ -46,8 +46,6 @@ namespace OperationTrident.FPS.Player {
         private Vector2 m_PreInput;
         //保存用户的速度
         private float m_Speed;
-        //保存用户上一帧的速度
-        private float m_PreSpeed;
         //角色移动的方向
         private Vector3 m_MoveDir = Vector3.zero;
 
@@ -72,13 +70,13 @@ namespace OperationTrident.FPS.Player {
             m_StepCycle = 0f;
             m_NextStep = m_StepCycle / 2f;
             m_Jumping = false;
-            m_IsUnderarming = false;
+            m_IsCrouching = false;
 
             m_Input = Vector2.zero;
             m_PreInput = Vector2.zero;
 
-            m_Speed = 0f;
-            m_PreSpeed = 0f;
+            m_Speed = m_WalkSpeed;
+            BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
         }
 
         private void FixedUpdate() {
@@ -109,7 +107,7 @@ namespace OperationTrident.FPS.Player {
 
                 if (m_Jump) {
                     //蹲下时不能直接起跳，需要先站起来
-                    if (m_IsUnderarming) {
+                    if (m_IsCrouching) {
                         StandUp();
                     } else {
                         m_MoveDir.y = m_JumpSpeed;
@@ -165,7 +163,7 @@ namespace OperationTrident.FPS.Player {
         //循环播放走路音效
         private void ProgressStepCycle(float speed) {
             if (m_CharacterController.velocity.sqrMagnitude > 0 && (m_Input.x != 0 || m_Input.y != 0)) {
-                m_StepCycle += (m_CharacterController.velocity.magnitude + (speed * (m_IsWalking ? 1f : m_RunstepLenghten))) *
+                m_StepCycle += (m_CharacterController.velocity.magnitude + (speed * (m_IsRunning ? m_RunstepLenghten : 1f))) *
                              Time.fixedDeltaTime;
             }
 
@@ -195,7 +193,7 @@ namespace OperationTrident.FPS.Player {
         private void GetInput() {
             //站立和蹲下
             if (Input.GetKeyDown(KeyCode.X)) {
-                if (m_IsUnderarming) {
+                if (m_IsCrouching) {
                     //这里需要调用RPC
                     StandUp();
                 } else {
@@ -212,36 +210,41 @@ namespace OperationTrident.FPS.Player {
             //水平移动
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
+
             m_Input = new Vector2(horizontal, vertical);
-            //这里需要调用RPC
-            Walk();
-
-#if !MOBILE_INPUT
-            // 按住shift键进入跑步状态
-            m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
-#endif
-            // 根据当前的状态设置速度
-            m_Speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
-
-            //如果是蹲着，那么速度减半
-            if (m_IsUnderarming) {
-                m_Speed /= 2;
-            }
+            
 
             //归一化用户的输入
             if (m_Input.sqrMagnitude > 1) {
                 m_Input.Normalize();
             }
 
-            //速度改变，发送速度改变的请求
-            if (m_Speed != m_PreSpeed) {
+            //这里需要调用RPC
+            Walk(horizontal, vertical);
+
+#if !MOBILE_INPUT
+            if(Input.GetKey(KeyCode.LeftShift) != m_IsRunning) {
+                // 按住shift键进入跑步状态
+                m_IsRunning = Input.GetKey(KeyCode.LeftShift);
+
+                //这里需要调用RPC函数
+                Run();
+
+                // 根据当前的状态设置速度
+                m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
+                //如果是蹲着，那么速度减半
+                if (m_IsCrouching) {
+                    m_Speed /= 2;
+                }
+
                 BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
 
                 //进入跑步状态
-                if (m_Speed == m_RunSpeed) {
+                if (m_IsRunning) {
                     BroadcastMessage("StartRunning", SendMessageOptions.DontRequireReceiver);
                 }
             }
+#endif
 
             //发送开始行走的消息
             if (m_Input.magnitude > 0f && m_PreInput.magnitude == 0f) {
@@ -254,7 +257,6 @@ namespace OperationTrident.FPS.Player {
             }
 
             //重置变量
-            m_PreSpeed = m_Speed;
             m_PreInput = m_Input;
         }
 
@@ -273,8 +275,28 @@ namespace OperationTrident.FPS.Player {
 
         #region RPC函数
         //行走函数
-        private void Walk() {
-            SendMessage("SetWalkAnimationParamters", m_Input, SendMessageOptions.DontRequireReceiver);
+        public void Walk(float h, float v) {
+            //调用RPC
+            if (IsLocalObject) {
+                //Debug.Log("m_input:" + m_Input.x + " " + m_Input.y);
+                //Debug.Log("m_PreInput:" + m_PreInput.x + " " + m_PreInput.y);
+                if (Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f || Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f) {
+                    //Debug.Log("Walk");
+                    m_NetSyncController.RPC(this, "Walk", h, v);
+                }
+            }
+
+
+            SendMessage("SetWalkAnimationParamters", new Vector2(h, v), SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void Run() {
+            //调用RPC
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Run");
+            }
+
+            SendMessage("SetRunAnimationParamters", m_IsRunning, SendMessageOptions.DontRequireReceiver);
         }
 
         //站立函数
@@ -286,11 +308,11 @@ namespace OperationTrident.FPS.Player {
 
             //碰撞体高度减少一半
             m_CharacterController.height *= 2;
-            m_CharacterController.center *= 2;
+            //m_CharacterController.center *= 2;
 
-            m_IsUnderarming = false;
+            m_IsCrouching = false;
 
-            SendMessage("SetUnderarmAnimationParamters", m_IsUnderarming, SendMessageOptions.DontRequireReceiver);
+            SendMessage("SetCrouchAnimationParamters", m_IsCrouching, SendMessageOptions.DontRequireReceiver);
             BroadcastMessage("MoveWeaponUp", SendMessageOptions.DontRequireReceiver);
         }
 
@@ -304,11 +326,11 @@ namespace OperationTrident.FPS.Player {
             float distacne = m_CharacterController.height / 2;
             //碰撞体高度减少一半
             m_CharacterController.height -= distacne;
-            m_CharacterController.center /= 2;
+            //m_CharacterController.center /= 2;
 
-            m_IsUnderarming = true;
+            m_IsCrouching = true;
 
-            SendMessage("SetUnderarmAnimationParamters", m_IsUnderarming, SendMessageOptions.DontRequireReceiver);
+            SendMessage("SetCrouchAnimationParamters", m_IsCrouching, SendMessageOptions.DontRequireReceiver);
             BroadcastMessage("MoveWeaponDown", distacne, SendMessageOptions.DontRequireReceiver);
         }
         #endregion

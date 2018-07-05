@@ -1123,7 +1123,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //换弹
-        private void Reload() {
+        public void Reload() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
@@ -1168,7 +1168,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //切换瞄准镜的状态
-        private void SwitchMirrorState() {
+        public void SwitchMirrorState() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "SwitchMirrorState");
