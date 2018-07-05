@@ -14,6 +14,8 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     public class Projectile : MonoBehaviour {
+        public bool IsLocalObject = false;
+
         //抛射物种类
         public ProjectileType SelectedProjectileType = ProjectileType.Standard; 
         //伤害类型
@@ -60,6 +62,11 @@ namespace OperationTrident.FPS.Weapons {
 
         // Update is called once per frame
         void Update() {
+            //不是本地物体，不执行任何操作
+            if (!IsLocalObject) {
+                return;
+            }
+
             //计时
             m_LifeTimer += Time.deltaTime;
 

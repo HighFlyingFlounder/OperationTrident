@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.CrossInput;
-using OperationTrident.Player;
+
 
 public class SceneNetManager : MonoBehaviour
 {
