@@ -28,11 +28,16 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void SetWalkAnimationParamters(Vector2 input) {
-            m_Animator.SetFloat("speed", input.magnitude);
+            m_Animator.SetFloat("turn", input.x);
+            m_Animator.SetFloat("forward", input.y);
         }
 
-        private void SetUnderarmAnimationParamters(bool isUnderarming) {
-            m_Animator.SetBool("isUnderarming", isUnderarming);
+        private void SetRunAnimationParamters(bool running) {
+            m_Animator.SetBool("isRunning", running);
+        }
+
+        private void SetCrouchAnimationParamters(bool isCrouching) {
+            m_Animator.SetBool("isCrouching", isCrouching);
         }
     }
 }

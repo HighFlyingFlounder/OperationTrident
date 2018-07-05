@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using OperationTrident.Room1;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 namespace OperationTrident.FPS.Weapons {
     //武器类型
@@ -318,8 +318,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         // Use this for initialization
-        private void Start() {
-
+        void Start() {
             //计算开火的频率
             if (RateOfFire != 0)
                 ActualROF = 1.0f / RateOfFire;
@@ -432,7 +431,6 @@ namespace OperationTrident.FPS.Weapons {
                 {"shootInterval", ActualROF },
                 {"maxAngle", RecoilMaxAngle }
             };
-
         }
 
         void Update() {
@@ -747,15 +745,6 @@ namespace OperationTrident.FPS.Weapons {
                         m_Heat = 0.0f;
                     }
 
-                    //hit.point:射线击中的坐标
-                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<OperationTrident.Room1.ReactiveTarget>();
-
-                    if (target != null)   //检查对象上是否有ReactiveTarget组件
-                    {
-                        target.OnHit(gameObject.name,false, 1);
-                    }
-
                     ////造成伤害
                     //hit.collider.gameObject.SendMessageUpwards("ChangeHealth", -damage, SendMessageOptions.DontRequireReceiver);
 
@@ -777,6 +766,13 @@ namespace OperationTrident.FPS.Weapons {
                     //        */
                     //    }
                     //}
+                    ReactiveTarget reactive_target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
+                    if (reactive_target)
+                    {
+                        Debug.Log("transform.root.name    " + transform.root.name);
+                        reactive_target.OnHit(transform.root.name, false, (int)Power);
+                    }
+                        
 
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
@@ -1135,7 +1131,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //换弹
-        private void Reload() {
+        public void Reload() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
@@ -1180,7 +1176,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //切换瞄准镜的状态
-        private void SwitchMirrorState() {
+        public void SwitchMirrorState() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "SwitchMirrorState");
@@ -1245,7 +1241,6 @@ namespace OperationTrident.FPS.Weapons {
             WeaponModel.transform.Translate(new Vector3(0, 0, -kickBack), Space.Self);
             WeaponModel.transform.Rotate(new Vector3(-kickRot, 0, 0), Space.Self);
 
-            Debug.Log(m_RecoilParam);
             //只有射线武器才会有镜头的后坐力效果
             if(Type == WeaponType.Raycast) {
                 SendMessageUpwards("RecoilEffect", m_RecoilParam, SendMessageOptions.DontRequireReceiver);

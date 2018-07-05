@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.CrossInput;
-using OperationTrident.Player;
+
 
 public class SceneNetManager : MonoBehaviour
 {
@@ -97,13 +96,14 @@ public class SceneNetManager : MonoBehaviour
         {
             playerObj = Instantiate(NetPlayerPrefabs[0]);
         }
-        
-        playerObj.name = id;
         //playerObj所有子节点都得改名
         NetSyncController[] net_sync_controllers = playerObj.GetComponentsInChildren<NetSyncController>();
-        foreach (var temp in net_sync_controllers) {
+        foreach (var temp in net_sync_controllers)
+        {
             temp.name = id + temp.name;
         }
+        playerObj.name = id;
+
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
 
