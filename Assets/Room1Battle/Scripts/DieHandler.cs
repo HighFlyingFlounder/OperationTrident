@@ -11,7 +11,7 @@ namespace OperationTrident.Room1
         public void OnReturnGameHallClick()
         {
             //退出游戏
-            SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
+            SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
         }
 
         // Use this for initialization

@@ -64,6 +64,7 @@ namespace OperationTrident.StartScene
 
         public void InitRoomListScene()
         {
+            Debug.Log("Init Room List Scene");
             //监听
             NetMgr.srvConn.msgDist.AddListener("GetAchieve", RecvGetAchieve);
             NetMgr.srvConn.msgDist.AddListener("GetRoomList", RecvGetRoomList);
@@ -76,6 +77,20 @@ namespace OperationTrident.StartScene
             protocol = new ProtocolBytes();
             protocol.AddString("GetAchieve");
             NetMgr.srvConn.Send(protocol);
+        }
+
+        void OnDisable()
+        {
+            Debug.Log("RoomList Disable");
+            NetMgr.srvConn.msgDist.DelListener("GetAchieve", RecvGetAchieve);
+            NetMgr.srvConn.msgDist.DelListener("GetRoomList", RecvGetRoomList);
+            NetMgr.srvConn.msgDist.DelListener("GetRoomInfo", RecvGetRoomInfo);
+            NetMgr.srvConn.msgDist.DelListener("EnterGame", RecvEnterGame);
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("RoomList Destroy");
         }
 
         public void InitTeamScene()
@@ -274,6 +289,7 @@ namespace OperationTrident.StartScene
         // 新建房间
         public void OnNewClick()
         {
+            Debug.Log("On New Click");
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("CreateRoom");
             NetMgr.srvConn.Send(protocol, OnNewBack);
@@ -282,6 +298,7 @@ namespace OperationTrident.StartScene
         //新建按钮返回
         public void OnNewBack(ProtocolBase protocol)
         {
+            Debug.Log("On New Back");
             //解析参数
             ProtocolBytes proto = (ProtocolBytes)protocol;
             int start = 0;
@@ -290,7 +307,8 @@ namespace OperationTrident.StartScene
             //处理
             if (ret == 0)
             {
-               // PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
+                Debug.Log("创建成功");
+                // PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
                 //PanelMgr.instance.OpenPanel<RoomPanel>("");
                 GameMgr.instance.isMasterClient = true;
                 roomListCanvas.enabled = false;
@@ -299,6 +317,7 @@ namespace OperationTrident.StartScene
             }
             else
             {
+                Debug.Log("fail to create");
                 //PanelMgr.instance.OpenPanel<TipPanel>("", "创建房间失败！");
             }
         }
