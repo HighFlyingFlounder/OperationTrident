@@ -59,9 +59,6 @@ namespace OperationTrident.StartScene
         [SerializeField]
         private GameObject starPrebab;
 
-        [SerializeField]
-        private Text welcomeText;
-
         public void InitRoomListScene()
         {
             //监听
@@ -80,9 +77,11 @@ namespace OperationTrident.StartScene
 
         public void InitTeamScene()
         {
+            Debug.Log("1111");
             NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
             NetMgr.srvConn.msgDist.AddListener("EnterGame", RecvEnterGame);
             //发送查询
+            Debug.Log("1112");
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("GetRoomInfo");
             NetMgr.srvConn.Send(protocol);
@@ -90,6 +89,7 @@ namespace OperationTrident.StartScene
 
         public void RecvGetRoomInfo(ProtocolBase protocol)
         {
+            Debug.Log("1113");
             m_memberList.Clear();
             //获取总数
             ProtocolBytes proto = (ProtocolBytes)protocol;
@@ -111,6 +111,7 @@ namespace OperationTrident.StartScene
                 }
                 m_memberList.Add(new MemberInfo(id, isOwner, id == GameMgr.instance.id));
             }
+            Debug.Log("1114");
             SetTeamMemberList();
         }
 
@@ -135,12 +136,9 @@ namespace OperationTrident.StartScene
                     membersImages[i].transform.position.y,
                     membersImages[i].transform.position.z
                     );
+                    
                 }
-                if (m_memberList[i].isMe)
-                {
-                    membersImages[i].GetComponent<Image>().color = new Color(0.7f,0.5f,1.0f,0.3f);
-                    welcomeText.text = "您好"+m_memberList[i].id+"\n\n请召集您的队友";
-                }
+
             }
         }
 
