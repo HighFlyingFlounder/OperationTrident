@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Room1;
+using System;
 
 namespace OperationTrident.Util
 {
@@ -60,14 +62,28 @@ namespace OperationTrident.Util
 
         void OnGUI()
         {
-                    GUIUtil.DisplayMissionDetailDefault(
-                            missionDetails,
-                            Camera.current,
-                            theColor,
-                            wordTransparentInterval: wordTransparentInterval,
-                            wordAppearanceInterval: wordAppearanceInterval,
-                            lineSubsequentlyInterval: lineSubsequentlyInterval,
-                            fontSize: fontSize);
+            try
+            {
+                GUIUtil.DisplayMissionDetailDefault(
+                        missionDetails,
+                        Room1.Util.GetCamera(),
+                        theColor,
+                        wordTransparentInterval: wordTransparentInterval,
+                        wordAppearanceInterval: wordAppearanceInterval,
+                        lineSubsequentlyInterval: lineSubsequentlyInterval,
+                        fontSize: fontSize);
+            }
+            catch(Exception e)
+            {
+                GUIUtil.DisplayMissionDetailDefault(
+                        missionDetails,
+                        Camera.current,
+                        theColor,
+                        wordTransparentInterval: wordTransparentInterval,
+                        wordAppearanceInterval: wordAppearanceInterval,
+                        lineSubsequentlyInterval: lineSubsequentlyInterval,
+                        fontSize: fontSize);
+            }
         }
     }
 }

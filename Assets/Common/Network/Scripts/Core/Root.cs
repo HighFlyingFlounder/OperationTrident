@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Root : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Root : MonoBehaviour
         Application.runInBackground = true;
         if(PanelMgr.instance)//旧版本的UI系统
             PanelMgr.instance.OpenPanel<LoginPanel>("");
+        SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
     }
 
     void Update()

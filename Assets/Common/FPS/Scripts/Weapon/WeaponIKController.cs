@@ -23,24 +23,18 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         private void OnAnimatorIK(int layerIndex) {
-            if (LootAtTarget != null) {
-                m_Animator.SetLookAtWeight(1);
-                m_Animator.SetLookAtPosition(LootAtTarget.position);
-            }
+            m_Animator.SetLookAtWeight(1);
+            m_Animator.SetLookAtPosition(LootAtTarget.position);
 
-            if (RightHandTarget != null) {
-                m_Animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-                m_Animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-                m_Animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandTarget.position);
-                m_Animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandTarget.rotation);
-            }
+            m_Animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
+            m_Animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
+            m_Animator.SetIKPosition(AvatarIKGoal.RightHand, RightHandTarget.position);
+            m_Animator.SetIKRotation(AvatarIKGoal.RightHand, RightHandTarget.rotation);
 
-            if (LeftHandTarget != null) {
-                m_Animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-                m_Animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-                m_Animator.SetIKPosition(AvatarIKGoal.LeftHand, LeftHandTarget.position);
-                m_Animator.SetIKRotation(AvatarIKGoal.LeftHand, LeftHandTarget.rotation);
-            }  
+            m_Animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
+            m_Animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
+            m_Animator.SetIKPosition(AvatarIKGoal.LeftHand, LeftHandTarget.position);
+            m_Animator.SetIKRotation(AvatarIKGoal.LeftHand, LeftHandTarget.rotation);
         }
     }
 }

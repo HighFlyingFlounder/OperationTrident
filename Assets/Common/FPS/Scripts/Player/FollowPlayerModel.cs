@@ -4,23 +4,21 @@ using UnityEngine;
 
 namespace OperationTrident.FPS.Player {
     public class FollowPlayerModel : MonoBehaviour {
-        public GameObject PlayerModel;
+        public Transform PlayerModelTarget;
 
-        private Transform m_Root;
         private Vector3 m_OriginalLocalPosition;
 
         // Use this for initialization
         void Start() {
-            m_Root = PlayerModel.transform.Find("Root");
-            if(m_Root == null) {
-                Debug.LogError("Please make sure the PlayerModel has a child named Root");
+            if(PlayerModelTarget == null) {
+                Debug.LogError("Please make sure to set the PlayerModelTarget...");
             }
 
-            m_OriginalLocalPosition = m_Root.InverseTransformPoint(this.transform.position);
+            m_OriginalLocalPosition = PlayerModelTarget.InverseTransformPoint(this.transform.position);
         }
 
         private void Update() {
-            this.transform.position = m_Root.TransformPoint(m_OriginalLocalPosition);
+            this.transform.position = PlayerModelTarget.TransformPoint(m_OriginalLocalPosition);
         }
     }
 }

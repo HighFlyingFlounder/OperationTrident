@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using OperationTrident.Room1;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -765,6 +766,13 @@ namespace OperationTrident.FPS.Weapons {
                     //        */
                     //    }
                     //}
+                    ReactiveTarget reactive_target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
+                    if (reactive_target)
+                    {
+                        Debug.Log("transform.root.name    " + transform.root.name);
+                        reactive_target.OnHit(transform.root.name, false, (int)Power);
+                    }
+                        
 
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
@@ -1123,7 +1131,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //换弹
-        private void Reload() {
+        public void Reload() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
@@ -1168,7 +1176,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //切换瞄准镜的状态
-        private void SwitchMirrorState() {
+        public void SwitchMirrorState() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "SwitchMirrorState");
