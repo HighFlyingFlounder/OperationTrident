@@ -34,7 +34,7 @@ namespace OperationTrident.Room1
 
         void DieHandlerFunc()
         {
-            m_NetSyncController.RPC(this, "DieHandlerImpl");
+            //m_NetSyncController.RPC(this, "DieHandlerImpl");
             DieHandlerImpl();
         }
 

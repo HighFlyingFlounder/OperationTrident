@@ -29,8 +29,6 @@ public class SpaceBattleManager : MonoBehaviour
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
-        if (GameObject.FindGameObjectWithTag("flyer"))
-            Destroy(GameObject.FindGameObjectWithTag("flyer"));
         StartGame();
     }
 
@@ -166,7 +164,15 @@ public class SpaceBattleManager : MonoBehaviour
         ClearBattle();
 
         //SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
-        timeline.SetActive(true);
+        if (isWin == 0)//失败
+        {
+            OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+        }
+        else//胜利
+        {
+            timeline.SetActive(true);
+        }
+        
     }
 
     public void RecvStartFight(ProtocolBase protocol)
