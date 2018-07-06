@@ -125,7 +125,6 @@ public class WeaponEditor : Editor {
                 weapon.InfiniteAmmo = EditorGUILayout.Toggle(new GUIContent("Infinite Ammo", "是否能无限射击"), weapon.InfiniteAmmo);
 
                 if (!weapon.InfiniteAmmo) {
-                    weapon.TotalAmmunition = EditorGUILayout.IntField(new GUIContent("Total Ammunition", "背包弹药总量"), weapon.TotalAmmunition);
                     weapon.AmmoCapacity = EditorGUILayout.IntField(new GUIContent("Ammo Capacity", "武器的弹夹容量"), weapon.AmmoCapacity);
                     weapon.ReloadTime = EditorGUILayout.FloatField(new GUIContent("Reload Time", "更换弹夹的时间"), weapon.ReloadTime);
                     weapon.ShowCurrentAmmo = EditorGUILayout.Toggle(new GUIContent("Show Current Ammo", "是否显示当前弹夹剩余的弹药量"), weapon.ShowCurrentAmmo);
