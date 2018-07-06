@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace OperationTrident.Util
 {
-    public static class GUIUtil
+    public class GUIUtil
     {
         //================================================================================
         //==========        一些可以获得的颜色，推荐直接获取Color后缀的         =============
@@ -50,6 +50,53 @@ namespace OperationTrident.Util
 
         public readonly static Color subtitleNormalColor = GetColorFromString("66 cc ff");
         public readonly static Color missionContentNormalColor = GetColorFromString("ee ee ee");
+
+        private static float lastTime = Time.time;
+        private enum Timer { DCIGPS,DMDD,DMTDS,DMTIMS1,DMTIMS2,DSIGG,DSsIGG,DSsIGGWT};
+        private static float[] startTime = { Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time , Time.time , Time.time , Time.time , Time.time , Time.time };
+        private static float FrameTime(Timer what)
+        {
+            float toReturn = 0.0f;
+            switch (what)
+            {
+                case Timer.DCIGPS:
+                    toReturn = Time.time - startTime[0];
+                    startTime[0] = Time.time;
+                    break;
+                case Timer.DMDD:
+                    toReturn = Time.time - startTime[1];
+                    startTime[1] = Time.time;
+                    break;
+                case Timer.DMTDS:
+                    toReturn = Time.time - startTime[2];
+                    startTime[2] = Time.time;
+                    break;
+                case Timer.DMTIMS1:
+                    toReturn = Time.time - startTime[3];
+                    startTime[3] = Time.time;
+                    break;
+                case Timer.DMTIMS2:
+                    toReturn = Time.time - startTime[4];
+                    startTime[4] = Time.time;
+                    break;
+                case Timer.DSIGG:
+                    toReturn = Time.time - startTime[5];
+                    startTime[5] = Time.time;
+                    break;
+                case Timer.DSsIGG:
+                    toReturn = Time.time - startTime[6];
+                    startTime[6] = Time.time;
+                    break;
+                case Timer.DSsIGGWT:
+                    toReturn = Time.time - startTime[7];
+                    startTime[7] = Time.time;
+                    break;
+            }
+            return toReturn;
+        }
+            
+
+            
 
 
         // 默认的字体大小
@@ -819,7 +866,7 @@ namespace OperationTrident.Util
             }
             else
             {
-                frameTimerDMTDS += Time.deltaTime;
+                frameTimerDMTDS += FrameTime(Timer.DMTDS);
                 if (frameTimerDMTDS > 0)
                 {
                     frameTimerDMTDS = -interval;
@@ -931,7 +978,7 @@ namespace OperationTrident.Util
             }
             else
             {
-                frameTimerDCIGPS += Time.deltaTime;
+                frameTimerDCIGPS += FrameTime(Timer.DCIGPS);
                 if (frameTimerDCIGPS > 0)
                 {
                     frameTimerDCIGPS = -interval;
@@ -1030,7 +1077,8 @@ namespace OperationTrident.Util
                 frameTimerDMTIMS2 = 0.0f;
                 toDisplayDMTIMS = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
             }
-            frameTimerDMTIMS2 += Time.deltaTime;
+            Debug.Log(frameTimerDMTIMS2);
+            frameTimerDMTIMS2 += FrameTime(Timer.DMTIMS2);
             if (!hasRememberStringInitDMTIMS)
             {
                 hasRememberStringInitDMTIMS = true;
@@ -1049,7 +1097,7 @@ namespace OperationTrident.Util
             }
             else
             {
-                frameTimerDMTIMS1 += Time.deltaTime;
+                frameTimerDMTIMS1 += FrameTime(Timer.DMTIMS1);
                 if (frameTimerDMTIMS1 >= interval)
                 {
                     frameTimerDMTIMS1 = 0;
@@ -1166,7 +1214,7 @@ namespace OperationTrident.Util
                     minusFactorAlphaDMDD += wordTransparentInterval;
                 }
             }
-            frameTimerDMDD += Time.deltaTime;
+            frameTimerDMDD += FrameTime(Timer.DMDD);
             if (missionDetailIndexDMDD == 0)
             {
                 DisplayContentInGivenPositionSequently(
@@ -1460,7 +1508,7 @@ namespace OperationTrident.Util
 
                 return;
             }
-            frameTimerDSIGG += Time.deltaTime;
+            frameTimerDSIGG += FrameTime(Timer.DSIGG);
             transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
             DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
              //如果采用每一行的时间
@@ -1528,7 +1576,7 @@ namespace OperationTrident.Util
                 secondOfEachWord: secondOfEachWord);
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
-                frameTimerDSsIGG += Time.deltaTime;
+                frameTimerDSsIGG += FrameTime(Timer.DSsIGG);
                 if (frameTimerDSsIGG >= secondBetweenLine)
                 {
                     if (displayingSubtitlesIndexDSsIGG == subtitles.Length - 1)
@@ -1574,7 +1622,7 @@ namespace OperationTrident.Util
                 displayingSubtitlesIndexDSsIGGWT = 0;
                 canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
             }
-            if (canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp) return;
+            if (canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp&&frameTimerDSsIGGWT>3.0F) return;
             rememberSubtitlesDSsIGGWT = subtitles;
             DisplaySubtitleInGivenGrammar(
                 subtitles[displayingSubtitlesIndexDSsIGGWT],
@@ -1587,7 +1635,7 @@ namespace OperationTrident.Util
                 secondOfEachLine: secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]);
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
-                frameTimerDSsIGGWT += Time.deltaTime;
+                frameTimerDSsIGGWT += FrameTime(Timer.DSsIGGWT);
                 if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
                 {
                     if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length-1)
