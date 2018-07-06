@@ -59,8 +59,12 @@ namespace OperationTrident.StartScene
         [SerializeField]
         private GameObject starPrebab;
 
+        [SerializeField]
+        private Text welcomeText;
+
         public void InitRoomListScene()
         {
+            Debug.Log("Init Room List Scene");
             //监听
             NetMgr.srvConn.msgDist.AddListener("GetAchieve", RecvGetAchieve);
             NetMgr.srvConn.msgDist.AddListener("GetRoomList", RecvGetRoomList);
@@ -75,13 +79,25 @@ namespace OperationTrident.StartScene
             NetMgr.srvConn.Send(protocol);
         }
 
+        void OnDisable()
+        {
+            Debug.Log("RoomList Disable");
+            NetMgr.srvConn.msgDist.DelListener("GetAchieve", RecvGetAchieve);
+            NetMgr.srvConn.msgDist.DelListener("GetRoomList", RecvGetRoomList);
+            NetMgr.srvConn.msgDist.DelListener("GetRoomInfo", RecvGetRoomInfo);
+            NetMgr.srvConn.msgDist.DelListener("EnterGame", RecvEnterGame);
+        }
+
+        private void OnDestroy()
+        {
+            Debug.Log("RoomList Destroy");
+        }
+
         public void InitTeamScene()
         {
-            Debug.Log("1111");
             NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
             NetMgr.srvConn.msgDist.AddListener("EnterGame", RecvEnterGame);
             //发送查询
-            Debug.Log("1112");
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("GetRoomInfo");
             NetMgr.srvConn.Send(protocol);
@@ -89,7 +105,6 @@ namespace OperationTrident.StartScene
 
         public void RecvGetRoomInfo(ProtocolBase protocol)
         {
-            Debug.Log("1113");
             m_memberList.Clear();
             //获取总数
             ProtocolBytes proto = (ProtocolBytes)protocol;
@@ -111,7 +126,6 @@ namespace OperationTrident.StartScene
                 }
                 m_memberList.Add(new MemberInfo(id, isOwner, id == GameMgr.instance.id));
             }
-            Debug.Log("1114");
             SetTeamMemberList();
         }
 
@@ -136,9 +150,12 @@ namespace OperationTrident.StartScene
                     membersImages[i].transform.position.y,
                     membersImages[i].transform.position.z
                     );
-                    
                 }
-
+                if (m_memberList[i].isMe)
+                {
+                    membersImages[i].GetComponent<Image>().color = new Color(0.7f,0.5f,1.0f,0.3f);
+                    welcomeText.text = "您好"+m_memberList[i].id+"\n\n请召集您的队友";
+                }
             }
         }
 
@@ -272,6 +289,7 @@ namespace OperationTrident.StartScene
         // 新建房间
         public void OnNewClick()
         {
+            Debug.Log("On New Click");
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("CreateRoom");
             NetMgr.srvConn.Send(protocol, OnNewBack);
@@ -280,6 +298,7 @@ namespace OperationTrident.StartScene
         //新建按钮返回
         public void OnNewBack(ProtocolBase protocol)
         {
+            Debug.Log("On New Back");
             //解析参数
             ProtocolBytes proto = (ProtocolBytes)protocol;
             int start = 0;
@@ -288,7 +307,8 @@ namespace OperationTrident.StartScene
             //处理
             if (ret == 0)
             {
-               // PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
+                Debug.Log("创建成功");
+                // PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
                 //PanelMgr.instance.OpenPanel<RoomPanel>("");
                 GameMgr.instance.isMasterClient = true;
                 roomListCanvas.enabled = false;
@@ -297,6 +317,7 @@ namespace OperationTrident.StartScene
             }
             else
             {
+                Debug.Log("fail to create");
                 //PanelMgr.instance.OpenPanel<TipPanel>("", "创建房间失败！");
             }
         }

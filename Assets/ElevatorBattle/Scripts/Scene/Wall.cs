@@ -15,8 +15,8 @@ namespace OperationTrident.Elevator
         // Use this for initialization
         void Start()
         {
-            child1 = GameObject.Find("Mesh1");
-            child2 = GameObject.Find("Mesh2");
+            child1 = GameObject.Find("wall1");
+            child2 = GameObject.Find("wall2");
         }
 
         // Update is called once per frame

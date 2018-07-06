@@ -54,6 +54,7 @@ namespace room2Battle
 
         protected float animationCurrentTime = 0.0f;
 
+        protected bool isAttacking = false;
 
         //==================================================
         //=====================     需要同步的状态量 =======
@@ -73,6 +74,12 @@ namespace room2Battle
         protected float fireFromLastTime = 0.0f;
 
         protected float intervalBetweenShot = 0.3f;
+
+        public void Attack()
+        {
+            isAttacking = true;
+        }
+
 
         /// <summary>
         /// 初始化函数
@@ -173,259 +180,265 @@ namespace room2Battle
         /// </summary>
         void mind()
         {
-            AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-            switch (currentState)
+            //只有攻击才会调用动画状态机
+            if (isAttacking)
             {
-                //停住
-                case fireState.Idle:
-                    {
-                        Debug.Log("idle");
-                        animator.SetBool("StopFire", false);
 
-                        if (thinkTime < 2.0f)
-                        {
-                            thinkTime += Time.deltaTime;
-                        }
-                        else
-                        {
-                            int choice = (int)UnityEngine.Random.Range(0, 3);
-                            if (GameMgr.instance)
-                            {
-                                //随机搞
-                                //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
-                                target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
-                            }
-                            //开始抬手
-                            switch (choice)
-                            {
-                                case 0:
-                                    {
-                                        thinkTime = 0.0f;
-                                    }
-                                    break;
-                                case 1:
-                                    {
-                                        //转移到下一个状态
-                                        currentState = fireState.OpenFire;
-                                        //同步
-                                        handup = true;
-                                        animator.SetBool("handup", true);
-                                        Debug.Log("SyncVariables");
-                                        netSyncController.SyncVariables();
-                                        //充值思考时间
-                                        thinkTime = 0.0f;
-                                    }
-                                    break;
-                                case 2:
-                                    {
-                                        //转移到下一个状态
-                                        currentState = fireState.MissileLaunch;
-                                        //同步
-                                        animator.SetBool("missileLaunch", true);
-                                        missilLaunch = true;
-                                        Debug.Log("SyncVariables");
-                                        netSyncController.SyncVariables();
-                                        //充值思考时间
-                                        thinkTime = 0.0f;
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                    break;
-                //抬起手为止
-                case fireState.OpenFire:
-                    {
-                        Debug.Log("openfire");
+                AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
+                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
-                        //切换完毕了
-                        if (stateInfo.IsName("shoot"))
+                switch (currentState)
+                {
+                    //停住
+                    case fireState.Idle:
                         {
-                            if (fireFromLastTime > intervalBetweenShot)
+                            Debug.Log("idle");
+                            animator.SetBool("StopFire", false);
+
+                            if (thinkTime < 2.0f)
                             {
-                                //开火
-                                leftHandFireImpl();
-                                netSyncController.RPC(this, "leftHandFireImpl");
-                                fireFromLastTime = 0.0f;
+                                thinkTime += Time.deltaTime;
                             }
                             else
                             {
-                                fireFromLastTime += Time.deltaTime;
-                            }
-                            //动画状态转移，同步
-                            if (stateInfo.normalizedTime >= 0.8f)
-                            {
-                                animator.SetBool("handup", false);
-                                animator.SetBool("shoot", true);
-
-                                handup = false;
-                                shoot = true;
-
-                                Debug.Log("SyncVariables");
-                                netSyncController.SyncVariables();
-                                //转移状态
-                                currentState = fireState.KeepFire;
-                            }
-                        }
-                    }
-                    break;
-                //抬手到播完再换手
-                case fireState.KeepFire:
-                    {
-                        Debug.Log("fire");
-                        if (stateInfo.IsName("keepShooting"))
-                        {
-                            //开火
-                            if (fireFromLastTime > intervalBetweenShot)
-                            {
-                                //开火
-                                leftHandFireImpl();
-                                netSyncController.RPC(this, "leftHandFireImpl");
-                                fireFromLastTime = 0.0f;
-                            }
-                            else
-                            {
-                                fireFromLastTime += Time.deltaTime;
-                            }
-                            //直到开火完毕，抬起另一只手
-                            //if (stateInfo.normalizedTime >= 0.8f)
-                            if (animationCurrentTime >= 2.0f)
-                            {
-                                animator.SetBool("rightHandup", true);
-                                animator.SetBool("shoot", false);
-
-                                rightHandup = true;
-                                shoot = false;
-                                //同步
-                                Debug.Log("SyncVariables");
-                                netSyncController.SyncVariables();
-                                //下一个状态
-                                currentState = fireState.RightFire;
-
-                                animationCurrentTime = 0.0f;
-                            }
-                            else
-                            {
-                               animationCurrentTime += Time.deltaTime;
+                                int choice = (int)UnityEngine.Random.Range(0, 3);
+                                if (GameMgr.instance)
+                                {
+                                    //随机搞
+                                    //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
+                                    target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
+                                }
+                                //开始抬手
+                                switch (choice)
+                                {
+                                    case 0:
+                                        {
+                                            thinkTime = 0.0f;
+                                        }
+                                        break;
+                                    case 1:
+                                        {
+                                            //转移到下一个状态
+                                            currentState = fireState.OpenFire;
+                                            //同步
+                                            handup = true;
+                                            animator.SetBool("handup", true);
+                                            Debug.Log("SyncVariables");
+                                            netSyncController.SyncVariables();
+                                            //充值思考时间
+                                            thinkTime = 0.0f;
+                                        }
+                                        break;
+                                    case 2:
+                                        {
+                                            //转移到下一个状态
+                                            currentState = fireState.MissileLaunch;
+                                            //同步
+                                            animator.SetBool("missileLaunch", true);
+                                            missilLaunch = true;
+                                            Debug.Log("SyncVariables");
+                                            netSyncController.SyncVariables();
+                                            //充值思考时间
+                                            thinkTime = 0.0f;
+                                        }
+                                        break;
+                                }
                             }
                         }
-                    }
-                    break;
-                //另一只手抬起完成
-                case fireState.RightFire:
-                    {
-                        Debug.Log("fire");
-                        //切换完毕了
-                        if (stateInfo.IsName("shootback"))
+                        break;
+                    //抬起手为止
+                    case fireState.OpenFire:
                         {
-                            if (fireFromLastTime > intervalBetweenShot)
+                            Debug.Log("openfire");
+
+                            //切换完毕了
+                            if (stateInfo.IsName("shoot"))
                             {
-                                //开火
-                                rightHandFireImpl();
-                                netSyncController.RPC(this, "rightHandFireImpl");
-                                fireFromLastTime = 0.0f;
+                                if (fireFromLastTime > intervalBetweenShot)
+                                {
+                                    //开火
+                                    leftHandFireImpl();
+                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    fireFromLastTime = 0.0f;
+                                }
+                                else
+                                {
+                                    fireFromLastTime += Time.deltaTime;
+                                }
+                                //动画状态转移，同步
+                                if (stateInfo.normalizedTime >= 0.8f)
+                                {
+                                    animator.SetBool("handup", false);
+                                    animator.SetBool("shoot", true);
+
+                                    handup = false;
+                                    shoot = true;
+
+                                    Debug.Log("SyncVariables");
+                                    netSyncController.SyncVariables();
+                                    //转移状态
+                                    currentState = fireState.KeepFire;
+                                }
                             }
-                            else
-                            {
-                                fireFromLastTime += Time.deltaTime;
-                            }
-                            //开火
+                        }
+                        break;
+                    //抬手到播完再换手
+                    case fireState.KeepFire:
+                        {
                             Debug.Log("fire");
-                            if (stateInfo.normalizedTime >= 0.8f)
-                            {
-                                animator.SetBool("rightHandup", false);
-                                animator.SetBool("shootAgain", true);
-
-                                rightHandup = false;
-                                shootAgain = true;
-                                //同步
-                                Debug.Log("SyncVariables");
-                                netSyncController.SyncVariables();
-                                //下一个状态
-                                currentState = fireState.KeepFireAgain;
-                            }
-                        }
-                    }
-                    break;
-                case fireState.KeepFireAgain:
-                    {
-                        Debug.Log("fire");
-                        if (stateInfo.IsName("keepShootingBack"))
-                        {
-                            if (fireFromLastTime > intervalBetweenShot)
+                            if (stateInfo.IsName("keepShooting"))
                             {
                                 //开火
-                                rightHandFireImpl();
-                                netSyncController.RPC(this, "rightHandFireImpl");
-                                fireFromLastTime = 0.0f;
-                            }
-                            else
-                            {
-                                fireFromLastTime += Time.deltaTime;
-                            }
-                            //直到开火完毕
-                            //if (stateInfo.normalizedTime >= 0.8f)
-                            if (animationCurrentTime >= 2.0f)
-                            {
-                                animator.SetBool("StopFire", true);
-                                animator.SetBool("shootAgain", false);
+                                if (fireFromLastTime > intervalBetweenShot)
+                                {
+                                    //开火
+                                    leftHandFireImpl();
+                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    fireFromLastTime = 0.0f;
+                                }
+                                else
+                                {
+                                    fireFromLastTime += Time.deltaTime;
+                                }
+                                //直到开火完毕，抬起另一只手
+                                //if (stateInfo.normalizedTime >= 0.8f)
+                                if (animationCurrentTime >= 2.0f)
+                                {
+                                    animator.SetBool("rightHandup", true);
+                                    animator.SetBool("shoot", false);
 
-                                stopFire = true;
-                                shoot = false;
-                                //同步
-                                Debug.Log("SyncVariables");
-                                netSyncController.SyncVariables();
+                                    rightHandup = true;
+                                    shoot = false;
+                                    //同步
+                                    Debug.Log("SyncVariables");
+                                    netSyncController.SyncVariables();
+                                    //下一个状态
+                                    currentState = fireState.RightFire;
 
-                                currentState = fireState.StopFire;
-
-                                animationCurrentTime = 0.0f;
-                            }
-                            else
-                            {
-                                animationCurrentTime += Time.deltaTime;
+                                    animationCurrentTime = 0.0f;
+                                }
+                                else
+                                {
+                                    animationCurrentTime += Time.deltaTime;
+                                }
                             }
                         }
-                    }
-                    break;
-                case fireState.StopFire:
-                    {
-                        Debug.Log("stop");
-                        if (stateInfo.IsName("idle"))
+                        break;
+                    //另一只手抬起完成
+                    case fireState.RightFire:
                         {
-                            Debug.Log("end of fire");
-                            if (!beginTurnAround)
+                            Debug.Log("fire");
+                            //切换完毕了
+                            if (stateInfo.IsName("shootback"))
                             {
-                                StartCoroutine(turnAround());
-                                currentState = fireState.Idle;
+                                if (fireFromLastTime > intervalBetweenShot)
+                                {
+                                    //开火
+                                    rightHandFireImpl();
+                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    fireFromLastTime = 0.0f;
+                                }
+                                else
+                                {
+                                    fireFromLastTime += Time.deltaTime;
+                                }
+                                //开火
+                                Debug.Log("fire");
+                                if (stateInfo.normalizedTime >= 0.8f)
+                                {
+                                    animator.SetBool("rightHandup", false);
+                                    animator.SetBool("shootAgain", true);
+
+                                    rightHandup = false;
+                                    shootAgain = true;
+                                    //同步
+                                    Debug.Log("SyncVariables");
+                                    netSyncController.SyncVariables();
+                                    //下一个状态
+                                    currentState = fireState.KeepFireAgain;
+                                }
                             }
                         }
-                    }
-                    break;
-                case fireState.MissileLaunch:
-                    {
-                        Debug.Log("aunch");
-                        if (stateInfo.IsName("missileLaunch"))
+                        break;
+                    case fireState.KeepFireAgain:
                         {
-                            if (stateInfo.normalizedTime >= 0.8f)
+                            Debug.Log("fire");
+                            if (stateInfo.IsName("keepShootingBack"))
                             {
-                                animator.SetBool("missileLaunch", false);
+                                if (fireFromLastTime > intervalBetweenShot)
+                                {
+                                    //开火
+                                    rightHandFireImpl();
+                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    fireFromLastTime = 0.0f;
+                                }
+                                else
+                                {
+                                    fireFromLastTime += Time.deltaTime;
+                                }
+                                //直到开火完毕
+                                //if (stateInfo.normalizedTime >= 0.8f)
+                                if (animationCurrentTime >= 2.0f)
+                                {
+                                    animator.SetBool("StopFire", true);
+                                    animator.SetBool("shootAgain", false);
 
-                                missilLaunch = false;
-                                //同步
-                                netSyncController.SyncVariables();
+                                    stopFire = true;
+                                    shoot = false;
+                                    //同步
+                                    Debug.Log("SyncVariables");
+                                    netSyncController.SyncVariables();
 
-                                missileLaunchImpl(target.position);
-                                netSyncController.RPC(this, "missileLaunchImpl",target.position);
+                                    currentState = fireState.StopFire;
 
-                                currentState = fireState.Idle;
+                                    animationCurrentTime = 0.0f;
+                                }
+                                else
+                                {
+                                    animationCurrentTime += Time.deltaTime;
+                                }
                             }
                         }
-                    }
-                    break;
-                default:
-                    return;
+                        break;
+                    case fireState.StopFire:
+                        {
+                            Debug.Log("stop");
+                            if (stateInfo.IsName("idle"))
+                            {
+                                Debug.Log("end of fire");
+                                if (!beginTurnAround)
+                                {
+                                    StartCoroutine(turnAround());
+                                    currentState = fireState.Idle;
+                                    isAttacking = false;
+                                }
+                            }
+                        }
+                        break;
+                    case fireState.MissileLaunch:
+                        {
+                            Debug.Log("aunch");
+                            if (stateInfo.IsName("missileLaunch"))
+                            {
+                                if (stateInfo.normalizedTime >= 0.8f)
+                                {
+                                    animator.SetBool("missileLaunch", false);
+
+                                    missilLaunch = false;
+                                    //同步
+                                    netSyncController.SyncVariables();
+
+                                    missileLaunchImpl(target.position);
+                                    netSyncController.RPC(this, "missileLaunchImpl", target.position);
+
+                                    currentState = fireState.StopFire;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        return;
+                }
             }
         }
 

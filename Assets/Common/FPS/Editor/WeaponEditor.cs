@@ -43,7 +43,7 @@ public class WeaponEditor : Editor {
         //绘制"General"折叠框
         m_ShowGeneral = EditorGUILayout.Foldout(m_ShowGeneral, new GUIContent("General", "武器的通用参数"));
         if (m_ShowGeneral) {
-            weapon.IsLocalObject = EditorGUILayout.Toggle(new GUIContent("Local Object", "当前的Object是否为本地Object，如果不是，则只接受网络同步信息"), weapon.IsLocalObject);
+            weapon.IsLocalObject = EditorGUILayout.Toggle(new GUIContent("Is Local Object", "当前的Object是否为本地Object，如果不是，则只接受网络同步信息"), weapon.IsLocalObject);
             weapon.PlayerWeapon = EditorGUILayout.Toggle(new GUIContent("Player's Weapon", "是否为Player使用的武器"), weapon.PlayerWeapon);
             if (weapon.Type == WeaponType.Raycast || weapon.Type == WeaponType.Projectile)
                 weapon.AutoMode = (Auto)EditorGUILayout.EnumPopup(new GUIContent("Auto Type", "开枪模式，全自动或者半自动"), weapon.AutoMode);

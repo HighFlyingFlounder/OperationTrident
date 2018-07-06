@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using OperationTrident.Room1;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -312,6 +313,7 @@ namespace OperationTrident.FPS.Weapons {
 
         private NetSyncController m_NetSyncController;
 
+        #region 生命周期函数
         private void OnEnable() {
             WeaponModel.SetActive(true);
         }
@@ -514,6 +516,7 @@ namespace OperationTrident.FPS.Weapons {
         private void OnDisable() {
             WeaponModel.SetActive(false);    
         }
+        #endregion
 
         //使用键盘输入触发武器开火
         void CheckForUserInput() {
@@ -596,8 +599,6 @@ namespace OperationTrident.FPS.Weapons {
                 SwitchMirrorState();
             }
         }
-
-        
 
         //非键盘输入触发武器开火，用于网络或者AI
         public void RemoteFire() {
@@ -765,6 +766,13 @@ namespace OperationTrident.FPS.Weapons {
                     //        */
                     //    }
                     //}
+                    ReactiveTarget reactive_target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
+                    if (reactive_target)
+                    {
+                        Debug.Log("transform.root.name    " + transform.root.name);
+                        reactive_target.OnHit(transform.root.name, false, (int)Power);
+                    }
+                        
 
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
@@ -917,6 +925,9 @@ namespace OperationTrident.FPS.Weapons {
                 //创建抛射物
                 if (Projectile != null) {
                     GameObject proj = Instantiate(Projectile, ProjectileSpawnSpot.position, ProjectileSpawnSpot.rotation) as GameObject;
+                    //设置拥有者的ID
+                    Projectile p = proj.GetComponent<Projectile>();
+                    p.SetOwnerID(transform.root.name);
 
                     //蓄力
                     if (Warmup) {
@@ -1123,7 +1134,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //换弹
-        private void Reload() {
+        public void Reload() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
@@ -1168,7 +1179,7 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         //切换瞄准镜的状态
-        private void SwitchMirrorState() {
+        public void SwitchMirrorState() {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "SwitchMirrorState");

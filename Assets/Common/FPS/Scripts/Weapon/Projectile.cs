@@ -14,6 +14,8 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     public class Projectile : MonoBehaviour {
+        public bool IsLocalObject = true;
+
         //抛射物种类
         public ProjectileType SelectedProjectileType = ProjectileType.Standard; 
         //伤害类型
@@ -49,6 +51,7 @@ namespace OperationTrident.FPS.Weapons {
         //保存可能的追踪目标
         private GameObject[] m_EnemyList;
 
+        private string m_OwnerID;
 
         void Start() {
             //更新追踪目标List
@@ -60,6 +63,11 @@ namespace OperationTrident.FPS.Weapons {
 
         // Update is called once per frame
         void Update() {
+            //不是本地物体，不执行任何操作
+            if (!IsLocalObject) {
+                return;
+            }
+
             //计时
             m_LifeTimer += Time.deltaTime;
 
@@ -135,6 +143,10 @@ namespace OperationTrident.FPS.Weapons {
             //        */
             //    }
             //}
+        }
+
+        public void SetOwnerID(string id) {
+            m_OwnerID = id;
         }
 
         void Explode(Vector3 position) {

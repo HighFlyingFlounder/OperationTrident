@@ -153,7 +153,7 @@ namespace room2Battle
         void Update()
         {
             mCamera = getCamera.GetCurrentUsedCamera();
-
+            Debug.Log(mCamera);
             Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
 
             Ray ray = mCamera.ScreenPointToRay(point);
@@ -164,10 +164,11 @@ namespace room2Battle
             {
                 //获取物体
                 GameObject obj = hit.transform.gameObject;
+                Debug.Log((hit.transform.position - mCamera.transform.position).sqrMagnitude);
                 //判断标签
                 if (obj.tag == "switch")
                 {
-                    if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 5.0f)
+                    //if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 5.0f)
                     {
                         isFocus = true;
                     }

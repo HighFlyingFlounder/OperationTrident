@@ -35,7 +35,7 @@ namespace OperationTrident.Elevator
         void Update()
         {
             //关门过程结束
-            if (child1.transform.position.z <= 2.5 || child2.transform.position.z >= -2.5)
+            if (child1.transform.position.z <= 2 || child2.transform.position.z >= -2)
             {
                 state = false;
                 close = false;
