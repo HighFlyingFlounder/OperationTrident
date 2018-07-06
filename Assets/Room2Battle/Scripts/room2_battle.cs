@@ -39,6 +39,8 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+        [SerializeField]
+        protected Transform bossInitPos;
 
         private void Start()
         {
@@ -72,24 +74,28 @@ namespace room2Battle {
             {
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
-
+            (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
             Debug.Log(director.isActiveAndEnabled);
             director.Play();
-            
         }
 
         void Update()
         {
-            mCamera = getCamera.GetCurrentUsedCamera();
+            if (getCamera != null)
+                mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)
             {
-                if (director.time >= 30.0f)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
+                    boss.transform.position = bossInitPos.position;
+
+                    (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
+                    nextScene_.SetActive(true);
                 }
             }
             else {
-                nextScene_.SetActive(true);
+                   
             }
         }
 
