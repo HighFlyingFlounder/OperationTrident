@@ -111,15 +111,18 @@ namespace OperationTrident.StartScene
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int count = proto.GetInt(start, ref start);
+            Debug.Log("Count: " + count);
             //每个处理
             int i = 0;
             for (i = 0; i < count; i++)
             {
+                Debug.Log("获取每个成员信息" + i);
                 string id = proto.GetString(start, ref start);
                 //int team = proto.GetInt(start, ref start);
                 int win = proto.GetInt(start, ref start);
                 int fail = proto.GetInt(start, ref start);
                 int isOwner = proto.GetInt(start, ref start);
+                Debug.Log("是房主吗?" + isOwner);
                 if (isOwner == 1)
                 {
                     NetSyncController.isMasterClient = true;
@@ -131,6 +134,7 @@ namespace OperationTrident.StartScene
 
         private void SetTeamMemberList()
         {
+            Debug.Log("设置房间信息");
             const int maxMemeberCount = 6;
             for(int i = 0; i < maxMemeberCount; i++)
             {
@@ -142,6 +146,7 @@ namespace OperationTrident.StartScene
                 membersImages[i].transform.Find("Text").GetComponent<Text>().text = m_memberList[i].id;
                 if (m_memberList[i].isOwner == 1)
                 {
+                    Debug.Log("准备显示星星");
                     GameObject gameObject = Instantiate(starPrebab);
                     gameObject.transform.parent = membersImages[i].transform;
                     gameObject.GetComponent<RectTransform>().
@@ -192,9 +197,12 @@ namespace OperationTrident.StartScene
         {
             roomListCanvas.enabled = false;
             teamCanvas.enabled = false;
-
-
-
+            if(StartSceneEvent.startSceneState != StartSceneEvent.StartSceneState.Login)
+            {
+                roomListCanvas.enabled = false;
+                teamCanvas.enabled = true;
+                InitTeamScene();
+            }
         }
 
         // Update is called once per frame
