@@ -14,8 +14,7 @@ namespace OperationTrident.FPS.Weapons {
         private int m_WeaponNumber;
         //当前正在使用的武器索引
         private int m_WeaponIndex;
-        //保存所有武器的弹药量
-        private int[] m_WeaponsTotalAmmunition;
+
         private Weapon[] m_Weapons;
 
         private NetSyncController m_NetSyncController;
@@ -75,7 +74,7 @@ namespace OperationTrident.FPS.Weapons {
         
 
         private void InitWeapons() {
-            m_WeaponsTotalAmmunition = new int[m_WeaponNumber];
+            //m_WeaponsTotalAmmunition = new int[m_WeaponNumber];
             m_Weapons = new Weapon[m_WeaponNumber];
 
             //确保其他武器都处于禁用状态
@@ -84,28 +83,7 @@ namespace OperationTrident.FPS.Weapons {
 
                 m_Weapons[i] = WeaponGameObjects[i].GetComponent<Weapon>();
                 m_Weapons[i].enabled = true;
-
-                if (m_Weapons[i].InfiniteAmmo) {
-                    //-1代表无限子弹
-                    m_WeaponsTotalAmmunition[i] = -1;
-                    return;
-                }
-
-                //int ammo, totalAmmo;
-                //ammo = m_Weapons[i].AmmoCapacity;
-                //totalAmmo = m_Weapons[i].TotalAmmunition;
-
-                //初始化当前总弹药量
-                //m_WeaponsTotalAmmunition[i] = totalAmmo >= ammo ? totalAmmo : ammo;
-                m_WeaponsTotalAmmunition[i] = m_Weapons[i].GetTotalAmmunition();
             }
-        }
-
-
-        private void UpdateWeaponsTotalAmmunition(int ammo) {
-            m_WeaponsTotalAmmunition[m_WeaponIndex] = ammo;
-
-            Debug.Log(m_WeaponIndex + " " + m_WeaponsTotalAmmunition[m_WeaponIndex]);
         }
 
         #region RPC函数
