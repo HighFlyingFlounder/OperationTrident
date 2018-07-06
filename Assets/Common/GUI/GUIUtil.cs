@@ -1494,6 +1494,7 @@ namespace OperationTrident.Util
             }
             if (rememberStringDSIGG != subtitle)
             {
+                startTime[5] = Time.time;
                 frameTimerDSIGG = 0;
                 transparentFactorDSIGG = 0;
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
@@ -1618,6 +1619,7 @@ namespace OperationTrident.Util
             // 要显示的总字幕发生了变化
             if (rememberSubtitlesDSsIGGWT[0] != subtitles[0])
             {
+                startTime[7] = Time.time;
                 frameTimerDSsIGGWT = 0.0f;
                 displayingSubtitlesIndexDSsIGGWT = 0;
                 canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
