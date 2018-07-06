@@ -29,11 +29,6 @@ public class SpaceBattleManager : MonoBehaviour
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
-<<<<<<< HEAD
-        //if (GameObject.FindGameObjectWithTag("flyer"))
-        //    Destroy(GameObject.FindGameObjectWithTag("flyer"));
-=======
->>>>>>> dev
         StartGame();
     }
 
