@@ -66,8 +66,8 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
-            //Debug.Log(director.isActiveAndEnabled);
-            //director.Play();
+            Debug.Log(director.isActiveAndEnabled);
+            director.Play();
             
         }
 
@@ -75,13 +75,12 @@ namespace room2Battle {
         {
             if (!isTimelinePaused)
             {
-                if (director.state != UnityEngine.Playables.PlayState.Playing)
+                if (director.time >= 20.0f)
                 {
                     isTimelinePaused = true;
                 }
             }
             else {
-                boss.SetActive(true);
                 nextScene_.SetActive(true);
             }
         }
