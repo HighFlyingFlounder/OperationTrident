@@ -96,6 +96,11 @@ namespace OperationTrident.Room1
                         Messenger.Broadcast(GameEvent.CROPSE_TRY);
                         return; 
                     }
+                    if (hitObject.CompareTag("Elevator"))
+                    {
+                        Messenger.Broadcast(GameEvent.ELEVATOR_OPEN);
+                        return;
+                    }
                     //InteractiveThing target2 =
                     //    hitObject.GetComponent<InteractiveThing>();
                     //if (target2 != null)

@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using System;
+using UnityEngine.Playables;
 
 namespace OperationTrident.Room1
 {
@@ -68,6 +69,9 @@ namespace OperationTrident.Room1
         public static Vector3 CropseWorldPosition;
         public static Vector3 IDCardWorldPosition;
 
+        [SerializeField]
+        private PlayableDirector elevator;
+
         // 场景中的物体数（指的是可交互的物品）
         private const int gameObjectCount = 7;
         /*
@@ -91,6 +95,13 @@ namespace OperationTrident.Room1
             Messenger<int>.AddListener(GameEvent.DOOR_OPEN, OnDoorOpen);
             // 增加尸体的侦听器
             Messenger.AddListener(GameEvent.CROPSE_TRY, OnCropseTry);
+
+            Messenger.AddListener(GameEvent.ELEVATOR_OPEN, OnElevatorOpen);
+        }
+
+        private void OnElevatorOpen()
+        {
+            if(state==Room1State.EscapingRoom) elevator.Play();
         }
 
         private void Destroy()
@@ -101,6 +112,8 @@ namespace OperationTrident.Room1
             Messenger<int>.RemoveListener(GameEvent.DOOR_OPEN, OnDoorOpen);
             // 删除尸体的侦听器
             Messenger.RemoveListener(GameEvent.CROPSE_TRY, OnCropseTry);
+
+            Messenger.RemoveListener(GameEvent.ELEVATOR_OPEN, OnElevatorOpen);
         }
 
         // Use this for initialization
@@ -109,7 +122,7 @@ namespace OperationTrident.Room1
             // 场景状态初始
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
-
+            elevator.playOnAwake = false;
             //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
         }

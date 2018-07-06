@@ -1048,7 +1048,6 @@ namespace OperationTrident.Util
                 frameTimerDMTIMS2 = 0.0f;
                 toDisplayDMTIMS = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
             }
-            Debug.Log(frameTimerDMTIMS2);
             frameTimerDMTIMS2 += FrameTime(Timer.DMTIMS2);
             if (!hasRememberStringInitDMTIMS)
             {
