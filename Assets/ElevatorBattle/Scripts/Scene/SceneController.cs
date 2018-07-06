@@ -85,7 +85,6 @@ namespace OperationTrident.Elevator {
                     e_time = s_time + d_time;
 
                     changeState();
-                    m_controller.RPC(this, "changeState");
                     break;
 
                 case ElevatorState.Fighting:
@@ -94,7 +93,6 @@ namespace OperationTrident.Elevator {
                     if(c_time >= e_time)
                     {
                         changeState();
-                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
@@ -108,7 +106,6 @@ namespace OperationTrident.Elevator {
                     if (OperationTrident.Elevator.Wall.state)
                     {
                         changeState();
-                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
@@ -140,7 +137,7 @@ namespace OperationTrident.Elevator {
             {
                 //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
                     //return;
-                int number = 1;//SceneNetManager.instance.list.Count;
+                int number = SceneNetManager.instance.list.Count;
 
                 count++;
 
@@ -148,7 +145,6 @@ namespace OperationTrident.Elevator {
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
                     changeState();
-                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -164,7 +160,6 @@ namespace OperationTrident.Elevator {
                 if (count <= 0 && Door.state && state == ElevatorState.Escape)
                 {
                     changeState();
-                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
