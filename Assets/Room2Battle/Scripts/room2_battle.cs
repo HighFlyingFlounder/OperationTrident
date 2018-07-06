@@ -29,16 +29,21 @@ namespace room2Battle {
         protected int currentEnemyNum = 0;
         //最多敌人数目
         protected int maxEnemyNum = 20;
-
+        //timeline播放程度
         protected bool isTimelinePaused = false;
 
         [SerializeField]
         protected GameObject nextScene_;
-
+        //台词
         public string[] line = {"" };
-
+        //boss，可能到时候有两个，一个过场，一个动作
         [SerializeField]
         protected GameObject boss;
+
+        /*
+        [SerializeField] 
+        protected GameObject realBoss;
+        */
 
         [SerializeField]
         protected Transform bossInitPos;
@@ -50,6 +55,18 @@ namespace room2Battle {
         protected Transform doorPos;
 
         protected NetSyncController mController;
+
+        //语音只播放一次
+        protected bool playOnce = false;
+
+        [SerializeField]
+        protected AudioSource source;
+
+        [SerializeField]
+        protected AudioSource TimelineSource;
+
+        [SerializeField]
+        protected AudioClip[] clips;
 
         private void Start()
         {
@@ -105,9 +122,12 @@ namespace room2Battle {
                 }
             }
             else {
-                if (Input.GetKeyDown(KeyCode.T))
+                if (!playOnce)
                 {
-                    openDoor();
+                    playOnce = true;
+                    source.clip = clips[0];
+                    source.Play();
+                    source.priority = TimelineSource.priority + 1;
                 }
             }
             
@@ -115,17 +135,6 @@ namespace room2Battle {
 
         void openDoor()
         {
-            /*
-            Debug.Log("open");
-            float time = 0.0f;
-            while (time < 2.0f)
-            {
-                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.5f, door.transform.position.z);
-                Debug.Log(door.transform.position);
-                yield return new WaitForFixedUpdate();
-                time += Time.deltaTime;
-            }
-            */
             Destroy(door.gameObject);
         }
 
@@ -136,9 +145,9 @@ namespace room2Battle {
                 if (mCamera)
                 {
                     GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
-                    OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+
+                    GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
                           mCamera,
-                          OperationTrident.Util.
                           GUIUtil.yellowColor,
                           0.5f, 0.1f, 16);
                 }
