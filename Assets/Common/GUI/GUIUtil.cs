@@ -56,46 +56,15 @@ namespace OperationTrident.Util
         private static float[] startTime = { Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time , Time.time , Time.time , Time.time , Time.time , Time.time };
         private static float FrameTime(Timer what)
         {
-            float toReturn = 0.0f;
-            switch (what)
-            {
-                case Timer.DCIGPS:
-                    toReturn = Time.time - startTime[0];
-                    startTime[0] = Time.time;
-                    break;
-                case Timer.DMDD:
-                    toReturn = Time.time - startTime[1];
-                    startTime[1] = Time.time;
-                    break;
-                case Timer.DMTDS:
-                    toReturn = Time.time - startTime[2];
-                    startTime[2] = Time.time;
-                    break;
-                case Timer.DMTIMS1:
-                    toReturn = Time.time - startTime[3];
-                    startTime[3] = Time.time;
-                    break;
-                case Timer.DMTIMS2:
-                    toReturn = Time.time - startTime[4];
-                    startTime[4] = Time.time;
-                    break;
-                case Timer.DSIGG:
-                    toReturn = Time.time - startTime[5];
-                    startTime[5] = Time.time;
-                    break;
-                case Timer.DSsIGG:
-                    toReturn = Time.time - startTime[6];
-                    startTime[6] = Time.time;
-                    break;
-                case Timer.DSsIGGWT:
-                    toReturn = Time.time - startTime[7];
-                    startTime[7] = Time.time;
-                    break;
-            }
+            float toReturn = Time.time - startTime[(int)what];
+            startTime[(int)what] = Time.time;
             return toReturn;
         }
             
-
+        private static void ResetFrame(Timer what)
+        {
+            startTime[(int)what] = Time.time;
+        }
             
 
 
@@ -856,6 +825,7 @@ namespace OperationTrident.Util
             // 如果任务目标出现了变化
             else if (missionContent != rememberStringDMTDS)
             {
+                ResetFrame(Timer.DMTDS);
                 missionContentCounterDMTDS = 0;
                 frameTimerDMTDS = -0.3f;
             }
@@ -961,6 +931,7 @@ namespace OperationTrident.Util
             // 如果任务目标出现了变化
             else if (content != rememberStringDCIGPS)
             {
+                ResetFrame(Timer.DCIGPS);
                 contentCounterDCIGPS = 0;
                 frameTimerDCIGPS = -0.3f;
             }
@@ -1087,6 +1058,7 @@ namespace OperationTrident.Util
             // 如果任务目标出现了变化
             else if (missionContent != rememberStringDMTIMS)
             {
+                ResetFrame(Timer.DMTIMS1);
                 frequentNumbers = new List<int>();
                 frameTimerDMTIMS1 = 0.0f;
             }
@@ -1494,7 +1466,7 @@ namespace OperationTrident.Util
             }
             if (rememberStringDSIGG != subtitle)
             {
-                startTime[5] = Time.time;
+                ResetFrame(Timer.DSIGG);
                 frameTimerDSIGG = 0;
                 transparentFactorDSIGG = 0;
                 canBeStopDisplaySubtitleInGivenGrammarInSeconds = false;
@@ -1563,6 +1535,7 @@ namespace OperationTrident.Util
             // 要显示的总字幕发生了变化
             if (rememberSubtitlesDSsIGG[0] != subtitles[0])
             {
+                ResetFrame(Timer.DSsIGG);
                 frameTimerDSsIGG = 0.0f;
                 displayingSubtitlesIndexDSsIGG = 0;
                 canBeStopDisplaySubtitlesInGivenGrammar = false;
@@ -1619,7 +1592,7 @@ namespace OperationTrident.Util
             // 要显示的总字幕发生了变化
             if (rememberSubtitlesDSsIGGWT[0] != subtitles[0])
             {
-                startTime[7] = Time.time;
+                ResetFrame(Timer.DSsIGGWT);
                 frameTimerDSsIGGWT = 0.0f;
                 displayingSubtitlesIndexDSsIGGWT = 0;
                 canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
