@@ -77,6 +77,8 @@ namespace room2Battle
         [SerializeField]
         protected AudioClip[] clips;
 
+        protected bool playOnce = false;
+
         ///=======================================================
         ///================ method  ==============================
         ///=======================================================
@@ -143,8 +145,6 @@ namespace room2Battle
                         GUIUtil.yellowColor,
                         0.5f, 0.1f, 16);
                     GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.2f, 1.2f);
-                    source.clip = clips[0];
-                    source.Play();
                 }
                 else
                 {
@@ -157,8 +157,6 @@ namespace room2Battle
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.5f);
                     GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
-                    source.clip = clips[1];
-                    source.Play();
                 }
 
                 GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
@@ -248,6 +246,16 @@ namespace room2Battle
                     else
                         isShowTarget = true;
                 }
+
+                if (isNear)
+                {
+                    if (!playOnce)
+                    {
+                        source.clip = clips[1];
+                        source.Play();
+                        playOnce = true;
+                    }
+                }
             }
             else
             {
@@ -293,6 +301,9 @@ namespace room2Battle
                     }
 
                     isInit = true;
+
+                    source.clip = clips[0];
+                    source.Play();
                 }
             }
         }
