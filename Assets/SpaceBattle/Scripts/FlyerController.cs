@@ -178,7 +178,7 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
     public void SendDead()
     {
         ProtocolBytes proto = new ProtocolBytes();
-        Debug.Log("dead");
+        Debug.Log("send dead message");
         proto.AddString("Dead");
         NetMgr.srvConn.Send(proto);
     }
