@@ -211,8 +211,8 @@ namespace room2Battle
                     gameObject.GetComponent<NetSyncController>().SyncVariables();
                 }
             }
-            //按G打开夜视仪
-            if (Input.GetKeyDown(KeyCode.G))
+            //按H打开夜视仪
+            if (Input.GetKeyDown(KeyCode.H))
             {
                 //通过只有一个后处理，减少post processing的pass
                 if (!isOpenDepthSensor)
@@ -284,7 +284,7 @@ namespace room2Battle
                    0.5f, 0.1f, 16);
                 if (!open2 && open)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.7f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
                 }
 
                 GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
@@ -315,7 +315,7 @@ namespace room2Battle
                 }
                 if (open2 && !isFocus)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.7f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
                 }
             }
 
