@@ -43,7 +43,7 @@ namespace OperationTrident.Room1
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) <= distanceQuota)
                     {
                         HintableObject target = hitObject.GetComponent<HintableObject>();
                         if (target != null)
@@ -71,8 +71,9 @@ namespace OperationTrident.Room1
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
                     Debug.Log("物体" + hitObject.name);
-                    Debug.Log("距离: "+Vector3.Distance(this.transform.position, hitObject.transform.position));
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
+                    //Debug.DrawLine(ray.origin, hitObject.transform.position, Color.red);
+                    Debug.Log("距离: "+Vector3.Distance(ray.origin, hitObject.transform.position));
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) > distanceQuota)
                     {
                         return;
                     }

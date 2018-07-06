@@ -51,6 +51,12 @@ namespace OperationTrident.Util
         public readonly static Color subtitleNormalColor = GetColorFromString("66 cc ff");
         public readonly static Color missionContentNormalColor = GetColorFromString("ee ee ee");
 
+        public readonly static Color subtitleYellow = new Color(1.0f, 1.0f, 0.7f);
+        public readonly static Color subtitleRed = new Color(1.0f, 0.5f, 0.5f);
+        public readonly static Color subtitleBlue = new Color(0.2f, 0.6f, 1.0f);
+        public readonly static Color subtitleGreen = new Color(0.6f, 1.0f, 0.7f);
+
+
         private static float lastTime = Time.time;
         private enum Timer { DCIGPS,DMDD,DMTDS,DMTIMS1,DMTIMS2,DSIGG,DSsIGG,DSsIGGWT};
         private static float[] startTime = { Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time , Time.time , Time.time , Time.time , Time.time , Time.time };
@@ -1287,10 +1293,10 @@ namespace OperationTrident.Util
             // 先进行文法编译
             string theTrueSubtitle = SubtitleParser.ParseALine(subtitle, out colors);
             // 四种颜色的GUIStyle
-            GUIStyle styleYellow = GetDefaultTextStyle(TransparentMoreColor(yellowColor,transparent), fontSize);
-            GUIStyle styleBlue = GetDefaultTextStyle(TransparentMoreColor(blueColor, transparent), fontSize);
-            GUIStyle styleRed = GetDefaultTextStyle(TransparentMoreColor(redColor, transparent), fontSize);
-            GUIStyle styleGreen = GetDefaultTextStyle(TransparentMoreColor(greenColor, transparent), fontSize);
+            GUIStyle styleYellow = GetDefaultTextStyle(TransparentMoreColor(subtitleYellow,transparent), fontSize);
+            GUIStyle styleBlue = GetDefaultTextStyle(TransparentMoreColor(subtitleBlue, transparent), fontSize);
+            GUIStyle styleRed = GetDefaultTextStyle(TransparentMoreColor(subtitleRed, transparent), fontSize);
+            GUIStyle styleGreen = GetDefaultTextStyle(TransparentMoreColor(subtitleGreen, transparent), fontSize);
             GUIStyle styleWhite = GetDefaultTextStyle(TransparentMoreColor(whiteColor, transparent), fontSize);
             GUIStyle styleBlack= GetDefaultTextStyle(TransparentMoreColor(blackColor, transparent), fontSize);
             // 先计算出来整行字幕的位置

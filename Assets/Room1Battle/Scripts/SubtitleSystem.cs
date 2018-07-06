@@ -8,7 +8,7 @@ namespace OperationTrident.Room1
     public class SubtitleSystem : MonoBehaviour
     {
         public AudioSource subtitleSource;
-
+        public AudioSource aiSource;
 
         public AudioClip audioInit;
         public string[] subtitleInitToDisplay = {
@@ -101,9 +101,10 @@ namespace OperationTrident.Room1
                     
                     if (initOpenDoor)
                     {
-                        subtitleSource.loop = false;
-                        subtitleSource.clip = audioAI;
-                        subtitleSource.Play();
+                        aiSource.loop = false;
+                        aiSource.clip = audioAI;
+                        aiSource.Stop();
+                        aiSource.Play();
                         initOpenDoor = false;
                         StartCoroutine(OpenDoorAudio(secondsOpenDoorInEachLine[0] + secondsOpenDoorBetweenLine[0] + 0.1f));
                     }

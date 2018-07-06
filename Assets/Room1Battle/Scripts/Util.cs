@@ -30,6 +30,19 @@ namespace OperationTrident.Room1
             else return camera;
         }
 
+        public static void SetParent(GameObject obj, Transform parent)
+        {
+            obj.transform.parent = parent;
+            obj.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+            obj.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            obj.transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
+        }
 
+        public static void SetTransform(GameObject a,Transform b)
+        {
+            a.transform.position = b.position;
+            a.transform.localEulerAngles = b.localEulerAngles;
+            a.transform.localScale = b.localScale;
+        }
     }
 }
