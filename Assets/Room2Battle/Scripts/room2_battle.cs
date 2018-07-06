@@ -4,10 +4,11 @@ using UnityEngine;
 using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
+using System;
 
 namespace room2Battle {
     //小boss大战
-    public class room2_battle :  Subscene{
+    public class room2_battle :  Subscene,NetSyncInterface{
         protected GetCamera getCamera;
 
         [SerializeField]
@@ -47,6 +48,8 @@ namespace room2Battle {
 
         [SerializeField]
         protected Transform doorPos;
+
+        protected NetSyncController mController;
 
         private void Start()
         {
@@ -123,7 +126,7 @@ namespace room2Battle {
                 time += Time.deltaTime;
             }
             */
-            Destroy(door);
+            Destroy(door.gameObject);
         }
 
         void OnGUI()
@@ -140,6 +143,21 @@ namespace room2Battle {
                           0.5f, 0.1f, 16);
                 }
             }      
+        }
+
+        public void RecvData(SyncData data)
+        {
+            
+        }
+
+        public SyncData SendData()
+        {
+            return null;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            mController = controller;
         }
     }
 
