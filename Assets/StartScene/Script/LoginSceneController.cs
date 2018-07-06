@@ -38,9 +38,9 @@ namespace OperationTrident.StartScene
             else
             {
                 loginCanvas.enabled = false;
-                titleCanvas.enabled = true;
+                titleCanvas.enabled = false;
                 roomCanvas.enabled = false;
-                titleTextCanvas.enabled = true;
+                titleTextCanvas.enabled = false;
             }
         }
 

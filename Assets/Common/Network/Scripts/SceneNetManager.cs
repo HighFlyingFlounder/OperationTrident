@@ -13,7 +13,7 @@ public class SceneNetManager : MonoBehaviour
     //游戏中给所有的角色
     public Dictionary<string, GameObject> list;
 
-    void Awake()
+    public virtual void Awake()
     {
         instance = this;
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
