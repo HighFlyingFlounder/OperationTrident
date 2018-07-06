@@ -150,32 +150,11 @@ namespace room2Battle
         void Update()
         {
             mCamera = getCamera.GetCurrentUsedCamera();
+
             Debug.Log(mCamera);
             Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
 
             Ray ray = mCamera.ScreenPointToRay(point);
-
-            //通过摄像机，射向对应物体，判断标签
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                //获取物体
-                GameObject obj = hit.transform.gameObject;
-                Debug.Log((hit.transform.position - mCamera.transform.position).sqrMagnitude);
-                //判断标签
-                if (obj.tag == "switch")
-                {
-                    if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 16.0f)
-                    {
-                        isFocus = true;
-                    }
-                }
-                else
-                {
-                    isFocus = false;
-
-                }
-            }
 
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2;
@@ -197,6 +176,27 @@ namespace room2Battle
                 isShowTarget = false;
             else
                 isShowTarget = true;
+
+            //通过摄像机，射向对应物体，判断标签
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                //获取物体
+                GameObject obj = hit.transform.gameObject;
+                Debug.Log((hit.transform.position - mCamera.transform.position).sqrMagnitude);
+                //判断标签
+                if (obj.tag == "switch")
+                {
+                    {
+                        isFocus = true;
+                    }
+                }
+                else
+                {
+                    isFocus = false;
+
+                }
+            }
         }
 
         void LateUpdate()
@@ -207,8 +207,11 @@ namespace room2Battle
 
                 if (Input.GetKey(KeyCode.F))
                 {
-                    isSwitchOpen = true;
-                    gameObject.GetComponent<NetSyncController>().SyncVariables();
+                    if (distance <= 5.0f)
+                    {
+                        isSwitchOpen = true;
+                        gameObject.GetComponent<NetSyncController>().SyncVariables();
+                    }
                 }
             }
             //按H打开夜视仪

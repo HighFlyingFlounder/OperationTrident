@@ -144,7 +144,7 @@ namespace room2Battle
                         mCamera,
                         GUIUtil.yellowColor,
                         0.5f, 0.1f, 16);
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.2f, 1.2f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace room2Battle
                         GUIUtil.yellowColor,
                         0.5f, 0.1f, 16);
                     if (!open)
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.5f);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
                     GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
                 }
 
@@ -263,7 +263,9 @@ namespace room2Battle
                 {
                     if (GameMgr.instance)//联网状态
                     {
-                        getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
+                        GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
+                        getCamera = PLAYER.GetComponent<GetCamera>();
+                        PLAYER.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
                         playerCamera = getCamera.MainCamera;
                         foreach (GameObject cam in getCamera.MirrorCameras)
                         {
