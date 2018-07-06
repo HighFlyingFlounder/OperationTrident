@@ -89,7 +89,6 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
 
         m_Animator.SetFloat("Vertical", input.y);
         m_Animator.SetFloat("Horizontal", input.x);
-        m_Animator.SetBool("isPushed", isPushed);//播放被推开的动画，要不放到碰撞检测的函数里？
 
         if (Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon)
         {
