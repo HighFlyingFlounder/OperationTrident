@@ -313,6 +313,7 @@ namespace OperationTrident.FPS.Weapons {
 
         private NetSyncController m_NetSyncController;
 
+        #region 生命周期函数
         private void OnEnable() {
             WeaponModel.SetActive(true);
         }
@@ -515,6 +516,7 @@ namespace OperationTrident.FPS.Weapons {
         private void OnDisable() {
             WeaponModel.SetActive(false);    
         }
+        #endregion
 
         //使用键盘输入触发武器开火
         void CheckForUserInput() {
@@ -597,8 +599,6 @@ namespace OperationTrident.FPS.Weapons {
                 SwitchMirrorState();
             }
         }
-
-        
 
         //非键盘输入触发武器开火，用于网络或者AI
         public void RemoteFire() {
@@ -925,6 +925,9 @@ namespace OperationTrident.FPS.Weapons {
                 //创建抛射物
                 if (Projectile != null) {
                     GameObject proj = Instantiate(Projectile, ProjectileSpawnSpot.position, ProjectileSpawnSpot.rotation) as GameObject;
+                    //设置拥有者的ID
+                    Projectile p = proj.GetComponent<Projectile>();
+                    p.SetOwnerID(transform.root.name);
 
                     //蓄力
                     if (Warmup) {

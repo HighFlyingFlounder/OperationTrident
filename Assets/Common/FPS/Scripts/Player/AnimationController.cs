@@ -39,5 +39,9 @@ namespace OperationTrident.FPS.Player {
         private void SetCrouchAnimationParamters(bool isCrouching) {
             m_Animator.SetBool("isCrouching", isCrouching);
         }
+
+        private void SetJumpAnimationParamters() {
+            m_Animator.SetTrigger("jump");
+        }
     }
 }

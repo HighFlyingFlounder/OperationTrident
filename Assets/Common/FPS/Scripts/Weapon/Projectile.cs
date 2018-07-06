@@ -14,7 +14,7 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     public class Projectile : MonoBehaviour {
-        public bool IsLocalObject = false;
+        public bool IsLocalObject = true;
 
         //抛射物种类
         public ProjectileType SelectedProjectileType = ProjectileType.Standard; 
@@ -51,6 +51,7 @@ namespace OperationTrident.FPS.Weapons {
         //保存可能的追踪目标
         private GameObject[] m_EnemyList;
 
+        private string m_OwnerID;
 
         void Start() {
             //更新追踪目标List
@@ -142,6 +143,10 @@ namespace OperationTrident.FPS.Weapons {
             //        */
             //    }
             //}
+        }
+
+        public void SetOwnerID(string id) {
+            m_OwnerID = id;
         }
 
         void Explode(Vector3 position) {

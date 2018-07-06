@@ -108,9 +108,12 @@ namespace OperationTrident.FPS.Player {
                 if (m_Jump) {
                     //蹲下时不能直接起跳，需要先站起来
                     if (m_IsCrouching) {
+                        //调用RPC函数
                         StandUp();
                     } else {
                         m_MoveDir.y = m_JumpSpeed;
+                        //调用RPC函数
+                        Jump();
                         PlayJumpSound();
                         m_Jumping = true;
                     }
@@ -278,10 +281,7 @@ namespace OperationTrident.FPS.Player {
         public void Walk(float h, float v) {
             //调用RPC
             if (IsLocalObject) {
-                //Debug.Log("m_input:" + m_Input.x + " " + m_Input.y);
-                //Debug.Log("m_PreInput:" + m_PreInput.x + " " + m_PreInput.y);
                 if (Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f || Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f) {
-                    //Debug.Log("Walk");
                     m_NetSyncController.RPC(this, "Walk", h, v);
                 }
             }
@@ -298,6 +298,16 @@ namespace OperationTrident.FPS.Player {
 
             SendMessage("SetRunAnimationParamters", m_IsRunning, SendMessageOptions.DontRequireReceiver);
         }
+
+        public void Jump() {
+            //调用RPC
+            if (IsLocalObject) {
+                m_NetSyncController.RPC(this, "Jump");
+            }
+
+            SendMessage("SetJumpAnimationParamters", SendMessageOptions.DontRequireReceiver);
+        }
+
 
         //站立函数
         public void StandUp() {
