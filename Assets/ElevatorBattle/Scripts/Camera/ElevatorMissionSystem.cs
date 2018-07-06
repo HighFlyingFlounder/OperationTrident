@@ -27,9 +27,10 @@ namespace OperationTrident.Elevator
         public string[] missionContents = {
             "",
             "开启电梯门",
-            "寻找启动电梯的按钮",
+            "等待电梯启动",
             "请抵御来袭的敌人，活下去！",
-            "逃出电梯"
+            "逃出电梯",
+            "找到逃生舱"
         };
 
         // 任务目标的内容
@@ -77,6 +78,7 @@ namespace OperationTrident.Elevator
                     targetWorldPosition = new Vector3(16, 2, 5);
                     break;
                 case SceneController.ElevatorState.Ready:
+                    missionContentsIndex = 2;
                     display = false;
                     break;
                 case SceneController.ElevatorState.Start_Fighting:
@@ -88,6 +90,10 @@ namespace OperationTrident.Elevator
                     break;
                 case SceneController.ElevatorState.End:
                     missionContentsIndex = 4;
+                    display = false;
+                    break;
+                case SceneController.ElevatorState.Escape:
+                    missionContentsIndex = 5;
                     display = false;
                     break;
             }

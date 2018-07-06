@@ -69,7 +69,10 @@ namespace OperationTrident.Elevator {
 
                         //准备时间结束，切换到下一个场景
                         if (c_time >= e_time)
+                        {
                             changeState();
+                            m_controller.RPC(this, "changeState");
+                        }
                     }
                     break;
 
@@ -82,6 +85,7 @@ namespace OperationTrident.Elevator {
                     e_time = s_time + d_time;
 
                     changeState();
+                    m_controller.RPC(this, "changeState");
                     break;
 
                 case ElevatorState.Fighting:
@@ -89,8 +93,8 @@ namespace OperationTrident.Elevator {
 
                     if(c_time >= e_time)
                     {
-                        change = true;
                         changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
@@ -100,9 +104,13 @@ namespace OperationTrident.Elevator {
 
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
-                    change = false;
 
-                    changeState();
+                    if (OperationTrident.Elevator.Wall.state)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
                     break;
 
                 case ElevatorState.Escape:
@@ -140,6 +148,7 @@ namespace OperationTrident.Elevator {
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
                     changeState();
+                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -155,6 +164,7 @@ namespace OperationTrident.Elevator {
                 if (count <= 0 && Door.state && state == ElevatorState.Escape)
                 {
                     changeState();
+                    m_controller.RPC(this, "changeState");
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
