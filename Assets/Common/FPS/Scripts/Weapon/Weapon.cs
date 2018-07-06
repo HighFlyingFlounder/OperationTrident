@@ -169,8 +169,6 @@ namespace OperationTrident.FPS.Weapons {
         #region 弹药
         //是否是无限弹药模式
         public bool InfiniteAmmo = false;
-        //背包弹药总量
-        public int TotalAmmunition = 100;
         //武器的弹夹容量
         public int AmmoCapacity = 12;
         //单次射击（弹药量减一）射出的子弹数
@@ -183,7 +181,7 @@ namespace OperationTrident.FPS.Weapons {
         public bool ReloadAutomatically = true;
 
         //武器当前的总弹药量
-        private int m_CurrentTotalAmmo;
+        //private int m_CurrentTotalAmmo;
         //武器当前的弹药量
         private int m_CurrentAmmo;
         #endregion
@@ -331,14 +329,6 @@ namespace OperationTrident.FPS.Weapons {
 
             //重置计时器
             FireTimer = 0.0f;
-
-            //确保总弹药量大于弹夹弹药量
-            if (TotalAmmunition < AmmoCapacity) {
-                TotalAmmunition = AmmoCapacity;
-            }
-
-            //初始化武器的总弹药量
-            m_CurrentTotalAmmo = TotalAmmunition;
 
             //初始化武器的当前弹药量
             m_CurrentAmmo = AmmoCapacity;
@@ -1140,42 +1130,13 @@ namespace OperationTrident.FPS.Weapons {
                 m_NetSyncController.RPC(this, "Reload");
             }
 
-            if (m_CurrentTotalAmmo == 0) {
-                return;
-            }
-
-            if (m_CurrentTotalAmmo >= AmmoCapacity) {
-                //更新弹药量
-                m_CurrentAmmo = AmmoCapacity;
-
-                //更新总弹药量
-                m_CurrentTotalAmmo -= AmmoCapacity;
-            } else {
-                //更新弹药量
-                m_CurrentAmmo = m_CurrentTotalAmmo;
-
-                //更新总弹药量
-                m_CurrentTotalAmmo = 0;
-            }
+            //更新弹药量
+            m_CurrentAmmo = AmmoCapacity;
 
             //停止计时器
             FireTimer = -ReloadTime;
             //播放换弹音效
             GetComponent<AudioSource>().PlayOneShot(ReloadSound);
-
-            //向上传递信息，更新弹药量
-            SendMessageUpwards("UpdateWeaponsTotalAmmunition", m_CurrentTotalAmmo, SendMessageOptions.DontRequireReceiver);
-            // Send a messsage so that users can do other actions whenever this happens
-            //SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
-        }
-
-        //弹药补给
-        public int AmmunitionSupply() {
-            int supplyNum = TotalAmmunition - m_CurrentTotalAmmo;
-
-            m_CurrentTotalAmmo = TotalAmmunition;
-
-            return supplyNum;
         }
 
         //切换瞄准镜的状态
@@ -1219,10 +1180,6 @@ namespace OperationTrident.FPS.Weapons {
             GetComponent<AudioSource>().PlayOneShot(DryFireSound);
         }
         #endregion
-
-        public int GetTotalAmmunition() {
-            return m_CurrentTotalAmmo;
-        }
 
         //后坐力函数
         void Recoil() {
