@@ -21,8 +21,8 @@ namespace room2Battle
 
         protected GetCamera getCamera;
 
-        [SerializeField]
-        protected GameObject player;
+        //[SerializeField]
+        //protected GameObject player;
 
         //挂载脚本的shader，包括dark和depth sensor
         [SerializeField]
@@ -41,6 +41,8 @@ namespace room2Battle
         protected bool isNear = false;
 
         protected bool isEnter = false;
+
+        Camera mCamera;
 
         public string[] missionDetails =
             {
@@ -107,20 +109,15 @@ namespace room2Battle
         {
             if (isInit)
             {
-                Camera cam;
                 if (GameMgr.instance)
                 {
-                    cam = getCamera.GetCurrentUsedCamera();
+                    mCamera = getCamera.GetCurrentUsedCamera();
                 }
-                else
-                {
-                    
-                    cam = getCamera.GetCurrentUsedCamera();
-                }
+
 
                 GUIUtil.DisplayMissionDetailDefault(
                                 missionDetails,
-                                cam,
+                                mCamera,
                                 GUIUtil.yellowColor,
                                 wordTransparentInterval: wordTransparentInterval,
                                 wordAppearanceInterval: wordAppearanceInterval,
@@ -130,7 +127,7 @@ namespace room2Battle
                 if (!isNear)
                 {
                     GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
-                        cam,
+                        mCamera,
                         GUIUtil.yellowColor,
                         0.5f, 0.1f, 16);
                 }
@@ -139,16 +136,16 @@ namespace room2Battle
                     //深度摄像头是否开启
                     bool open = playerCamera.GetComponent<depthSensor>().enabled;
                     GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
-                        cam,
+                        mCamera,
                         GUIUtil.yellowColor,
                         0.5f, 0.1f, 16);
                     if (!open)
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", cam, 12, 0.5f);
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, cam, 16, 0.9f, 0.2f, 1.2f);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
                 }
 
                 GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(roomPos.position, cam);
+                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(roomPos.position, mCamera);
                 // 指定颜色
                 if (isShowTarget)
                 {
@@ -217,11 +214,12 @@ namespace room2Battle
         {
             if (isInit)
             {
-                if (Camera.current)
+                mCamera = getCamera.GetCurrentUsedCamera();
+                if (mCamera)
                 {
-                    Vector3 point = new Vector3(Camera.current.pixelWidth / 2, Camera.current.pixelHeight / 2, 0);
+                    Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
 
-                    Ray ray = Camera.current.ScreenPointToRay(point);
+                    Ray ray = mCamera.ScreenPointToRay(point);
 
                     distance = Vector3.Distance(roomPos.position, playerCamera.GetComponent<Transform>().position);
 
@@ -247,16 +245,7 @@ namespace room2Battle
                             playerCameraMirror.Add(cam);
                         }
                     }
-                    else
-                    {
-                        getCamera = (player.GetComponent<GetCamera>() as GetCamera);
-                        playerCamera = player.GetComponent<GetCamera>().MainCamera;
-                        foreach (GameObject cam in getCamera.MirrorCameras)
-                        {
-                            playerCameraMirror.Add(cam);
-                        }
 
-                    }
                     //给腰射相机加特效
                     playerCamera.AddComponent<becomeDark>();
                     playerCamera.AddComponent<depthSensor>();

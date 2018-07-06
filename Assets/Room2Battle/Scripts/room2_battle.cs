@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
 
+using OperationTrident.FPS.Common;
 
 namespace room2Battle {
     //小boss大战
     public class room2_battle :  Subscene{
+        protected GetCamera getCamera;
 
         [SerializeField]
         protected Camera mCamera;
@@ -66,6 +68,11 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
+            if (GameMgr.instance)
+            {
+                getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
+            }
+
             Debug.Log(director.isActiveAndEnabled);
             director.Play();
             
@@ -73,9 +80,10 @@ namespace room2Battle {
 
         void Update()
         {
+            mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)
             {
-                if (director.time >= 20.0f)
+                if (director.time >= 30.0f)
                 {
                     isTimelinePaused = true;
                 }
@@ -89,23 +97,17 @@ namespace room2Battle {
         {
             if (isTimelinePaused)
             {
-                if (Camera.current)
+                if (mCamera)
                 {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
                     OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                          Camera.current,
+                          mCamera,
                           OperationTrident.Util.
                           GUIUtil.yellowColor,
                           0.5f, 0.1f, 16);
                 }
-            }
-            if (!isTimelinePaused)
-            {
-                GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
-            }
-            
+            }      
         }
-
     }
 
 }

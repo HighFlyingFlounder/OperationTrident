@@ -49,8 +49,8 @@ namespace room2Battle
         protected GetCamera getCamera;
 
         //挂载相机的对象，单机可用
-        [SerializeField]
-        protected GameObject player;
+        //[SerializeField]
+        //protected GameObject player;
 
         [SerializeField]
         protected Transform switchPos;
@@ -93,6 +93,12 @@ namespace room2Battle
             Destroy(playerCamera.GetComponent<depthSensor>());
             Destroy(playerCamera.GetComponent<becomeDark>());
 
+            foreach (GameObject cam in getCamera.MirrorCameras)
+            {
+                Destroy(cam.GetComponent<depthSensor>());
+                Destroy(cam.GetComponent<becomeDark>());
+            }
+
             //@TODO: 替换成老Y的AI
             foreach (GameObject obj in enemyList)
             {
@@ -110,15 +116,6 @@ namespace room2Battle
             if (GameMgr.instance)//联网状态
             {
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
-                playerCamera = getCamera.MainCamera;
-                foreach (GameObject cam in getCamera.MirrorCameras)
-                {
-                    playerCameraMirror.Add(cam);
-                }
-            }
-            else
-            {
-                getCamera = player.GetComponent<GetCamera>();
                 playerCamera = getCamera.MainCamera;
                 foreach (GameObject cam in getCamera.MirrorCameras)
                 {
@@ -168,7 +165,7 @@ namespace room2Battle
                 //判断标签
                 if (obj.tag == "switch")
                 {
-                    //if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 5.0f)
+                    if ((hit.transform.position - mCamera.transform.position).sqrMagnitude < 16.0f)
                     {
                         isFocus = true;
                     }
@@ -267,17 +264,13 @@ namespace room2Battle
         {
             if (isFocus)
             {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", mCamera, 16);
                 float posX = mCamera.pixelWidth / 2 - 50;
                 float posY = mCamera.pixelHeight / 2 - 50;
                 //交互提示
                 if (!isSwitchOpen)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.5f);
-                }
-                else
-                {
-                    GUIUtil.DisplaySubtitleInDefaultPosition("干得漂亮", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", mCamera, 16, 0.9f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
                 }
             }
             //深度摄像头是否开启，是否黑
@@ -291,7 +284,7 @@ namespace room2Battle
                    0.5f, 0.1f, 16);
                 if (!open2 && open)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w开启/关闭探测器", mCamera, 12, 0.7f);
                 }
 
                 GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
@@ -322,7 +315,7 @@ namespace room2Battle
                 }
                 if (open2 && !isFocus)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yG^w关闭探测器", mCamera, 12, 0.7f);
                 }
             }
 
