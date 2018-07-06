@@ -42,6 +42,12 @@ namespace room2Battle {
         [SerializeField]
         protected Transform bossInitPos;
 
+        [SerializeField]
+        protected GameObject door;
+
+        [SerializeField]
+        protected Transform doorPos;
+
         private void Start()
         {
             AIController.instance.AddAIObject(boss);
@@ -92,11 +98,32 @@ namespace room2Battle {
 
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     nextScene_.SetActive(true);
+                    door.transform.position = doorPos.position;
                 }
             }
             else {
-                   
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    openDoor();
+                }
             }
+            
+        }
+
+        void openDoor()
+        {
+            /*
+            Debug.Log("open");
+            float time = 0.0f;
+            while (time < 2.0f)
+            {
+                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.5f, door.transform.position.z);
+                Debug.Log(door.transform.position);
+                yield return new WaitForFixedUpdate();
+                time += Time.deltaTime;
+            }
+            */
+            Destroy(door);
         }
 
         void OnGUI()
