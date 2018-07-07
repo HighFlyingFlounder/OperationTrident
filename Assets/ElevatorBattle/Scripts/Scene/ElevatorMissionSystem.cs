@@ -27,9 +27,10 @@ namespace OperationTrident.Elevator
         public string[] missionContents = {
             "",
             "开启电梯门",
-            "寻找启动电梯的按钮",
+            "等待电梯启动",
             "请抵御来袭的敌人，活下去！",
-            "逃出电梯"
+            "逃出电梯",
+            "找到逃生舱"
         };
 
         // 任务目标的内容
@@ -76,11 +77,9 @@ namespace OperationTrident.Elevator
                     display = true;
                     targetWorldPosition = new Vector3(16, 2, 5);
                     break;
-                case SceneController.ElevatorState.FindingButton:
+                case SceneController.ElevatorState.Ready:
                     missionContentsIndex = 2;
-                    display = true;
-                    targetWorldPosition = SceneController.ButtonPosition;
-                    missionLabelOffset = 0.1f;
+                    display = false;
                     break;
                 case SceneController.ElevatorState.Start_Fighting:
                     display = false;
@@ -93,6 +92,10 @@ namespace OperationTrident.Elevator
                     missionContentsIndex = 4;
                     display = false;
                     break;
+                case SceneController.ElevatorState.Escape:
+                    missionContentsIndex = 5;
+                    display = false;
+                    break;
             }
 
             missionContent = missionContents[missionContentsIndex]; // 设置要显示的任务目标内容
@@ -103,8 +106,8 @@ namespace OperationTrident.Elevator
                 nowDistance = Vector3.Distance(targetWorldPosition,
                      SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
 
-            Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            Vector3 point = new Vector3(Room1.Util.GetCamera().pixelWidth / 2, Room1.Util.GetCamera().pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = Room1.Util.GetCamera().ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
@@ -129,8 +132,9 @@ namespace OperationTrident.Elevator
             {
                 //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent,
-                    Camera.main,
+                GUIUtil.DisplayMissionTargetInMessSequently(
+                    missionContent,
+                    Room1.Util.GetCamera(),
                     GUIUtil.brightGreenColor,
                     interval: appearInterval,
                     blingInterval: blingInterval,
@@ -140,7 +144,7 @@ namespace OperationTrident.Elevator
 
 
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
+            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Room1.Util.GetCamera());
             // 指定颜色
             if (toDisplayTheMissionPoint && display)
             {
