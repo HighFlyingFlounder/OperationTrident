@@ -61,9 +61,9 @@ namespace OperationTrident.Room1 {
                 {
                     GameObject hitObject = hit.transform.gameObject;
 
-                    if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<ReactiveTarget>() != null)
+                    if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<FPS.Player.ReactiveTarget>() != null)
                     {
-                        hitObject.GetComponent<ReactiveTarget>().OnHit(attacker, fromAI, 1);
+                        hitObject.GetComponent<FPS.Player.ReactiveTarget>().OnHit(attacker, fromAI, 1);
                         Debug.Log("打中了敌人");
                     }
                     Destroy(gameObject);

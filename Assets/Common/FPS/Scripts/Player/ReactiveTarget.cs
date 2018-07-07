@@ -117,6 +117,14 @@ namespace OperationTrident.FPS.Player {
             NetMgr.srvConn.Send(proto);
         }
 
+        public bool isDeath
+        {
+            get
+            {
+                return m_Death;
+            }
+        }
+
         #region 接口
         public void Init(NetSyncController controller) {
             m_NetSyncController = controller;
