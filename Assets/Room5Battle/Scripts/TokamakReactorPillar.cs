@@ -36,6 +36,7 @@ namespace OperationTrident.Room5
             //柱子关掉Emissive（替换成无Emissive的material）
             GetComponentsInChildren<MeshRenderer>()[0].material = m_ReactorPillarShutdownMat;
             GetComponentsInChildren<MeshRenderer>()[1].material = m_ReactorPillarShutdownMat;
+            GetComponentsInChildren<MeshRenderer>()[2].material = m_ReactorPillarShutdownMat;
             m_DescendingAnimDirector.Play();
         }
 
@@ -45,6 +46,7 @@ namespace OperationTrident.Room5
             //柱子关掉Emissive（替换成无Emissive的material）
             GetComponentsInChildren<MeshRenderer>()[0].material = m_ReactorPillarCoolingDownMat;
             GetComponentsInChildren<MeshRenderer>()[1].material = m_ReactorPillarCoolingDownMat;
+            GetComponentsInChildren<MeshRenderer>()[2].material = m_ReactorPillarCoolingDownMat;
         }
     }
 }

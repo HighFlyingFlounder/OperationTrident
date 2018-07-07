@@ -16,9 +16,15 @@ namespace OperationTrident.Room5
 
         public GameObject nextScene;
 
-        //是否已经获取核心
-        //protected bool isGetTorcore = false;
+        //播放出口门打开的的动画
+        public UnityEngine.Playables.PlayableDirector m_ExitDoorOpenDirector;
 
+        //音效的音源（非BGM)
+        public AudioSource m_AudioSource_SoundEffect;
+
+        //音效：核心关闭+台词：“逃离反应室”
+        public AudioClip m_AudioClip_CoreClosedAndEvacuate;
+        bool isAudioPlayed = false;
 
         public override bool isTransitionTriggered()
         {
@@ -38,6 +44,7 @@ namespace OperationTrident.Room5
         {
             m_ReactorCore.Shutdown();
             m_ReactorPillar.Shutdown();
+
         }
 
         //@brief 善后工作
@@ -55,8 +62,12 @@ namespace OperationTrident.Room5
 
         private void Update()
         {
+            //如果拿到了反应核心
             if (m_ReactorCore == null)
             {
+                //出口的门打开
+                m_ExitDoorOpenDirector.Play();
+                //下一场景
                 nextScene.SetActive(true);
             }
         }
@@ -65,12 +76,36 @@ namespace OperationTrident.Room5
         {
             if (m_ReactorCore != null)
             {
-                GUIUtil.DisplayMissionTargetDefault("夺回托卡马克之心.", Camera.main, Color.white);
+                GUIUtil.DisplayMissionTargetDefault("夺回托卡马克之心.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
             }
             else
             {
-                GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Camera.main, Color.white);
+                GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
+
             }
+
+            //音效:断电+台词
+            if (m_AudioSource_SoundEffect.isPlaying==false & isAudioPlayed==false)
+            {
+                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
+                m_AudioSource_SoundEffect.Play();
+                isAudioPlayed = true;
+
+                //字幕
+                string[] subtitles =
+                {
+                "",
+                "^g队长^w：拿上核心，准备撤退",
+                "^g队长^w：鲲的自毁程序即将启动，动作快一点！",
+                };
+
+                float[] lastingTime = { 4.6f, 1.6f, 2.6f };
+                float[] intervals = { 0.0f, 0.2f, 0.2f };
+                GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
+
+            }
+
+
         }
         /*
         public void RecvData(SyncData data)

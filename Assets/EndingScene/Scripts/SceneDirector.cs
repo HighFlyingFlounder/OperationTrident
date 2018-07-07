@@ -24,7 +24,7 @@ namespace OperationTrident.EndingScene
         //爆炸生成器
         public ExplosionGenerator m_ExplosionGenerator;
         public LensFlare m_ExplosionLensFlare;//爆炸光亮的镜头光晕
-        enum CameraState
+        public enum CameraState
         {
             ROAMING,//一开始缓慢移动,和靠近，用Timeline
             THIRD_PERSON,//第三人称看着逃生舱（可以控制）
@@ -92,43 +92,10 @@ namespace OperationTrident.EndingScene
 
         }
 
-        void OnGUI()
+        public CameraState GetCameraState()
         {
-            switch (m_CamState)
-            {
-                case CameraState.ROAMING:
-
-                    break;
-
-                case CameraState.THIRD_PERSON:
-                    GUIUtil.DisplayMissionTargetInMessSequently("任务完成，返回基地.", m_CamDirected, Color.white,0.1f);
-                    string[] subtitles =
-                    {
-                        "",//等几秒先
-                        "^g蓝星陆战队：^w指挥部，已取回托卡马克之心",
-                        "^g蓝星陆战队：^w陆战队所有成员均已登上逃生舱，任务完成",
-                        "^g地球指挥部：^w收到，尽快返回海神号进行任务简报。",
-                    };
-
-                    float[] subtitleTime = { 5.0f, 4.0f, 7.0f, 6.0f };
-                    float[] intervals = {5.0f, 0.5f, 2.0f,  2.0f};
-                    GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
-                        subtitles,m_CamFree,GUIUtil.DefaultFontSize, GUIUtil.DefaultSubtitleRatioHeight,subtitleTime, intervals);
-
-                    break;
-
-                case CameraState.LOOKING_AT_KUN:
-
-                    break;
-
-                case CameraState.VIDEO:
-
-                    break;
-            }
-
+            return m_CamState;
         }
-
-
 
         /************************************************
          *                           PRIVATE
