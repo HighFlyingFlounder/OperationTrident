@@ -18,10 +18,12 @@ public class NetSyncController : MonoBehaviour
     // Use this for initialization
     public void AddSyncScripts(Component Component){
         sync_scripts.Add(Component);
-        for (int i = 0; i < sync_scripts.Count; i++)
-        {
-            (sync_scripts[i] as NetSyncInterface).Init(this);
-        }
+        (sync_scripts[sync_scripts.Count - 1] as NetSyncInterface).Init(this);
+    }
+
+    public void RemoveSyncScripts(Component Component)
+    {
+        sync_scripts.Remove(Component);
     }
 
     void Start()
@@ -51,6 +53,11 @@ public class NetSyncController : MonoBehaviour
         //sync_scripts
         for (int i = 0; i < sync_scripts.Count; i++)
         {
+            //移除禁用脚本
+            if( ((MonoBehaviour)sync_scripts[i]).enabled == false)
+            {
+                sync_scripts.Remove(sync_scripts[i]);
+            }
             Component temp = sync_scripts[i];
             SyncData data = (temp as NetSyncInterface).SendData();
             //加入空检测
