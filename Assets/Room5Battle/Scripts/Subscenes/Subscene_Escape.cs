@@ -16,9 +16,8 @@ namespace OperationTrident.Room5
 
         public GameObject nextScene;
 
-        //是否已经获取核心
-        //protected bool isGetTorcore = false;
-
+        //播放出口门打开的的动画
+        public UnityEngine.Playables.PlayableDirector m_ExitDoorOpenDirector;
 
         public override bool isTransitionTriggered()
         {
@@ -38,6 +37,7 @@ namespace OperationTrident.Room5
         {
             m_ReactorCore.Shutdown();
             m_ReactorPillar.Shutdown();
+            m_ExitDoorOpenDirector.Play();
         }
 
         //@brief 善后工作

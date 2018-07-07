@@ -7,6 +7,7 @@ namespace OperationTrident.Room5
 {
     //InteractiveObject的 Init/Update/GUI渲染 需要手动调用，只是一个类似于工具类的东西
     //Initialize，然后在外面的Update()调用UpdateState，OnGUI()调用RenderGUI
+    //要把这东西挂到对应物体上；交互使用RayCast的CompareTag来做的
     public class InteractiveObject:MonoBehaviour
     {
         //画进度条的纯色texture
@@ -86,12 +87,14 @@ namespace OperationTrident.Room5
         //GUI的渲染(为了不迷惑，就不叫OnGUI了)
         public void RenderGUI()
         {
+    
+
             if (m_IsLookingAtObject)
             {
                 //显示持续按键的进度条
                 if (m_IsPressingKey)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar(m_PlayerInteractingPromptText, Camera.main, 0.5f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar(m_PlayerInteractingPromptText, Camera.main,(int)18, 0.5f);
 
                     //进度条
                     float barWidth = 200.0f;
@@ -124,13 +127,17 @@ namespace OperationTrident.Room5
         //玩家Camera view ray和Tagged了的目标物体的求交
         private bool IsLookingAtObject()
         {
-            if (m_Cam)
+            //if (m_Cam)
+            if(Camera.current)
             {
+                Debug.Log("123123123123");
                 //摄像机中心发出的射线
-                Vector3 centerCoordPixel = new Vector3(m_Cam.pixelWidth / 2.0f, m_Cam.pixelHeight / 2.0f);
-                Ray viewRay = m_Cam.ScreenPointToRay(centerCoordPixel);
+                //Vector3 centerCoordPixel = new Vector3(m_Cam.pixelWidth / 2.0f, m_Cam.pixelHeight / 2.0f);
+                Vector3 centerCoordPixel = new Vector3(Camera.current.pixelWidth / 2.0f, Camera.current.pixelHeight / 2.0f);
+                Ray viewRay = Camera.current.ScreenPointToRay(centerCoordPixel);
                 RaycastHit hitInfo;
-                if (Physics.Raycast(viewRay, out hitInfo, 4.0f))
+                const float rayCastDepth = 20.0f;
+                if (Physics.Raycast(viewRay, out hitInfo, rayCastDepth))
                 {
                     //如果玩家看着物体
                     if (hitInfo.transform.CompareTag(m_ObjectTag))

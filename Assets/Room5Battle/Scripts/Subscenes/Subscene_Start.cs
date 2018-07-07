@@ -4,6 +4,8 @@ using UnityEngine;
 using OperationTrident.Util;
 using System;
 
+using OperationTrident.FPS.Common;
+
 namespace OperationTrident.Room5
 {
     public class Subscene_Start : Subscene, NetSyncInterface
@@ -15,17 +17,12 @@ namespace OperationTrident.Room5
         //托卡马克之心是否已启动冷却（要对着控制台按住F十秒）
         private bool m_isTokamakeStartToCoolDown;
 
-        //对着控制台按着F
-        /*private bool m_isLookingAtControlPanel = false;
-        private bool m_isPressingKeyF=false;
-        private float m_ControlPanelKeyFPressingTime = 0.0f;
-        private const float c_RequiredKeyFPressingTime = 1.0f;*/
-
         //player的camera引用
         private GameObject mCamera;
 
         //单机测试
-        private GameObject playerOffline;
+        //private GameObject playerOffline;
+        private GetCamera m_GetCamera;
 
         //是否联网初始化完毕
         private bool isNetworkInitialized = false;
@@ -58,9 +55,21 @@ namespace OperationTrident.Room5
          * **************************************************************/
         private void Start()
         {
+            Debug.Log("注意这里用了Camera.main来做Raycast");
+
             m_ControlPanel.Initialize(
-                "ControlPanel", Camera.main, KeyCode.F, 2.0f,
+                "Room5ControlPanel", Camera.main, KeyCode.F, 5.0f,//Camera.main
                 "^w按住^yF^w开始核心冷却程序", "^w正在启动冷却程序...");
+
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players)
+            {
+                m_GetCamera = player.GetComponent<GetCamera>();
+                if(m_GetCamera != null)
+                {
+                    break;
+                }
+            }
         }
 
         private void  Update()
@@ -80,7 +89,7 @@ namespace OperationTrident.Room5
                     
                     if (SceneNetManager.instance.list.ContainsKey(GameMgr.instance.id))
                     {
-                        mCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
+                        //mCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
                         m_ControlPanel.SetGUICamera(mCamera.GetComponent<Camera>());
                         m_TorCore.SetGUICamera(mCamera.GetComponent<Camera>());
                         isNetworkInitialized = true;
