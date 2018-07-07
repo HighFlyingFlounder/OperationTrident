@@ -61,6 +61,8 @@ namespace OperationTrident.FPS.Weapons {
         public bool PlayerWeapon = true;
         //武器的模型
         public GameObject WeaponModel;
+        //不进行检测的物理层
+        public string LayerMaskName;
         //发射的起点和方向
         public Transform RaycastStartSpot;
         //射击前等待的时间
@@ -721,11 +723,21 @@ namespace OperationTrident.FPS.Weapons {
                 //创建射线
                 Ray ray = new Ray(m_CurrentShootPoint.position, direction);
 
+                bool hitResult;
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, Range)) {
-                    //蓄力
-                    float damage = Power;
+                int layer = LayerMask.NameToLayer(LayerMaskName);
+                if (layer != -1) {
+                    //过滤LayerMaskName这一层
+                    LayerMask mask = ~(1 << layer);
+                    hitResult = Physics.Raycast(ray, out hit, Range, mask);
+                } else {
+                    hitResult = Physics.Raycast(ray, out hit, Range);
+                }
+
+                if (hitResult) {
+                        //蓄力
+                        float damage = Power;
                     if (Warmup) {
                         damage *= m_Heat * PowerMultiplier;
                         m_Heat = 0.0f;
