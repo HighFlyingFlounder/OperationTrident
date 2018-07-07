@@ -24,6 +24,7 @@ namespace OperationTrident.Room5
 
         //音效：核心关闭+台词：“逃离反应室”
         public AudioClip m_AudioClip_CoreClosedAndEvacuate;
+        bool isAudioPlayed = false;
 
         public override bool isTransitionTriggered()
         {
@@ -81,6 +82,15 @@ namespace OperationTrident.Room5
             {
                 GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
 
+            }
+
+            //音效:断电+台词
+            if (m_AudioSource_SoundEffect.isPlaying==false & isAudioPlayed==false)
+            {
+                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
+                m_AudioSource_SoundEffect.Play();
+                isAudioPlayed = true;
+
                 //字幕
                 string[] subtitles =
                 {
@@ -93,12 +103,7 @@ namespace OperationTrident.Room5
                 float[] intervals = { 0.0f, 0.2f, 0.2f };
                 GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
 
-                //音效:断电+台词
-                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
-                m_AudioSource_SoundEffect.Play();
-
             }
-
 
 
         }

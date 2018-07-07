@@ -101,8 +101,13 @@ namespace OperationTrident.Room5
 
         private void OnGUI()
         {
+            //任务目标
+            GUIUtil.DisplayMissionTargetInMessSequently("前往控制台启动核心冷却程序.", GetCameraUtil.GetCurrentCamera(), Color.white);
+
+            //控制台的交互GUI
             m_ControlPanel.RenderGUI();
 
+            //字幕
             string[] subtitles =
             {
                 "",
