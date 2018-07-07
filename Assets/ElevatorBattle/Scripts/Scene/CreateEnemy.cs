@@ -96,7 +96,7 @@ namespace OperationTrident.Elevator
         private void Operate()
         {
             Operate_Imp();
-            m_controller.RPC(this, "Operate_Imp");
+            //m_controller.RPC(this, "Operate_Imp");
         }
 
         public void Operate_Imp()
