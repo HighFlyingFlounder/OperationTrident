@@ -9,8 +9,6 @@ public class ElevatorBattleNetManager : SceneNetManager {
     {
         if(id == GameMgr.instance.id)//本地玩家
         {
-            player.AddComponent<ElevatorMissionSystem>();
-            player.AddComponent<RayShooter>();
             player.AddComponent<RenderDepth>();
         }
     }

@@ -137,7 +137,7 @@ namespace OperationTrident.Elevator {
             {
                 //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
                 //return;
-                int number = 1;//SceneNetManager.instance.list.Count;
+                int number = SceneNetManager.instance.list.Count;
 
                 count++;
 
