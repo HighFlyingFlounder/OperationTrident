@@ -133,7 +133,7 @@ namespace OperationTrident.Elevator {
 
         void OnTriggerEnter(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.End)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
                 //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
                 //return;
@@ -152,7 +152,7 @@ namespace OperationTrident.Elevator {
 
         void OnTriggerExit(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.Escape)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
                 //离开关门
                 count--;
