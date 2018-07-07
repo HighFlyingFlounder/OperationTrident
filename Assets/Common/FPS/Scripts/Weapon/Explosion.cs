@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using OperationTrident.FPS.Player;
 
 namespace OperationTrident.FPS.Weapons {
     public class Explosion : MonoBehaviour {
-        //public bool shooterAISupport = false; 
-        //public bool bloodyMessSupport = false;
-        //public int weaponType = 0;             
-
+        public string LayerMaskName;
         //爆炸击退力
         public float ExplosionForce = 5.0f;
         //爆炸的半径
@@ -21,48 +19,36 @@ namespace OperationTrident.FPS.Weapons {
         //伤害大小
         public float Damage = 10.0f;
 
+        //将Start设置为协程，自动开始协程
         IEnumerator Start() {
-            //暂停一帧，避免有碎片还没被创建
-            yield return null;
+            ////暂停一帧，避免有碎片还没被创建
+            //yield return null;
+            yield return new WaitForSeconds(0.1f);
 
-            //爆炸范围内的物体
-            Collider[] cols = Physics.OverlapSphere(transform.position, ExplosionRadius);
+            //获取物理层
+            int layer = LayerMask.NameToLayer(LayerMaskName);
+            Collider[] cols;
+            if (layer != -1) {
+                //创建物理遮罩
+                LayerMask mask = ~(1 << layer);
+                //爆炸范围内的物体
+                cols = Physics.OverlapSphere(transform.position, ExplosionRadius, mask);
+            } else {
+                Debug.LogWarning("Can not find the layer to create a layer mask");
+                //爆炸范围内的物体
+                cols = Physics.OverlapSphere(transform.position, ExplosionRadius);
+            }
 
             //造成伤害
             if (CauseDamage) {
                 foreach (Collider col in cols) {
                     float damageAmount = Damage * (1 / Vector3.Distance(transform.position, col.transform.position));
 
-                    //col.GetComponent<Collider>().gameObject.SendMessageUpwards("ChangeHealth", -damageAmount, SendMessageOptions.DontRequireReceiver);
-
-                    //if (shooterAISupport) {
-                    //    col.transform.SendMessageUpwards("Damage", damageAmount, SendMessageOptions.DontRequireReceiver);
-                    //}
-
-                    //if (bloodyMessSupport) {
-                    //    if (col.gameObject.layer == LayerMask.NameToLayer("Limb")) {
-                    //        Vector3 directionShot = col.transform.position - transform.position;
-
-                    //        /*
-                    //        if (col.gameObject.GetComponent<Limb>())
-                    //        {
-                    //            RaycastHit limbHit;
-
-                    //            if (Physics.Raycast(transform.position, directionShot, out limbHit))
-                    //            {
-                    //                if (limbHit.collider.gameObject.tag == col.gameObject.tag)
-                    //                {
-                    //                    GameObject parent = col.gameObject.GetComponent<Limb>().parent;
-                    //                    CharacterSetup character = parent.GetComponent<CharacterSetup>();
-                    //                    character.ApplyDamage(damage, col.gameObject, weaponType, directionShot, Camera.main.transform.position);
-                    //                }
-                    //            }
-                    //        }
-                    //        */
-                    //    }
-                    //}
-
-
+                    //造成伤害
+                    ReactiveTarget target = col.gameObject.GetComponent<ReactiveTarget>();
+                    if (target) {
+                        target.OnHit(this.gameObject.name, false, Damage);
+                    }
                 }
             }
 

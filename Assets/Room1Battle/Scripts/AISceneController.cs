@@ -46,8 +46,8 @@ namespace OperationTrident.Room1
             nowEnemyNum = enemysList.Count;
             for (int i=0;i<enemysList.Count;i++)
             {
-                ReactiveTarget rt = enemysList[i].GetComponent<ReactiveTarget>();
-                if (rt.Dead)
+                FPS.Player.ReactiveTarget rt = enemysList[i].GetComponent<FPS.Player.ReactiveTarget>();
+                if (rt.isDeath)
                 {
                     enemysList.RemoveAt(i);
                 }

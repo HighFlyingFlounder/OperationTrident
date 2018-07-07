@@ -38,12 +38,12 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //使用鼠标滚轮切换武器
-            if (Input.GetAxis("Mouse ScrollWheel") > 0) {
+            if (Input.GetAxis("Mouse ScrollWheel") < 0) {
                 //使用RPC函数
                 NextWeapon();
 
             }
-            if (Input.GetAxis("Mouse ScrollWheel") < 0) {
+            if (Input.GetAxis("Mouse ScrollWheel") > 0) {
                 //使用RPC函数
                 PreviousWeapon();
             }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using OperationTrident.FPS.Player;
 
 namespace OperationTrident.FPS.Weapons {
     public enum ProjectileType {
@@ -42,16 +43,13 @@ namespace OperationTrident.FPS.Weapons {
         public GameObject ClusterBomb;
         //单次射击发射炸弹的数量
         public int ClusterBombNum = 6;
-
-        //public int weaponType = 0; 
+        
 
         //计时器
         private float m_LifeTimer = 0.0f;
         private float m_TargetListUpdateTimer = 0.0f;
         //保存可能的追踪目标
         private GameObject[] m_EnemyList;
-
-        private string m_OwnerID;
 
         void Start() {
             //更新追踪目标List
@@ -126,33 +124,22 @@ namespace OperationTrident.FPS.Weapons {
             //播放爆炸特效
             Explode(col.contacts[0].point);
 
-            ////让被击中物受到伤害
-            //if (SelectedDamageType == DamageType.Direct) {
-            //    col.collider.gameObject.SendMessageUpwards("ChangeHealth", -Damage, SendMessageOptions.DontRequireReceiver);
-
-            //    if (col.collider.gameObject.layer == LayerMask.NameToLayer("Limb")) {
-            //        Vector3 directionShot = col.collider.transform.position - transform.position;
-
-            //        /*
-            //        if (col.collider.gameObject.GetComponent<Limb>())
-            //        {
-            //            GameObject parent = col.collider.gameObject.GetComponent<Limb>().parent;
-            //            CharacterSetup character = parent.GetComponent<CharacterSetup>();
-            //            character.ApplyDamage(damage, col.collider.gameObject, weaponType, directionShot, Camera.main.transform.position);
-            //        }
-            //        */
-            //    }
-            //}
-        }
-
-        public void SetOwnerID(string id) {
-            m_OwnerID = id;
+            //让被击中物受到伤害
+            if (SelectedDamageType == DamageType.Direct) {
+                ReactiveTarget target = col.collider.gameObject.GetComponent<ReactiveTarget>();
+                if (target) {
+                    target.OnHit(this.gameObject.name, false, Damage);
+                }
+            }
         }
 
         void Explode(Vector3 position) {
             //实例化爆炸特效
             if (Explosion != null) {
-                Instantiate(Explosion, position, Quaternion.identity);
+                GameObject explosion = Instantiate(Explosion, position, Quaternion.identity);
+                explosion.name = this.gameObject.name;
+
+                //Instantiate(Explosion, position, Quaternion.identity);
             }
 
             //爆炸之后创建新的炸弹
