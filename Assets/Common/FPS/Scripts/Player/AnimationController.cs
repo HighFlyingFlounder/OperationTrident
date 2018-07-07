@@ -15,18 +15,6 @@ namespace OperationTrident.FPS.Player {
             m_Animator = PlayerModel.GetComponent<Animator>();
         }
 
-        private void Start() {
-            m_AnimatorParameters = m_Animator.parameters;
-
-            foreach (AnimatorControllerParameter param in m_AnimatorParameters) {
-                Debug.Log(param.name);
-                Debug.Log(param.defaultBool);
-                Debug.Log(param.defaultFloat);
-                Debug.Log(param.defaultInt);
-                Debug.Log(param.type);
-            }
-        }
-
         private void SetWalkAnimationParamters(Vector2 input) {
             m_Animator.SetFloat("turn", input.x);
             m_Animator.SetFloat("forward", input.y);
