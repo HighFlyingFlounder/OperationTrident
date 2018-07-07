@@ -20,9 +20,10 @@ namespace OperationTrident.Room5
         //player的camera引用
         private GameObject mCamera;
 
-        //单机测试
-        //private GameObject playerOffline;
-        private GetCamera m_GetCamera;
+        //BGM播放
+        public AudioSource m_AudioSource;
+        public AudioClip m_BGM_Start;
+
 
         //是否联网初始化完毕
         private bool isNetworkInitialized = false;
@@ -41,13 +42,12 @@ namespace OperationTrident.Room5
         //@brief 子场景的初始化，可以在初始化阶段将所有元素的行为模式改为此状态下的逻辑
         public override void onSubsceneInit()
         {
-            //Debug.Log("Entering Subscene:start");
+            m_AudioSource.Play();
         }
 
         //@brief 善后工作
         public override void onSubsceneDestory()
         {
-            //Debug.Log("Leaving Subscene:start");
         }
 
         /***************************************************************
@@ -55,21 +55,10 @@ namespace OperationTrident.Room5
          * **************************************************************/
         private void Start()
         {
-            Debug.Log("注意这里用了Camera.main来做Raycast");
-
             m_ControlPanel.Initialize(
-                "Room5ControlPanel", Camera.main, KeyCode.F, 5.0f,//Camera.main
+                "Room5ControlPanel", KeyCode.F, 5.0f,//Camera.main
                 "^w按住^yF^w开始核心冷却程序", "^w正在启动冷却程序...");
 
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            foreach(GameObject player in players)
-            {
-                m_GetCamera = player.GetComponent<GetCamera>();
-                if(m_GetCamera != null)
-                {
-                    break;
-                }
-            }
         }
 
         private void  Update()
@@ -87,13 +76,25 @@ namespace OperationTrident.Room5
                 if (!isNetworkInitialized)
                 {
                     
-                    if (SceneNetManager.instance.list.ContainsKey(GameMgr.instance.id))
+                    //设置Camera用于交互
+                    /*if (SceneNetManager.instance.list.ContainsKey(GameMgr.instance.id))
                     {
                         //mCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
-                        m_ControlPanel.SetGUICamera(mCamera.GetComponent<Camera>());
-                        m_TorCore.SetGUICamera(mCamera.GetComponent<Camera>());
+                        /*GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                        foreach (GameObject player in players)
+                        {
+                            m_GetCamera = player.GetComponent<GetCamera>();
+                            if (m_GetCamera != null)
+                            {
+                                break;
+                            }
+                        }
+
+                        //设置当前的Camera用于Raycast交互
+                        m_ControlPanel.SetGUICamera(Room5.GetCameraUtil.GetCurrentCamera());
+                        m_TorCore.SetGUICamera(Room5.GetCameraUtil.GetCurrentCamera());
                         isNetworkInitialized = true;
-                    }
+                    }*/
                 }
             }
         }
@@ -101,6 +102,19 @@ namespace OperationTrident.Room5
         private void OnGUI()
         {
             m_ControlPanel.RenderGUI();
+
+            string[] subtitles =
+            {
+                "",
+                "^g地球指挥部^w：这里是鲲的核心，核聚变反应室",
+                "^g地球指挥部^w：你们要在这里取回反应核心——^y托卡马克之心",
+                "^g地球指挥部^w：反应核心的冷却需要一段时间，期间可能会有大量防御机器人持续涌入，保持警惕"
+            };
+
+            float[] lastingTime = { 7.0f, 2.5f, 3.5f, 6.0f };
+            float[] intervals = { 0.2f, 0.2f, 0.2f, 0.2f };
+            GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
+
         }
 
         public void RecvData(SyncData data)

@@ -16,8 +16,12 @@ namespace OperationTrident.Room5
         //四个高台可以生成敌人
         public Transform[] m_EnemyGenPos = new Transform[4];
 
-        //五分钟 300s
+        //三分钟 180s
         private float m_CountDownTime = 15.0f;
+
+        //BGM播放
+        public AudioSource m_AudioSource;
+        public AudioClip m_BGM_CountingDown;
 
 
         public override bool isTransitionTriggered()
@@ -43,6 +47,10 @@ namespace OperationTrident.Room5
             m_ReactorPillar.StartCoolDownProcedure();
             StartCoroutine(spawnEnemies1());
             StartCoroutine(spawnEnemies2());
+
+            //开始倒计时，换BGM
+            m_AudioSource.clip = m_BGM_CountingDown;
+            m_AudioSource.Play();
         }
 
         /***************************************************
@@ -92,7 +100,7 @@ namespace OperationTrident.Room5
 
         private void OnGUI()
         {
-            GUIUtil.DisplayMissionTargetDefault("托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), Camera.main, Color.white);
+            GUIUtil.DisplayMissionTargetDefault("托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
         }
     }
 }
