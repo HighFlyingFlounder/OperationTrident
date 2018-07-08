@@ -135,14 +135,16 @@ namespace room2Battle
 
         public override void notify(int i)
         {
-            //碰撞体消息
-            if (i == 1)
+            if (this.enabled)
             {
-                if (isSwitchOpen)
+                //碰撞体消息
+                if (i == 1)
                 {
-                    isIntoSecondFloor = true;
-                    Debug.Log("player into floor2");
-                    gameObject.GetComponent<NetSyncController>().SyncVariables();
+                    if (isSwitchOpen)
+                    {
+                        enterSecondFloor();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor");
+                    }
                 }
             }
         }
@@ -174,6 +176,8 @@ namespace room2Battle
 
                 }
             }
+
+            distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
         void LateUpdate()
@@ -186,8 +190,8 @@ namespace room2Battle
                 {
                     if (distance <= 5.0f)
                     {
-                        isSwitchOpen = true;
-                        gameObject.GetComponent<NetSyncController>().SyncVariables();
+                        switchOn();
+                        gameObject.GetComponent<NetSyncController>().RPC(this,"switchOn");
                     }
                 }
             }
@@ -269,8 +273,8 @@ namespace room2Battle
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
                 }
                 //目标位置
-                GUIUtil.DisplayMissionPoint(switchPos.position, mCamera,Color.white);
-                
+                GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
+
             }
             else
             {
@@ -298,21 +302,26 @@ namespace room2Battle
 
         public void RecvData(SyncData data)
         {
-            isSwitchOpen = (bool)data.Get(typeof(bool));
-            isIntoSecondFloor = (bool)data.Get(typeof(bool));
         }
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            data.Add(isSwitchOpen);
-            data.Add(isIntoSecondFloor);
-            return data;
+            return null;
         }
 
         public void Init(NetSyncController controller)
         {
 
+        }
+
+        public void switchOn()
+        {
+            isSwitchOpen = true;
+        }
+
+        public void enterSecondFloor()
+        {
+            isIntoSecondFloor = true;
         }
     }
 }

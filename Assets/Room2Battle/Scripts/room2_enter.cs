@@ -70,10 +70,12 @@ namespace room2Battle
         //距离
         protected float distance = float.MaxValue;
 
-        //音源
         [SerializeField]
         protected AudioSource source;
-        //音频
+
+        [SerializeField]
+        protected AudioSource TimelineSource;
+
         [SerializeField]
         protected AudioClip[] clips;
 
@@ -104,18 +106,21 @@ namespace room2Battle
 
         public override void notify(int i)
         {
-            if (i == 1)
+            if (this.enabled)
             {
-                isNear = true;
-                m_controller.SyncVariables();
-                //初始化
-                becomeDark();
-                m_controller.RPC(this, "becomeDark");
-            }
-            else if (i == 2)
-            {
-                isEnter = true;
-                m_controller.SyncVariables();
+                if (i == 1)
+                {
+                    near();
+                    m_controller.RPC(this, "near");
+                    //初始化
+                    becomeDark();
+                    m_controller.RPC(this, "becomeDark");
+                }
+                else if (i == 2)
+                {
+                    enter();
+                    m_controller.RPC(this,"enter");
+                }
             }
         }
 
@@ -163,18 +168,23 @@ namespace room2Battle
             }
         }
 
+        public void near()
+        {
+            isNear = true;
+        }
+
+        public void enter()
+        {
+            isEnter = true;
+        }
+
         public void RecvData(SyncData data)
         {
-            isNear = (bool)data.Get(typeof(bool));
-            isEnter = (bool)data.Get(typeof(bool));
         }
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            data.Add(isNear);
-            data.Add(isEnter);
-            return data;
+            return null;
         }
 
         public void Init(NetSyncController controller)
@@ -229,8 +239,8 @@ namespace room2Battle
                 {
                     if (!playOnce)
                     {
-                        source.clip = clips[1];
-                        source.Play();
+                        TimelineSource.clip = clips[1];
+                        TimelineSource.Play();
                         playOnce = true;
                     }
                 }
@@ -249,6 +259,8 @@ namespace room2Battle
                             PLAYER.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
                             PLAYER.GetComponent<CharacterController>().radius = r;
                             playerCamera = getCamera.MainCamera;
+
+                            Destroy(PLAYER.GetComponent<Rigidbody>());
                             foreach (GameObject cam in getCamera.MirrorCameras)
                             {
                                 playerCameraMirror.Add(cam);
@@ -285,8 +297,12 @@ namespace room2Battle
 
                             isInit = true;
 
-                            source.clip = clips[0];
+                            TimelineSource.clip = clips[0];
+                            TimelineSource.Play();
+
+                            source.clip = clips[2];
                             source.Play();
+                            source.priority = TimelineSource.priority + 1;
                         }
                     }   
                 }
