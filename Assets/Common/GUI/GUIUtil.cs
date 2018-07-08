@@ -920,7 +920,8 @@ namespace OperationTrident.Util
         /// <returns type="bool"></returns>
         private static bool IsDigit(char a)
         {
-            return a - ' ' >= 0 && a - ' ' <= 94;
+            if (a >= 'A' && a <= 'Z') return false; 
+            return a >= ' ' && a <= '~';
         }
 
         /// <summary>
