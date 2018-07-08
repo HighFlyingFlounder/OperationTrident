@@ -104,6 +104,15 @@ namespace OperationTrident.Room5
             //任务目标
             GUIUtil.DisplayMissionTargetInMessSequently("前往控制台启动核心冷却程序.", GetCameraUtil.GetCurrentCamera(), Color.white);
 
+            //左下角任务细节
+            string[] missionDetails =
+            {
+                "2048.8.1 15:00 p.m. GMT+8",
+                "鲲内部  核聚变反应室",
+                "三叉戟行动"
+            };
+            GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white);
+
             //控制台的交互GUI
             m_ControlPanel.RenderGUI();
 

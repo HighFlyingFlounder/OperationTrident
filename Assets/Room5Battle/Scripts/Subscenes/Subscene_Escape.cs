@@ -96,11 +96,11 @@ namespace OperationTrident.Room5
                 {
                 "",
                 "^g队长^w：拿上核心，准备撤退",
-                "^g队长^w：鲲的自毁程序即将启动，动作快一点！",
+                "^g队长^w：鲲的自毁程序即将启动，动作快一点！"
                 };
 
                 float[] lastingTime = { 4.6f, 1.6f, 2.6f };
-                float[] intervals = { 0.0f, 0.2f, 0.2f };
+                float[] intervals = { 0.1f, 0.2f, 0.2f };
                 GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
 
             }
