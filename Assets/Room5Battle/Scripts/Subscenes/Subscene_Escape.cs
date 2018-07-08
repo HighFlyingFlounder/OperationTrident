@@ -23,8 +23,10 @@ namespace OperationTrident.Room5
         public AudioSource m_AudioSource_SoundEffect;
 
         //音效：核心关闭+台词：“逃离反应室”
-        public AudioClip m_AudioClip_CoreClosedAndEvacuate;
-        bool m_isAudioPlayed = false;
+        public AudioClip m_AudioClip_CoreClose;
+        public AudioClip m_AudioClip_Evacuate;
+        bool m_isCoreCloseAudioPlayed = false;
+        bool m_isEvacuateAudioPlayed = false;
         bool m_isExitDoorOpened=false;
 
         public override bool isTransitionTriggered()
@@ -58,7 +60,8 @@ namespace OperationTrident.Room5
          * *************************************************/
         private void Start()
         {
-            m_isAudioPlayed = false;
+            m_isCoreCloseAudioPlayed = false;
+            m_isEvacuateAudioPlayed = false;
             m_isExitDoorOpened = false;
         }
 
@@ -70,17 +73,24 @@ namespace OperationTrident.Room5
                 //出口的门打开
                 m_ExitDoorOpenDirector.Play();
                 m_isExitDoorOpened = true;
-                //下一场景
+                //下一场景的出口active一下
                 m_EnterNextSceneCube.SetActive(true);
-
             }
 
-            //音效:断电+台词
-            if (m_AudioSource_SoundEffect.isPlaying == false && m_isAudioPlayed == false)
+            //播放 音效断电+"拿上核心"
+            if (!m_isCoreCloseAudioPlayed)
             {
-                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
+                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClose;
                 m_AudioSource_SoundEffect.Play();
-                m_isAudioPlayed = true;
+                m_isCoreCloseAudioPlayed = true;
+            }
+
+            //拿到核心，播放"撤退"台词
+            if (m_ReactorCore == null && !m_isEvacuateAudioPlayed)
+            {
+                m_AudioSource_SoundEffect.clip = m_AudioClip_Evacuate;
+                m_AudioSource_SoundEffect.Play();
+                m_isEvacuateAudioPlayed = true;
             }
         }
 
@@ -97,25 +107,28 @@ namespace OperationTrident.Room5
                 GUIUtil.DisplayMissionPoint(m_EnterNextSceneCube.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
             }
 
-            //音效:断电+台词
-            if (m_AudioSource_SoundEffect.isPlaying==true)
+            //播放 音效断电+"拿上核心"
+            if (m_ReactorCore != null && m_isCoreCloseAudioPlayed)
             {
                 //字幕
-                string[] subtitles =
-                {
-                "",
-                "^g队长^w：拿上核心，准备撤退",
-                "^g队长^w：鲲的自毁程序即将启动，动作快一点！"
-                };
-
-                float[] lastingTime = { 4.6f, 1.6f, 2.6f };
-                float[] intervals = { 0.1f, 0.2f, 0.2f };
+                string[] subtitles ={ "", "^g队长^w：拿上核心，准备撤退", };
+                float[] lastingTime = { 4.6f, 1.6f };
+                float[] intervals = { 0.0f, 0.0f };
                 GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
-
             }
 
-
+            //拿到核心，"撤退”
+            if (m_ReactorCore == null && m_isEvacuateAudioPlayed)
+            {
+                //字幕
+                string[] subtitles = { "^g队长^w：鲲的自毁程序即将启动，动作快一点！"};
+                float[] lastingTime = { 2.6f };
+                float[] intervals = { 0.0f };
+                GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(subtitles, GetCameraUtil.GetCurrentCamera(), 20, 0.9f, lastingTime, intervals);
+            }
         }
+
+
         /*
         public void RecvData(SyncData data)
         {
