@@ -64,7 +64,10 @@ namespace OperationTrident.Room1
             // 返回主界面的按钮加上回调
             dieUIPrefab.transform.Find("DieCanvas").Find("Image").Find("Button").GetComponent<Button>().enabled = true;
             dieUIPrefab.transform.Find("DieCanvas").Find("Image").Find("Button").GetComponent<Button>().onClick.AddListener(delegate () {
-                SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
+                GameMgr.instance.nextScene = "StartScene";
+                SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+
+                //SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
             });
 
             // 按钮的颜色开始透明
@@ -87,7 +90,11 @@ namespace OperationTrident.Room1
         public void OnReturnGameHallClick()
         {
             //退出游戏
-            SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
+            //SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
+
+            GameMgr.instance.nextScene = "GameHall";
+            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+
         }
 
         // Use this for initialization

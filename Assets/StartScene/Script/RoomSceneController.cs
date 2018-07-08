@@ -166,7 +166,7 @@ namespace OperationTrident.StartScene
 
         public void RecvEnterGame(ProtocolBase protocol)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(GameMgr.instance.startScene, 
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Loading", 
                 UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
 

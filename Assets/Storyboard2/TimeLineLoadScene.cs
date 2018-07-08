@@ -7,7 +7,8 @@ public class TimeLineLoadScene : MonoBehaviour {
     public string nextScene;
 	// Use this for initialization
 	void Start () {
-        SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+        GameMgr.instance.nextScene = nextScene;
+        SceneManager.LoadScene("Loading", LoadSceneMode.Single);
     }
 	
 	// Update is called once per frame
