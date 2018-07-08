@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using System;
+using UnityEngine.Playables;
 
 namespace OperationTrident.Room1
 {
@@ -34,7 +35,7 @@ namespace OperationTrident.Room1
         public GameObject key1;
         private GameObject key2;
         // 这里的尸体指的是尸体上的C4，尸体是一直都在的,这里有个问题！@Question: 可以不用把这个C4显示出来的
-        public GameObject cropse;
+        public GameObject corpse;
         private GameObject IDCard;
 
         // 三个门
@@ -43,20 +44,15 @@ namespace OperationTrident.Room1
         private GameObject door2;
 
         // 场景中一些物品出现的位置
-        [SerializeField]
-        private Vector3 Key1Position; //= new Vector3(-15.842f, 1.075f, 29.765f);
-        [SerializeField]
-        private Vector3 Key2Position; //= new Vector3(-52.58f, 1.075f, -2.91f);
-                                      // public Vector3 CropsePosition;  暂时不需要这个了
-        [SerializeField]
-        private Vector3 IDCardPosition; // = new Vector3(-34.961f, 1.32f, 76.99f);
+        public Transform Key2Transform;
 
-        [SerializeField]
-        private Vector3 DoorStartPosition; // = new Vector3(-7.04771f, 1.345f, 25.848f);
-        [SerializeField]
-        private Vector3 Door1Position; // = new Vector3(-58.706f, 1.394f, 9.44f); 开门的话向X轴负半轴移动
-        [SerializeField]
-        private Vector3 Door2Position; // = new Vectir3(-58.12f, 2.05f, 74.87f); 初始化时Scale的x值要变成3. 开门也是向x轴负半轴移动
+        public Transform IDCardTransform;
+
+        //[SerializeField]
+        //private Vector3 DoorStartPosition; // = new Vector3(-7.04771f, 1.345f, 25.848f);
+
+        public Transform door1Transform;
+        public Transform door2Transform;
 
         [NonSerialized]
         public static Vector3 escapePosition;
@@ -67,6 +63,9 @@ namespace OperationTrident.Room1
         public static Vector3 Key2WorldPosition;
         public static Vector3 CropseWorldPosition;
         public static Vector3 IDCardWorldPosition;
+
+        [SerializeField]
+        private PlayableDirector elevator;
 
         // 场景中的物体数（指的是可交互的物品）
         private const int gameObjectCount = 7;
@@ -91,6 +90,13 @@ namespace OperationTrident.Room1
             Messenger<int>.AddListener(GameEvent.DOOR_OPEN, OnDoorOpen);
             // 增加尸体的侦听器
             Messenger.AddListener(GameEvent.CROPSE_TRY, OnCropseTry);
+
+            Messenger.AddListener(GameEvent.ELEVATOR_OPEN, OnElevatorOpen);
+        }
+
+        private void OnElevatorOpen()
+        {
+            if(state==Room1State.EscapingRoom) elevator.Play();
         }
 
         private void Destroy()
@@ -101,6 +107,8 @@ namespace OperationTrident.Room1
             Messenger<int>.RemoveListener(GameEvent.DOOR_OPEN, OnDoorOpen);
             // 删除尸体的侦听器
             Messenger.RemoveListener(GameEvent.CROPSE_TRY, OnCropseTry);
+
+            Messenger.RemoveListener(GameEvent.ELEVATOR_OPEN, OnElevatorOpen);
         }
 
         // Use this for initialization
@@ -109,7 +117,7 @@ namespace OperationTrident.Room1
             // 场景状态初始
             state = Room1State.Initing;
             gameObjects = new GameObject[gameObjectCount];
-
+            elevator.playOnAwake = false;
             //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
         }
@@ -125,7 +133,7 @@ namespace OperationTrident.Room1
                     subtitlesToDisplay = subtitleInitToDisplay;
                     Key1WorldPosition = key1.transform.position;
                     Key2WorldPosition = key2.transform.position;
-                    CropseWorldPosition = cropse.transform.position;
+                    CropseWorldPosition = corpse.transform.position;
                     IDCardWorldPosition = IDCard.transform.position;
                     //StartCoroutine(EnemyCreateRountine());
                     state = Room1State.FindingKey1;
@@ -176,11 +184,11 @@ namespace OperationTrident.Room1
             //key1 = Instantiate(keyPrefab) as GameObject;
             //key1.transform.localPosition = Key1Position;
 
-            key2 = Instantiate(keyPrefab) as GameObject;
-            key2.transform.localPosition = Key2Position;
+            key2 = Instantiate(IDCardPrefab) as GameObject;
+            Util.SetParent(key2, Key2Transform);
 
             IDCard = Instantiate(IDCardPrefab) as GameObject;
-            IDCard.transform.localPosition = IDCardPosition;
+            Util.SetParent(IDCard, IDCardTransform);
 
             //doorStart = Instantiate(DoorPrefab) as GameObject;
             //doorStart.transform.localPosition = DoorStartPosition;
@@ -188,12 +196,10 @@ namespace OperationTrident.Room1
             //doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
 
             door1 = Instantiate(DoorPrefab) as GameObject;
-            door1.transform.localPosition = Door1Position;
-            door1.transform.localScale = new Vector3(3.2f, 4.9f, 0.2f);
+            Util.SetParent(door1, door1Transform);
 
             door2 = Instantiate(DoorPrefab) as GameObject;
-            door2.transform.localPosition = Door2Position;
-            door2.transform.localScale = new Vector3(3.8f, 5.0f, 0.2f);
+            Util.SetParent(door2, door2Transform);
 
             escapeGameObject.SetActive(false);
 
@@ -254,6 +260,8 @@ namespace OperationTrident.Room1
             m_controller.RPC(this, "OnDoorOpen_Imp", id);
         }
 
+        public GameObject C4Door;
+
         // 改进后的函数，所有门的事件分ID处理
         public void OnDoorOpen_Imp(int id)
         {
@@ -265,7 +273,7 @@ namespace OperationTrident.Room1
                     if (state == Room1State.FindingKey1)
                     {
                         Debug.Log("WindyIce");
-                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.ZNegative);
+                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(10.0f,DoorScript.DoorOpenDirection.ZNegative);
                         doorStart.GetComponent<HintableObject>().DestroyThis();
 
                         AIController.instance.CreateAI(5, 0, "AIborn2");
@@ -276,7 +284,7 @@ namespace OperationTrident.Room1
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        door1.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XPositive);
+                        door1.GetComponent<DoorScript>().OpenAndDestroy(10.0f,DoorScript.DoorOpenDirection.XPositive);
                         door1.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
@@ -289,28 +297,42 @@ namespace OperationTrident.Room1
                     }
                     else if (state == Room1State.FindingIDCard)
                     {
-                        //door2.GetComponent<DoorScript>().OpenAndDestroy(5.0f,DoorScript.DoorOpenDirection.XNegative);
-                        door2.GetComponent<DoorScript>().CreateFragmentsInFloor(270, true);
-                        door2.GetComponent<HintableObject>().DestroyThis();
-                        Destroy(door2);
+                        C4Door.SetActive(true);
+                        StartCoroutine(WaitForExplosion(9.0f));
                     }
                     break;
             }
         }
 
-        private void OnCropseTry()
+
+
+        IEnumerator WaitForExplosion(float t)
         {
-            OnCropseTry_Imp();
-            m_controller.RPC(this, "OnCropseTry_Imp");
+
+            yield return new WaitForSeconds(t);
+            door2.GetComponent<DoorScript>().CreateFragmentsInFloor(270, true);
+            door2.GetComponent<HintableObject>().DestroyThis();
+            C4Door.SetActive(false);
+            Destroy(door2);
         }
 
+        private void OnCropseTry()
+        {
+            OnCorpseTry_Imp();
+            m_controller.RPC(this, "OnCorpseTry_Imp");
+        }
+
+
+
         // 搜刮尸体
-        public void OnCropseTry_Imp()
+        public void OnCorpseTry_Imp()
         {
             if (state == Room1State.FindingNeeded)
             {
                 // TODO: 拿到了尸体C4
                 state = Room1State.FindingIDCard;
+                Destroy(corpse);
+                
             }
         }
 
@@ -332,26 +354,26 @@ namespace OperationTrident.Room1
         private int subtitleIndex = 0;
         void OnGUI()
         {
-            GUIUtil.DisplaySubtitlesInGivenGrammar(
-                subtitlesToDisplay,
-                Util.GetCamera(),
-                fontSize: 16,
-                subtitleRatioHeight: 0.9f,
-                secondOfEachWord: 0.2f,
-                secondBetweenLine: 4.0f);
+            //GUIUtil.DisplaySubtitlesInGivenGrammar(
+            //    subtitlesToDisplay,
+            //    Util.GetCamera(),
+            //    fontSize: 16,
+            //    subtitleRatioHeight: 0.9f,
+            //    secondOfEachWord: 0.2f,
+            //    secondBetweenLine: 4.0f);
 
             //string[] toD = {
             //    "^w你好，^r一王^w，我是^b WindyIce",
             //    "^w你好，^r鸡王^w，我是^b WindyIce" ,
             //    "^w我们都要取回^b托卡马克之心" };
-            //float[] a1 = { 10.0f, 5.0f ,10.0f};
-            //float[] a2 = { 5.0f, 10.0f ,5.0f};
+            //float[] a1 = { 10.0f, 5.0f, 10.0f };
+            //float[] a2 = { 5.0f, 10.0f, 5.0f };
             //GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
             //    toD,
-            //    Camera.main,
+            //    Util.GetCamera(),
             //    fontSize: 16,
             //    subtitleRatioHeight: 0.9f,
-            //    secondsOfEachLine:a1,
+            //    secondsOfEachLine: a1,
             //    secondBetweenLine: a2);
         }
 

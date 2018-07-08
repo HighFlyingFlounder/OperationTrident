@@ -52,6 +52,10 @@ namespace OperationTrident.Room1
         // 任务目标是随机的生成正确的还是顺序
         public bool sequentClear = true;
 
+        public Color missionTargetColor;
+
+        public Color distanceColor;
+
         private float nowDistance;
         // Use this for initialization
         void Start()
@@ -132,7 +136,7 @@ namespace OperationTrident.Room1
                 //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
                 GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
                     Util.GetCamera(),
-                    GUIUtil.FadeAColor(GUIUtil.yellowColor,10.0f),
+                    missionTargetColor,
                     interval: appearInterval,
                     blingInterval:blingInterval,
                     fontSize: 16,
@@ -140,12 +144,12 @@ namespace OperationTrident.Room1
             }
 
 
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.brightPurpleColor,60.0f));
+            GUIStyle style = GUIUtil.GetDefaultTextStyle(distanceColor,fontSize:18);
             Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Util.GetCamera());
             // 指定颜色
             if (toDisplayTheMissionPoint)
             {
-                GUI.Label(rect, (int)nowDistance + "m", style);
+                GUI.Label(rect, (int)nowDistance + "m\n●", style);
             }
 
             //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";

@@ -8,9 +8,10 @@ namespace OperationTrident.Room1
     // 记录Room1里面的所有游戏事件！
     static public class GameEvent
     {
-        public const String KEY_GOT = "KEY_GOT";
-        public const String DOOR_OPEN = "DOOR_OPEN";
-        public const String C4_GOT = "C4_GOT";
-        public const String CROPSE_TRY = "CROPSE_TRY";
+        public const string KEY_GOT = "KEY_GOT";
+        public const string DOOR_OPEN = "DOOR_OPEN";
+        public const string C4_GOT = "C4_GOT";
+        public const string CROPSE_TRY = "CROPSE_TRY";
+        public const string ELEVATOR_OPEN = "ELEVATOR_OPEN";
     }
 }
