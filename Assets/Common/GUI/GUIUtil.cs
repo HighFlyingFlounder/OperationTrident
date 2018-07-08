@@ -882,7 +882,14 @@ namespace OperationTrident.Util
             rememberStringDMTDS = missionContent;
         }
 
-
+        /// <summary>
+        /// 显示任务点
+        /// </summary>
+        /// <param name="targetPosition">目标任务点</param>
+        /// <param name="camera">传入相机</param>
+        /// <param name="color">显示的颜色，可以直接获得missionPointColor</param>
+        /// <param name="fontSize">字体大小</param>
+        /// <param name="labelOffsetHeight">目标点显示有多高</param>
         public static void DisplayMissionPoint(
             Vector3 targetPosition,
             Camera camera,
