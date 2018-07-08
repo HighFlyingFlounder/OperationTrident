@@ -9,10 +9,13 @@ namespace OperationTrident.Common.AI
     {
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
+        [SerializeField]
+        TurretAIAgentInitParams[] turrentAIAgentInitParams;
 
         // Use this for initialization
         void Start()
         {
+            AIController.instance.CreateAI(wanderAIAgentInitParams.Length, 0, "SwopPoints", wanderAIAgentInitParams);
             AIController.instance.CreateAI(wanderAIAgentInitParams.Length, 0, "SwopPoints", wanderAIAgentInitParams);
         }
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     public enum ProjectileType {
@@ -126,9 +126,15 @@ namespace OperationTrident.FPS.Weapons {
 
             //让被击中物受到伤害
             if (SelectedDamageType == DamageType.Direct) {
+                Debug.LogFormat("col.collider.gameObject.name = {0}", col.collider.gameObject.name);
                 ReactiveTarget target = col.collider.gameObject.GetComponent<ReactiveTarget>();
                 if (target) {
                     target.OnHit(this.gameObject.name, false, Damage);
+                } else {
+                    target = col.collider.transform.root.GetComponent<ReactiveTarget>();
+                    if (target) {
+                        target.OnHit(this.gameObject.name, false, Damage);
+                    }
                 }
             }
         }

@@ -206,6 +206,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void DestroyAI(string AI_name)
     {
+        Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
@@ -291,6 +292,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
         data.Add(1);//防止空
         foreach (var ai in AI_List)
         {
+            if(ai.Value == null)
+            {
+                Debug.LogFormat("ai_name:{0}", ai.Key);
+            }
             data.AddString(ai.Key);
             data.Add(ai.Value.transform.position);
             data.Add(ai.Value.transform.eulerAngles);

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     //武器类型
@@ -417,7 +417,8 @@ namespace OperationTrident.FPS.Weapons {
             for (int i = 0; i < DefaultBulletHolePoolNames.Count; i++) {
                 GameObject g = GameObject.Find(DefaultBulletHolePoolNames[i]);
 
-                if (g.GetComponent<BulletHolePool>() != null)
+                BulletHolePool bulletHolePool = g.GetComponent<BulletHolePool>();
+                if (bulletHolePool != null)
                     DefaultBulletHoles[i] = g.GetComponent<BulletHolePool>();
                 else
                     Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
@@ -762,8 +763,14 @@ namespace OperationTrident.FPS.Weapons {
                     ReactiveTarget target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
                     if (target) {
                         target.OnHit(this.transform.root.name, false, Power);
+                    } else {
+                        target = hit.collider.transform.root.gameObject.GetComponent<ReactiveTarget>();
+                        if (target) {
+                            target.OnHit(this.transform.root.name, false, Power);
+                        }
                     }
-                        
+
+
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
                     if (BHSystem == BulletHoleSystem.Tag) {
@@ -1115,6 +1122,10 @@ namespace OperationTrident.FPS.Weapons {
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
+            }
+
+            if(m_CurrentAmmo == AmmoCapacity) {
+                return;
             }
 
             //判断是否使用有限弹药

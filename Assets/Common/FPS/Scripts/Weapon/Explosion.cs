@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     public class Explosion : MonoBehaviour {
