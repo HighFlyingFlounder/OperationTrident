@@ -58,11 +58,13 @@ namespace OperationTrident.Room5
             m_ControlPanel.Initialize(
                 "Room5ControlPanel", KeyCode.F, 5.0f,//Camera.main
                 "^w按住^yF^w开始核心冷却程序", "^w正在启动冷却程序...");
+            FadeInOutUtil.SetFadingState(5.0f, GetCameraUtil.GetCurrentCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
 
         }
 
         private void  Update()
         {
+            FadeInOutUtil.UpdateState();
             m_ControlPanel.UpdateState();
             if(m_ControlPanel.IsInteractionDone())
             {
@@ -101,6 +103,10 @@ namespace OperationTrident.Room5
 
         private void OnGUI()
         {
+            //淡入
+            FadeInOutUtil.RenderGUI();
+
+
             //任务目标
             GUIUtil.DisplayMissionTargetInMessSequently("前往控制台启动核心冷却程序.", GetCameraUtil.GetCurrentCamera(), Color.white);
 
