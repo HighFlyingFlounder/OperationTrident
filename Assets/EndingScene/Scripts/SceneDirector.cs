@@ -7,9 +7,6 @@ namespace OperationTrident.EndingScene
 {
     public class SceneDirector : MonoBehaviour
     {
-        //淡入淡出的GUI Utility
-        public FadeInOutUtil m_FadeInOutUtil; 
-
         //逃生舱
         public GameObject m_EscapingCabin;
 
@@ -64,13 +61,15 @@ namespace OperationTrident.EndingScene
             m_ExplosionLensFlare.brightness = 0.0f;
 
             //启动淡入
-            m_FadeInOutUtil.FadeIn(5.0f, Color.black);
+            FadeInOutUtil.SetFadingState(5.0f,m_CamFree, Color.black,FadeInOutUtil.FADING_STATE.FADING_IN);
         }
 
         // Update is called once per frame
         void Update()
         {
             m_Time = m_TimeLineDirector.time;
+            FadeInOutUtil.UpdateState();
+
             switch (m_CamState)
             {
                 case CameraState.ROAMING:
@@ -90,6 +89,11 @@ namespace OperationTrident.EndingScene
                     break;
             }
 
+        }
+
+        private void OnGUI()
+        {
+            FadeInOutUtil.RenderGUI();
         }
 
         public CameraState GetCameraState()
