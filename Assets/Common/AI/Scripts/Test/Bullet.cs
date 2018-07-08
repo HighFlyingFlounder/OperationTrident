@@ -15,8 +15,10 @@ namespace OperationTrident.Common.AI
         }
 		private void OnCollisionEnter(Collision other)
 		{
-			Debug.Log(other.gameObject.tag);
-			Destroy(gameObject);
+			Debug.LogFormat("OnCollisionEnter other.gameObject.tag = {0}", other.gameObject.tag);
+            if (other.gameObject.tag == "Player")
+                other.gameObject.GetComponent<Common.ReactiveTarget>().OnHit(this.gameObject.name, true, 1);
+            Destroy(gameObject);
 		}
 		
     }

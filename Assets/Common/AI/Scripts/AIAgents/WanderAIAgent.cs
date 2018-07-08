@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,48 +9,29 @@ namespace OperationTrident.Common.AI
     [RequireComponent(typeof(NavMeshAgent))]
     public class WanderAIAgent : AIAgent
     {
-        [Header("初始化参数")]
-        [Tooltip("设置巡逻路径，传入一个根节点")]
-        [SerializeField]
-        Transform _patrolLocations = null;
-
-        [Tooltip("设置水平FOV角度")]
-        [SerializeField]
-        [Range(0, 180)]
-        float _horizontalFOV = 120f;
-
-        [Tooltip("设置垂直FOV角度")]
-        [SerializeField]
-        [Range(0, 180)]
-        float _verticalFOV = 60f;
-
-        [Tooltip("设置视线距离")]
-        [SerializeField]
-        [Range(0, 500)]
-        float _sightDistance = 100f;
-
-        [Tooltip("设置射击精度范围角度")]
-        [SerializeField]
-        [Range(0, 10)]
-        float _precisionAngle = 5f;
-
-        [Tooltip("设置射击精度范围半径")]
-        [SerializeField]
-        [Range(0, 5)]
-        float _precisionRadius = 1f;
+         [SerializeField]
+         WanderAIAgentInitParams _initParams;
 
         public override Vector3[] PatrolLocations
         {
             get
             {
-                if (_patrolLocations == null)
+                if (_initParams.patrolLocations == null)
                     return null;
 
-                Vector3[] result = new Vector3[_patrolLocations.childCount];
-                for (int i = 0; i < _patrolLocations.childCount; i++)
+                Transform prelocationTrans = GameObject.Find(_initParams.patrolLocations).transform;
+                Vector3[] result = new Vector3[prelocationTrans.childCount];
+                for (int i = 0; i < prelocationTrans.childCount; i++)
                 {
-                    result[i] = _patrolLocations.GetChild(i).position;
+                    result[i] = prelocationTrans.GetChild(i).position;
                 }
+
+                //Vector3[] result = new Vector3[_initParams.patrolLocations.childCount];
+                //for (int i = 0; i < _initParams.patrolLocations.childCount; i++)
+                //{
+                //    result[i] = _initParams.patrolLocations.GetChild(i).position;
+                //}
+
                 return result;
             }
         }
@@ -74,33 +56,33 @@ namespace OperationTrident.Common.AI
         {
             get
             {
-                return _horizontalFOV;
+                return _initParams.horizontalFOV;
             }
             set
             {
-                _horizontalFOV = Mathf.Clamp(value, 0, 180);
+                _initParams.horizontalFOV = Mathf.Clamp(value, 0, 180);
             }
         }
         public override float CameraVerticalFOV
         {
             get
             {
-                return _verticalFOV;
+                return _initParams.verticalFOV;
             }
             set
             {
-                _verticalFOV = Mathf.Clamp(value, 0, 180);
+                _initParams.verticalFOV = Mathf.Clamp(value, 0, 180);
             }
         }
         public override float CameraSightDistance
         {
             get
             {
-                return _sightDistance;
+                return _initParams.sightDistance;
             }
             set
             {
-                _sightDistance = Mathf.Clamp(value, 0, 500);
+                _initParams.sightDistance = Mathf.Clamp(value, 0, 500);
             }
         }
 
@@ -108,11 +90,11 @@ namespace OperationTrident.Common.AI
         {
             get
             {
-                return _precisionAngle;
+                return _initParams.precisionAngle;
             }
             set
             {
-                _precisionAngle = Mathf.Clamp(value, 0, 10);
+                _initParams.precisionAngle = Mathf.Clamp(value, 0, 10);
             }
         }
 
@@ -120,17 +102,17 @@ namespace OperationTrident.Common.AI
         {
             get
             {
-                return _precisionRadius;
+                return _initParams.precisionRadius;
             }
             set
             {
-                _precisionRadius = Mathf.Clamp(value, 0, 5);
+                _initParams.precisionRadius = Mathf.Clamp(value, 0, 5);
             }
         }
 
-        public void SetPatrolLocations(Transform locationsRoot)
+        public void SetPatrolLocations(string locationsRoot)
         {
-            _patrolLocations = locationsRoot;
+            _initParams.patrolLocations = locationsRoot;
         }
 
         private void Awake()
@@ -146,5 +128,37 @@ namespace OperationTrident.Common.AI
             
             base.Update();
         }
+
+        public override void SetInitParams(AIAgentInitParams initParams)
+        {
+            _initParams = (WanderAIAgentInitParams)initParams;
+        }
+    }
+
+    [System.Serializable]
+    public class WanderAIAgentInitParams : AIAgentInitParams
+    {
+        [Tooltip("设置巡逻路径，传入一个根节点")]
+        public string patrolLocations = null;
+
+        [Tooltip("设置水平FOV角度")]
+        [Range(0, 180)]
+        public float horizontalFOV = 120f;
+
+        [Tooltip("设置垂直FOV角度")]
+        [Range(0, 180)]
+        public float verticalFOV = 60f;
+
+        [Tooltip("设置视线距离")]
+        [Range(0, 500)]
+        public float sightDistance = 100f;
+
+        [Tooltip("设置射击精度范围角度")]
+        [Range(0, 10)]
+        public float precisionAngle = 5f;
+
+        [Tooltip("设置射击精度范围半径")]
+        [Range(0, 5)]
+        public float precisionRadius = 1f;
     }
 }

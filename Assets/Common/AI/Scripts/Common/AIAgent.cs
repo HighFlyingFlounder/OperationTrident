@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 namespace OperationTrident.Common.AI
 {
-    public class AIAgent : MonoBehaviour
+    public abstract class AIAgent : MonoBehaviour
     {
         public ScriptableObject AIFSMAsset = null;
         public AIActionController ActionController = null;
@@ -93,5 +93,11 @@ namespace OperationTrident.Common.AI
 
             FSM.Update();
         }
+
+        public abstract void SetInitParams(AIAgentInitParams initParams);
+
     }
+
+    [System.Serializable]
+    public class AIAgentInitParams { }
 }
