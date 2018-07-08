@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 [CustomEditor(typeof(ReactiveTarget))]
 public class ReactiveTargetEditor : Editor {
@@ -13,6 +13,7 @@ public class ReactiveTargetEditor : Editor {
         reactiveTarget.IsPlayer = EditorGUILayout.Toggle(new GUIContent("Is Player", "是否为Player"), reactiveTarget.IsPlayer);
         reactiveTarget.CanBeHurt = EditorGUILayout.Toggle(new GUIContent("Can Be Hurt", "能否收到伤害"), reactiveTarget.CanBeHurt);
         reactiveTarget.MaxHealth = EditorGUILayout.FloatField(new GUIContent("Max Health", "最大血量值"), reactiveTarget.MaxHealth);
+        reactiveTarget.ShowHealth = EditorGUILayout.Toggle(new GUIContent("Show Health", "是否显示血量值"), reactiveTarget.ShowHealth);
 
 
         if (reactiveTarget.IsPlayer) {

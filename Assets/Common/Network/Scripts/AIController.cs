@@ -69,6 +69,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     /// <param name="type">AI Prefabs中的种类，索引从0开始</param>  
     /// <param name="swopPoints">场景中AI的生成点的节点名字，其子节点数量应与num对应</param>         
     /// <returns></returns> 
+    [Obsolete]
     public void CreateAI(int num, int type, string swopPoints)
     {
         if (!GameMgr.instance)//离线状态
@@ -83,12 +84,27 @@ public class AIController : MonoBehaviour, NetSyncInterface
             m_NetSyncController.RPC(this, "createAIImpl", num, type, swopPoints);
         }
     }
-    //本地创建AI，不同步
-    public void createAIImpl(int num, int type, string swopPoints)
+
+    public void CreateAI(int num, int type, string swopPoints, AIAgentInitParams[] args)
+    {
+        if (!GameMgr.instance)//离线状态
+        {
+            createAIImplement(num, type, swopPoints, args);
+            return;
+        }
+
+        if (GameMgr.instance.isMasterClient)
+        {
+            createAIImplement(num, type, swopPoints, args);
+            m_NetSyncController.RPC(this, "createAIImplement", num, type, swopPoints, args);
+        }
+    }
+
+    public void createAIImplement(int num, int type, string swopPoints, AIAgentInitParams[] args)
     {
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
-        
+        Debug.Log("createAIImplement");
         for (int i = 0; i < num; i++)
         {
             swopTrans = sp.GetChild(i);
@@ -97,7 +113,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 Debug.LogError("GeneratePlayer出生点错误！");
                 return;
             }
-            GameObject AI = (GameObject)Instantiate(AIPrefabs[type]);
+            GameObject AI = (GameObject)Instantiate(AIPrefabs[type], swopTrans.position, swopTrans.rotation);
             //非master_client需要对AI进行裁剪或者增添
             if (!is_master_client)
             {
@@ -111,8 +127,48 @@ public class AIController : MonoBehaviour, NetSyncInterface
             //创建的AI初始化信息
             begin_id++;
             AI.name = "AI" + begin_id;
-            AI.transform.position = swopTrans.position;
-            AI.transform.rotation = swopTrans.rotation;
+            AI.GetComponent<AIAgent>().SetInitParams(args[i]);
+            AI_List.Add(AI.name, AI);
+
+            //初始化位置和转向预测数据
+            AI_fPosition_List.Add(AI.name, AI.transform.position);
+            AI_lPosition_List.Add(AI.name, AI.transform.position);
+            AI_fRotation_List.Add(AI.name, AI.transform.eulerAngles);
+            AI_lRotation_List.Add(AI.name, AI.transform.eulerAngles);
+        }
+    }
+
+    //本地创建AI，不同步
+    [Obsolete]
+    public void createAIImpl(int num, int type, string swopPoints)
+    {
+        Transform sp = GameObject.Find(swopPoints).transform;
+        Transform swopTrans;
+        Debug.Log("createAIImpl");
+        for (int i = 0; i < num; i++)
+        {
+            swopTrans = sp.GetChild(i);
+            if (swopTrans == null)
+            {
+                Debug.LogError("GeneratePlayer出生点错误！");
+                return;
+            }
+            GameObject AI = (GameObject)Instantiate(AIPrefabs[type], swopTrans.position, swopTrans.rotation);
+            //非master_client需要对AI进行裁剪或者增添
+            if (!is_master_client)
+            {
+                //尝试禁用掉非master_client的ai组件
+                if (AI.GetComponent<WanderAIAgent>() != null)
+                    AI.GetComponent<WanderAIAgent>().enabled = false;
+                if (AI.GetComponent<NavMeshAgent>() != null)
+                    AI.GetComponent<NavMeshAgent>().enabled = false;
+            }
+
+            //创建的AI初始化信息
+            begin_id++;
+            AI.name = "AI" + begin_id;
+            //AI.transform.position = swopTrans.position;
+            //AI.transform.rotation = swopTrans.rotation;
             AI_List.Add(AI.name, AI);
 
             //初始化位置和转向预测数据
@@ -150,6 +206,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void DestroyAI(string AI_name)
     {
+        Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
@@ -235,6 +292,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
         data.Add(1);//防止空
         foreach (var ai in AI_List)
         {
+            if(ai.Value == null)
+            {
+                Debug.LogFormat("ai_name:{0}", ai.Key);
+            }
             data.AddString(ai.Key);
             data.Add(ai.Value.transform.position);
             data.Add(ai.Value.transform.eulerAngles);
