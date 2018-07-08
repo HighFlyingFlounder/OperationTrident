@@ -6,6 +6,7 @@ namespace OperationTrident.FPS.Player {
     public class ReactiveTarget : MonoBehaviour,NetSyncInterface {
         public bool IsPlayer = true;
         public bool CanBeHurt = true;
+        public bool ShowHealth = true;
         public float MaxHealth = 100;
         public bool ReplaceWhenDie = false;
         public GameObject DeadReplacement;
@@ -26,6 +27,12 @@ namespace OperationTrident.FPS.Player {
             m_HasSendDeadMessage = false;
         }
 
+        private void OnGUI() {
+            if (ShowHealth) {
+                GUI.color = Color.red;
+                GUI.Label(new Rect(10, Screen.height - 20, 100, 20), "Health: " + m_CurrentHealth);
+            }
+        }
 
         public void OnHit(string id, bool fromAI, float damage) {
             //Debug.LogFormat("id = {0} fromAI = {1} damage = {2} GameMgr.instance.id = {3} ", id, fromAI, damage, GameMgr.instance.id);

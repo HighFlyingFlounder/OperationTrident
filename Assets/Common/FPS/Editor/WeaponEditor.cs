@@ -27,19 +27,6 @@ public class WeaponEditor : Editor {
         //武器种类
         weapon.Type = (WeaponType)EditorGUILayout.EnumPopup(new GUIContent("Weapon Type", "武器射击的方式"), weapon.Type);
 
-        ////绘制"3rd Party Plugin Support"折叠框
-        //m_ShowPluginSupport = EditorGUILayout.Foldout(m_ShowPluginSupport, "3rd Party Plugin Support");
-        //if (m_ShowPluginSupport) {
-        //    //显示单选框
-        //    weapon.ShooterAIEnabled = EditorGUILayout.Toggle(new GUIContent("Shooter AI", "Support for Shooter AI by Gateway Games"), weapon.ShooterAIEnabled);
-
-        //    //显示单选框
-        //    weapon.BloodyMessEnabled = EditorGUILayout.Toggle(new GUIContent("Bloody Mess"), weapon.BloodyMessEnabled);
-        //    if (weapon.BloodyMessEnabled) {
-        //        weapon.WeaponType = EditorGUILayout.IntField("Weapon Type", weapon.WeaponType);
-        //    }
-        //}
-
         //绘制"General"折叠框
         m_ShowGeneral = EditorGUILayout.Foldout(m_ShowGeneral, new GUIContent("General", "武器的通用参数"));
         if (m_ShowGeneral) {
@@ -138,6 +125,11 @@ public class WeaponEditor : Editor {
                 weapon.InfiniteAmmo = EditorGUILayout.Toggle(new GUIContent("Infinite Ammo", "是否能无限射击"), weapon.InfiniteAmmo);
 
                 if (!weapon.InfiniteAmmo) {
+                    weapon.LimitedTotalAmmo = EditorGUILayout.Toggle(new GUIContent("Limited Total Ammo", "是否开枪有限总弹药模式，如果不开启可以无限换弹"), weapon.LimitedTotalAmmo);
+
+                    if (weapon.LimitedTotalAmmo) {
+                        weapon.TotalAmmo = EditorGUILayout.IntField(new GUIContent("Total Ammo", "武器的总弹药量，耗尽之后不能再换弹"), weapon.TotalAmmo);
+                    }
                     weapon.AmmoCapacity = EditorGUILayout.IntField(new GUIContent("Ammo Capacity", "武器的弹夹容量"), weapon.AmmoCapacity);
                     weapon.ReloadTime = EditorGUILayout.FloatField(new GUIContent("Reload Time", "更换弹夹的时间"), weapon.ReloadTime);
                     weapon.ShowCurrentAmmo = EditorGUILayout.Toggle(new GUIContent("Show Current Ammo", "是否显示当前弹夹剩余的弹药量"), weapon.ShowCurrentAmmo);
@@ -146,8 +138,6 @@ public class WeaponEditor : Editor {
                 weapon.ShotPerRound = EditorGUILayout.IntField(new GUIContent("Shots Per Round", "单次射击（弹药量减一）射出的子弹数"), weapon.ShotPerRound);
             }
         }
-
-
 
         //绘制"Accuracy"折叠框
         if (weapon.Type == WeaponType.Raycast) {
