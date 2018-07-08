@@ -155,27 +155,6 @@ namespace room2Battle
 
             Ray ray = mCamera.ScreenPointToRay(point);
 
-            Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2;
-
-            if (!isSwitchOpen)
-            {
-                distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
-                direction2 = switchPos.position - playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
-            }
-            else
-            {
-                distance = Vector3.Distance(secondFloor.position, playerCamera.GetComponent<Transform>().position);
-                direction2 = secondFloor.position - playerCamera.GetComponentInParent<Transform>().position; // 到物体的方向
-            }
-            
-            
-            // 如果物体大方向在人视线背后的话，就不显示了
-            if (Vector3.Dot(direction1, direction2) <= 0)
-                isShowTarget = false;
-            else
-                isShowTarget = true;
-
             //通过摄像机，射向对应物体，判断标签
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
@@ -277,8 +256,10 @@ namespace room2Battle
             //深度摄像头是否开启，是否黑
             bool open = playerCamera.GetComponent<becomeDark>().enabled;
             bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
+            //没开灯
             if (!isSwitchOpen)
             {
+                //任务目标
                 GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                    mCamera,
                    GUIUtil.yellowColor,
@@ -287,32 +268,24 @@ namespace room2Battle
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
                 }
-
-                GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-                Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(switchPos.position + new Vector3(0.0f, 3.0f, 0.0f), mCamera);
-                // 指定颜色
-                if (isShowTarget)
-                {
-                    GUI.Label(rect, (int)distance + "m", style);
-                }
+                //目标位置
+                GUIUtil.DisplayMissionPoint(switchPos.position, mCamera,Color.white);
                 
             }
             else
             {
+                //杀入2楼
                 if (!isIntoSecondFloor)
                 {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
+                    //台词
+                    //GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
+                    //任务目标
                     GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                        mCamera,
                        GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
-                    GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-                    Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(secondFloor.position + new Vector3(0.0f, 3.0f, 0.0f), mCamera);
-                    // 指定颜色
-                    if (isShowTarget)
-                    {
-                        GUI.Label(rect, (int)distance + "m", style);
-                    }
+                    //任务目标位置
+                    GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
                 }
                 if (open2 && !isFocus)
                 {
