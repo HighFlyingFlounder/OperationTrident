@@ -14,7 +14,7 @@ namespace OperationTrident.Room5
         //核心（下降）
         public TokamakCore m_ReactorCore;
 
-        public GameObject nextScene;
+        public GameObject m_EnterNextSceneCube;
 
         //播放出口门打开的的动画
         public UnityEngine.Playables.PlayableDirector m_ExitDoorOpenDirector;
@@ -57,7 +57,7 @@ namespace OperationTrident.Room5
          * *************************************************/
         private void Start()
         {
-            
+            isAudioPlayed = false;   
         }
 
         private void Update()
@@ -68,7 +68,15 @@ namespace OperationTrident.Room5
                 //出口的门打开
                 m_ExitDoorOpenDirector.Play();
                 //下一场景
-                nextScene.SetActive(true);
+                m_EnterNextSceneCube.SetActive(true);
+            }
+
+            //音效:断电+台词
+            if (m_AudioSource_SoundEffect.isPlaying == false && isAudioPlayed == false)
+            {
+                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
+                m_AudioSource_SoundEffect.Play();
+                isAudioPlayed = true;
             }
         }
 
@@ -77,19 +85,17 @@ namespace OperationTrident.Room5
             if (m_ReactorCore != null)
             {
                 GUIUtil.DisplayMissionTargetDefault("夺回托卡马克之心.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
+                GUIUtil.DisplayMissionPoint(m_ReactorCore.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
             }
             else
             {
                 GUIUtil.DisplayMissionTargetDefault("逃离中央控制室.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
-
+                GUIUtil.DisplayMissionPoint(m_EnterNextSceneCube.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
             }
 
             //音效:断电+台词
             if (m_AudioSource_SoundEffect.isPlaying==false & isAudioPlayed==false)
             {
-                m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
-                m_AudioSource_SoundEffect.Play();
-                isAudioPlayed = true;
 
                 //字幕
                 string[] subtitles =

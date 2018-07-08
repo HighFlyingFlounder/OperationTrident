@@ -111,10 +111,13 @@ namespace OperationTrident.Room5
                 "鲲内部  核聚变反应室",
                 "三叉戟行动"
             };
-            GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white);
+            GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white,18,0.005f,0.1f,0.5f);
 
             //控制台的交互GUI
             m_ControlPanel.RenderGUI();
+
+            //控制台目标距离
+            GUIUtil.DisplayMissionPoint(m_ControlPanel.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
 
             //字幕
             string[] subtitles =
