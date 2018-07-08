@@ -61,9 +61,9 @@ namespace OperationTrident.Room1 {
                 {
                     GameObject hitObject = hit.transform.gameObject;
 
-                    if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<FPS.Player.ReactiveTarget>() != null)
+                    if (Vector3.Distance(originPoint, hitObject.transform.position) <= speed || hitObject.GetComponent<Common.ReactiveTarget>() != null)
                     {
-                        hitObject.GetComponent<FPS.Player.ReactiveTarget>().OnHit(attacker, fromAI, 1);
+                        hitObject.GetComponent<Common.ReactiveTarget>().OnHit(attacker, fromAI, 1);
                         Debug.Log("打中了敌人");
                     }
                     Destroy(gameObject);
@@ -81,9 +81,9 @@ namespace OperationTrident.Room1 {
             if (other.GetComponent<BulletScript>() != null) return;
             // 玩家不会被击中
             //if (other.CompareTag("Player")) return;
-            if (other.gameObject.GetComponent<FPS.Player.ReactiveTarget>() != null)
+            if (other.gameObject.GetComponent<Common.ReactiveTarget>() != null)
             {
-                other.gameObject.GetComponent<FPS.Player.ReactiveTarget>().OnHit(attacker,fromAI,1);
+                other.gameObject.GetComponent<Common.ReactiveTarget>().OnHit(attacker,fromAI,1);
                 Debug.Log("打中了敌人");
             }
             Destroy(gameObject);

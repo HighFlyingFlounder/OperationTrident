@@ -74,23 +74,28 @@ namespace OperationTrident.Room1
             {
                 // 场景的初始状态
                 case SceneController.Room1State.Initing:
-                    subtitlesToDisplay = subtitleInitToDisplay;
-                    secondsInEachLine = secondsInitInEachLine;
-                    secondsBetweenLine = secondsInitBetweenLine;
-                    subtitleSource.clip = audioInit;
-                    subtitleSource.Play();
+                    
                     //subtit
                     break;
                 // 玩家正在找第一个钥匙
                 case SceneController.Room1State.FindingKey1:
-                    
+                    if (initOpenDoor)
+                    {
+                        subtitlesToDisplay = subtitleInitToDisplay;
+                        secondsInEachLine = secondsInitInEachLine;
+                        secondsBetweenLine = secondsInitBetweenLine;
+                        subtitleSource.clip = audioInit;
+                        subtitleSource.Play();
+                        initOpenDoor = false;
+                    }
                     break;
                 // 玩家正在找第二个钥匙
                 case SceneController.Room1State.FindingKey2:
-
+                    initOpenDoor = true;
                     break;
                 // 玩家正准备尝试开最后一个门
                 case SceneController.Room1State.TryingToOpenRoom:
+
                     subtitleSource.Stop();
                     break;
                 // 玩家正在找必需品

@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace OperationTrident.FPS.Player {
-    public class ReactiveTarget : MonoBehaviour,NetSyncInterface {
+namespace OperationTrident.Common {
+    public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface {
         public bool IsPlayer = true;
         public bool CanBeHurt = true;
         public bool ShowHealth = true;
@@ -18,6 +19,10 @@ namespace OperationTrident.FPS.Player {
         private float m_CurrentHealth;
         private bool m_Death;
         private bool m_HasSendDeadMessage;
+    
+        private bool _isParalyzed;
+        private float _EMPEffectTime;
+
         private NetSyncController m_NetSyncController;
 
         // Use this for initialization
@@ -35,7 +40,7 @@ namespace OperationTrident.FPS.Player {
         }
 
         public void OnHit(string id, bool fromAI, float damage) {
-            //Debug.LogFormat("id = {0} fromAI = {1} damage = {2} GameMgr.instance.id = {3} ", id, fromAI, damage, GameMgr.instance.id);
+            Debug.LogFormat("id = {0} fromAI = {1} damage = {2} GameMgr.instance.id = {3} ", id, fromAI, damage, GameMgr.instance.id);
             //单机状态
             if (GameMgr.instance == null) {
                 HitImplement(damage);
@@ -59,48 +64,52 @@ namespace OperationTrident.FPS.Player {
         #region RPC函数
         public void HitImplement(float damage) {
             //如果不能收到伤害，不执行任何操作
-            //Debug.LogFormat("GameObject {0} get Damage {1}, Health = {2}", this.gameObject.name, damage, m_CurrentHealth);
+            Debug.LogFormat("GameObject {0} get Damage {1}", this.gameObject.name, damage);
             if (!CanBeHurt) {
                 return;
             }
             m_CurrentHealth -= damage;
             if (m_CurrentHealth <= 0f && m_Death == false) {
                 m_Death = true;
-                //调用死亡函数
-                Die();
+                //调用死亡函数, 机器人不进行调用
+                if (IsPlayer)
+                    PlayerDie();
+                // 从controller List中移除现有AI
+                else
+                    AIController.instance.DestroyAI(this.gameObject.name);
             }
         }
         #endregion
 
-        private void Die() {
-            if (IsPlayer) {
-                //生成替代模型
-                if (ReplaceWhenDie) {
-                    if(DeadReplacement != null) {
-                        Instantiate(DeadReplacement, transform.position, transform.rotation);
-                    } else {
-                        Debug.LogWarning("Can not find DeadReplacement to Instantiate");
-                    }
+        private void PlayerDie() {
+            //生成替代模型
+            if (ReplaceWhenDie) {
+                if(DeadReplacement != null) {
+                    Instantiate(DeadReplacement, transform.position, transform.rotation);
+                } else {
+                    Debug.LogWarning("Can not find DeadReplacement to Instantiate");
                 }
+            }
 
-                if (UseDeadCamera) {
-                    if(DeathCamera != null) {
-                        DeathCamera.SetActive(true);
-                        DeathCamera.transform.SetParent(null);
-                        //这里可以设置镜头上移
-                    } else {
-                        Debug.LogWarning("Can not find DeathCamera to active");
-                    }
+            if (UseDeadCamera) {
+                if(DeathCamera != null) {
+                    DeathCamera.SetActive(true);
+                    DeathCamera.transform.SetParent(null);
+                    //这里可以设置镜头上移
+                } else {
+                    Debug.LogWarning("Can not find DeathCamera to active");
                 }
+            }
 
-                if (!m_HasSendDeadMessage) {
-                    SendDead();
-                    m_HasSendDeadMessage = true;
-                }
+            if (!m_HasSendDeadMessage) {
+                SendDead();
+                m_HasSendDeadMessage = true;
+            }
 
-                //销毁自身
-                Destroy(this.gameObject);
-            } else {
+            //销毁自身
+            Destroy(this.gameObject);
+            /*
+            else {
                 if (MakeExplosion) {
                     if (Explosion) {
                         Instantiate(Explosion, transform.position, transform.rotation);
@@ -116,6 +125,7 @@ namespace OperationTrident.FPS.Player {
                 Destroy(this.gameObject);
                 //AIController.instance.DestroyAI(gameObject.name);
             }
+            */
         }
 
         public void SendDead() {
@@ -124,11 +134,58 @@ namespace OperationTrident.FPS.Player {
             NetMgr.srvConn.Send(proto);
         }
 
+        private void Update()
+        {
+            if (_isParalyzed)
+            {
+                _EMPEffectTime -= Time.deltaTime;
+                if(_EMPEffectTime < 0)
+                {
+                    _EMPEffectTime = 0;
+                    _isParalyzed = false;
+                }
+            }
+        }
+
+        public void OnEMP(float effectTime)
+        {
+            if (!IsAlive)
+                return;
+
+            _isParalyzed = true;
+
+            _EMPEffectTime += effectTime;
+        }
+
         public bool isDeath
         {
             get
             {
                 return m_Death;
+            }
+        }
+
+        public bool IsParalyzed
+        {
+            get
+            {
+                return _isParalyzed;
+            }
+        }
+
+        public bool IsAlive
+        {
+            get
+            {
+                return !m_Death;
+            }
+        }
+
+        public float HPPercentage
+        {
+            get
+            {
+                return m_CurrentHealth / MaxHealth;
             }
         }
 

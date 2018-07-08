@@ -32,6 +32,10 @@ namespace OperationTrident.Common.AI
         public override string Execute()
         {
             string satisfy = null;
+            if(_agent.Target == null)
+            {
+                return Conditions.LOST_TARGET;
+            }
             _agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
