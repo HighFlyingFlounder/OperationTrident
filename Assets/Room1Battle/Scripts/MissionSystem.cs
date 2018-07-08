@@ -94,7 +94,6 @@ namespace OperationTrident.Room1
                 case SceneController.Room1State.EscapingRoom:
                     missionContentsIndex = 6;
                     targetWorldPosition = SceneController.escapePosition;
-                    // TODO: 逃跑的时候任务目标是啥
                     break;
             }
             
@@ -144,27 +143,18 @@ namespace OperationTrident.Room1
             }
 
 
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(distanceColor,fontSize:18);
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Util.GetCamera());
-            // 指定颜色
-            if (toDisplayTheMissionPoint)
-            {
-                GUI.Label(rect, (int)nowDistance + "m\n●", style);
-            }
+            //GUIStyle style = GUIUtil.GetDefaultTextStyle(distanceColor,fontSize:18);
+            //Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Util.GetCamera());
+            //// 指定颜色
+            //if (toDisplayTheMissionPoint)
+            //{
+            //    GUI.Label(rect, (int)nowDistance + "m\n●", style);
+            //}
 
-            //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
-            //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
-            //string[] subtitles ={
-            //    "^b地球指挥官:^w 根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
-            //    "^b地球指挥官:^w 你们要拿到它，小心里面的^r巡逻机器人"
-            //};
-            //GUIUtil.DisplaySubtitlesInGivenGrammar(
-            //    subtitles, 
-            //    camera, 
-            //    fontSize: 16,
-            //    subtitleRatioHeight: 0.9f, 
-            //    secondOfEachWord: 0.5f, 
-            //    secondBetweenLine: 3.0f);
+            GUIUtil.DisplayMissionPoint(
+                targetWorldPosition,
+                Util.GetCamera(),
+                GUIUtil.missionPointColor);
         }
     }
 }

@@ -50,6 +50,7 @@ namespace OperationTrident.Util
 
         public readonly static Color subtitleNormalColor = GetColorFromString("66 cc ff");
         public readonly static Color missionContentNormalColor = GetColorFromString("ee ee ee");
+        public readonly static Color missionPointColor = new Vector4(184.0f / 256.0f, 184.0f / 256.0f, 184.0f / 256.0f, 1.0f);
 
         public readonly static Color subtitleYellow = new Color(1.0f, 1.0f, 0.7f);
         public readonly static Color subtitleRed = new Color(1.0f, 0.5f, 0.5f);
@@ -75,7 +76,7 @@ namespace OperationTrident.Util
 
 
         // 默认的字体大小
-        private const int defaultFontSize = 12;
+        private const int defaultFontSize = 18;
 
         // 默认的字体对齐
         private const TextAlignment defaultAlignment = TextAlignment.Center;
@@ -881,6 +882,30 @@ namespace OperationTrident.Util
             rememberStringDMTDS = missionContent;
         }
 
+
+        public static void DisplayMissionPoint(
+            Vector3 targetPosition,
+            Camera camera,
+            Color color,
+            int fontSize = defaultFontSize,
+            float labelOffsetHeight=0.0f
+            )
+        {
+            Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            Vector3 direction1 = ray.direction; // 摄像头的方向
+            Vector3 direction2 = targetPosition - camera.transform.position; // 到摄像头的方向
+            // 如果物体大方向在人视线背后的话，就不显示了
+            if (Vector3.Dot(direction1, direction2) <= 0) return;
+            float nowDistance = Vector3.Distance(targetPosition,
+                     camera.transform.position);
+            targetPosition = new Vector3(targetPosition.x, targetPosition.y + labelOffsetHeight, targetPosition.z);
+            GUIStyle style = GetDefaultTextStyle(color, fontSize: 18);
+            Rect rect = GetFixedRectDirectlyFromWorldPosition(targetPosition, camera);
+            // 指定颜色
+            GUI.Label(rect, (int)nowDistance + "m\n●", style);
+        }
+
         /// <summary>
         /// 是不是一个字母或者数字或者符号或者空格等一系列的占一个位置的字符
         /// </summary>
@@ -1598,8 +1623,14 @@ namespace OperationTrident.Util
             {
                 rememberSubtitlesDSsIGGWT = subtitles;
             }
+            if (subtitles == null)
+            {
+                Debug.Log("传入空字幕");
+                return;
+            }
             // 要显示的总字幕发生了变化
-            if (rememberSubtitlesDSsIGGWT[0] != subtitles[0])
+            if (rememberSubtitlesDSsIGGWT[0] 
+                != subtitles[0])
             {
                 ResetFrame(Timer.DSsIGGWT);
                 frameTimerDSsIGGWT = 0.0f;
@@ -1633,5 +1664,6 @@ namespace OperationTrident.Util
                 }
             }
         }
+
     }
 }
