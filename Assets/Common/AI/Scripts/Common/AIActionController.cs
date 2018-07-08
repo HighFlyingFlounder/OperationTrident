@@ -11,6 +11,8 @@ namespace OperationTrident.Common.AI
         protected NetSyncController m_Controller;
         public void RPC<T>(Action<T> func, T args)
         {
+            if (m_Controller == null) Debug.LogError("m_Controller");
+            if (func.Method.Name == null) Debug.LogError("func.Method.Name");
             m_Controller.RPC(this, func.Method.Name, args);
             func(args);
         }
