@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
 
+using OperationTrident.FPS.Common;
+using System;
 
 namespace room2Battle {
     //小boss大战
-    public class room2_battle :  Subscene{
+    public class room2_battle :  Subscene,NetSyncInterface{
+        protected GetCamera getCamera;
 
         [SerializeField]
         protected Camera mCamera;
@@ -37,6 +40,16 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+        [SerializeField]
+        protected Transform bossInitPos;
+
+        [SerializeField]
+        protected GameObject door;
+
+        [SerializeField]
+        protected Transform doorPos;
+
+        protected NetSyncController mController;
 
         private void Start()
         {
@@ -66,46 +79,86 @@ namespace room2Battle {
 
         public override void onSubsceneInit()
         {
+            if (GameMgr.instance)
+            {
+                getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
+            }
+            (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
             Debug.Log(director.isActiveAndEnabled);
             director.Play();
-            
         }
 
         void Update()
         {
+            if (getCamera != null)
+                mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)
             {
-                if (director.time >= 20.0f)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
+                    boss.transform.position = bossInitPos.position;
+
+                    (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
+                    nextScene_.SetActive(true);
+                    door.transform.position = doorPos.position;
                 }
             }
             else {
-                nextScene_.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    openDoor();
+                }
             }
+            
+        }
+
+        void openDoor()
+        {
+            /*
+            Debug.Log("open");
+            float time = 0.0f;
+            while (time < 2.0f)
+            {
+                door.transform.position = new Vector3(door.transform.position.x, door.transform.position.y + 0.5f, door.transform.position.z);
+                Debug.Log(door.transform.position);
+                yield return new WaitForFixedUpdate();
+                time += Time.deltaTime;
+            }
+            */
+            Destroy(door.gameObject);
         }
 
         void OnGUI()
         {
             if (isTimelinePaused)
             {
-                if (Camera.current)
+                if (mCamera)
                 {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
                     OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                          Camera.current,
+                          mCamera,
                           OperationTrident.Util.
                           GUIUtil.yellowColor,
                           0.5f, 0.1f, 16);
                 }
-            }
-            if (!isTimelinePaused)
-            {
-                GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
-            }
+            }      
+        }
+
+        public void RecvData(SyncData data)
+        {
             
         }
 
+        public SyncData SendData()
+        {
+            return null;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            mController = controller;
+        }
     }
 
 }

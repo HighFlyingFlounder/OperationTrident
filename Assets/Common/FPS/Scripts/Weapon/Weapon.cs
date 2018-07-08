@@ -1,7 +1,7 @@
-﻿using OperationTrident.Room1;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.FPS.Player;
 
 namespace OperationTrident.FPS.Weapons {
     //武器类型
@@ -47,14 +47,9 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     [RequireComponent(typeof(AudioSource))]
-    [RequireComponent(typeof(WeaponBobbing))]
     public class Weapon : MonoBehaviour,NetSyncInterface {
         //武器射击的方式
-        public WeaponType Type = Weapons.WeaponType.Projectile;
-
-        //public bool ShooterAIEnabled = false; 
-        //public bool BloodyMessEnabled = false;
-        //public int WeaponType = 0;            
+        public WeaponType Type = Weapons.WeaponType.Projectile;         
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
         //开枪模式，全自动或者半自动
         public Auto AutoMode = Auto.Full;
@@ -147,10 +142,11 @@ namespace OperationTrident.FPS.Weapons {
         #endregion
 
         #region 武器威力
+        public bool UseForce = false;
         //武器的伤害大小
         public float Power = 80.0f;
         //武器击退力的增幅系数
-        public float ForceMultiplier = 10.0f;
+        public float ForceMultiplier = 0f;
         //激光的伤害
         public float BeamPower = 1.0f;
         //武器的射击距离
@@ -735,35 +731,12 @@ namespace OperationTrident.FPS.Weapons {
                         m_Heat = 0.0f;
                     }
 
-                    ////造成伤害
-                    //hit.collider.gameObject.SendMessageUpwards("ChangeHealth", -damage, SendMessageOptions.DontRequireReceiver);
-
-                    //if (shooterAIEnabled) {
-                    //    hit.transform.SendMessageUpwards("Damage", damage / 100, SendMessageOptions.DontRequireReceiver);
-                    //}
-
-                    //if (BloodyMessEnabled) {
-                    //    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Limb")) {
-                    //        Vector3 directionShot = hit.collider.transform.position - transform.position;
-
-                    //        /*
-                    //        if (hit.collider.gameObject.GetComponent<Limb>())
-                    //        {
-                    //            GameObject parent = hit.collider.gameObject.GetComponent<Limb>().parent;
-                    //            CharacterSetup character = parent.GetComponent<CharacterSetup>();
-                    //            character.ApplyDamage(damage, hit.collider.gameObject, weaponType, directionShot, Camera.main.transform.position);
-                    //        }
-                    //        */
-                    //    }
-                    //}
-                    ReactiveTarget reactive_target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
-                    if (reactive_target)
-                    {
-                        Debug.Log("transform.root.name    " + transform.root.name);
-                        reactive_target.OnHit(transform.root.name, false, (int)Power);
+                    //造成伤害
+                    ReactiveTarget target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
+                    if (target) {
+                        target.OnHit(this.transform.root.name, false, Power);
                     }
                         
-
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
                     if (BHSystem == BulletHoleSystem.Tag) {
@@ -853,15 +826,16 @@ namespace OperationTrident.FPS.Weapons {
                     }
 
                     //给被射中的物体加上一个击退的力
-                    if (hit.rigidbody) {
+                    if (UseForce && hit.rigidbody) {
                         hit.rigidbody.AddForce(ray.direction * Power * ForceMultiplier);
                     }
                 }
             }
 
             //如果使用后坐力，调用后坐力函数
-            if (UseRecoil)
+            if (UseRecoil) {
                 Recoil();
+            }
 
             //如果使用枪口火焰效果，就显示枪口火焰
             if (MakeMuzzleEffects) {
@@ -907,17 +881,18 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //如果不是无限弹药模式，减少弹药量
-            if (!InfiniteAmmo)
+            if (!InfiniteAmmo) {
                 m_CurrentAmmo--;
+            }
+                
 
             //单次射击，射出shotPerRound颗子弹
             for (int i = 0; i < ShotPerRound; i++) {
                 //创建抛射物
                 if (Projectile != null) {
                     GameObject proj = Instantiate(Projectile, ProjectileSpawnSpot.position, ProjectileSpawnSpot.rotation) as GameObject;
-                    //设置拥有者的ID
-                    Projectile p = proj.GetComponent<Projectile>();
-                    p.SetOwnerID(transform.root.name);
+                    //设置名称
+                    proj.name = this.transform.root.name;
 
                     //蓄力
                     if (Warmup) {
@@ -934,14 +909,17 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //如果使用后坐力，调用后坐力函数
-            if (UseRecoil)
+            if (UseRecoil) {
                 Recoil();
+            }
+                
 
             //如果使用枪口火焰效果，就显示枪口火焰
             if (MakeMuzzleEffects) {
                 GameObject muzfx = MuzzleEffects[Random.Range(0, MuzzleEffects.Length)];
-                if (muzfx != null)
+                if (muzfx != null) {
                     Instantiate(muzfx, MuzzleEffectsPosition.position, MuzzleEffectsPosition.rotation);
+                }
             }
 
             //创建弹壳
@@ -1032,28 +1010,11 @@ namespace OperationTrident.FPS.Weapons {
                         }
                     }
 
-                    //hit.collider.gameObject.SendMessageUpwards("ChangeHealth", -BeamPower, SendMessageOptions.DontRequireReceiver);
-
-                    //if (ShooterAIEnabled) {
-                    //    hit.transform.SendMessageUpwards("Damage", BeamPower / 100, SendMessageOptions.DontRequireReceiver);
-                    //}
-
-                    //if (BloodyMessEnabled) {
-                    //    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Limb")) {
-                    //        Vector3 directionShot = hit.collider.transform.position - transform.position;
-
-                    //        /*
-                    //        if (hit.collider.gameObject.GetComponent<Limb>())
-                    //        {
-                    //            GameObject parent = hit.collider.gameObject.GetComponent<Limb>().parent;
-
-                    //            CharacterSetup character = parent.GetComponent<CharacterSetup>();
-                    //            character.ApplyDamage(beamPower, hit.collider.gameObject, weaponType, directionShot, Camera.main.transform.position);
-                    //        }
-                    //        */
-
-                    //    }
-                    //}
+                    //造成伤害
+                    ReactiveTarget target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
+                    if (target) {
+                        target.OnHit(this.transform.root.name, false, Power);
+                    }
 
 
                     // 增加反射次数
@@ -1069,7 +1030,6 @@ namespace OperationTrident.FPS.Weapons {
             } while (keepReflecting && reflections < MaxReflections && Reflect && (ReflectionMaterial == null || (FindMeshRenderer(hit.collider.gameObject) != null && FindMeshRenderer(hit.collider.gameObject).sharedMaterial == ReflectionMaterial)));
 
             //设置线渲染器的顶点
-            //beamLR.SetVertexCount(reflectionPoints.Count);
             beamLR.positionCount = reflectionPoints.Count;
 
             for (int i = 0; i < reflectionPoints.Count; i++) {
