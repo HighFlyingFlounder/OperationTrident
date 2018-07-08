@@ -84,6 +84,7 @@ namespace room2Battle
             }
         }
 
+
         public override void Move(bool isStart)
         {
             if (isStart)

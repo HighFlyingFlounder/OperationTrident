@@ -265,7 +265,9 @@ namespace room2Battle
                     {
                         GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
                         getCamera = PLAYER.GetComponent<GetCamera>();
+                        float r = PLAYER.GetComponent<CharacterController>().radius;
                         PLAYER.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+                        PLAYER.GetComponent<CharacterController>().radius = r;
                         playerCamera = getCamera.MainCamera;
                         foreach (GameObject cam in getCamera.MirrorCameras)
                         {
