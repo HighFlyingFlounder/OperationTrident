@@ -75,8 +75,9 @@ namespace OperationTrident.FPS.Player {
             m_Input = Vector2.zero;
             m_PreInput = Vector2.zero;
 
-            m_Speed = m_WalkSpeed;
-            BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
+            //设置速度
+            BroadcastMessage("SetWalkSpeed", m_WalkSpeed, SendMessageOptions.DontRequireReceiver);
+            BroadcastMessage("SetRunSpeed", m_RunSpeed, SendMessageOptions.DontRequireReceiver);
         }
 
         private void FixedUpdate() {
@@ -194,17 +195,6 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void GetInput() {
-            //站立和蹲下
-            if (Input.GetKeyDown(KeyCode.X)) {
-                if (m_IsCrouching) {
-                    //这里需要调用RPC
-                    StandUp();
-                } else {
-                    //这里需要调用RPC
-                    Underarm();
-                }
-            }
-
             // 在跳跃的过程中不能重复跳跃
             if (!m_Jump) {
                 m_Jump = Input.GetButtonDown("Jump");
@@ -225,29 +215,36 @@ namespace OperationTrident.FPS.Player {
             //这里需要调用RPC
             Walk(horizontal, vertical);
 
+            bool currentRunningState = Input.GetKey(KeyCode.LeftShift);
 #if !MOBILE_INPUT
-            if(Input.GetKey(KeyCode.LeftShift) != m_IsRunning) {
+            if(currentRunningState != m_IsRunning) {
                 // 按住shift键进入跑步状态
-                m_IsRunning = Input.GetKey(KeyCode.LeftShift);
+                m_IsRunning = currentRunningState;
 
                 //这里需要调用RPC函数
                 Run();
-
-                // 根据当前的状态设置速度
-                m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
-                //如果是蹲着，那么速度减半
-                if (m_IsCrouching) {
-                    m_Speed /= 2;
-                }
-
-                BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
-
-                //进入跑步状态
-                if (m_IsRunning) {
-                    BroadcastMessage("StartRunning", SendMessageOptions.DontRequireReceiver);
-                }
             }
 #endif
+            // 根据当前的状态设置速度
+            m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
+
+            //站立和蹲下
+            if (Input.GetKeyDown(KeyCode.X)) {
+                if (m_IsCrouching) {
+                    //这里需要调用RPC
+                    StandUp();
+                } else {
+                    //这里需要调用RPC
+                    Underarm();
+                }
+            }
+            //如果是蹲着，那么速度减半
+            if (m_IsCrouching) {
+                m_Speed /= 2;
+            }
+
+            //更新速度信息
+            BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
 
             //发送开始行走的消息
             if (m_Input.magnitude > 0f && m_PreInput.magnitude == 0f) {

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     public class Explosion : MonoBehaviour {
+        public string LayerMaskName;
         //爆炸击退力
         public float ExplosionForce = 5.0f;
         //爆炸的半径
@@ -24,8 +25,19 @@ namespace OperationTrident.FPS.Weapons {
             //yield return null;
             yield return new WaitForSeconds(0.1f);
 
-            //爆炸范围内的物体
-            Collider[] cols = Physics.OverlapSphere(transform.position, ExplosionRadius);
+            //获取物理层
+            int layer = LayerMask.NameToLayer(LayerMaskName);
+            Collider[] cols;
+            if (layer != -1) {
+                //创建物理遮罩
+                LayerMask mask = ~(1 << layer);
+                //爆炸范围内的物体
+                cols = Physics.OverlapSphere(transform.position, ExplosionRadius, mask);
+            } else {
+                Debug.LogWarning("Can not find the layer to create a layer mask");
+                //爆炸范围内的物体
+                cols = Physics.OverlapSphere(transform.position, ExplosionRadius);
+            }
 
             //造成伤害
             if (CauseDamage) {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.FPS.Player;
+using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     //武器类型
@@ -61,6 +61,8 @@ namespace OperationTrident.FPS.Weapons {
         public bool PlayerWeapon = true;
         //武器的模型
         public GameObject WeaponModel;
+        //不进行检测的物理层
+        public string LayerMaskName;
         //发射的起点和方向
         public Transform RaycastStartSpot;
         //射击前等待的时间
@@ -165,8 +167,12 @@ namespace OperationTrident.FPS.Weapons {
         #region 弹药
         //是否是无限弹药模式
         public bool InfiniteAmmo = false;
+        //是否使用有限弹药模式
+        public bool LimitedTotalAmmo;
+        //弹药总容量 
+        public int TotalAmmo = 30;
         //武器的弹夹容量
-        public int AmmoCapacity = 12;
+        public int AmmoCapacity = 30;
         //单次射击（弹药量减一）射出的子弹数
         public int ShotPerRound = 1;
         //更换弹夹的时间
@@ -177,7 +183,7 @@ namespace OperationTrident.FPS.Weapons {
         public bool ReloadAutomatically = true;
 
         //武器当前的总弹药量
-        //private int m_CurrentTotalAmmo;
+        private int m_CurrentTotalAmmo;
         //武器当前的弹药量
         private int m_CurrentAmmo;
         #endregion
@@ -326,8 +332,12 @@ namespace OperationTrident.FPS.Weapons {
             //重置计时器
             FireTimer = 0.0f;
 
-            //初始化武器的当前弹药量
-            m_CurrentAmmo = AmmoCapacity;
+            //初始化当前总弹药量
+            m_CurrentTotalAmmo = TotalAmmo;
+            //开始时先执行一次换弹
+            Reload();
+            ////初始化武器的当前弹药量
+            //m_CurrentAmmo = AmmoCapacity;
 
             //确保设置了射线起点
             if (RaycastStartSpot == null) {
@@ -407,7 +417,8 @@ namespace OperationTrident.FPS.Weapons {
             for (int i = 0; i < DefaultBulletHolePoolNames.Count; i++) {
                 GameObject g = GameObject.Find(DefaultBulletHolePoolNames[i]);
 
-                if (g.GetComponent<BulletHolePool>() != null)
+                BulletHolePool bulletHolePool = g.GetComponent<BulletHolePool>();
+                if (bulletHolePool != null)
                     DefaultBulletHoles[i] = g.GetComponent<BulletHolePool>();
                 else
                     Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
@@ -492,10 +503,17 @@ namespace OperationTrident.FPS.Weapons {
 
             //显示弹药量
             if (ShowCurrentAmmo) {
-                if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile)
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Ammo: " + m_CurrentAmmo);
-                else if (Type == Weapons.WeaponType.Beam)
+                if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile) {
+                    GUI.Label(new Rect(10, Screen.height - 60, 100, 20), "Ammo: " + m_CurrentAmmo);
+                    if (LimitedTotalAmmo) {
+                        GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: " + m_CurrentTotalAmmo);
+                    } else {
+                        GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: Infinite");
+                    }
+                }
+                else if (Type == Weapons.WeaponType.Beam) {
                     GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
+                }   
             }
         }
 
@@ -509,14 +527,14 @@ namespace OperationTrident.FPS.Weapons {
             //射线武器
             if (Type == Weapons.WeaponType.Raycast) {
                 if (FireTimer >= ActualROF && BurstCounter < BurstRate && m_CanFire) {
-                    if (Input.GetButton("Fire1")) {
+                    if (Input.GetMouseButton(0)) {
                         if (!Warmup) {   //没有蓄力射击，正常射击
                             Fire();
                         } else if (m_Heat < MaxWarmup) {   //开始蓄力
                             m_Heat += Time.deltaTime;
                         }
                     }
-                    if (Warmup && Input.GetButtonUp("Fire1")) {
+                    if (Warmup && Input.GetMouseButtonUp(0)) {
                         if (AllowCancel && Input.GetButton("Cancel")) {
                             m_Heat = 0.0f;
                         } else {
@@ -529,14 +547,14 @@ namespace OperationTrident.FPS.Weapons {
             //抛射武器
             if (Type == Weapons.WeaponType.Projectile) {
                 if (FireTimer >= ActualROF && BurstCounter < BurstRate && m_CanFire) {
-                    if (Input.GetButton("Fire1")) {
+                    if (Input.GetMouseButton(0)) {
                         if (!Warmup) {   //没有蓄力射击，正常射击
                             Launch();
                         } else if (m_Heat < MaxWarmup) {   //开始蓄力
                             m_Heat += Time.deltaTime;
                         }
                     }
-                    if (Warmup && Input.GetButtonUp("Fire1")) {
+                    if (Warmup && Input.GetMouseButtonUp(0)) {
                         if (AllowCancel && Input.GetButton("Cancel")) {
                             m_Heat = 0.0f;
                         } else {
@@ -558,7 +576,7 @@ namespace OperationTrident.FPS.Weapons {
 
             //激光武器
             if (Type == Weapons.WeaponType.Beam) {
-                if (Input.GetButton("Fire1") && m_BeamHeat <= MaxBeamHeat && !m_CoolingDown) {
+                if (Input.GetMouseButton(0) && m_BeamHeat <= MaxBeamHeat && !m_CoolingDown) {
                     Beam();
                 } else {
                     //停止发射激光
@@ -577,11 +595,11 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //如果是半自动武器，松开开火键时才能重新开火
-            if (Input.GetButtonUp("Fire1")) {
+            if (Input.GetMouseButtonUp(0)) {
                 m_CanFire = true;
             }
 
-            if (Input.GetButtonDown("Fire2")) {
+            if (Input.GetMouseButtonDown(1)) {
                 SwitchMirrorState();
             }
         }
@@ -721,11 +739,21 @@ namespace OperationTrident.FPS.Weapons {
                 //创建射线
                 Ray ray = new Ray(m_CurrentShootPoint.position, direction);
 
+                bool hitResult;
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, Range)) {
-                    //蓄力
-                    float damage = Power;
+                int layer = LayerMask.NameToLayer(LayerMaskName);
+                if (layer != -1) {
+                    //过滤LayerMaskName这一层
+                    LayerMask mask = ~(1 << layer);
+                    hitResult = Physics.Raycast(ray, out hit, Range, mask);
+                } else {
+                    hitResult = Physics.Raycast(ray, out hit, Range);
+                }
+
+                if (hitResult) {
+                        //蓄力
+                        float damage = Power;
                     if (Warmup) {
                         damage *= m_Heat * PowerMultiplier;
                         m_Heat = 0.0f;
@@ -735,8 +763,14 @@ namespace OperationTrident.FPS.Weapons {
                     ReactiveTarget target = hit.collider.gameObject.GetComponent<ReactiveTarget>();
                     if (target) {
                         target.OnHit(this.transform.root.name, false, Power);
+                    } else {
+                        target = hit.collider.transform.root.gameObject.GetComponent<ReactiveTarget>();
+                        if (target) {
+                            target.OnHit(this.transform.root.name, false, Power);
+                        }
                     }
-                        
+
+
                     //判断被击中物体是否满足不产生弹孔的条件
                     bool exception = false;
                     if (BHSystem == BulletHoleSystem.Tag) {
@@ -1090,8 +1124,28 @@ namespace OperationTrident.FPS.Weapons {
                 m_NetSyncController.RPC(this, "Reload");
             }
 
-            //更新弹药量
-            m_CurrentAmmo = AmmoCapacity;
+            if(m_CurrentAmmo == AmmoCapacity) {
+                return;
+            }
+
+            //判断是否使用有限弹药
+            if (LimitedTotalAmmo) {
+                if (m_CurrentTotalAmmo >= AmmoCapacity) {
+                    //更新弹药量
+                    m_CurrentAmmo = AmmoCapacity;
+                    //更新总弹药量
+                    m_CurrentTotalAmmo -= AmmoCapacity;
+                } else {
+                    //更新弹药量
+                    m_CurrentAmmo = m_CurrentTotalAmmo;
+                    //更新总弹药量
+                    m_CurrentTotalAmmo = 0;
+                }
+            } else {
+                //更新弹药量
+                m_CurrentAmmo = AmmoCapacity;
+            }
+            
 
             //停止计时器
             FireTimer = -ReloadTime;

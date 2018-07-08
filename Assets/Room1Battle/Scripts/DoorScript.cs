@@ -10,6 +10,8 @@ namespace OperationTrident.Room1
         // 标识三扇门的ID
         private static int totalId = 0;
 
+        [SerializeField]
+        private GameObject explosion;
 
         [SerializeField]
         private GameObject fragmentPrefab;
@@ -66,34 +68,34 @@ namespace OperationTrident.Room1
                 switch (direction)
                 {
                     case DoorOpenDirection.XNegative:
-                        transform.localPosition = new Vector3(transform.localPosition.x - openSpeed,
-                            transform.localPosition.y,
-                            transform.localPosition.z);
+                        transform.position = new Vector3(transform.position.x - openSpeed,
+                            transform.position.y,
+                            transform.position.z);
                         break;
                     case DoorOpenDirection.XPositive:
-                        transform.localPosition = new Vector3(transform.localPosition.x + openSpeed,
-                            transform.localPosition.y,
-                            transform.localPosition.z);
+                        transform.position = new Vector3(transform.position.x + openSpeed,
+                            transform.position.y,
+                            transform.position.z);
                         break;
                     case DoorOpenDirection.YNegative:
-                        transform.localPosition = new Vector3(transform.localPosition.x,
-                            transform.localPosition.y - openSpeed,
-                            transform.localPosition.z);
+                        transform.position = new Vector3(transform.position.x,
+                            transform.position.y - openSpeed,
+                            transform.position.z);
                         break;
                     case DoorOpenDirection.YPositive:
-                        transform.localPosition = new Vector3(transform.localPosition.x,
-                            transform.localPosition.y + openSpeed,
-                            transform.localPosition.z);
+                        transform.position = new Vector3(transform.position.x,
+                            transform.position.y + openSpeed,
+                            transform.position.z);
                         break;
                     case DoorOpenDirection.ZNegative:
-                        transform.localPosition = new Vector3(transform.localPosition.x,
-                            transform.localPosition.y,
-                            transform.localPosition.z - openSpeed);
+                        transform.position = new Vector3(transform.position.x,
+                            transform.position.y,
+                            transform.position.z - openSpeed);
                         break;
                     case DoorOpenDirection.ZPositive:
-                        transform.localPosition = new Vector3(transform.localPosition.x,
-                            transform.localPosition.y,
-                            transform.localPosition.z + openSpeed);
+                        transform.position = new Vector3(transform.position.x,
+                            transform.position.y,
+                            transform.position.z + openSpeed);
                         break;
                 }
 
@@ -122,6 +124,7 @@ namespace OperationTrident.Room1
         // 在炸开的门下面弄点碎片
         public void CreateFragmentsInFloor(int amount,bool isMainX)
         {
+            Explosion();
             const float randomFactor = 0.5f;
             if (isMainX) {
                 // 左上角
@@ -187,43 +190,14 @@ namespace OperationTrident.Room1
                     cube.AddComponent<Rigidbody>();
                 }
             }
-            //for(int i = 0; i < amount; i++)
-            //{
-            //    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //    cube.transform.localScale = new Vector3(
-            //        UnityEngine.Random.Range(0.02f, 0.05f),
-            //        UnityEngine.Random.Range(0.02f, 0.05f),
-            //        UnityEngine.Random.Range(0.02f, 0.05f));
-            //    cube.AddComponent<Rigidbody>();
-            //    //cube.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            //    //cube.transform.position = new Vector3();
-            //    if (isMainX)
-            //    {
-            //        float x = UnityEngine.Random.Range(
-            //            transform.position.x - transform.localScale.x / 2,
-            //            transform.position.x + transform.localScale.x / 2);
-            //        float z = UnityEngine.Random.Range(
-            //            transform.position.z - randomFactor,
-            //            transform.position.z + randomFactor);
-            //        float y = UnityEngine.Random.Range(
-            //            transform.position.y - transform.localScale.y / 2.5f - 0.05f,
-            //            transform.position.y - transform.localScale.y / 2.5f + 0.05f);
-            //        cube.transform.position = new Vector3(x, y, z);
-            //    }
-            //    else
-            //    {
-            //        float x = UnityEngine.Random.Range(
-            //            transform.position.x - transform.localScale.x / 2 - 0.05f,
-            //            transform.position.x - transform.localScale.x / 2 + 0.05f);
-            //        float z = UnityEngine.Random.Range(
-            //            transform.position.z - randomFactor,
-            //            transform.position.z + randomFactor);
-            //        float y = UnityEngine.Random.Range(
-            //            transform.position.y - transform.localScale.y / 2.5f,
-            //            transform.position.y + transform.localScale.y / 2.5f);
-            //        cube.transform.position = new Vector3(x, y, z);
-            //    }
-            //}
+        }
+
+        public void Explosion()
+        {
+            GameObject explosionObj=Instantiate(explosion) as GameObject;
+            Util.SetTransform(explosionObj, gameObject.transform);
+            
+
         }
     }
 }

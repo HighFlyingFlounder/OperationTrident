@@ -10,11 +10,21 @@ namespace OperationTrident.FPS.Player {
         private Coroutine m_Coroutine;
         private Vector3 m_OriginalPosition;
 
-        // Use this for initialization
+        private float m_WalkSpeed;
+        private float m_RunSpeed;
+
         void Start() {
             m_Bobbing.Init(this.transform);
 
             m_OriginalPosition = this.transform.localPosition;
+        }
+
+        private void SetWalkSpeed(float speed) {
+            m_WalkSpeed = speed;
+        }
+
+        private void SetRunSpeed(float speed) {
+            m_RunSpeed = speed;
         }
 
         private void ChangeMovementSpeed(float speed) {

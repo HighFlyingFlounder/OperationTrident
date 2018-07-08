@@ -162,6 +162,7 @@ public class ProtocolBytes : ProtocolBase
 
     public void AddSyncData(SyncData data)
     {
+        if (data.Bytes.Length == 0) return;
         bytes = bytes.Concat(data.Bytes).ToArray();
     }
 
@@ -169,7 +170,8 @@ public class ProtocolBytes : ProtocolBase
     {
         SyncData data = new SyncData();
         data.Bytes = new byte[bytes.Length - start];
-
+        if (data.Bytes.Length == 0)
+            return data;
         Array.Copy(bytes, start, data.Bytes, 0, bytes.Length - start);
 
         return data;
