@@ -1574,7 +1574,7 @@ namespace OperationTrident.Util
                 rememberSubtitlesDSsIGG = subtitles;
             }
             // 要显示的总字幕发生了变化
-            if (rememberSubtitlesDSsIGG[0] != subtitles[0])
+            if (!IsEqual(rememberSubtitlesDSsIGG, subtitles))
             {
                 ResetFrame(Timer.DSsIGG);
                 frameTimerDSsIGG = 0.0f;
@@ -1636,8 +1636,7 @@ namespace OperationTrident.Util
                 return;
             }
             // 要显示的总字幕发生了变化
-            if (rememberSubtitlesDSsIGGWT[0] 
-                != subtitles[0])
+            if (!IsEqual(rememberSubtitlesDSsIGGWT,subtitles) )
             {
                 ResetFrame(Timer.DSsIGGWT);
                 frameTimerDSsIGGWT = 0.0f;
@@ -1670,6 +1669,16 @@ namespace OperationTrident.Util
                     frameTimerDSsIGGWT = 0;
                 }
             }
+        }
+
+        private static bool IsEqual(string[] a,string[] b)
+        {
+            if (a.Length != b.Length) return false;
+            for(int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
         }
 
     }

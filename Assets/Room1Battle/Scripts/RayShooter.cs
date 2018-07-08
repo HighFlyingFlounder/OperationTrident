@@ -90,7 +90,7 @@ namespace OperationTrident.Room1
             {
                 //hit.point:射线击中的坐标
                 GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                FPS.Player.ReactiveTarget target = hitObject.GetComponent<FPS.Player.ReactiveTarget>();
+                Common.ReactiveTarget target = hitObject.GetComponent<Common.ReactiveTarget>();
                 if (target != null)   //检查对象上是否有ReactiveTarget组件
                 {
                      target.OnHit(gameObject.name,false,1);
