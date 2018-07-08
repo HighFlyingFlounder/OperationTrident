@@ -7,13 +7,15 @@ namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
     {
         [SerializeField]
-        //电梯开关的预设
-        public GameObject buttonPre;
+
         //持续时间
         public int d_time = 60;
 
+        //准备时间
+        public int r_time = 10;
+
         //状态
-        public enum ElevatorState { Initing, FindingButton, Start_Fighting ,Fighting, End, Escape };
+        public enum ElevatorState { Initing, Ready, Start_Fighting ,Fighting, End, Escape };
         public static ElevatorState state;
 
         //开始战斗的时间
@@ -23,16 +25,10 @@ namespace OperationTrident.Elevator {
         //结束时间
         private float e_time;
 
-        //按钮
-        private GameObject button;
-        //button的位置
-        public static Vector3 ButtonPosition;
-
         //碰撞次数（为偶数）
         private int count = 0;
 
-        //是否更改碰撞体
-        private bool change = false;
+        private bool change;
 
         //碰撞体
         private BoxCollider bcollider;
@@ -42,12 +38,9 @@ namespace OperationTrident.Elevator {
         // Use this for initialization
         void Start()
         {
-            //初始化BUTTON
-            button = GameObject.Instantiate(buttonPre);
-            button.transform.localPosition = new Vector3(0, 2, 0);
-            ButtonPosition = button.transform.localPosition;
             state = ElevatorState.Initing;
             bcollider = this.GetComponent<BoxCollider>();
+            change = true;
         }
 
         // Update is called once per frame
@@ -58,24 +51,48 @@ namespace OperationTrident.Elevator {
                 case ElevatorState.Initing:
                     break;
 
-                case ElevatorState.FindingButton:
+                case ElevatorState.Ready:
+                    if (change)
+                    {
+                        //开始计时
+                        s_time = Time.time;
+                        c_time = s_time;
+                        e_time = s_time + r_time;
+
+                        bcollider.size = new Vector3(40, bcollider.size.y, bcollider.size.z);
+
+                        change = false;
+                    }
+                    else
+                    {
+                        c_time += Time.deltaTime;
+
+                        //准备时间结束，切换到下一个场景
+                        if (c_time >= e_time)
+                        {
+                            changeState();
+                            m_controller.RPC(this, "changeState");
+                        }
+                    }
                     break;
 
                 case ElevatorState.Start_Fighting:
                     Messenger.Broadcast(GameEvent.Enemy_Start);
-                    state = ElevatorState.Fighting;
+
+                    //开始计时
                     s_time = Time.time;
                     c_time = s_time;
                     e_time = s_time + d_time;
-                    bcollider.size = new Vector3(12f, bcollider.size.y, bcollider.size.z);
+
+                    changeState();
                     break;
 
                 case ElevatorState.Fighting:
                     c_time += Time.deltaTime;
+
                     if(c_time >= e_time)
                     {
-                        change = true;
-                        state = ElevatorState.End;
+                        changeState();
                     }
 
                     break;
@@ -83,28 +100,19 @@ namespace OperationTrident.Elevator {
                 case ElevatorState.End:
                     Messenger.Broadcast(GameEvent.End);
 
-                    if (change)
+                    //开门
+                    GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
+
+                    if (OperationTrident.Elevator.Wall.state)
                     {
-                        //开门
-                        GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
-                        change = false;
+                        changeState();
                     }
+
                     break;
 
                 case ElevatorState.Escape:
                     break;
             }
-        }
-
-        //监听器
-        private void Awake()
-        {
-            Messenger.AddListener(GameEvent.Push_Button, fight);
-        }
-
-        private void Destroy()
-        {
-            Messenger.RemoveListener(GameEvent.Push_Button, fight);
         }
 
         //网络同步
@@ -125,42 +133,35 @@ namespace OperationTrident.Elevator {
 
         void OnTriggerEnter(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.End)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
-                int number = 1;//SceneNetManager.instance.list.Count;
-                //进入关门
+                //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
+                //return;
+                int number = SceneNetManager.instance.list.Count;
+
                 count++;
-                Debug.Log("Enter" + count);
+
+                //进入关门
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
                     changeState();
-                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                    GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
         }
 
         void OnTriggerExit(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.End)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
                 //离开关门
                 count--;
-                Debug.Log("Exit" + count);
-                if (count <= 0 && Door.state && state == ElevatorState.End)
+
+                if (count <= 0 && Door.state && state == ElevatorState.Escape)
                 {
                     changeState();
-                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                    GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
-            }
-        }
-
-        private void fight()
-        {
-            //点击按钮
-            if (state == ElevatorState.FindingButton && !Door.state)
-            {
-                changeState();
-                m_controller.RPC(this, "changeState");
             }
         }
 
@@ -169,11 +170,19 @@ namespace OperationTrident.Elevator {
             switch (state)
             {
                 case ElevatorState.Initing:
-                    state = ElevatorState.FindingButton;
+                    state = ElevatorState.Ready;
                     break;
 
-                case ElevatorState.FindingButton:
+                case ElevatorState.Ready:
                     state = ElevatorState.Start_Fighting;
+                    break;
+
+                case ElevatorState.Start_Fighting:
+                    state = ElevatorState.Fighting;
+                    break;
+
+                case ElevatorState.Fighting:
+                    state = ElevatorState.End;
                     break;
 
                 case ElevatorState.End:

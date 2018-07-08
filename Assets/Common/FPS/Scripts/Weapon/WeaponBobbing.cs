@@ -19,12 +19,16 @@ namespace OperationTrident.FPS.Weapons {
         private Vector3 m_OriginalPosition;
         private Quaternion m_OriginalRotation;
 
+
         private float m_Speed;
         private bool m_IsRunning;
         private bool m_IsWalking;
         private bool m_IsFiring;
         private bool m_IsUsingMirror;
         private float m_FireTimer;
+
+        private float m_WalkSpeed;
+        private float m_RunSpeed;
 
         // Use this for initialization
         void Start() {
@@ -57,16 +61,34 @@ namespace OperationTrident.FPS.Weapons {
             }
         }
 
+        private void SetWalkSpeed(float speed) {
+            m_WalkSpeed = speed;
+        }
+
+        private void SetRunSpeed(float speed) {
+            m_RunSpeed = speed;
+        }
+
         //改变移动速度
         private void ChangeMovementSpeed(float speed) {
             m_Speed = speed;
-            if (m_IsRunning) {
+
+            if (speed < m_RunSpeed && m_IsRunning) {
                 m_IsRunning = false;
 
                 //停止跑步，重置枪的位置为初始位置
                 this.transform.localPosition = m_OriginalPosition;
                 this.transform.localRotation = m_OriginalRotation;
                 m_Bobbing.Init(this.transform);
+            }
+
+            if(speed == m_RunSpeed && !m_IsRunning) {
+                m_IsRunning = true;
+                //当正在行走并且没有在开枪时，可以转换为跑步姿势
+                if (!m_IsUsingMirror && !m_IsFiring && m_IsWalking) {
+                    //开始跑步，设置枪的位置为跑步时的位置
+                    StartCoroutine(SwitchToRun());
+                }
             }
 
             m_Bobbing.ChangeSpeed(speed);
@@ -84,21 +106,10 @@ namespace OperationTrident.FPS.Weapons {
             m_Coroutine = StartCoroutine(m_Bobbing.DoBobbing());
         }
 
-        private void StartRunning() {
-            m_IsRunning = true;
-
-            //当正在行走并且没有在开枪时，可以转换为跑步姿势
-            if (!m_IsUsingMirror && !m_IsFiring && m_IsWalking) {
-                //开始跑步，设置枪的位置为跑步时的位置
-                StartCoroutine(SwitchToRun());
-            }
-        }
-
         //停止走路
         private void StopWalking() {
             //走路停止
             m_IsWalking = false;
-            //跑步也停止
             m_IsRunning = false;
 
             if(m_Coroutine != null) {
@@ -108,6 +119,7 @@ namespace OperationTrident.FPS.Weapons {
             //停止行走，恢复枪的位置
             transform.localPosition = m_OriginalPosition;
             transform.localRotation = m_OriginalRotation;
+            m_Bobbing.Init(this.transform);
         }
 
         private void StartShooting() {
@@ -137,7 +149,8 @@ namespace OperationTrident.FPS.Weapons {
 
         private IEnumerator SwitchToRun() {
             float timer = 0f;
-            while(timer <= SwitchTime && !m_IsFiring) {
+            //只有在不开枪、不开镜且正在跑步的时候执行
+            while(timer <= SwitchTime && !m_IsFiring && m_IsRunning) {
                 this.transform.localPosition = Vector3.Lerp(m_OriginalPosition, RunningPosition.localPosition, timer / SwitchTime);
                 this.transform.localRotation = Quaternion.Lerp(m_OriginalRotation, RunningPosition.localRotation, timer / SwitchTime);
                 m_Bobbing.Init(this.transform);

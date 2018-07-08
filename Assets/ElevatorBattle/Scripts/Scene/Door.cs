@@ -25,6 +25,7 @@ namespace OperationTrident.Elevator
         {
             child1 = GameObject.Find("left");
             child2 = GameObject.Find("right");
+
             open = false;
             close = false;
             state = false;
@@ -34,7 +35,7 @@ namespace OperationTrident.Elevator
         void Update()
         {
             //关门过程结束
-            if (child1.transform.position.z <= 2.5 || child2.transform.position.z >= -2.5)
+            if (child1.transform.position.z <= 2 || child2.transform.position.z >= -2)
             {
                 state = false;
                 close = false;
@@ -80,65 +81,39 @@ namespace OperationTrident.Elevator
         }
 
         //发信息
-        private void Operate()
+        private void closeDoor()
         {
-            Operate_Imp();
-            m_controller.RPC(this, "Operate_Imp");
+            closeDoor_Imp();
+            m_controller.RPC(this, "closeDoor_Imp");
         }
 
-        public void Operate_Imp()
+        private void openDoor()
         {
-            switch (SceneController.state)
+            openDoor_Imp();
+            m_controller.RPC(this, "openDoor_Imp");
+        }
+
+        private void Operate()
+        {
+            openDoor();
+        }
+
+        public void closeDoor_Imp()
+        {
+            if (state)
             {
-                case SceneController.ElevatorState.Initing:
-                    if (!state)
-                    {
-                        //开门
-                        open = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.FindingButton:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Start_Fighting:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Fighting:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.End:
-                    if (!state)
-                    {
-                        //开门
-                        open = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Escape:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
+                //关门
+                close = true;
             }
+        }
 
+        public void openDoor_Imp()
+        {
+            if (!state)
+            {
+                //开门
+                open = true;
+            }
         }
     }
 }

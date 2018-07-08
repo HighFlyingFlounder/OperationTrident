@@ -790,7 +790,11 @@ namespace OperationTrident.Util
             if (inLeft)
             {
                 DisplayContentInGivenPosition(missionContent,
-                        new Rect(defaultMissionTargetOffsetLeft*camera.pixelWidth, camera.pixelHeight / 20.0f + fontSize, fontSize * missionContent.Length, fontSize),
+                        new Rect(
+                            defaultMissionTargetOffsetLeft
+                            *camera.pixelWidth, 
+                            camera.pixelHeight / 20.0f + fontSize, 
+                            fontSize * missionContent.Length, fontSize),
                         GetDefaultTextStyle(color, fontSize, TextAnchor.LowerLeft));
             }
             else
