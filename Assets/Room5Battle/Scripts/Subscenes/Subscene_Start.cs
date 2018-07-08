@@ -117,7 +117,7 @@ namespace OperationTrident.Room5
             m_ControlPanel.RenderGUI();
 
             //控制台目标距离
-            GUIUtil.DisplayMissionPoint(m_ControlPanel.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
+            GUIUtil.DisplayMissionPoint(m_ControlPanel.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white,labelOffsetHeight:5.0f);
 
             //字幕
             string[] subtitles =

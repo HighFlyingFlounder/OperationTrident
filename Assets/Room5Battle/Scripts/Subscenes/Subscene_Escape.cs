@@ -24,7 +24,8 @@ namespace OperationTrident.Room5
 
         //音效：核心关闭+台词：“逃离反应室”
         public AudioClip m_AudioClip_CoreClosedAndEvacuate;
-        bool isAudioPlayed = false;
+        bool m_isAudioPlayed = false;
+        bool m_isExitDoorOpened=false;
 
         public override bool isTransitionTriggered()
         {
@@ -57,26 +58,29 @@ namespace OperationTrident.Room5
          * *************************************************/
         private void Start()
         {
-            isAudioPlayed = false;   
+            m_isAudioPlayed = false;
+            m_isExitDoorOpened = false;
         }
 
         private void Update()
         {
             //如果拿到了反应核心
-            if (m_ReactorCore == null)
+            if (m_ReactorCore == null && m_isExitDoorOpened==false)
             {
                 //出口的门打开
                 m_ExitDoorOpenDirector.Play();
+                m_isExitDoorOpened = true;
                 //下一场景
                 m_EnterNextSceneCube.SetActive(true);
+
             }
 
             //音效:断电+台词
-            if (m_AudioSource_SoundEffect.isPlaying == false && isAudioPlayed == false)
+            if (m_AudioSource_SoundEffect.isPlaying == false && m_isAudioPlayed == false)
             {
                 m_AudioSource_SoundEffect.clip = m_AudioClip_CoreClosedAndEvacuate;
                 m_AudioSource_SoundEffect.Play();
-                isAudioPlayed = true;
+                m_isAudioPlayed = true;
             }
         }
 
@@ -85,7 +89,7 @@ namespace OperationTrident.Room5
             if (m_ReactorCore != null)
             {
                 GUIUtil.DisplayMissionTargetDefault("夺回托卡马克之心.", Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
-                GUIUtil.DisplayMissionPoint(m_ReactorCore.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white);
+                GUIUtil.DisplayMissionPoint(m_ReactorCore.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white,labelOffsetHeight:5.0f);
             }
             else
             {
@@ -94,9 +98,8 @@ namespace OperationTrident.Room5
             }
 
             //音效:断电+台词
-            if (m_AudioSource_SoundEffect.isPlaying==false & isAudioPlayed==false)
+            if (m_AudioSource_SoundEffect.isPlaying==true)
             {
-
                 //字幕
                 string[] subtitles =
                 {
