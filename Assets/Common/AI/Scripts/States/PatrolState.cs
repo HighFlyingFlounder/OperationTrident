@@ -33,8 +33,7 @@ namespace OperationTrident.Common.AI
             }
             _agent.PathfindingAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
             _agent.PathfindingAgent.isStopped = false;
-            _agent.ActionController.RPC(_agent.ActionController.Move, true);
-			//_agent.ActionController.Move(true);
+			_agent.ActionController.Move(true);
         }
 
         public override string Execute()
@@ -64,8 +63,7 @@ namespace OperationTrident.Common.AI
         public override void Exit()
 		{
             _agent.PathfindingAgent.isStopped = true;
-            _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			//_agent.ActionController.Move(false);
-        }
+			_agent.ActionController.Move(false);
+		}
     }
 }

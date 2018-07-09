@@ -18,14 +18,12 @@ namespace OperationTrident.Common.AI
 
         public override void Init()
         {
-            _agent.ActionController.RPC(_agent.ActionController.DetectedTarget, true);
-            //_agent.ActionController.DetectedTarget(true);
+            _agent.ActionController.DetectedTarget(true);
         }
 
         public override string Execute()
         {
-            _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.position);
-            //_agent.ActionController.LookAt(_agent.Target.position);
+            _agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
             if (_agent.Camera.DetectTarget(_agent.Target))
@@ -40,8 +38,7 @@ namespace OperationTrident.Common.AI
 
         public override void Exit()
         {
-            _agent.ActionController.RPC(_agent.ActionController.DetectedTarget, false);
-            //_agent.ActionController.DetectedTarget(false);
+            _agent.ActionController.DetectedTarget(false);
         }
     }
 }

@@ -40,6 +40,8 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject boss;
 
+        [SerializeField]
+        protected GameObject trueBoss;
         /*
         [SerializeField] 
         protected GameObject realBoss;
@@ -70,7 +72,6 @@ namespace room2Battle {
 
         private void Start()
         {
-            AIController.instance.AddAIObject(boss);
         }
 
         public override void notify(int i)
@@ -114,11 +115,15 @@ namespace room2Battle {
                 if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
-                    boss.transform.position = bossInitPos.position;
+                    trueBoss.transform.position = bossInitPos.position;
+                    trueBoss.SetActive(true);
 
+                    Destroy(boss.gameObject);
+                    //动画位置同步
+                    AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    nextScene_.SetActive(true);
-                    door.transform.position = doorPos.position;
+                    openDoor();
+                    mController.RPC(this, "openDoor");
                 }
             }
             else {
@@ -133,9 +138,13 @@ namespace room2Battle {
             
         }
 
-        void openDoor()
+        public void openDoor()
         {
-            Destroy(door.gameObject);
+            if (door.gameObject)
+            {
+                Destroy(door.gameObject);
+                nextScene_.SetActive(true);
+            }
         }
 
         void OnGUI()

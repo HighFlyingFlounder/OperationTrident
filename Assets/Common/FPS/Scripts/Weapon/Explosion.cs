@@ -21,15 +21,13 @@ namespace OperationTrident.FPS.Weapons {
 
         //将Start设置为协程，自动开始协程
         IEnumerator Start() {
-            //暂停一帧，避免有碎片还没被创建
-            yield return null;
-            //yield return new WaitForSeconds(0.1f);
+            ////暂停一帧，避免有碎片还没被创建
+            //yield return null;
+            yield return new WaitForSeconds(0.1f);
 
             //获取物理层
             int layer = LayerMask.NameToLayer(LayerMaskName);
             Collider[] cols;
-            Collider[] colsWithoutMask;
-
             if (layer != -1) {
                 //创建物理遮罩
                 LayerMask mask = ~(1 << layer);
@@ -40,8 +38,6 @@ namespace OperationTrident.FPS.Weapons {
                 //爆炸范围内的物体
                 cols = Physics.OverlapSphere(transform.position, ExplosionRadius);
             }
-
-            colsWithoutMask = Physics.OverlapSphere(transform.position, ExplosionRadius);
 
             //造成伤害
             if (CauseDamage) {
@@ -64,18 +60,16 @@ namespace OperationTrident.FPS.Weapons {
                 if (col.attachedRigidbody != null && !rigidbodies.Contains(col.attachedRigidbody)) {
                     rigidbodies.Add(col.attachedRigidbody);
                 }
-            }
 
-            foreach (Rigidbody rb in rigidbodies) {
-                rb.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 1, ForceMode.Impulse);
-            }
-
-            foreach(Collider col in colsWithoutMask) {
                 //如果子对象包含Vibration脚本，就调用函数进行抖动
                 if (ShakeCamera && col.transform.GetComponentInChildren<Vibration>() != null) {
                     float shakeViolence = 1 / (Vector3.Distance(transform.position, col.transform.position) * CameraShakeViolence);
                     col.transform.GetComponentInChildren<Vibration>().StartShakingRandom(-shakeViolence, shakeViolence, -shakeViolence, shakeViolence);
                 }
+            }
+
+            foreach (Rigidbody rb in rigidbodies) {
+                rb.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 1, ForceMode.Impulse);
             }
         }
     }

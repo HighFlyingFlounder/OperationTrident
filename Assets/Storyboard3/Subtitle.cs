@@ -5,7 +5,7 @@ using OperationTrident.Util;
 
 public class Subtitle : MonoBehaviour {
     public string[] subtitles;
-    //public Camera camera = Camera.current;
+    public Camera camera;
     public float[] secondsOfEachLine;
     public float[] secondBetweenLine;
     // Use this for initialization
@@ -17,7 +17,7 @@ public class Subtitle : MonoBehaviour {
     {
         GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
             subtitles,
-            Camera.current,
+            camera,
             GUIUtil.DefaultFontSize,
             GUIUtil.DefaultSubtitleRatioHeight,
             secondsOfEachLine,

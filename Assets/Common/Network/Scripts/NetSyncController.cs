@@ -26,7 +26,7 @@ public class NetSyncController : MonoBehaviour
         sync_scripts.Remove(Component);
     }
 
-    void Awake()
+    void Start()
     {
         for (int i = 0; i < sync_scripts.Count; i++)
         {

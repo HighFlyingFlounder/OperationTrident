@@ -36,8 +36,7 @@ namespace OperationTrident.Common.AI
             {
                 return Conditions.LOST_TARGET;
             }
-            _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.position);
-            //_agent.ActionController.LookAt(_agent.Target.position);
+            _agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
 
@@ -47,15 +46,12 @@ namespace OperationTrident.Common.AI
             {
                 _agent.PathfindingAgent.SetDestination(_agent.Target.position);
                 _agent.PathfindingAgent.isStopped = false;
-                _agent.ActionController.RPC(_agent.ActionController.Move, true);
-                //_agent.ActionController.Move(true);
+                _agent.ActionController.Move(true);
             }
             else
             {
-                _agent.ActionController.RPC(_agent.ActionController.Shoot, shootingPoint);
-                //_agent.ActionController.Shoot(shootingPoint);
-                _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			    //_agent.ActionController.Move(false);
+                _agent.ActionController.Shoot(shootingPoint);
+			    _agent.ActionController.Move(false);
                 satisfy = Conditions.FINISH_ONCE_SHOOT;
             }
 
@@ -75,8 +71,7 @@ namespace OperationTrident.Common.AI
         public override void Exit()
 		{
 			_agent.PathfindingAgent.isStopped = true;
-            _agent.ActionController.RPC(_agent.ActionController.Move, false);
-            //_agent.ActionController.Move(false);
-        }
+            _agent.ActionController.Move(false);
+		}
     }
 }

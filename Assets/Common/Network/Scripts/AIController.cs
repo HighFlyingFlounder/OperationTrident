@@ -85,7 +85,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
         }
     }
 
-    public void CreateAI(int num, int type, string swopPoints, AIAgentInitParams args)
+    public void CreateAI(int num, int type, string swopPoints, AIAgentInitParams[] args)
     {
         if (!GameMgr.instance)//离线状态
         {
@@ -100,13 +100,8 @@ public class AIController : MonoBehaviour, NetSyncInterface
         }
     }
 
-    public void createAIImplement(int num, int type, string swopPoints, AIAgentInitParams args)
+    public void createAIImplement(int num, int type, string swopPoints, AIAgentInitParams[] args)
     {
-        if (GameObject.Find(swopPoints) == null)
-        {
-            Debug.LogError("SwopPoints Not Found!");
-            return;
-        }
         Transform sp = GameObject.Find(swopPoints).transform;
         Transform swopTrans;
         Debug.Log("createAIImplement");
@@ -132,7 +127,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
             //创建的AI初始化信息
             begin_id++;
             AI.name = "AI" + begin_id;
-            AI.GetComponent<AIAgent>().SetInitParams(args);
+            AI.GetComponent<AIAgent>().SetInitParams(args[i]);
             AI_List.Add(AI.name, AI);
 
             //初始化位置和转向预测数据

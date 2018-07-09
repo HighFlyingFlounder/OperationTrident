@@ -23,8 +23,7 @@ namespace OperationTrident.Common.AI
 			// 设置寻路目标点
             _agent.PathfindingAgent.SetDestination(_agent.TargetPosition);
             _agent.PathfindingAgent.isStopped = false;
-            _agent.ActionController.RPC(_agent.ActionController.Move, true);
-            //_agent.ActionController.Move(true);
+            _agent.ActionController.Move(true);
         }
 
         public override string Execute()
@@ -51,8 +50,7 @@ namespace OperationTrident.Common.AI
 		public override void Exit()
 		{
             _agent.PathfindingAgent.isStopped = true;
-            _agent.ActionController.RPC(_agent.ActionController.Move, false);
-            //_agent.ActionController.Move(false);
-        }
+            _agent.ActionController.Move(false);
+		}
     }
 }

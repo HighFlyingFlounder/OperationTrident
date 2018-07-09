@@ -310,21 +310,11 @@ namespace OperationTrident.FPS.Weapons {
         private Hashtable m_RecoilParam;
         //发射射线的起点
         private Transform m_CurrentShootPoint;
-        //换弹协程
-        private Coroutine m_ReloadCoroutine;
-
-        private bool m_IsReloading;
 
         private NetSyncController m_NetSyncController;
 
         #region 生命周期函数
         private void OnEnable() {
-            if(m_IsReloading) {
-                m_IsReloading = false;
-
-                Reload();
-            }
-
             WeaponModel.SetActive(true);
         }
 
@@ -342,15 +332,12 @@ namespace OperationTrident.FPS.Weapons {
             //重置计时器
             FireTimer = 0.0f;
 
-            //设置换弹状态
-            m_IsReloading = false;
-
             //初始化当前总弹药量
             m_CurrentTotalAmmo = TotalAmmo;
-            ////开始时先执行一次换弹
-            //Reload();
-            //初始化武器的当前弹药量
-            m_CurrentAmmo = AmmoCapacity;
+            //开始时先执行一次换弹
+            Reload();
+            ////初始化武器的当前弹药量
+            //m_CurrentAmmo = AmmoCapacity;
 
             //确保设置了射线起点
             if (RaycastStartSpot == null) {
@@ -465,9 +452,8 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //如果设置了自动换弹，弹药用光之后进行换弹
-            if (ReloadAutomatically && m_CurrentAmmo <= 0 && !m_IsReloading) {
+            if (ReloadAutomatically && m_CurrentAmmo <= 0)
                 Reload();
-            }
 
             //从后坐力偏移恢复至起始位置
             if (PlayerWeapon && UseRecoil && Type != Weapons.WeaponType.Beam) {
@@ -532,14 +518,6 @@ namespace OperationTrident.FPS.Weapons {
         }
 
         private void OnDisable() {
-            //还没换完弹就换枪
-            if(m_IsReloading) {
-                //重新开始换弹
-                FireTimer = -ReloadTime;
-                //停止换弹协程
-                StopCoroutine(m_ReloadCoroutine);
-            }
-
             WeaponModel.SetActive(false);    
         }
         #endregion
@@ -626,7 +604,6 @@ namespace OperationTrident.FPS.Weapons {
             }
         }
 
-        #region 非玩家调用函数
         //非键盘输入触发武器开火，用于网络或者AI
         public void RemoteFire() {
             AIFiring();
@@ -713,7 +690,6 @@ namespace OperationTrident.FPS.Weapons {
             yield return new WaitForSeconds(DelayBeforeFire);
             Beam();
         }
-        #endregion
 
         #region RPC函数
         //射线武器，开火
@@ -723,6 +699,7 @@ namespace OperationTrident.FPS.Weapons {
                 m_NetSyncController.RPC(this, "Fire");
             }
 
+            SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //重置计时器
             FireTimer = 0.0f;
@@ -731,18 +708,14 @@ namespace OperationTrident.FPS.Weapons {
             BurstCounter++;
 
             //半自动武器不能连续射击
-            if (AutoMode == Auto.Semi) {
+            if (AutoMode == Auto.Semi)
                 m_CanFire = false;
-            }
 
             //判断当前是否仍有弹药
             if (m_CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
-
-            //能够开枪，发送开枪消息
-            SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //如果不是无线弹药模式，减少弹药量
             if (!InfiniteAmmo)
@@ -923,6 +896,7 @@ namespace OperationTrident.FPS.Weapons {
                 m_NetSyncController.RPC(this, "Launch");
             }
 
+            SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //重置计时器
             FireTimer = 0.0f;
@@ -931,18 +905,14 @@ namespace OperationTrident.FPS.Weapons {
             BurstCounter++;
 
             //半自动武器不能连续射击
-            if (AutoMode == Auto.Semi) {
+            if (AutoMode == Auto.Semi)
                 m_CanFire = false;
-            }
 
             //判断当前是否仍有弹药
             if (m_CurrentAmmo <= 0) {
                 DryFire();
                 return;
             }
-
-            //能够开枪，发送开枪消息
-            SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //如果不是无限弹药模式，减少弹药量
             if (!InfiniteAmmo) {
@@ -1004,7 +974,6 @@ namespace OperationTrident.FPS.Weapons {
                 m_NetSyncController.RPC(this, "Beam");
             }
 
-            //能够开枪，发送开枪消息
             SendMessage("StartShooting", SendMessageOptions.DontRequireReceiver);
 
             //当前正在发射激光
@@ -1025,6 +994,7 @@ namespace OperationTrident.FPS.Weapons {
             LineRenderer beamLR = m_BeamGO.GetComponent<LineRenderer>();
             beamLR.material = BeamMaterial;
             beamLR.material.SetColor("_TintColor", BeamColor);
+            //beamLR.SetWidth(startBeamWidth, endBeamWidth);
             beamLR.startWidth = StartBeamWidth;
             beamLR.endWidth = EndBeamWidth;
 
@@ -1149,38 +1119,16 @@ namespace OperationTrident.FPS.Weapons {
 
         //换弹
         public void Reload() {
-            //如果子弹数满，或者说正在换弹，不执行任何操作
-            if (m_CurrentAmmo == AmmoCapacity || m_IsReloading) {
-                return;
-            }
-
             //调用RPC函数
             if (IsLocalObject) {
                 m_NetSyncController.RPC(this, "Reload");
             }
 
-            if (m_IsUsingMirror) {
-                SwitchMirrorState();
+            if(m_CurrentAmmo == AmmoCapacity) {
+                return;
             }
 
-            m_IsReloading = true;
-            SendMessage("UpdateReloadState", m_IsReloading, SendMessageOptions.DontRequireReceiver);
-
-            //停止计时器
-            FireTimer = -ReloadTime;
-            //播放换弹音效
-            GetComponent<AudioSource>().PlayOneShot(ReloadSound);
-            //开启换弹协程
-            m_ReloadCoroutine = StartCoroutine(StartReload());
-        }
-
-        //换弹协程
-        private IEnumerator StartReload() {
-            while(FireTimer < 0f) {
-                yield return null;
-            }
-
-            //更新弹药信息
+            //判断是否使用有限弹药
             if (LimitedTotalAmmo) {
                 if (m_CurrentTotalAmmo >= AmmoCapacity) {
                     //更新弹药量
@@ -1197,9 +1145,12 @@ namespace OperationTrident.FPS.Weapons {
                 //更新弹药量
                 m_CurrentAmmo = AmmoCapacity;
             }
+            
 
-            m_IsReloading = false;
-            SendMessage("UpdateReloadState", m_IsReloading, SendMessageOptions.DontRequireReceiver);
+            //停止计时器
+            FireTimer = -ReloadTime;
+            //播放换弹音效
+            GetComponent<AudioSource>().PlayOneShot(ReloadSound);
         }
 
         //切换瞄准镜的状态
