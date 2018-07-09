@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.EventSystem;
+using OperationTrident.Util;
 
 namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
@@ -59,25 +60,27 @@ namespace OperationTrident.Elevator {
                         c_time = s_time;
                         e_time = s_time + r_time;
 
-                        bcollider.size = new Vector3(40, bcollider.size.y, bcollider.size.z);
+                        bcollider.size = new Vector3(bcollider.size.x * 2f, bcollider.size.y, bcollider.size.z);
 
                         change = false;
+
+                        GameObject.Find("BGM").GetComponent<AudioSource>().Play();
                     }
                     else
                     {
                         c_time += Time.deltaTime;
+                        
 
                         //准备时间结束，切换到下一个场景
                         if (c_time >= e_time)
                         {
                             changeState();
-                            m_controller.RPC(this, "changeState");
                         }
                     }
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    Messenger.Broadcast(GameEvent.Enemy_Start);
+                    //Messenger.Broadcast(GameEvent.Enemy_Start);
 
                     //开始计时
                     s_time = Time.time;
@@ -98,7 +101,7 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.End:
-                    Messenger.Broadcast(GameEvent.End);
+                    //Messenger.Broadcast(GameEvent.End);
 
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
