@@ -77,19 +77,21 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1()
         {
             yield return new WaitForSeconds(5.0f);
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 2; ++i)
             {
-                AIController.instance.CreateAI(2, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
-
-            }//EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
+                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+            }
+            //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
 
         //生成第二波敌人
         private IEnumerator spawnEnemies2()
         {
             yield return new WaitForSeconds(10.0f);
-            for (int i = 0; i < 4; ++i)
-                EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1, m_EnemyGenPos[i]);
+            for (int i = 0; i < 2; ++i)
+            {
+                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+            }
         }
 
         /***************************************************

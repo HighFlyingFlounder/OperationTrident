@@ -24,9 +24,8 @@ namespace OperationTrident.Room5
         public AudioSource m_AudioSource;
         public AudioClip m_BGM_Start;
 
-
-        //是否联网初始化完毕
-        private bool isNetworkInitialized = false;
+        //是否已经更改了Player的Scale（联网的时候要等各个player都被network manager创建出来才行）
+        private bool m_isPlayerScaled = false;
 
         public override bool isTransitionTriggered()
         {
@@ -72,33 +71,8 @@ namespace OperationTrident.Room5
                 m_isTokamakeStartToCoolDown = true;
                 gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
-            //时刻检查是否联网，避免一开始联网玩家没有加载出来出现null引用的问题
-            if (GameMgr.instance)
-            {
-                if (!isNetworkInitialized)
-                {
-                    
-                    //设置Camera用于交互
-                    /*if (SceneNetManager.instance.list.ContainsKey(GameMgr.instance.id))
-                    {
-                        //mCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).transform.Find("Camera").gameObject;
-                        /*GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-                        foreach (GameObject player in players)
-                        {
-                            m_GetCamera = player.GetComponent<GetCamera>();
-                            if (m_GetCamera != null)
-                            {
-                                break;
-                            }
-                        }
 
-                        //设置当前的Camera用于Raycast交互
-                        m_ControlPanel.SetGUICamera(Room5.GetCameraUtil.GetCurrentCamera());
-                        m_TorCore.SetGUICamera(Room5.GetCameraUtil.GetCurrentCamera());
-                        isNetworkInitialized = true;
-                    }*/
-                }
-            }
+            TryInitPlayerScale();
         }
 
         private void OnGUI()
@@ -157,7 +131,29 @@ namespace OperationTrident.Room5
             
         }
 
+        //scale一下联网时各个player的大小（玩家不一定在start的时候被创建，所以要在update里面搞这玩意）
+        private void TryInitPlayerScale()
+        {
+            if (GameMgr.instance && m_isPlayerScaled==false)
+            {
+                //当前的玩家数量
+                int playerCount = SceneNetManager.instance.list.Count;
 
+                if (playerCount!=0)
+                {
+                    //遍历所有玩家（本地和联网的）
+                    foreach (var p in SceneNetManager.instance.list)
+                    {
+                        GameObject temp = p.Value;
+                        temp.transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+                    }
+                }
+            }
+            else
+            {
+                GameObject.FindWithTag("Player").transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+            }
+        }
 
     }
 }
