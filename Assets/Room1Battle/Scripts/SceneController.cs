@@ -5,6 +5,7 @@ using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using System;
 using UnityEngine.Playables;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Room1
 {
@@ -82,6 +83,9 @@ namespace OperationTrident.Room1
 
         public static Room1State state;
 
+        [SerializeField]
+        WanderAIAgentInitParams[] _wanderAIAgentInitParams;
+
         private void Awake()
         {
             // 增加第一个key的侦听器
@@ -120,6 +124,7 @@ namespace OperationTrident.Room1
             elevator.playOnAwake = false;
             //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
+            AIController.instance.CreateAI(5, 1, "AIborn1", _wanderAIAgentInitParams[0]);
         }
 
         // Update is called once per frame
