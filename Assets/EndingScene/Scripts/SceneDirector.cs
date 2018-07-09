@@ -190,7 +190,7 @@ namespace OperationTrident.EndingScene
             {
                 if(m_Time > c_explodeStartTime + m_BgmBarTime * i*2 )
                 {
-                    m_ExplosionGenerator.SetExplodeMaxInterval(0.5f - 0.05f * i);
+                    m_ExplosionGenerator.SetExplodeMaxInterval(0.4f - 0.05f * i);
                     m_LookingAtKunCamShakingAmp = 3f *(i+1);
                 }
             }

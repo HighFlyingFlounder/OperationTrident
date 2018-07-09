@@ -157,7 +157,7 @@ public class RoomPanel : PanelBase
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        SceneManager.LoadScene(GameMgr.instance.startScene, LoadSceneMode.Single);
+        SceneManager.LoadScene("Loading", LoadSceneMode.Single);
         Close();
     }
 
