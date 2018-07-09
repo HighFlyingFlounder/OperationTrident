@@ -33,7 +33,7 @@ namespace OperationTrident.Common.AI
                 return Conditions.SIGHT_PLAYER;
             }
 
-            _duration -= Time.deltaTime;
+            _duration -= (_agent.fsmUpdateTime + Time.deltaTime);
             if (_duration < 0)
             {
                 return Conditions.FINISH_INSPECTION;
