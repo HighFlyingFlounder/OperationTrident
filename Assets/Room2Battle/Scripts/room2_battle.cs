@@ -119,7 +119,8 @@ namespace room2Battle {
                     trueBoss.SetActive(true);
 
                     Destroy(boss.gameObject);
-
+                    //动画位置同步
+                    AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     openDoor();
                     mController.RPC(this, "openDoor");
