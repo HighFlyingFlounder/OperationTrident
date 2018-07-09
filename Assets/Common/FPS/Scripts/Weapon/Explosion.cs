@@ -5,25 +5,25 @@ using OperationTrident.Common;
 
 namespace OperationTrident.FPS.Weapons {
     public class Explosion : MonoBehaviour {
+        [Tooltip("不检测的物理层名称")]
         public string LayerMaskName;
-        //爆炸击退力
+        [Tooltip("爆炸击退力")]
         public float ExplosionForce = 5.0f;
-        //爆炸的半径
+        [Tooltip("爆炸的半径")]
         public float ExplosionRadius = 10.0f;
-        //是否晃动摄像机
+        [Tooltip("是否晃动摄像机")]
         public bool ShakeCamera = true;
-        //摄像机晃动剧烈程度
+        [Tooltip("摄像机晃动剧烈程度")]
         public float CameraShakeViolence = 0.5f;
-        //是否造成伤害
+        [Tooltip("是否造成伤害")]
         public bool CauseDamage = true;
-        //伤害大小
+        [Tooltip("伤害大小")]
         public float Damage = 10.0f;
 
         //将Start设置为协程，自动开始协程
         IEnumerator Start() {
             //暂停一帧，避免有碎片还没被创建
             yield return null;
-            //yield return new WaitForSeconds(0.1f);
 
             //获取物理层
             int layer = LayerMask.NameToLayer(LayerMaskName);
@@ -51,7 +51,8 @@ namespace OperationTrident.FPS.Weapons {
                     //造成伤害
                     ReactiveTarget target = col.gameObject.GetComponent<ReactiveTarget>();
                     if (target) {
-                        target.OnHit(this.gameObject.name, false, Damage);
+                        //第二个参数为true，不分敌我进行伤害
+                        target.OnHit(this.gameObject.name, true, Damage);
                     }
                 }
             }

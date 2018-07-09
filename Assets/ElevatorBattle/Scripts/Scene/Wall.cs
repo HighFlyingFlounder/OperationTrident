@@ -138,11 +138,11 @@ namespace OperationTrident.Elevator
                             state = true;
 
                             door.SetActive(true);
-                            if (child1.transform.position.y == origin)
+                            if (child1.transform.position.y <= origin + height)
                                 d1.SetActive(false);
-                            if (child2.transform.position.y == origin)
+                            if (child2.transform.position.y <= origin + height)
                                 d2.SetActive(false);
-                            if (child3.transform.position.y == origin)
+                            if (child3.transform.position.y <= origin + height)
                                 d3.SetActive(false);
                         }
                     }

@@ -10,10 +10,10 @@ public class ReactiveTargetEditor : Editor {
     public override void OnInspectorGUI() {
         ReactiveTarget reactiveTarget = (ReactiveTarget)target;
 
-        reactiveTarget.IsPlayer = EditorGUILayout.Toggle(new GUIContent("Is Player", "是否为Player"), reactiveTarget.IsPlayer);
-        reactiveTarget.CanBeHurt = EditorGUILayout.Toggle(new GUIContent("Can Be Hurt", "能否收到伤害"), reactiveTarget.CanBeHurt);
+        reactiveTarget.IsPlayer = EditorGUILayout.Toggle(new GUIContent("Is Player", "是否为Player对象"), reactiveTarget.IsPlayer);
+        reactiveTarget.CanBeHurt = EditorGUILayout.Toggle(new GUIContent("Can Be Hurt", "能否受到伤害"), reactiveTarget.CanBeHurt);
         reactiveTarget.MaxHealth = EditorGUILayout.FloatField(new GUIContent("Max Health", "最大血量值"), reactiveTarget.MaxHealth);
-        reactiveTarget.ShowHealth = EditorGUILayout.Toggle(new GUIContent("Show Health", "是否显示血量值"), reactiveTarget.ShowHealth);
+        reactiveTarget.ShowHealth = EditorGUILayout.Toggle(new GUIContent("Show Health", "是否在界面上显示剩余血量值"), reactiveTarget.ShowHealth);
 
 
         if (reactiveTarget.IsPlayer) {
