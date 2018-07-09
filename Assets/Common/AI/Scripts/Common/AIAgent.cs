@@ -85,7 +85,8 @@ namespace OperationTrident.Common.AI
             if (!ReactiveTarget.IsAlive && !_isDestory)
             {
                 _isDestory = true;
-                StartCoroutine(ActionController.Destroy());
+                ActionController.RPC(ActionController.Die);
+                //ActionController.Die();
             }
 
             if (ReactiveTarget.IsParalyzed || !ReactiveTarget.IsAlive)
