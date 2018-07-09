@@ -40,7 +40,6 @@ namespace OperationTrident.Common {
         }
 
         public void OnHit(string id, bool fromAI, float damage) {
-            Debug.LogFormat("id = {0} fromAI = {1} damage = {2} GameMgr.instance.id = {3} ", id, fromAI, damage, GameMgr.instance.id);
             //单机状态
             if (GameMgr.instance == null) {
                 HitImplement(damage);
