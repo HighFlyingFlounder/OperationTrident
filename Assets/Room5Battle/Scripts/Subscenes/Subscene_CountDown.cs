@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Room5
 {
@@ -9,6 +10,10 @@ namespace OperationTrident.Room5
     {
         //反应柱开始冷却（变色）
         public TokamakReactorPillar m_ReactorPillar;
+
+        public WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+        public TurretActionController[] turretActionController;
 
         //敌人的prefab
         public GameObject m_EnemyPrefab1;
@@ -22,7 +27,6 @@ namespace OperationTrident.Room5
         //BGM播放
         public AudioSource m_AudioSource;
         public AudioClip m_BGM_CountingDown;
-
 
         public override bool isTransitionTriggered()
         {
@@ -73,7 +77,11 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1()
         {
             yield return new WaitForSeconds(5.0f);
-            for(int i=0;i<4;++i) EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
+            for (int i = 0; i < 4; ++i)
+            {
+                AIController.instance.CreateAI(2, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+
+            }//EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
 
         //生成第二波敌人
