@@ -87,7 +87,8 @@ namespace OperationTrident.Common {
             //生成替代模型
             if (ReplaceWhenDie) {
                 if(DeadReplacement != null) {
-                    Instantiate(DeadReplacement, transform.position, transform.rotation);
+                    GameObject replacement = Instantiate(DeadReplacement, transform.position, transform.rotation);
+                    replacement.transform.localScale = this.transform.localScale;
                 } else {
                     Debug.LogWarning("Can not find DeadReplacement to Instantiate");
                 }
@@ -97,7 +98,8 @@ namespace OperationTrident.Common {
                 if(DeathCamera != null) {
                     DeathCamera.SetActive(true);
                     DeathCamera.transform.SetParent(null);
-                    //这里可以设置镜头上移
+                    //对摄像机进行移动
+                    CameraAnimation();
                 } else {
                     Debug.LogWarning("Can not find DeathCamera to active");
                 }
@@ -128,6 +130,11 @@ namespace OperationTrident.Common {
                 //AIController.instance.DestroyAI(gameObject.name);
             }
             */
+        }
+
+        //这里可以设置镜头的动画
+        private void CameraAnimation() {
+
         }
 
         public void SendDead() {
