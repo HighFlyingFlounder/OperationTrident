@@ -20,7 +20,7 @@ namespace OperationTrident.StartScene
         // Update is called once per frame
         void Update()
         {
-            camera.transform.Rotate(new Vector3(0.0f, rotateSpeed, 0.0f));
+            camera.transform.Rotate(new Vector3(0.0f, rotateSpeed*Time.deltaTime, 0.0f));
         }
     }
 }

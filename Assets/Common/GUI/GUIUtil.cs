@@ -298,6 +298,7 @@ namespace OperationTrident.Util
         /// <returns type="Vector4">
         /// 返回一个处理之后的颜色向量
         /// </returns>
+        [Obsolete]
         public static Vector4 TransparentMoreColor(Vector4 color, float factor)
         {
             return new Vector4(color.x, color.y, color.z, Math.Max(color.w - factor / 256.0f, 0.0f));
@@ -316,7 +317,6 @@ namespace OperationTrident.Util
         /// <returns type="Color">
         /// 返回一个处理之后的颜色向量
         /// </returns>
-        [Obsolete]
         public static Vector4 TransparentMoreColor(Color color, float factor)
         {
             return new Vector4(color.r, color.g, color.b, Math.Max(color.a - factor / 256.0f, 0.0f));
