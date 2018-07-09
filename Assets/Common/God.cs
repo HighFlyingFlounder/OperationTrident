@@ -14,7 +14,9 @@ public class God : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+            GameMgr.instance.nextScene = nextScene;
+            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+            //SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
         }
 	}
 }
