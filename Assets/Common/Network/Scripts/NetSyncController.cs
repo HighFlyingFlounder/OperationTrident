@@ -40,6 +40,17 @@ public class NetSyncController : MonoBehaviour
         NetMgr.srvConn.msgDist.AddListener(sync_id + "RPC", RecvRPC);
     }
 
+    public void setSyncID(string _sync_id)
+    {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "RPC", RecvRPC);
+        sync_id = _sync_id;
+        NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.AddListener(sync_id + "RPC", RecvRPC);
+    }
+
     void SendNetSync()
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
