@@ -10,7 +10,7 @@ namespace OperationTrident.FPS.Common {
         private Camera m_MainCamera;
         private Camera[] m_MirrorCameras;
 
-        void Start() {
+        void Awake() {
             //默认为主摄像机
             m_MainCamera = MainCamera.GetComponent<Camera>();
 
