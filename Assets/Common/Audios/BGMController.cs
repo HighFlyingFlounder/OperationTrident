@@ -343,19 +343,19 @@ namespace OperationTrident.AudioSystem
         // 淡入淡出的类型：线性，凹的和凸的
         public enum FadedType { Linear, Concave, Raised };
         // 淡入速度
-        public int fadeInSpeed;
+        public float fadeInSpeed;
         // 淡出速度
-        public int fadeOutSpeed;
+        public float fadeOutSpeed;
         // 淡入类型
         public FadedType fadeInType;
         // 淡出类型
         public FadedType fadeOutType;
 
         // 一个很一般的构造函数，接受全部参数
-        public FadedParameter(int fadeInUntilTime, int fadeOutFromTime, FadedType fadeInType, FadedType fadeOutType)
+        public FadedParameter(float fadeInUntilTime, float fadeOutFromTime, FadedType fadeInType, FadedType fadeOutType)
         {
-            this.fadeInSpeed = fadeInUntilTime;
-            this.fadeOutSpeed = fadeOutFromTime;
+            fadeInSpeed = fadeInUntilTime;
+            fadeOutSpeed = fadeOutFromTime;
             this.fadeInType = fadeInType;
             this.fadeOutType = fadeOutType;
         }
