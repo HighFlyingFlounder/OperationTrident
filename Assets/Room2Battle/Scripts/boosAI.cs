@@ -6,7 +6,7 @@ using UnityEngine;
 namespace room2Battle
 {
 
-    public class boosAI : MonoBehaviour,NetSyncInterface
+    public class boosAI : MonoBehaviour, NetSyncInterface
     {
         public enum fireState
         {
@@ -60,7 +60,7 @@ namespace room2Battle
         //==================================================
         //目标位置
         [SerializeField]
-        protected Transform target;
+        protected Transform target = null;
 
         //动画状态相关bool值
         protected bool shoot = false;
@@ -148,6 +148,7 @@ namespace room2Battle
                                     //随机搞
                                     //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
                                     target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
+                                    //netSyncController.RPC(this, "targetSync",target);
                                 }
                                 //开始抬手
                                 switch (choice)
@@ -198,8 +199,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    leftHandFireImpl();
-                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    leftHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "leftHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -233,8 +234,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    leftHandFireImpl();
-                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    leftHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "leftHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -275,8 +276,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    rightHandFireImpl();
-                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    rightHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "rightHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -309,8 +310,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    rightHandFireImpl();
-                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    rightHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "rightHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -382,6 +383,11 @@ namespace room2Battle
             }
         }
 
+        public void targetSync(Transform trans)
+        {
+            target = trans;
+        }
+
         public void missileLaunchImpl(Vector3 positon)
         {
             foreach (missilLauncher a in pos)
@@ -394,14 +400,18 @@ namespace room2Battle
         /// <summary>
         /// 开枪
         /// </summary>
-        public void leftHandFireImpl()
+        public void leftHandFireImpl(Vector3 target_)
         {
-            Instantiate(Missiles[0], leftHand.position, transform.rotation);
+            GameObject obj = Instantiate(Missiles[0], leftHand.position, transform.rotation);
+            obj.transform.position = leftHand.position;
+            obj.transform.up = (target_ - obj.transform.position);
         }
 
-        public void rightHandFireImpl()
+        public void rightHandFireImpl(Vector3 target_)
         {
-            Instantiate(Missiles[0], rightHand.position, transform.rotation);
+            GameObject obj = Instantiate(Missiles[0], rightHand.position, transform.rotation);
+            obj.transform.position = rightHand.position;
+            obj.transform.up = (target_ - obj.transform.position);
         }
 
         //转向玩家
@@ -459,11 +469,11 @@ namespace room2Battle
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-1.0f, 2.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
                     break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-3.0f, 1.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
                     break;
             }
         }
