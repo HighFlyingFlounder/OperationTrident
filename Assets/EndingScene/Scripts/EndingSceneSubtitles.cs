@@ -43,7 +43,7 @@ namespace OperationTrident.EndingScene
                     };
 
                     float[] subtitleTime = { 8.3f, 2.5f, 4.0f, 3.0f };
-                    float[] intervals = { 0, 0.5f, 2.0f, 2.0f };
+                    float[] intervals = { 0, 0.5f, 4.5f, 1.5f };
                     GUIUtil.DisplaySubtitlesInGivenGrammarWithTimeStamp(
                         subtitles, m_CamFree, GUIUtil.DefaultFontSize, GUIUtil.DefaultSubtitleRatioHeight, subtitleTime, intervals);
 

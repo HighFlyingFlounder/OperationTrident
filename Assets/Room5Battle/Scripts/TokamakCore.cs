@@ -97,8 +97,7 @@ namespace OperationTrident.Room5
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            return data;
+            return null;
         }
 
         public void Init(NetSyncController controller)

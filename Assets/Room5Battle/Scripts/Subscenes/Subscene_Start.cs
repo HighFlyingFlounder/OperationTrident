@@ -58,11 +58,13 @@ namespace OperationTrident.Room5
             m_ControlPanel.Initialize(
                 "Room5ControlPanel", KeyCode.F, 5.0f,//Camera.main
                 "^w按住^yF^w开始核心冷却程序", "^w正在启动冷却程序...");
+            FadeInOutUtil.SetFadingState(5.0f, GetCameraUtil.GetCurrentCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
 
         }
 
         private void  Update()
         {
+            FadeInOutUtil.UpdateState();
             m_ControlPanel.UpdateState();
             if(m_ControlPanel.IsInteractionDone())
             {
@@ -101,11 +103,27 @@ namespace OperationTrident.Room5
 
         private void OnGUI()
         {
+            //淡入
+            FadeInOutUtil.RenderGUI();
+
+
             //任务目标
             GUIUtil.DisplayMissionTargetInMessSequently("前往控制台启动核心冷却程序.", GetCameraUtil.GetCurrentCamera(), Color.white);
 
+            //左下角任务细节
+            string[] missionDetails =
+            {
+                "2048.8.1 15:00 p.m. GMT+8",
+                "鲲内部  核聚变反应室",
+                "三叉戟行动"
+            };
+            GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white,18,0.005f,0.1f,0.5f);
+
             //控制台的交互GUI
             m_ControlPanel.RenderGUI();
+
+            //控制台目标距离
+            GUIUtil.DisplayMissionPoint(m_ControlPanel.transform.position, GetCameraUtil.GetCurrentCamera(), Color.white,labelOffsetHeight:5.0f);
 
             //字幕
             string[] subtitles =
