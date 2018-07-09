@@ -59,9 +59,11 @@ namespace OperationTrident.Elevator {
                         c_time = s_time;
                         e_time = s_time + r_time;
 
-                        bcollider.size = new Vector3(40, bcollider.size.y, bcollider.size.z);
+                        bcollider.size = new Vector3(bcollider.size.x * 2f, bcollider.size.y, bcollider.size.z);
 
                         change = false;
+
+                        GameObject.Find("BGM").GetComponent<AudioSource>().Play();
                     }
                     else
                     {
@@ -98,7 +100,7 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.End:
-                    Messenger.Broadcast(GameEvent.End);
+                    //Messenger.Broadcast(GameEvent.End);
 
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
@@ -137,7 +139,7 @@ namespace OperationTrident.Elevator {
             {
                 //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
                 //return;
-                int number = SceneNetManager.instance.list.Count;
+                int number = 1;// SceneNetManager.instance.list.Count;
 
                 count++;
 

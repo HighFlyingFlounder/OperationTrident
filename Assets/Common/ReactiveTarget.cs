@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace OperationTrident.Common {
     public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface {
-        public bool IsPlayer = true;
+        public bool IsPlayer = false;
         public bool CanBeHurt = true;
-        public bool ShowHealth = true;
+        public bool ShowHealth = false;
         public float MaxHealth = 100;
         public bool ReplaceWhenDie = false;
         public GameObject DeadReplacement;
@@ -82,6 +82,8 @@ namespace OperationTrident.Common {
         #endregion
 
         private void PlayerDie() {
+
+            EventSystem.Messenger.Broadcast(Room1.DieHandler.PLAYER_DIE);
             //生成替代模型
             if (ReplaceWhenDie) {
                 if(DeadReplacement != null) {

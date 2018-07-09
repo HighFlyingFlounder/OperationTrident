@@ -18,6 +18,8 @@ public class SceneNetManager : MonoBehaviour
         instance = this;
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
+        if (GameObject.FindGameObjectWithTag("Player"))
+            Destroy(GameObject.FindGameObjectWithTag("Player"));
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("FinishLoading");
@@ -30,8 +32,6 @@ public class SceneNetManager : MonoBehaviour
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
-        if (GameObject.FindGameObjectWithTag("Player"))
-            Destroy(GameObject.FindGameObjectWithTag("Player"));
         StartGame();
     }
     //开始一场游戏的准备工作
