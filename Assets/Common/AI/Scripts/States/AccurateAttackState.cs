@@ -22,8 +22,10 @@ namespace OperationTrident.Common.AI
         {
             if (_agent.Target != null)
             {
-                _agent.ActionController.LookAt(_agent.Target.position);
-                _agent.ActionController.Shoot(_agent.Target.position);
+                _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.position);
+                _agent.ActionController.RPC(_agent.ActionController.Shoot, _agent.Target.position);
+                //_agent.ActionController.LookAt(_agent.Target.position);
+                //_agent.ActionController.Shoot(_agent.Target.position);
             }
             return Conditions.FINISH_ONCE_SHOOT;
         }
