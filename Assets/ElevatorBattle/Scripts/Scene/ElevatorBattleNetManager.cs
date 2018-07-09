@@ -9,7 +9,7 @@ public class ElevatorBattleNetManager : SceneNetManager {
     {
         if(id == GameMgr.instance.id)//本地玩家
         {
-            player.AddComponent<RenderDepth>();
+            
         }
     }
 }
