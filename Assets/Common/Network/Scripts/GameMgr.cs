@@ -7,7 +7,7 @@ public class GameMgr : MonoBehaviour
 
     public string id = "OffLine";
 
-    public string startScene = "SpaceBattle";
+    public string nextScene = "StoryBoard2";//用于全局的状态，传入到AsynLoadingScene
 
     //[HideInInspector]
     public bool isMasterClient = false;//暂时用isOwner（房主）来定master_client

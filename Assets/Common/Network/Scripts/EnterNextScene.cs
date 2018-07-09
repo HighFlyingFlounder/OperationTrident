@@ -60,7 +60,10 @@ public class EnterNextScene : MonoBehaviour {
         {
             //某关卡胜利是直接进入下一个场景，故不会进入这里
             Debug.Log("Room1 胜利！");
-            SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+            GameMgr.instance.nextScene = nextScene;
+            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+
+            //SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
         }
     }
 }
