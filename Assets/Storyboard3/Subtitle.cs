@@ -5,7 +5,7 @@ using OperationTrident.Util;
 
 public class Subtitle : MonoBehaviour {
     public string[] subtitles;
-    //public Camera camera = Camera.current;
+    //public Camera camera = null;
     public float[] secondsOfEachLine;
     public float[] secondBetweenLine;
     // Use this for initialization
