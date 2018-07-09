@@ -278,7 +278,7 @@ namespace OperationTrident.FPS.Player {
         public void Walk(float h, float v) {
             //调用RPC
             if (IsLocalObject) {
-                if (Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f || Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f) {
+                if (Mathf.Abs(m_Input.x - m_PreInput.x) > 0.05f || Mathf.Abs(m_Input.y - m_PreInput.y) > 0.05f) {
                     m_NetSyncController.RPC(this, "Walk", h, v);
                 }
             }

@@ -15,34 +15,33 @@ namespace OperationTrident.FPS.Weapons {
     }
 
     public class Projectile : MonoBehaviour {
-        public bool IsLocalObject = true;
-
-        //抛射物种类
+        [Tooltip("抛射物种类")]
         public ProjectileType SelectedProjectileType = ProjectileType.Standard; 
-        //伤害类型
+        [Tooltip("伤害类型")]
         public DamageType SelectedDamageType = DamageType.Direct;
-        //伤害
+        [Tooltip("伤害大小")]
         public float Damage = 100.0f;
-        //移动速度
+        [Tooltip("移动速度")]
         public float Speed = 10.0f;
-        //发射导弹时给导弹施加的力大小
+        [Tooltip("发射导弹时给导弹施加的力大小,速度为0时设置有效")]
         public float InitialForce = 1000.0f;
-        //最长飞行时间
+        [Tooltip("最长飞行时间")]
         public float Lifetime = 30.0f;
 
-        //追踪目标时的拐弯速率
+        [Tooltip("追踪目标时的拐弯速率")]
         public float SeekRate = 1.0f;
-        //追踪目标的Tag
+        [Tooltip("追踪目标的Tag")]
         public string SeekTag = "Enemy";
-        //爆炸特效
+        [Tooltip("爆炸特效")]
         public GameObject Explosion;
-        //更新追踪目标的速率
+        [Tooltip("更新追踪目标的速率")]
         public float TargetListUpdateRate = 1.0f;
 
-        //炸弹模型
+        [Tooltip("炸弹模型")]
         public GameObject ClusterBomb;
-        //单次射击发射炸弹的数量
+        [Tooltip("单次射击发射炸弹的数量")]
         public int ClusterBombNum = 6;
+        
         
 
         //计时器
@@ -61,11 +60,6 @@ namespace OperationTrident.FPS.Weapons {
 
         // Update is called once per frame
         void Update() {
-            //不是本地物体，不执行任何操作
-            if (!IsLocalObject) {
-                return;
-            }
-
             //计时
             m_LifeTimer += Time.deltaTime;
 
@@ -126,13 +120,14 @@ namespace OperationTrident.FPS.Weapons {
 
             //让被击中物受到伤害
             if (SelectedDamageType == DamageType.Direct) {
-                Debug.LogFormat("col.collider.gameObject.name = {0}", col.collider.gameObject.name);
                 ReactiveTarget target = col.collider.gameObject.GetComponent<ReactiveTarget>();
                 if (target) {
-                    target.OnHit(this.gameObject.name, false, Damage);
+                    //第二个参数设置为true，不分敌我进行伤害
+                    target.OnHit(this.gameObject.name, true, Damage);
                 } else {
                     target = col.collider.transform.root.GetComponent<ReactiveTarget>();
                     if (target) {
+                        //第二个参数设置为true，不分敌我进行伤害
                         target.OnHit(this.gameObject.name, false, Damage);
                     }
                 }
