@@ -72,8 +72,8 @@ namespace OperationTrident.Util
         {
             if (m_GuiCamera == null)
             {
-                Debug.Log("warning: FadeInOutUtil GUI camera没绑定！");
-                return;
+                Debug.Log("warning: FadeInOutUtil GUI camera没绑定！正在变成Camera.current");
+                m_GuiCamera = Camera.current;
             }
 
             Color c = m_FadeColor;
@@ -100,6 +100,7 @@ namespace OperationTrident.Util
                     }
 
                 case FADING_STATE.STOPPED:
+                    GUI.DrawTexture(m_GuiCamera.pixelRect, m_PureTexture, ScaleMode.StretchToFill, true);
                     return;
             }
         }
