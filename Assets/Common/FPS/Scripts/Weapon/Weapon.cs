@@ -540,6 +540,11 @@ namespace OperationTrident.FPS.Weapons {
                 StopCoroutine(m_ReloadCoroutine);
             }
 
+            //如果使用瞄准镜，那么关掉瞄准镜
+            if (m_IsUsingMirror) {
+                SwitchMirrorState();
+            }
+
             WeaponModel.SetActive(false);    
         }
         #endregion
@@ -1149,8 +1154,8 @@ namespace OperationTrident.FPS.Weapons {
 
         //换弹
         public void Reload() {
-            //如果子弹数满，或者说正在换弹，不执行任何操作
-            if (m_CurrentAmmo == AmmoCapacity || m_IsReloading) {
+            //如果子弹数满、或者正在换弹、或者没有子弹可以补充，不执行任何操作
+            if (m_CurrentAmmo == AmmoCapacity || m_IsReloading || m_CurrentTotalAmmo == 0) {
                 return;
             }
 
