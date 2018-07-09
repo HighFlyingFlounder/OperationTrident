@@ -138,7 +138,7 @@ namespace room2Battle {
             
         }
 
-        void openDoor()
+        public void openDoor()
         {
             if (door.gameObject)
             {

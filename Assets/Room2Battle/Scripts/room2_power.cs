@@ -246,56 +246,58 @@ namespace room2Battle
         //TODO： 更新到佩炜的GUI
         void OnGUI()
         {
-            if (isFocus)
-            {
-                float posX = mCamera.pixelWidth / 2 - 50;
-                float posY = mCamera.pixelHeight / 2 - 50;
-                //交互提示
+            if (mCamera != null)
+                {
+                if (isFocus)
+                {
+                    float posX = mCamera.pixelWidth / 2 - 50;
+                    float posY = mCamera.pixelHeight / 2 - 50;
+                    //交互提示
+                    if (!isSwitchOpen)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
+                    }
+                }
+                //深度摄像头是否开启，是否黑
+                bool open = playerCamera.GetComponent<becomeDark>().enabled;
+                bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
+                //没开灯
                 if (!isSwitchOpen)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
-                }
-            }
-            //深度摄像头是否开启，是否黑
-            bool open = playerCamera.GetComponent<becomeDark>().enabled;
-            bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
-            //没开灯
-            if (!isSwitchOpen)
-            {
-                //任务目标
-                GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
-                   mCamera,
-                   GUIUtil.yellowColor,
-                   0.5f, 0.1f, 16);
-                if (!open2 && open)
-                {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                }
-                //目标位置
-                GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
-
-            }
-            else
-            {
-                //杀入2楼
-                if (!isIntoSecondFloor)
-                {
-                    //台词
-                    //GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
                     //任务目标
-                    GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                    GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                        mCamera,
                        GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
-                    //任务目标位置
-                    GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
+                    if (!open2 && open)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
+                    }
+                    //目标位置
+                    GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
+
                 }
-                if (open2 && !isFocus)
+                else
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
+                    //杀入2楼
+                    if (!isIntoSecondFloor)
+                    {
+                        //台词
+                        //GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
+                        //任务目标
+                        GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                           mCamera,
+                           GUIUtil.yellowColor,
+                           0.5f, 0.1f, 16);
+                        //任务目标位置
+                        GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
+                    }
+                    if (open2 && !isFocus)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
+                    }
                 }
             }
-
 
         }
 
