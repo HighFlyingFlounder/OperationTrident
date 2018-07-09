@@ -31,6 +31,10 @@ namespace room2Battle
         [SerializeField]
         protected float rotateSpeed = 1.0f;
 
+        protected Coroutine previousTurn = null;
+
+        protected Coroutine previousAttack = null;
+
         public override IEnumerator Destroy()
         {
             yield return new WaitForSeconds(1.0f);
@@ -41,8 +45,6 @@ namespace room2Battle
         void Start()
         {
             animator = GetComponent<Animator>();
-
-            StartCoroutine(LookAtImpl());
         }
 
         // Update is called once per frame
@@ -53,7 +55,17 @@ namespace room2Battle
 
         public override void LookAt(Vector3 interestPoint)
         {
-            targetPos = interestPoint;
+            //第一次转
+            if (previousTurn == null)
+            {
+                targetPos = interestPoint;
+                previousTurn = StartCoroutine(LookAtImpl());
+            }
+            else {
+                StopCoroutine(previousTurn);
+                targetPos = interestPoint;
+                previousTurn = StartCoroutine(LookAtImpl());
+            }
         }
 
         /// <summary>
@@ -62,26 +74,31 @@ namespace room2Battle
         /// <returns></returns>
         IEnumerator LookAtImpl()
         {
+            //算角度
+            Transform temp = transform;
+            Quaternion originRotation = transform.rotation;
+
+            temp.LookAt(targetPos, transform.up);
+
+            Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
+
+            Quaternion newRotation = Quaternion.Euler(newAngle);
+
             //每帧更新
-            while (true)
+            float time = 0.0f;
+            while (time <= 1.5f)
             {
                 //防止为空
                 if (targetPos != null)
                 {
-                    //利用lookat，算出绕Y轴旋转的角度，不考虑X,Z轴旋转
-                    Transform temp = transform;
-                    Quaternion originRotation = transform.rotation;
-
-                    temp.LookAt(targetPos, transform.up);
-
-                    Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
-
-                    Quaternion newRotation = Quaternion.Euler(newAngle);
                     //一直一点点地旋转
-                    transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * rotateSpeed);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, time / 1.5f);
                 }
-                    yield return new WaitForFixedUpdate();
+                yield return new WaitForFixedUpdate();
+                time += Time.deltaTime;
             }
+                transform.rotation = newRotation;
+            
         }
 
 
@@ -91,6 +108,11 @@ namespace room2Battle
                 animator.SetFloat("speed", 0.3f);
             else
                 animator.SetFloat("speed", 0.0f);
+        }
+
+        public override void Shoot(Vector3 shootingPoint)
+        {
+            
         }
     }
 }

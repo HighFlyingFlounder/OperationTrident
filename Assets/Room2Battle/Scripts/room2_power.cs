@@ -253,7 +253,6 @@ namespace room2Battle
                 //交互提示
                 if (!isSwitchOpen)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", mCamera, 16, 0.9f);
                     GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
                 }
             }
