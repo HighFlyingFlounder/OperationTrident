@@ -119,7 +119,7 @@ namespace room2Battle
                 else if (i == 2)
                 {
                     enter();
-                    m_controller.RPC(this,"enter");
+                    m_controller.RPC(this, "enter");
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace room2Battle
                         0.5f, 0.1f, 16);
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.2f);
                 }
 
                 GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
@@ -251,13 +251,17 @@ namespace room2Battle
                 {
                     if (GameMgr.instance)//联网状态
                     {
+                        foreach (var a in (SceneNetManager.instance.list))
+                        {
+                            GameObject temp = a.Value;
+                            temp.transform.localScale = new Vector3(2.0f,2.0f,2.0f);  
+                        }
+
                         GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
                         if (PLAYER != null)
                         {
                             getCamera = PLAYER.GetComponent<GetCamera>();
-                            float r = PLAYER.GetComponent<CharacterController>().radius;
-                            PLAYER.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
-                            PLAYER.GetComponent<CharacterController>().radius = r;
+
                             playerCamera = getCamera.MainCamera;
 
                             Destroy(PLAYER.GetComponent<Rigidbody>());
@@ -304,7 +308,7 @@ namespace room2Battle
                             source.Play();
                             source.priority = TimelineSource.priority + 1;
                         }
-                    }   
+                    }
                 }
             }
         }
