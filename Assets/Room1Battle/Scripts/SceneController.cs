@@ -210,14 +210,12 @@ namespace OperationTrident.Room1
         private void OnKeyGot(int id)
         {
             OnKeyGot_Imp(id);
-            Debug.Log("1112");
             m_controller.RPC(this, "OnKeyGot_Imp", id);
         }
 
         // 改进后的函数，所有钥匙的事件分ID处理
         public void OnKeyGot_Imp(int id)
         {
-            Debug.Log("1114");
             Debug.Log("id: "+id+" state: "+state);
             switch (id)
             {
@@ -233,7 +231,6 @@ namespace OperationTrident.Room1
                 case 1:
                     if (state == Room1State.FindingKey2)
                     {
-                        Debug.Log("1111");
                         Destroy(key2);
                         state = Room1State.TryingToOpenRoom;
                         AIController.instance.CreateAI(2, 0, "AIborn4");
@@ -251,7 +248,6 @@ namespace OperationTrident.Room1
                     }
                     break;
             }
-            Debug.Log("1115");
         }
 
         private void OnDoorOpen(int id)
