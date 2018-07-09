@@ -2,19 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using OperationTrident.Util;
 
 public class EnterNextScene : MonoBehaviour {
     private bool arrived = false;
+
+    private Camera m_FadeOutGuiCamera;
+
     public string nextScene = "PlayerTest2";
-	// Use this for initialization
-	void Start () {
-        NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
+
+    public void SetGuiCamera(Camera cam)
+    {
+        m_FadeOutGuiCamera = cam;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+	// Use this for initialization
+	private void Start () {
+        NetMgr.srvConn.msgDist.AddListener("Result", RecvResult);
+        m_FadeOutGuiCamera = null;
+    }
+
+    private void Update()
+    {
+        FadeInOutUtil.UpdateState();
+    }
+
+    private void OnGUI()
+    {
+        FadeInOutUtil.RenderGUI();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Player")
@@ -58,12 +75,19 @@ public class EnterNextScene : MonoBehaviour {
         }
         else//胜利
         {
-            //某关卡胜利是直接进入下一个场景，故不会进入这里
-            Debug.Log("Room1 胜利！");
-            GameMgr.instance.nextScene = nextScene;
-            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
-
-            //SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+            //淡出
+            float fadeOutDuration = 3.0f;
+            FadeInOutUtil.SetFadingState(fadeOutDuration,m_FadeOutGuiCamera, Color.black, FadeInOutUtil.FADING_STATE.FADING_OUT);
+            StartCoroutine(FadeOutCoroutine(fadeOutDuration));//等多一下确定淡出完成？
         }
     }
+
+    private IEnumerator FadeOutCoroutine(float sec)
+    {
+        yield return new WaitForSeconds(sec);
+        GameMgr.instance.nextScene = nextScene;
+        SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+        //SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+    }
+
 }
