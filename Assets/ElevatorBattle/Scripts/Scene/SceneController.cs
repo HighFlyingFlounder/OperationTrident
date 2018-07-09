@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.EventSystem;
+using OperationTrident.Util;
 
 namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
@@ -68,18 +69,18 @@ namespace OperationTrident.Elevator {
                     else
                     {
                         c_time += Time.deltaTime;
+                        
 
                         //准备时间结束，切换到下一个场景
                         if (c_time >= e_time)
                         {
                             changeState();
-                            m_controller.RPC(this, "changeState");
                         }
                     }
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    Messenger.Broadcast(GameEvent.Enemy_Start);
+                    //Messenger.Broadcast(GameEvent.Enemy_Start);
 
                     //开始计时
                     s_time = Time.time;
@@ -139,7 +140,7 @@ namespace OperationTrident.Elevator {
             {
                 //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
                 //return;
-                int number = 1;// SceneNetManager.instance.list.Count;
+                int number = SceneNetManager.instance.list.Count;
 
                 count++;
 
