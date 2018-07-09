@@ -35,12 +35,19 @@ namespace OperationTrident.Common.AI
                 return result;
             }
         }
-
         public override NavMeshAgent PathfindingAgent
         {
             get
             {
                 return transform.GetComponent<NavMeshAgent>();
+            }
+        }
+
+        public override int PatrolStartLocationIndex
+        {
+            get
+            {
+                return _initParams.patrolStartLocationIndex;
             }
         }
 
@@ -140,6 +147,9 @@ namespace OperationTrident.Common.AI
     {
         [Tooltip("设置巡逻路径，传入一个根节点")]
         public string patrolLocations = null;
+
+        [Tooltip("设置巡逻路径起始点")]
+        public int patrolStartLocationIndex = 0;
 
         [Tooltip("设置水平FOV角度")]
         [Range(0, 180)]

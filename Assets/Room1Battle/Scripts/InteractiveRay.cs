@@ -11,7 +11,7 @@ namespace OperationTrident.Room1
     {
         // 判断能否够到物体的距离
         [SerializeField]
-        private float distanceQuota = 3.0f;
+        private float distanceQuota = 5.0f;
 
         // 附加在这个游戏对象上的摄像头
 
@@ -81,7 +81,6 @@ namespace OperationTrident.Room1
                         hitObject.GetComponent<KeyScript>();
                     if (target != null)   //检查对象上是否有KeyScript组件
                     {
-                        Debug.Log("1113");
                         Messenger<int>.Broadcast(GameEvent.KEY_GOT, target.ThisId);
                         return;
                     }
