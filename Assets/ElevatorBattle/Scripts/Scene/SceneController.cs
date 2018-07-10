@@ -77,7 +77,7 @@ namespace OperationTrident.Elevator {
                         foreach (var player in SceneNetManager.instance.list)
                         {
                             GameObject temp = player.Value;
-                            temp.transform.localScale = new Vector3(4f, 4f, 4f);
+                            temp.transform.localScale = new Vector3(3f, 3f, 3f);
                         }
                         flag = false;
                     }

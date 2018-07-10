@@ -12,11 +12,21 @@ namespace OperationTrident.FPS.Weapons {
         float DistortStrength;
         float IntersectPower;
 
+        Collider[] cols;
+
         // Use this for initialization
         void Start() {
             this.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             DistortStrength = 1;
             IntersectPower = 0;
+
+            cols = Physics.OverlapSphere(transform.position, 20f);
+
+            foreach (Collider col in cols)
+            {
+                Debug.Log(col);
+                col.SendMessageUpwards("OnEMP", 5, SendMessageOptions.DontRequireReceiver);
+            }
         }
 
         // Update is called once per frame
