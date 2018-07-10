@@ -144,7 +144,7 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
         {
             if(other.tag == "Hinder")
             {
-                //AudioSource.PlayClipAtPoint(AC, new Vector3(0f,0f,0f));
+                AudioSource.PlayClipAtPoint(AC, new Vector3(0f,0f,0f));
                 ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
                 shield.Play();
                 //ChangeHp(-40.0f);
