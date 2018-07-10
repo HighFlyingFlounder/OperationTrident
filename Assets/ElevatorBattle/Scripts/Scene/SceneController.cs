@@ -199,6 +199,7 @@ namespace OperationTrident.Elevator {
                 //进入关门
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
+                    Debug.Log("fuck?");
                     if (GameMgr.instance.isMasterClient)
                     {
                         Debug.Log("fuck");
