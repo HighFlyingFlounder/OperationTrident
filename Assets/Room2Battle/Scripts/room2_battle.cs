@@ -147,10 +147,6 @@ namespace room2Battle
         /// </summary>
         public void openDoor()
         {
-            if (trueBoss != null)
-            {
-                Destroy(trueBoss.gameObject);
-            }
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
