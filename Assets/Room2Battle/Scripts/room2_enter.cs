@@ -256,7 +256,7 @@ namespace room2Battle
                         TimelineSource.Play();
                         playOnce = true;
 
-                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }
