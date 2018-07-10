@@ -98,6 +98,7 @@ namespace OperationTrident.StartScene
 
         public void InitTeamScene()
         {
+            roomNameText.text = "Room  " + roomName;
             NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
             NetMgr.srvConn.msgDist.AddListener("EnterGame", RecvEnterGame);
             //发送查询
@@ -322,7 +323,7 @@ namespace OperationTrident.StartScene
                 GameMgr.instance.isMasterClient = true;
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                roomNameText.text = "Room  "+roomName;
+                
                 InitTeamScene();
             }
             else
@@ -360,8 +361,7 @@ namespace OperationTrident.StartScene
             {
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                roomNameText.text = "Room  " + roomName;
-                InitTeamScene();
+                
             }
             else
             {

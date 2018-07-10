@@ -71,7 +71,7 @@ public class EnterNextScene : MonoBehaviour {
         if (isWin == 0)//失败
         {
             Debug.Log("Room1 Fail");
-            //OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+            OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
         }
         else//胜利
         {
