@@ -63,8 +63,34 @@ public class AsyncLoadScene : MonoBehaviour
 
         if ((int)(loadingSlider.value * 100) == 100)
         {
+            SendFinishLoading();
             //允许异步加载完毕后自动切换场景
             operation.allowSceneActivation = true;
         }
+    }
+
+    void SendFinishLoading()
+    {
+        //监听
+        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
+        //协议
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("FinishLoading");
+        NetMgr.srvConn.Send(protocol);
+    }
+
+    public void RecvLoading(ProtocolBase protocol)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        //解析协议
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        string player_id = proto.GetString(start, ref start);
+        Debug.Log(player_id + " finish Loading");
+    }
+
+    private void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
     }
 }
