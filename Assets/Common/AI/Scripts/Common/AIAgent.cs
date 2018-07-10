@@ -15,6 +15,8 @@ namespace OperationTrident.Common.AI
         Transform _target;
         Vector3 _targetPosition;
         bool _isDestory = false;
+        public float fsmUpdateTime = 0.5f;
+        float _time = 0;
 
         public virtual Vector3[] PatrolLocations { get; set; }
         public virtual int PatrolStartLocationIndex { get; set; }
@@ -93,7 +95,12 @@ namespace OperationTrident.Common.AI
             if (ReactiveTarget.IsParalyzed || !ReactiveTarget.IsAlive)
                 return;
 
-            FSM.Update();
+            _time += Time.deltaTime;
+            if (_time > fsmUpdateTime)
+            {
+                _time = 0;
+                FSM.Update();
+            }
         }
 
         public abstract void SetInitParams(AIAgentInitParams initParams);
