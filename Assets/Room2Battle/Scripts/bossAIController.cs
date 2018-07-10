@@ -41,56 +41,12 @@ namespace room2Battle
         void Start()
         {
             animator = GetComponent<Animator>();
-
-            StartCoroutine(LookAtImpl());
         }
 
         // Update is called once per frame
         void Update()
         {
 
-        }
-
-        public override void LookAt(Vector3 interestPoint)
-        {
-            targetPos = interestPoint;
-        }
-
-        /// <summary>
-        /// 虽为携程，却写着update二字，持续算lookat角度并进行更新
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator LookAtImpl()
-        {
-            //每帧更新
-            while (true)
-            {
-                //防止为空
-                if (targetPos != null)
-                {
-                    //利用lookat，算出绕Y轴旋转的角度，不考虑X,Z轴旋转
-                    Transform temp = transform;
-                    Quaternion originRotation = transform.rotation;
-
-                    temp.LookAt(targetPos, transform.up);
-
-                    Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
-
-                    Quaternion newRotation = Quaternion.Euler(newAngle);
-                    //一直一点点地旋转
-                    transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * rotateSpeed);
-                }
-                    yield return new WaitForFixedUpdate();
-            }
-        }
-
-
-        public override void Move(bool isStart)
-        {
-            if (isStart)
-                animator.SetFloat("speed", 0.3f);
-            else
-                animator.SetFloat("speed", 0.0f);
         }
     }
 }
