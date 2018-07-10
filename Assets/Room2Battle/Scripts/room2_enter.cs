@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
+using OperationTrident.Common.AI;
 
 namespace room2Battle
 {
@@ -13,12 +14,13 @@ namespace room2Battle
 
     public class room2_enter : Subscene, NetSyncInterface
     {
+        //网络同步
         NetSyncController m_controller;
-
+        //相机节点
         protected GameObject playerCamera = null;
-
+        //倍镜
         protected List<GameObject> playerCameraMirror = new List<GameObject>();
-
+        //
         protected GetCamera getCamera;
 
         //[SerializeField]
@@ -37,20 +39,20 @@ namespace room2Battle
 
         [SerializeField]
         protected Texture waveMaskTexture = null;
-
+        //关灯否
         protected bool isNear = false;
-
+        //进入房间否
         protected bool isEnter = false;
-
+        //当前相机
         Camera mCamera;
-
+        //任务详细
         public string[] missionDetails =
             {
             "2018.6.22  星期五",
             "外太空",
             "三叉戟行动"
         };
-
+        //台词
         public string[] line =
         {
         };
@@ -69,17 +71,21 @@ namespace room2Battle
         protected bool isShowTarget = false;
         //距离
         protected float distance = float.MaxValue;
-
+        //BGM
         [SerializeField]
         protected AudioSource source;
-
+        //台词
         [SerializeField]
         protected AudioSource TimelineSource;
-
+        //台词，bgm
         [SerializeField]
         protected AudioClip[] clips;
 
         protected bool playOnce = false;
+
+        [SerializeField]
+        WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
 
         ///=======================================================
         ///================ method  ==============================
@@ -87,8 +93,13 @@ namespace room2Battle
 
         public override void onSubsceneInit()
         {
-        }
+            if (GameMgr.instance)
+            {
+                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+            }
 
+        }
+        //进入房间转power
         public override bool isTransitionTriggered()
         {
             return isEnter;
@@ -103,7 +114,7 @@ namespace room2Battle
         {
 
         }
-
+        //两次碰撞体检测
         public override void notify(int i)
         {
             if (this.enabled)
@@ -119,21 +130,23 @@ namespace room2Battle
                 else if (i == 2)
                 {
                     enter();
-                    m_controller.RPC(this,"enter");
+                    m_controller.RPC(this, "enter");
                 }
             }
         }
 
         void OnGUI()
         {
+            //仅当初始化完成
             if (isInit)
             {
+                //联网
                 if (GameMgr.instance)
                 {
                     mCamera = getCamera.GetCurrentUsedCamera();
                 }
 
-
+                //使命召唤风格
                 GUIUtil.DisplayMissionDetailDefault(
                                 missionDetails,
                                 mCamera,
@@ -142,7 +155,7 @@ namespace room2Battle
                                 wordAppearanceInterval: wordAppearanceInterval,
                                 lineSubsequentlyInterval: lineSubsequentlyInterval,
                                 fontSize: fontSize);
-
+                //未遭遇
                 if (!isNear)
                 {
                     GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
@@ -151,7 +164,7 @@ namespace room2Battle
                         0.5f, 0.1f, 16);
                     GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
                 }
-                else
+                else//遭遇
                 {
                     //深度摄像头是否开启
                     bool open = playerCamera.GetComponent<depthSensor>().enabled;
@@ -161,9 +174,8 @@ namespace room2Battle
                         0.5f, 0.1f, 16);
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.2f);
                 }
-
                 GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
             }
         }
@@ -195,7 +207,7 @@ namespace room2Battle
 
         void LateUpdate()
         {
-            //按G打开夜视仪
+            //按H打开夜视仪
             if (Input.GetKeyDown(KeyCode.H))
             {
                 if (isInit)
@@ -231,6 +243,7 @@ namespace room2Battle
 
         void Update()
         {
+            //到时间播放
             if (isInit)
             {
                 mCamera = getCamera.GetCurrentUsedCamera();
@@ -242,22 +255,30 @@ namespace room2Battle
                         TimelineSource.clip = clips[1];
                         TimelineSource.Play();
                         playOnce = true;
+
+                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }
-            else
+            else//初始化
             {
                 if (this.enabled)
                 {
                     if (GameMgr.instance)//联网状态
                     {
                         GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
+                        //设置相机
                         if (PLAYER != null)
                         {
+                            //设置合适大小
+                            foreach (var a in (SceneNetManager.instance.list))
+                            {
+                                GameObject temp = a.Value;
+                                temp.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+                            }
+
                             getCamera = PLAYER.GetComponent<GetCamera>();
-                            float r = PLAYER.GetComponent<CharacterController>().radius;
-                            PLAYER.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
-                            PLAYER.GetComponent<CharacterController>().radius = r;
+
                             playerCamera = getCamera.MainCamera;
 
                             Destroy(PLAYER.GetComponent<Rigidbody>());
@@ -296,7 +317,7 @@ namespace room2Battle
                             }
 
                             isInit = true;
-
+                            //bgm，台词
                             TimelineSource.clip = clips[0];
                             TimelineSource.Play();
 
@@ -304,11 +325,11 @@ namespace room2Battle
                             source.Play();
                             source.priority = TimelineSource.priority + 1;
                         }
-                    }   
+                    }
                 }
             }
         }
-
+        //关灯
         public void becomeDark()
         {
             if (isInit)

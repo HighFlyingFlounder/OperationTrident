@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
+using OperationTrident.Common.AI;
 
 namespace room2Battle
 {
@@ -64,6 +65,18 @@ namespace room2Battle
         {
         };
 
+        [SerializeField]
+        WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+        [SerializeField]
+        TurretAIAgentInitParams[] turrentAIAgentInitParams;
+
+        protected bool initEnemyAgain = false;
+
+        /// <summary>
+        ///  method 
+        /// </summary>
+
         //获取相机句柄
         void Start()
         {
@@ -121,15 +134,11 @@ namespace room2Battle
                 {
                     playerCameraMirror.Add(cam);
                 }
-            }
 
-            //@TODO: 替换成老Y的AI
-            for (int i = 0; i < maxEnemyNum; ++i)
-            {
-                GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                enemyList.Add(obj);
+                //@TODO: 替换成老Y的AI
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
-
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
@@ -178,6 +187,16 @@ namespace room2Battle
             }
 
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
+
+            if (isSwitchOpen)
+            {
+                if (!initEnemyAgain)
+                {
+                    AIController.instance.CreateAI(4,1, "EnemyInitPos4",turrentAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    initEnemyAgain = true;
+                }
+            }
         }
 
         void LateUpdate()
@@ -191,7 +210,7 @@ namespace room2Battle
                     if (distance <= 5.0f)
                     {
                         switchOn();
-                        gameObject.GetComponent<NetSyncController>().RPC(this,"switchOn");
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn");
                     }
                 }
             }
@@ -246,57 +265,58 @@ namespace room2Battle
         //TODO： 更新到佩炜的GUI
         void OnGUI()
         {
-            if (isFocus)
+            if (mCamera != null)
             {
-                float posX = mCamera.pixelWidth / 2 - 50;
-                float posY = mCamera.pixelHeight / 2 - 50;
-                //交互提示
+                if (isFocus)
+                {
+                    float posX = mCamera.pixelWidth / 2 - 50;
+                    float posY = mCamera.pixelHeight / 2 - 50;
+                    //交互提示
+                    if (!isSwitchOpen)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
+                    }
+                }
+                //深度摄像头是否开启，是否黑
+                bool open = playerCamera.GetComponent<becomeDark>().enabled;
+                bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
+                //没开灯
                 if (!isSwitchOpen)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w打开这该死的照明电源", mCamera, 16, 0.9f);
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
-                }
-            }
-            //深度摄像头是否开启，是否黑
-            bool open = playerCamera.GetComponent<becomeDark>().enabled;
-            bool open2 = playerCamera.GetComponent<depthSensor>().enabled;
-            //没开灯
-            if (!isSwitchOpen)
-            {
-                //任务目标
-                GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
-                   mCamera,
-                   GUIUtil.yellowColor,
-                   0.5f, 0.1f, 16);
-                if (!open2 && open)
-                {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                }
-                //目标位置
-                GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
-
-            }
-            else
-            {
-                //杀入2楼
-                if (!isIntoSecondFloor)
-                {
-                    //台词
-                    //GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
                     //任务目标
-                    GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                    GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                        mCamera,
                        GUIUtil.yellowColor,
                        0.5f, 0.1f, 16);
-                    //任务目标位置
-                    GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
+                    if (!open2 && open)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
+                    }
+                    //目标位置
+                    GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
+
                 }
-                if (open2 && !isFocus)
+                else
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
+                    //杀入2楼
+                    if (!isIntoSecondFloor)
+                    {
+                        //台词
+                        //GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16,0.9f,0.2f,1.2f);
+                        //任务目标
+                        GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
+                           mCamera,
+                           GUIUtil.yellowColor,
+                           0.5f, 0.1f, 16);
+                        //任务目标位置
+                        GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
+                    }
+                    if (open2 && !isFocus)
+                    {
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
+                    }
                 }
             }
-
 
         }
 

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace room2Battle
 {
 
-    public class boosAI : MonoBehaviour,NetSyncInterface
+    public class boosAI : MonoBehaviour, NetSyncInterface
     {
         public enum fireState
         {
@@ -54,14 +54,13 @@ namespace room2Battle
 
         protected float animationCurrentTime = 0.0f;
 
-        protected bool isAttacking = false;
 
         //==================================================
         //=====================     需要同步的状态量 =======
         //==================================================
         //目标位置
         [SerializeField]
-        protected Transform target;
+        protected Transform target = null;
 
         //动画状态相关bool值
         protected bool shoot = false;
@@ -74,12 +73,6 @@ namespace room2Battle
         protected float fireFromLastTime = 0.0f;
 
         protected float intervalBetweenShot = 0.3f;
-
-        public void Attack()
-        {
-            isAttacking = true;
-        }
-
 
         /// <summary>
         /// 初始化函数
@@ -120,58 +113,7 @@ namespace room2Battle
                     animator.SetBool("missileLaunch", missilLaunch);
                 }
             }
-            else // 离线
-            {
-                mind();
-            }
-
         }
-        /*
-        /// <summary>
-        /// 使用携程隔一段时间发一枚导弹
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator shotTogether()
-        {
-            isShotDone = false;
-            float r = radius;
-            for (int j = 0; j < 3; ++j)
-            {
-                r += 3;
-                for (int i = 0; i < pos.Length; ++i)
-                {
-                    Vector3 pos_ = target.position;
-                    pos_.x += Random.Range(-r, r);
-                    pos_.y += Random.Range(-r, r);
-
-                    //Quaternion targetRotation = Quaternion.LookRotation(target.position - pos[i].position);
-
-
-                    //pos[i].rotation = targetRotation;
-                    Transform p = pos[i];   
-                    p.LookAt(pos_);
-
-                    Vector3 vec = new Vector3(p.eulerAngles.x, p.eulerAngles.y, p.eulerAngles.z);
-                    Quaternion ro = p.rotation;
-
-                    p.eulerAngles = new Vector3(-90,p.eulerAngles.y,0);
-
-                    Transform t = pos[i].Find("Rocket launcher");
-
-                    t.LookAt(pos_, t.up);
-                    t.localEulerAngles = new Vector3(t.localEulerAngles.x+90, t.localEulerAngles.y, t.localEulerAngles.z);
-
-
-
-                    Instantiate(Missiles[Random.Range(0, Missiles.Length)], p.position,ro);
-
-
-                    yield return new WaitForSeconds(Random.Range(1.0f,2.0f));
-                }
-            }
-            isShotDone = true;
-        }
-        */
 
 
 
@@ -181,7 +123,6 @@ namespace room2Battle
         void mind()
         {
             //只有攻击才会调用动画状态机
-            if (isAttacking)
             {
 
                 AnimatorTransitionInfo transitioInfo = animator.GetAnimatorTransitionInfo(0);
@@ -207,6 +148,7 @@ namespace room2Battle
                                     //随机搞
                                     //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
                                     target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
+                                    //netSyncController.RPC(this, "targetSync",target);
                                 }
                                 //开始抬手
                                 switch (choice)
@@ -257,8 +199,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    leftHandFireImpl();
-                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    leftHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "leftHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -292,8 +234,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    leftHandFireImpl();
-                                    netSyncController.RPC(this, "leftHandFireImpl");
+                                    leftHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "leftHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -334,8 +276,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    rightHandFireImpl();
-                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    rightHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "rightHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -368,8 +310,8 @@ namespace room2Battle
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
                                     //开火
-                                    rightHandFireImpl();
-                                    netSyncController.RPC(this, "rightHandFireImpl");
+                                    rightHandFireImpl(target.position);
+                                    netSyncController.RPC(this, "rightHandFireImpl", target.position);
                                     fireFromLastTime = 0.0f;
                                 }
                                 else
@@ -410,7 +352,6 @@ namespace room2Battle
                                 {
                                     StartCoroutine(turnAround());
                                     currentState = fireState.Idle;
-                                    isAttacking = false;
                                 }
                             }
                         }
@@ -442,6 +383,11 @@ namespace room2Battle
             }
         }
 
+        public void targetSync(Transform trans)
+        {
+            target = trans;
+        }
+
         public void missileLaunchImpl(Vector3 positon)
         {
             foreach (missilLauncher a in pos)
@@ -454,14 +400,18 @@ namespace room2Battle
         /// <summary>
         /// 开枪
         /// </summary>
-        public void leftHandFireImpl()
+        public void leftHandFireImpl(Vector3 target_)
         {
-            Instantiate(Missiles[0], leftHand.position, transform.rotation);
+            GameObject obj = Instantiate(Missiles[0], leftHand.position, transform.rotation);
+            obj.transform.position = leftHand.position;
+            obj.transform.up = (target_ - obj.transform.position);
         }
 
-        public void rightHandFireImpl()
+        public void rightHandFireImpl(Vector3 target_)
         {
-            Instantiate(Missiles[0], rightHand.position, transform.rotation);
+            GameObject obj = Instantiate(Missiles[0], rightHand.position, transform.rotation);
+            obj.transform.position = rightHand.position;
+            obj.transform.up = (target_ - obj.transform.position);
         }
 
         //转向玩家
@@ -519,11 +469,11 @@ namespace room2Battle
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-1.0f, 2.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
                     break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-3.0f, 1.0f));
+                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
                     break;
             }
         }

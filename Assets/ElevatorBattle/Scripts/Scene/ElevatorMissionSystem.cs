@@ -99,21 +99,6 @@ namespace OperationTrident.Elevator
             }
 
             missionContent = missionContents[missionContentsIndex]; // 设置要显示的任务目标内容
-            if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
-                nowDistance = Vector3.Distance(targetWorldPosition,
-                     GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
-            else
-                nowDistance = Vector3.Distance(targetWorldPosition,
-                     SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
-
-            Vector3 point = new Vector3(Room1.Util.GetCamera().pixelWidth / 2, Room1.Util.GetCamera().pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = Room1.Util.GetCamera().ScreenPointToRay(point); // 在摄像机所在位置创建射线
-            Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
-            // 如果物体大方向在人视线背后的话，就不显示了
-            if (Vector3.Dot(direction1, direction2) <= 0) toDisplayTheMissionPoint = false;
-            else toDisplayTheMissionPoint = true;
-            targetWorldPosition = new Vector3(targetWorldPosition.x, targetWorldPosition.y + missionLabelOffset, targetWorldPosition.z);
             //UIPosition = camera.WorldToScreenPoint(targetWorldPosition);
         }
 
@@ -141,15 +126,7 @@ namespace OperationTrident.Elevator
                     fontSize: 16,
                     sequentClear: sequentClear);
             }
-
-
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor, 60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Room1.Util.GetCamera());
-            // 指定颜色
-            if (toDisplayTheMissionPoint && display)
-            {
-                GUI.Label(rect, (int)nowDistance + "m", style);
-            }
+            GUIUtil.DisplayMissionPoint(targetWorldPosition, Room1.Util.GetCamera(), GUIUtil.missionPointColor);
 
             //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
             //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);

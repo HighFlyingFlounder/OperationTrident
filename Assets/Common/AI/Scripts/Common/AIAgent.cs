@@ -17,6 +17,7 @@ namespace OperationTrident.Common.AI
         bool _isDestory = false;
 
         public virtual Vector3[] PatrolLocations { get; set; }
+        public virtual int PatrolStartLocationIndex { get; set; }
         public virtual NavMeshAgent PathfindingAgent { get; set; }
         public virtual AICamera Camera { get; set; }
         public virtual float CameraHorizontalFOV { get; set; }

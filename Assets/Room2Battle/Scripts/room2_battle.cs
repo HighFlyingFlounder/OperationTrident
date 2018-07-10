@@ -6,9 +6,11 @@ using OperationTrident.Util;
 using OperationTrident.FPS.Common;
 using System;
 
-namespace room2Battle {
+namespace room2Battle
+{
     //小boss大战
-    public class room2_battle :  Subscene,NetSyncInterface{
+    public class room2_battle : Subscene, NetSyncInterface
+    {
         protected GetCamera getCamera;
 
         [SerializeField]
@@ -35,11 +37,13 @@ namespace room2Battle {
         [SerializeField]
         protected GameObject nextScene_;
         //台词
-        public string[] line = {"" };
+        public string[] line = { "" };
         //boss，可能到时候有两个，一个过场，一个动作
         [SerializeField]
         protected GameObject boss;
 
+        [SerializeField]
+        protected GameObject trueBoss;
         /*
         [SerializeField] 
         protected GameObject realBoss;
@@ -70,12 +74,11 @@ namespace room2Battle {
 
         private void Start()
         {
-            AIController.instance.AddAIObject(boss);
         }
 
         public override void notify(int i)
         {
-            
+
         }
 
         public override bool isTransitionTriggered()
@@ -114,14 +117,19 @@ namespace room2Battle {
                 if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
-                    boss.transform.position = bossInitPos.position;
+                    trueBoss.transform.position = bossInitPos.position;
+                    trueBoss.SetActive(true);
 
+                    Destroy(boss.gameObject);
+                    //动画位置同步
+                    AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    nextScene_.SetActive(true);
-                    door.transform.position = doorPos.position;
+                    openDoor();
+                    mController.RPC(this, "openDoor");
                 }
             }
-            else {
+            else
+            {
                 if (!playOnce)
                 {
                     playOnce = true;
@@ -130,12 +138,16 @@ namespace room2Battle {
                     source.priority = TimelineSource.priority + 1;
                 }
             }
-            
+
         }
 
-        void openDoor()
+        public void openDoor()
         {
-            Destroy(door.gameObject);
+            if (door.gameObject)
+            {
+                Destroy(door.gameObject);
+                nextScene_.SetActive(true);
+            }
         }
 
         void OnGUI()
@@ -151,12 +163,12 @@ namespace room2Battle {
                           GUIUtil.yellowColor,
                           0.5f, 0.1f, 16);
                 }
-            }      
+            }
         }
 
         public void RecvData(SyncData data)
         {
-            
+
         }
 
         public SyncData SendData()

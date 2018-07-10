@@ -30,6 +30,7 @@ namespace OperationTrident.Common.AI
                 _patrolLocations = _agent.PatrolLocations;
                 if(_patrolLocations == null)
                     Debug.Log("没有设置巡逻路径");
+                _nextPatrolLocationIndex = _agent.PatrolStartLocationIndex;
             }
             _agent.PathfindingAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
             _agent.PathfindingAgent.isStopped = false;

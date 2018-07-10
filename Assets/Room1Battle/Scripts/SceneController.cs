@@ -5,6 +5,7 @@ using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using System;
 using UnityEngine.Playables;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Room1
 {
@@ -82,6 +83,9 @@ namespace OperationTrident.Room1
 
         public static Room1State state;
 
+        [SerializeField]
+        WanderAIAgentInitParams[] _wanderAIAgentInitParams;
+
         private void Awake()
         {
             // 增加第一个key的侦听器
@@ -120,6 +124,9 @@ namespace OperationTrident.Room1
             elevator.playOnAwake = false;
             //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
+            AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
+            AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
+            AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
         }
 
         // Update is called once per frame
@@ -181,6 +188,23 @@ namespace OperationTrident.Room1
         // 一次性生成了全部的GameObject，但是这里并没有生成C4？
         private void InitAllGameObject()
         {
+            if (GameMgr.instance)
+            {
+                foreach(var a in SceneNetManager.instance.list)
+                {
+                    a.Value.transform.localScale = new Vector3(
+                        3.0f,
+                        3.0f,
+                        3.0f);
+                }
+            }
+            else
+            {
+                GameObject.FindWithTag("Player").transform.localScale = new Vector3(
+                    3.0f,
+                    3.0f,
+                    3.0f);
+            }
             //key1 = Instantiate(keyPrefab) as GameObject;
             //key1.transform.localPosition = Key1Position;
 
@@ -203,8 +227,6 @@ namespace OperationTrident.Room1
 
             escapeGameObject.SetActive(false);
 
-            //生成AI
-            AIController.instance.CreateAI(5,0, "AIborn1");
         }
 
         private void OnKeyGot(int id)
@@ -225,6 +247,9 @@ namespace OperationTrident.Room1
                     {
                         Destroy(key1);
                         state = Room1State.FindingKey2;
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[3]);
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[4]);
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[5]);
                     }
                     break;
                 // 第二个钥匙
@@ -233,8 +258,10 @@ namespace OperationTrident.Room1
                     {
                         Destroy(key2);
                         state = Room1State.TryingToOpenRoom;
-                        AIController.instance.CreateAI(2, 0, "AIborn4");
-                        AIController.instance.CreateAI(4, 0, "AIborn5");
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[6]);
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[7]);
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[8]);
+
                     }
                     break;
                 // ID卡（也当成钥匙了）
@@ -245,6 +272,18 @@ namespace OperationTrident.Room1
                         state = Room1State.EscapingRoom;
                         escapeGameObject.SetActive(true);
                         escapePosition = escapeGameObject.transform.position;
+                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
+                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[3]);
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[4]);
+                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[5]);
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[6]);
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[7]);
+                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[8]);
+                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[9]);
+                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[10]);
+                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[11]);
                     }
                     break;
             }
@@ -271,9 +310,6 @@ namespace OperationTrident.Room1
                         Debug.Log("WindyIce");
                         doorStart.GetComponent<DoorScript>().OpenAndDestroy(10.0f,DoorScript.DoorOpenDirection.ZNegative);
                         doorStart.GetComponent<HintableObject>().DestroyThis();
-
-                        AIController.instance.CreateAI(5, 0, "AIborn2");
-                        AIController.instance.CreateAI(2, 0, "AIborn3");
                     }
                     break;
                 // 第二扇门
