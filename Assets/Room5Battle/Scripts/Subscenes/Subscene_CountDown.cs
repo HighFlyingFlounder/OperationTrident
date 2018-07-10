@@ -94,9 +94,9 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies2()
         {
             yield return new WaitForSeconds(120.0f);
-            for (int i = 0; i < 2; ++i)
+            for (int i = 0; i < 8; ++i)
             {
-                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[0]);
             }
         }
 
