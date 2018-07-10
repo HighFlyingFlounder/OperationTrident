@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.EventSystem;
 using OperationTrident.Util;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
     {
         [SerializeField]
+        WanderAIAgentInitParams[] wanderAIAgentInitParams;
 
+        [SerializeField]
+        TurretAIAgentInitParams[] turretAIAgentInitParams;
+
+        [SerializeField]
         //持续时间
         public int d_time = 60;
 
@@ -31,6 +37,8 @@ namespace OperationTrident.Elevator {
 
         private bool change;
 
+        private bool flag;
+
         //碰撞体
         private BoxCollider bcollider;
 
@@ -42,14 +50,26 @@ namespace OperationTrident.Elevator {
             state = ElevatorState.Initing;
             bcollider = this.GetComponent<BoxCollider>();
             change = true;
+
+            flag = true;
         }
 
         // Update is called once per frame
         void Update()
         {
+
             switch (state)
             {
                 case ElevatorState.Initing:
+                    if (GameMgr.instance && flag)
+                    {
+                        foreach (var player in SceneNetManager.instance.list)
+                        {
+                            GameObject temp = player.Value;
+                            temp.transform.localScale = new Vector3(4f, 4f, 4f);
+                        }
+                        flag = false;
+                    }
                     break;
 
                 case ElevatorState.Ready:
@@ -81,6 +101,10 @@ namespace OperationTrident.Elevator {
 
                 case ElevatorState.Start_Fighting:
                     //Messenger.Broadcast(GameEvent.Enemy_Start);
+                    AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[2]);
+                    AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[3]);
 
                     //开始计时
                     s_time = Time.time;
