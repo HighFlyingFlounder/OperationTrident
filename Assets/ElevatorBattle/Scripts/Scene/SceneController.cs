@@ -32,12 +32,16 @@ namespace OperationTrident.Elevator {
         //结束时间
         private float e_time;
 
-        //碰撞次数（为偶数）
+        //碰撞次数
         private int count = 0;
 
         private bool change;
 
         private bool flag;
+
+        private IEnumerator coroutine1;
+
+        private IEnumerator coroutine2;
 
         //碰撞体
         private BoxCollider bcollider;
@@ -52,6 +56,10 @@ namespace OperationTrident.Elevator {
             change = true;
 
             flag = true;
+
+            coroutine1 = WaitAndPrint1(5);
+
+            coroutine2 = WaitAndPrint2(5);
         }
 
         // Update is called once per frame
@@ -101,10 +109,8 @@ namespace OperationTrident.Elevator {
 
                 case ElevatorState.Start_Fighting:
                     //Messenger.Broadcast(GameEvent.Enemy_Start);
-                    AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
-                    AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[1]);
-                    AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[2]);
-                    AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[3]);
+                    StartCoroutine(coroutine1);
+                    
 
                     //开始计时
                     s_time = Time.time;
@@ -216,6 +222,26 @@ namespace OperationTrident.Elevator {
                     state = ElevatorState.Escape;
                     break;
             }
+        }
+
+        private IEnumerator WaitAndPrint1(float waitTime)
+        {
+            //生成物体
+            AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
+            AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
+            AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
+            AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
+            yield return new WaitForSeconds(waitTime);
+        }
+
+        private IEnumerator WaitAndPrint2(float waitTime)
+        {
+            //生成物体
+            AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
+            AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
+            AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
+            AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
+            yield return new WaitForSeconds(waitTime);
         }
     }
 }
