@@ -103,9 +103,10 @@ namespace OperationTrident.Elevator {
                         
 
                         //准备时间结束，切换到下一个场景
-                        if (c_time >= e_time)
+                        if (c_time >= e_time && GameMgr.instance.isMasterClient)
                         {
                             changeState();
+                            m_controller.RPC(this, "changeState");
                         }
                     }
                     break;
@@ -118,7 +119,11 @@ namespace OperationTrident.Elevator {
 
                     t_time = s_time + 5;
 
-                    changeState();
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
                     break;
 
                 case ElevatorState.Fighting:
@@ -136,9 +141,10 @@ namespace OperationTrident.Elevator {
                         flag1 = false;
                     }
 
-                    if (c_time >= e_time)
+                    if (c_time >= e_time && GameMgr.instance.isMasterClient)
                     {
                         changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
@@ -149,9 +155,10 @@ namespace OperationTrident.Elevator {
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
 
-                    if (OperationTrident.Elevator.Wall.state)
+                    if (OperationTrident.Elevator.Wall.state && GameMgr.instance.isMasterClient)
                     {
                         changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
