@@ -116,6 +116,7 @@ namespace room2Battle
                     //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
                 openDoor();
+                destoryBoss = true;
             }
             else
             {
@@ -137,10 +138,10 @@ namespace room2Battle
 
         public void openDoor()
         {
-            if (trueBoss != null)
-            {
-                Destroy(trueBoss.gameObject);
-            }
+            //if (trueBoss != null)
+            //{
+            //    Destroy(trueBoss.gameObject);
+            //}
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
