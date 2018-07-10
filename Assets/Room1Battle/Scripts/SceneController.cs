@@ -188,6 +188,23 @@ namespace OperationTrident.Room1
         // 一次性生成了全部的GameObject，但是这里并没有生成C4？
         private void InitAllGameObject()
         {
+            if (GameMgr.instance)
+            {
+                foreach(var a in SceneNetManager.instance.list)
+                {
+                    a.Value.transform.localScale = new Vector3(
+                        3.0f,
+                        3.0f,
+                        3.0f);
+                }
+            }
+            else
+            {
+                GameObject.FindWithTag("Player").transform.localScale = new Vector3(
+                    3.0f,
+                    3.0f,
+                    3.0f);
+            }
             //key1 = Instantiate(keyPrefab) as GameObject;
             //key1.transform.localPosition = Key1Position;
 
