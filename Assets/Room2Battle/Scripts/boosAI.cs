@@ -77,10 +77,17 @@ namespace room2Battle
         protected bool shootAgain = false;
         protected bool stopFire = false;
         protected bool missilLaunch = false;
+        protected bool isWalking = false;
 
         protected float fireFromLastTime = 0.0f;
 
         protected float intervalBetweenShot = 0.15f;
+
+        protected bool isStartWalking = false;
+
+        protected bool isBeginWandering = false;
+
+        protected Transform currentWanderTarget;
 
         /// <summary>
         /// 初始化函数
@@ -112,6 +119,7 @@ namespace room2Battle
                     animator.SetBool("shootAgain", shootAgain);
                     animator.SetBool("StopFire", stopFire);
                     animator.SetBool("missileLaunch", missilLaunch);
+                    animator.SetBool("walk", isWalking);
                 }
             }
         }
@@ -147,7 +155,7 @@ namespace room2Battle
                             else
                             {
                                 thinkTime = 0.0f;
-                                currentState = fireState.SeekingPlayer;
+                                currentState = fireState.wandering;
                             }
                         }
                         break;
@@ -212,6 +220,46 @@ namespace room2Battle
                             else
                             {
                                 currentState = fireState.Idle;
+                            }
+                        }
+                        break;
+                    case fireState.wandering:
+                        {
+                            //TODO:之前状态要加一下isStartWalking的初始化
+                            //先转过去再走
+                            if (!isStartWalking)
+                            {
+                                //选个目标
+                                currentWanderTarget = wanderPath[UnityEngine.Random.Range(0, wanderPath.Length)];
+                                StartCoroutine(turnAround(currentWanderTarget));
+                                isStartWalking = true;
+                            }
+                            else
+                            {
+                                //转到位了
+                                if (!beginTurnAround)
+                                {
+                                    if (!isBeginWandering)
+                                    {
+                                        animator.SetBool("walk", true);
+                                        isWalking = true;
+                                        netSyncController.SyncVariables();
+                                        isBeginWandering = true;
+                                    }
+                                    else
+                                    {
+                                        if (Vector3.Distance(transform.position, currentWanderTarget.position) < 10.0f)
+                                        {
+                                            isStartWalking = false;
+                                            isBeginWandering = false;
+
+                                            isWalking = false;
+                                            animator.SetBool("walk", false);
+                                            netSyncController.SyncVariables();
+                                            currentState = fireState.SeekingPlayer;
+                                        }
+                                    }
+                                }
                             }
                         }
                         break;
@@ -344,7 +392,7 @@ namespace room2Battle
                                 Debug.Log("end of fire");
                                 if (!beginTurnAround)
                                 {
-                                    StartCoroutine(turnAround());
+                                    StartCoroutine(turnAround(target));
                                     currentState = fireState.Idle;
                                 }
                             }
@@ -408,16 +456,16 @@ namespace room2Battle
         }
 
         //转向玩家
-        IEnumerator turnAround()
+        IEnumerator turnAround(Transform target_)
         {
             beginTurnAround = true;
 
             Transform temp = transform;
             Quaternion originRotation = transform.rotation;
 
-            if (target != null)
+            if (target_ != null)
             {
-                temp.LookAt(target);
+                temp.LookAt(target_);
 
                 Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
 
@@ -471,6 +519,14 @@ namespace room2Battle
                 case fireState.KeepFireAgain:
                     transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
                     break;
+                case fireState.wandering:
+                    {
+                        if (isStartWalking && !beginTurnAround)
+                        {
+                            transform.position = Vector3.Lerp(transform.position, currentWanderTarget.position, Time.deltaTime);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -482,6 +538,7 @@ namespace room2Battle
             shootAgain = (bool)data.Get(typeof(bool));
             stopFire = (bool)data.Get(typeof(bool));
             missilLaunch = (bool)data.Get(typeof(bool));
+            isWalking = (bool)data.Get(typeof(bool));
         }
 
         public SyncData SendData()
@@ -493,6 +550,7 @@ namespace room2Battle
             data.Add(shootAgain);
             data.Add(stopFire);
             data.Add(missilLaunch);
+            data.Add(isWalking);
             return data;
         }
 
