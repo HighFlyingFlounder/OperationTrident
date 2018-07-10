@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using OperationTrident.Common.AI;
 
@@ -41,6 +40,8 @@ namespace OperationTrident.Elevator {
 
         private bool flag;
 
+        private bool flag1;
+
         private IEnumerator coroutine1;
 
         private IEnumerator coroutine2;
@@ -58,9 +59,9 @@ namespace OperationTrident.Elevator {
             change = true;
 
             flag = true;
+            flag1 = true;
 
             coroutine1 = WaitAndPrint1(10);
-
             coroutine2 = WaitAndPrint2(10);
         }
 
@@ -110,10 +111,6 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    //Messenger.Broadcast(GameEvent.Enemy_Start);
-                    StartCoroutine(coroutine1);
-                    
-
                     //开始计时
                     s_time = Time.time;
                     c_time = s_time;
@@ -127,12 +124,19 @@ namespace OperationTrident.Elevator {
                 case ElevatorState.Fighting:
                     c_time += Time.deltaTime;
 
-                    if (c_time >= t_time)
+                    if (!flag)
                     {
-                        StartCoroutine(coroutine2);
+                        StartCoroutine(coroutine1);
+                        flag = true;
                     }
 
-                    if(c_time >= e_time)
+                    if (flag1&&c_time >= t_time)
+                    {
+                        StartCoroutine(coroutine2);
+                        flag1 = false;
+                    }
+
+                    if (c_time >= e_time)
                     {
                         changeState();
                     }
@@ -153,6 +157,8 @@ namespace OperationTrident.Elevator {
                     break;
 
                 case ElevatorState.Escape:
+                    StopCoroutine(coroutine1);
+                    StopCoroutine(coroutine2);
                     break;
             }
         }
@@ -235,22 +241,28 @@ namespace OperationTrident.Elevator {
 
         private IEnumerator WaitAndPrint1(float waitTime)
         {
-            //生成物体
-            AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
-            AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
-            AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
-            AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
-            yield return new WaitForSeconds(waitTime);
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
+            }
         }
 
         private IEnumerator WaitAndPrint2(float waitTime)
         {
-            //生成物体
-            AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
-            AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
-            AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
-            AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
-            yield return new WaitForSeconds(waitTime);
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
+            }
         }
     }
 }
