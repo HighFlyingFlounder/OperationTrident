@@ -169,6 +169,14 @@ namespace OperationTrident.StartScene
 
         public void RecvEnterGame(ProtocolBase protocol)
         {
+            //解析协议
+            ProtocolBytes proto = (ProtocolBytes)protocol;
+            int start = 0;
+            string protoName = proto.GetString(start, ref start);
+            int player_num = proto.GetInt(start, ref start);
+
+            GameMgr.instance.player_num = player_num;//该局房间总人数
+
             UnityEngine.SceneManagement.SceneManager.LoadScene("Loading", 
                 UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
