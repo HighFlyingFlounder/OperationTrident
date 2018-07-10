@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SceneNetManager : MonoBehaviour
 {
+    public static ProtocolBytes fight_protocol;
     public static SceneNetManager instance;
     //本地玩家实体预设
     public GameObject[] LocalPlayerPrefabs;
@@ -20,30 +21,13 @@ public class SceneNetManager : MonoBehaviour
             return;
         if (GameObject.FindGameObjectWithTag("Player"))
             Destroy(GameObject.FindGameObjectWithTag("Player"));
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("FinishLoading");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
-    }
-    // Use this for initialization
-    void Start()
-    {
-        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
-            return;
         StartGame();
     }
     //开始一场游戏的准备工作
     void StartGame()
     {
         list = new Dictionary<string, GameObject>();
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("StartFight");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
+        StartBattle(fight_protocol);
     }
 
     //清理场景
@@ -115,16 +99,11 @@ public class SceneNetManager : MonoBehaviour
         if (id == GameMgr.instance.id)
         {
             netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
-            //playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
 
             netsyn.ctrlType = NetSyncTransform.CtrlType.net;
-            //playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
-            //playerObj.GetComponent<PlayerController>().enabled = false;
-            //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            //playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
         }
         //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
         HandlePlayer(id,playerObj);
@@ -140,20 +119,5 @@ public class SceneNetManager : MonoBehaviour
 
     }
 
-    public void RecvStartFight(ProtocolBase protocol)
-    {
-        StartBattle((ProtocolBytes)protocol);
-        //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
-        NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
-    }
 
-    public void RecvLoading(ProtocolBase protocol)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protocol;
-        //解析协议
-        int start = 0;
-        string protoName = proto.GetString(start, ref start);
-        string player_id = proto.GetString(start, ref start);
-        Debug.Log(player_id + " finish Loading");
-    }
 }

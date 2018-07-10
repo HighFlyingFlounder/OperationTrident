@@ -127,11 +127,13 @@ namespace OperationTrident.Room1
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
+            FadeInOutUtil.SetFadingState(5.0f, Util.GetCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
         }
 
         // Update is called once per frame
         void Update()
         {
+            FadeInOutUtil.UpdateState();
             switch (state)
             {
                 // 场景的初始状态
@@ -190,6 +192,7 @@ namespace OperationTrident.Room1
         {
             if (GameMgr.instance)
             {
+                SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<Common.ReactiveTarget>().MaxHealth = 500;
                 foreach(var a in SceneNetManager.instance.list)
                 {
                     a.Value.transform.localScale = new Vector3(
@@ -399,6 +402,11 @@ namespace OperationTrident.Room1
         public void Init(NetSyncController controller)
         {
             m_controller = controller;
+        }
+
+        private void OnGUI()
+        {
+            FadeInOutUtil.RenderGUI();
         }
     }
 }
