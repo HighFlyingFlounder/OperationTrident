@@ -81,12 +81,10 @@ namespace OperationTrident.Common {
         #endregion
 
         private void PlayerDie() {
-
-            //EventSystem.Messenger.Broadcast(Room1.DieHandler.PLAYER_DIE);
             //生成替代模型
             if (ReplaceWhenDie) {
                 if(DeadReplacement != null) {
-                    GameObject replacement = Instantiate(DeadReplacement, transform.position, transform.rotation);
+                    GameObject replacement = Instantiate(DeadReplacement, transform.position + Vector3.up * 0.3f, transform.rotation);
                     replacement.transform.localScale = this.transform.localScale;
                 } else {
                     Debug.LogWarning("Can not find DeadReplacement to Instantiate");
