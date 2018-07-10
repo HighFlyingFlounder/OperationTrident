@@ -197,12 +197,13 @@ namespace room2Battle
                             bool work = false;
                             foreach (var a in SceneNetManager.instance.list)
                             {
-                                Vector3 dir = a.Value.transform.position - head.position;
+                                //用头比较清真
+                                Vector3 dir = a.Value.transform.Find("Head").position - head.position;
                                 Ray ray = new Ray (head.position, dir);
                                 RaycastHit hit;
                                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
                                 {
-                                    Debug.DrawLine(ray.origin, hit.point, Color.red);
+                                    Debug.DrawLine(ray.origin, hit.point, Color.red,2.0f);
                                     Debug.Log(hit.collider.tag);
                                     if (hit.collider.tag == "Player")
                                     {
