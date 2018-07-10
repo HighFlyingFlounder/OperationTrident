@@ -101,8 +101,10 @@ public class SceneNetManager : MonoBehaviour
         foreach (var temp in net_sync_controllers)
         {
             temp.name = id + temp.name;
+            temp.setSyncID(temp.name);//确保sync_id正确
         }
         playerObj.name = id;
+        playerObj.GetComponent<NetSyncController>().setSyncID(playerObj.name);//确保sync_id正确
 
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
