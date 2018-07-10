@@ -93,7 +93,7 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            //director.Play();
+            director.Play();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace room2Battle
                 mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)//bool值作为flag
             {
-                //if (director.time > 30.0f)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
                     trueBoss.transform.position = bossInitPos.position;
