@@ -16,10 +16,10 @@ namespace OperationTrident.Room5
         public TurretActionController[] turretActionController;
 
         //敌人的prefab
-        public GameObject m_EnemyPrefab1;
+       // public GameObject m_EnemyPrefab1;
 
         //四个高台可以生成敌人
-        public Transform[] m_EnemyGenPos = new Transform[4];
+        //public Transform[] m_EnemyGenPos = new Transform[4];
 
         //三分钟 180s
         private float m_CountDownTime = 180.0f;
@@ -83,7 +83,7 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1(float t)
         {
             yield return new WaitForSeconds(t);
-            for (int i = 0; i < 1; ++i)
+            for (int i = 0; i < 2; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
             }
@@ -93,8 +93,8 @@ namespace OperationTrident.Room5
         //生成一大波敌人
         private IEnumerator spawnEnemies2()
         {
-            yield return new WaitForSeconds(60.0f);
-            for (int i = 0; i < 1; ++i)
+            yield return new WaitForSeconds(120.0f);
+            for (int i = 0; i < 2; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
             }
