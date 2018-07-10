@@ -95,7 +95,7 @@ namespace room2Battle
         {
             if (GameMgr.instance)
             {
-                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }
@@ -256,7 +256,7 @@ namespace room2Battle
                         TimelineSource.Play();
                         playOnce = true;
 
-                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }

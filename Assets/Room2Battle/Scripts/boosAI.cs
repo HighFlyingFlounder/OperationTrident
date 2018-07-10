@@ -16,7 +16,9 @@ namespace room2Battle
             RightFire = 3, //抬起另一只手的机枪
             KeepFireAgain = 4, //另一只手继续射击
             StopFire = 5,
-            MissileLaunch = 6
+            MissileLaunch = 6,
+            SeekingPlayer = 7,
+            wandering = 8
         };
 
         protected fireState currentState = fireState.Idle;
@@ -44,6 +46,9 @@ namespace room2Battle
         //右手前的位置
         [SerializeField]
         protected Transform rightHand;
+
+        [SerializeField]
+        protected Transform head;
 
         //调整转向
         protected bool beginTurnAround = false;
@@ -142,49 +147,87 @@ namespace room2Battle
                             }
                             else
                             {
-                                int choice = (int)UnityEngine.Random.Range(0, 3);
-                                if (GameMgr.instance)
+                                //int choice = (int)UnityEngine.Random.Range(0, 3);
+                                //if (GameMgr.instance)
+                                //{
+                                //    //随机搞
+                                //    //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
+                                //    target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
+                                //}
+                                ////开始抬手
+                                //switch (choice)
+                                //{
+                                //    case 0:
+                                //        {
+                                //            thinkTime = 0.0f;
+                                //        }
+                                //        break;
+                                //    case 1:
+                                //        {
+                                //            //转移到下一个状态
+                                //            currentState = fireState.OpenFire;
+                                //            //同步
+                                //            handup = true;
+                                //            animator.SetBool("handup", true);
+                                //            Debug.Log("SyncVariables");
+                                //            netSyncController.SyncVariables();
+                                //            //充值思考时间
+                                //            thinkTime = 0.0f;
+                                //        }
+                                //        break;
+                                //    case 2:
+                                //        {
+                                //            //转移到下一个状态
+                                //            currentState = fireState.MissileLaunch;
+                                //            //同步
+                                //            animator.SetBool("missileLaunch", true);
+                                //            missilLaunch = true;
+                                //            Debug.Log("SyncVariables");
+                                //            netSyncController.SyncVariables();
+                                //            //充值思考时间
+                                //            thinkTime = 0.0f;
+                                //        }
+                                //        break;
+                                //}
+                                thinkTime = 0.0f;
+                                currentState = fireState.SeekingPlayer;
+                            }
+                        }
+                        break;
+                    case fireState.SeekingPlayer:
+                        {
+                            bool work = false;
+                            foreach (var a in SceneNetManager.instance.list)
+                            {
+                                Vector3 dir = a.Value.transform.position - head.position;
+                                Ray ray = new Ray (head.position, dir);
+                                RaycastHit hit;
+                                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
                                 {
-                                    //随机搞
-                                    //target = (players[UnityEngine.Random.Range(0,players.Count)] as GameObject).transform;
-                                    target = (SceneNetManager.instance.list[GameMgr.instance.id]).transform;
-                                    //netSyncController.RPC(this, "targetSync",target);
+                                    Debug.DrawLine(ray.origin, hit.point, Color.red);
+                                    if (hit.collider.tag == "Player")
+                                    {
+                                        work = true;
+                                        target = a.Value.transform;
+                                        break;
+                                    }
                                 }
-                                //开始抬手
-                                switch (choice)
-                                {
-                                    case 0:
-                                        {
-                                            thinkTime = 0.0f;
-                                        }
-                                        break;
-                                    case 1:
-                                        {
-                                            //转移到下一个状态
-                                            currentState = fireState.OpenFire;
-                                            //同步
-                                            handup = true;
-                                            animator.SetBool("handup", true);
-                                            Debug.Log("SyncVariables");
-                                            netSyncController.SyncVariables();
-                                            //充值思考时间
-                                            thinkTime = 0.0f;
-                                        }
-                                        break;
-                                    case 2:
-                                        {
-                                            //转移到下一个状态
-                                            currentState = fireState.MissileLaunch;
-                                            //同步
-                                            animator.SetBool("missileLaunch", true);
-                                            missilLaunch = true;
-                                            Debug.Log("SyncVariables");
-                                            netSyncController.SyncVariables();
-                                            //充值思考时间
-                                            thinkTime = 0.0f;
-                                        }
-                                        break;
-                                }
+                            }
+                            if (!work)
+                            {
+                                currentState = fireState.Idle;
+                            }
+                            else
+                            { 
+                                //转移到下一个状态
+                                currentState = fireState.MissileLaunch;
+                                //同步
+                                animator.SetBool("missileLaunch", true);
+                                missilLaunch = true;
+
+                                netSyncController.SyncVariables();
+                                //充值思考时间
+                                thinkTime = 0.0f;
                             }
                         }
                         break;
