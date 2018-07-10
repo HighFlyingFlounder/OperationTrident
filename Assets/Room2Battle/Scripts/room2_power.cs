@@ -98,15 +98,6 @@ namespace room2Battle
                 Destroy(cam.GetComponent<depthSensor>());
                 Destroy(cam.GetComponent<becomeDark>());
             }
-
-            //@TODO: 替换成老Y的AI
-            foreach (GameObject obj in enemyList)
-            {
-                if (obj != null)
-                {
-                    Destroy(obj);
-                }
-            }
         }
 
         public override void onSubsceneInit()
