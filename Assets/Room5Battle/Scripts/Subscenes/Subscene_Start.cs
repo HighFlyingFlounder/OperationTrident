@@ -72,7 +72,7 @@ namespace OperationTrident.Room5
                 gameObject.GetComponent<NetSyncController>().SyncVariables();
             }
 
-            TryInitPlayerScale();
+            //TryInitPlayerScale();
         }
 
         private void OnGUI()
@@ -87,7 +87,7 @@ namespace OperationTrident.Room5
             //左下角任务细节
             string[] missionDetails =
             {
-                "2048.8.1 15:00 p.m. GMT+8",
+                "2048年8月1 15:00 p.m. GMT+8",
                 "鲲内部  核聚变反应室",
                 "三叉戟行动"
             };
@@ -131,7 +131,9 @@ namespace OperationTrident.Room5
             
         }
 
+        //这个别用了，因为已经给Room5单独弄了local/network player prefab，已经scale好了
         //scale一下联网时各个player的大小（玩家不一定在start的时候被创建，所以要在update里面搞这玩意）
+        [Obsolete]
         private void TryInitPlayerScale()
         {
             if (GameMgr.instance && m_isPlayerScaled==false)
@@ -154,6 +156,6 @@ namespace OperationTrident.Room5
                 GameObject.FindWithTag("Player").transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
             }
         }
-
+        
     }
 }
