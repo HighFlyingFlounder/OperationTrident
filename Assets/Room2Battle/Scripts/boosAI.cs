@@ -523,7 +523,7 @@ namespace room2Battle
                     {
                         if (isStartWalking && !beginTurnAround)
                         {
-                            transform.position = Vector3.Lerp(transform.position, currentWanderTarget.position, Time.deltaTime);
+                            transform.position = Vector3.Lerp(transform.position, currentWanderTarget.position, Time.deltaTime * 0.2f);
                         }
                     }
                     break;

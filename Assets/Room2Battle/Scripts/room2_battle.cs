@@ -93,7 +93,6 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            Debug.Log(director.isActiveAndEnabled);
             //director.Play();
         }
 
@@ -122,7 +121,6 @@ namespace room2Battle
                     AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
-                openDoor();
                 destoryBoss = true;
             }
             else//播放台词
@@ -149,10 +147,10 @@ namespace room2Battle
         /// </summary>
         public void openDoor()
         {
-            //if (trueBoss != null)
-            //{
-            //    Destroy(trueBoss.gameObject);
-            //}
+            if (trueBoss != null)
+            {
+                Destroy(trueBoss.gameObject);
+            }
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
