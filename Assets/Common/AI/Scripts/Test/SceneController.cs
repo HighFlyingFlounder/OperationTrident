@@ -15,9 +15,9 @@ namespace OperationTrident.Common.AI
         // Use this for initialization
         void Start()
         {
-            AIController.instance.CreateAI(7, 0, "AIBorn0", wanderAIAgentInitParams[0]);
-            AIController.instance.CreateAI(8, 0, "AIBorn0", wanderAIAgentInitParams[1]);
-            AIController.instance.CreateAI(5, 1, "AIBorn1", turrentAIAgentInitParams[0]);
+            AIController.instance.CreateAI(12, 0, "AIBorn0", wanderAIAgentInitParams[0]);
+            //AIController.instance.CreateAI(8, 0, "AIBorn0", wanderAIAgentInitParams[1]);
+            //AIController.instance.CreateAI(1, 1, "AIBorn1", turrentAIAgentInitParams[0]);
         }
 
         // Update is called once per frame

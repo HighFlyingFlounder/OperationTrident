@@ -132,6 +132,9 @@ public class AIController : MonoBehaviour, NetSyncInterface
             //创建的AI初始化信息
             begin_id++;
             AI.name = "AI" + begin_id;
+            
+            AI.GetComponent<NetSyncController>().setSyncID(AI.name);
+
             AI.GetComponent<AIAgent>().SetInitParams(args);
             AI_List.Add(AI.name, AI);
 
