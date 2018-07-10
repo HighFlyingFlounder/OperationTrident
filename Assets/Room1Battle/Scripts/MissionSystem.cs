@@ -103,8 +103,16 @@ namespace OperationTrident.Room1
                      GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
             else
             {
-                nowDistance = Vector3.Distance(targetWorldPosition,
-                     SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+                try
+                {
+                    nowDistance = Vector3.Distance(targetWorldPosition,
+                         SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+                }
+                catch(Exception e)
+                {
+                    missionContent = string.Empty;
+                    return;
+                }
             }
             
             Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0); // 屏幕中心
@@ -127,34 +135,30 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            // 显示任务目标
-
-            if (missionContent != string.Empty)
+            try
             {
-                //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
-                //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
+                // 显示任务目标
+
+                if (missionContent != string.Empty)
+                {
+
+                    GUIUtil.DisplayMissionTargetInMessSequently(missionContent,
+                        Util.GetCamera(),
+                        missionTargetColor,
+                        interval: appearInterval,
+                        blingInterval: blingInterval,
+                        fontSize: 16,
+                        sequentClear: sequentClear);
+                }
+                GUIUtil.DisplayMissionPoint(
+                    targetWorldPosition,
                     Util.GetCamera(),
-                    missionTargetColor,
-                    interval: appearInterval,
-                    blingInterval:blingInterval,
-                    fontSize: 16,
-                    sequentClear:sequentClear);
+                    GUIUtil.missionPointColor);
             }
-
-
-            //GUIStyle style = GUIUtil.GetDefaultTextStyle(distanceColor,fontSize:18);
-            //Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Util.GetCamera());
-            //// 指定颜色
-            //if (toDisplayTheMissionPoint)
-            //{
-            //    GUI.Label(rect, (int)nowDistance + "m\n●", style);
-            //}
-
-            GUIUtil.DisplayMissionPoint(
-                targetWorldPosition,
-                Util.GetCamera(),
-                GUIUtil.missionPointColor);
+            catch(Exception e)
+            {
+                Debug.Log("任务系统摄像头错误");
+            }
         }
     }
 }
