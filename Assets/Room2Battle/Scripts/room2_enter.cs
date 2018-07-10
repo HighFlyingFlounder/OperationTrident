@@ -95,7 +95,7 @@ namespace room2Battle
         {
             if (GameMgr.instance)
             {
-                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }
@@ -256,7 +256,7 @@ namespace room2Battle
                         TimelineSource.Play();
                         playOnce = true;
 
-                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }
@@ -265,11 +265,11 @@ namespace room2Battle
                 if (this.enabled)
                 {
                     if (GameMgr.instance)//联网状态
-                    {
-                        GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
+                    {              
                         //设置相机
-                        if (PLAYER != null)
+                        if (SceneNetManager.instance.list.Count != 0)
                         {
+                            GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
                             //设置合适大小
                             foreach (var a in (SceneNetManager.instance.list))
                             {

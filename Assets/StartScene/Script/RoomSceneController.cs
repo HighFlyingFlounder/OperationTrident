@@ -62,6 +62,9 @@ namespace OperationTrident.StartScene
         [SerializeField]
         private Text welcomeText;
 
+        [SerializeField]
+        private Text roomNameText;
+
         public void InitRoomListScene()
         {
             Debug.Log("Init Room List Scene");
@@ -146,7 +149,6 @@ namespace OperationTrident.StartScene
                 membersImages[i].transform.Find("Text").GetComponent<Text>().text = m_memberList[i].id;
                 if (m_memberList[i].isOwner == 1)
                 {
-                    Debug.Log("准备显示星星");
                     GameObject gameObject = Instantiate(starPrebab);
                     gameObject.transform.parent = membersImages[i].transform;
                     gameObject.GetComponent<RectTransform>().
@@ -237,11 +239,11 @@ namespace OperationTrident.StartScene
             for (int i = 0; i < count; i++)
             {
                 int num = proto.GetInt(start, ref start);
+
                 int status = proto.GetInt(start, ref start);
                 m_roomList.Add(new RoomInfo(i, num, status));
             }
             scrollbar.numberOfSteps = m_roomList.Count;
-            Debug.Log("wtf");
             scrollbar.value = 0;
             SetRoomList();
 
@@ -279,9 +281,7 @@ namespace OperationTrident.StartScene
                 roomsPanels[i].transform.Find("joinin").GetComponent<Button>().onClick.RemoveAllListeners();
                 roomsPanels[i].transform.Find("joinin").GetComponent<Button>().onClick.AddListener(
                     delegate() {
-                        Debug.Log("invoke");
                         OnJoinBtnClick(to);
-                        //roomsPanels[i].transform.Find("joinin").GetComponent<Button>().onClick.RemoveAllListeners();
                 });
             }
         }
@@ -312,6 +312,7 @@ namespace OperationTrident.StartScene
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int ret = proto.GetInt(start, ref start);
+            roomName = m_roomList.Count.ToString();
             //处理
             if (ret == 0)
             {
@@ -321,6 +322,7 @@ namespace OperationTrident.StartScene
                 GameMgr.instance.isMasterClient = true;
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
+                roomNameText.text = "Room  "+roomName;
                 InitTeamScene();
             }
             else
@@ -329,6 +331,8 @@ namespace OperationTrident.StartScene
                 //PanelMgr.instance.OpenPanel<TipPanel>("", "创建房间失败！");
             }
         }
+
+        private string roomName;
 
         //加入按钮
         public void OnJoinBtnClick(string name)
@@ -339,6 +343,7 @@ namespace OperationTrident.StartScene
 
             protocol.AddInt(int.Parse(name));
             NetMgr.srvConn.Send(protocol, OnJoinBtnBack);
+            roomName = name;
             Debug.Log("请求进入房间 " + name);
         }
 
@@ -355,7 +360,7 @@ namespace OperationTrident.StartScene
             {
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                Debug.Log("1110");
+                roomNameText.text = "Room  " + roomName;
                 InitTeamScene();
             }
             else
