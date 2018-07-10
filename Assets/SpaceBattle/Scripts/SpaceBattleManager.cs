@@ -118,9 +118,8 @@ public class SpaceBattleManager : MonoBehaviour
         else
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
-            //playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
             playerObj.transform.Find("Camera").gameObject.SetActive(false);
-            //playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
+            playerObj.GetComponent<showHp>().enabled = false;
         }
         
     }
