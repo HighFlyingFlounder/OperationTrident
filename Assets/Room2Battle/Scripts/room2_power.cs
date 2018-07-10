@@ -66,6 +66,8 @@ namespace room2Battle
         //bool值保证只生成一次AI
         protected bool initEnemyAgain = false;
 
+        float initEnemyTime = 0.0f;
+
         /// <summary>
         ///  method 
         /// </summary>
@@ -194,6 +196,12 @@ namespace room2Battle
                     AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
                     initEnemyAgain = true;
+                }
+
+                if (initEnemyTime > 5.0f)
+                {
+                    AIController.instance.CreateAI(1,0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    initEnemyTime = 0.0f;
                 }
             }
         }

@@ -65,6 +65,8 @@ namespace room2Battle
         protected TurretAIAgentInitParams turretAIAgentParams;
         //只删一次boss
         protected bool destoryBoss = false;
+
+        protected float initEnemyTime = 0.0f;
         private void Start()
         {
         }
@@ -130,6 +132,14 @@ namespace room2Battle
                     source.clip = clips[0];
                     source.Play();
                     source.priority = TimelineSource.priority + 1;
+                }
+                if (initEnemyTime > 6.0f)
+                {
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos2", wanderAIAgentParams);
+                    initEnemyTime = 0.0f;
                 }
             }
             //TODO:测试，删除
