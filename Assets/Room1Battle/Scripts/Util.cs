@@ -12,12 +12,19 @@ namespace OperationTrident.Room1
 
         public static Camera camera;
 
-        public static Camera GetCamera()
+        private static Camera GetCameraImpl()
         {
             if(camera == null)
             {
-                camera = GameMgr.instance ? SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<GetCamera>().GetMainCamera() :
-            GameObject.FindWithTag("Player").GetComponent<GetCamera>().GetMainCamera();
+                try
+                {
+                    camera = GameMgr.instance ? SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<GetCamera>().GetMainCamera() :
+                GameObject.FindWithTag("Player").GetComponent<GetCamera>().GetMainCamera();
+                }
+                catch(Exception e)
+                {
+                    return Camera.current ? Camera.current : Camera.main;
+                }
             }
             if (GameMgr.instance)//联机状态
             {
@@ -28,6 +35,18 @@ namespace OperationTrident.Room1
             //else return Camera.current;
             //return Camera.current;
             else return camera;
+        }
+
+        public static Camera GetCamera()
+        {
+            try
+            {
+                return GetCameraImpl() ? GetCameraImpl() : Camera.current;
+            }
+            catch(Exception e)
+            {
+                return Camera.current ? Camera.current : Camera.main;
+            }
         }
 
         public static void SetParent(GameObject obj, Transform parent)

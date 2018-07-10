@@ -31,38 +31,39 @@ namespace room2Battle
         [SerializeField]
         protected GameObject boss;
 
+        //真·boss
         [SerializeField]
         protected GameObject trueBoss;
-
+        //boss的摆放位置
         [SerializeField]
         protected Transform bossInitPos;
-
+        //门
         [SerializeField]
         protected GameObject door;
 
         [SerializeField]
         protected Transform doorPos;
-
+        //同步控制器
         protected NetSyncController mController;
 
         //语音只播放一次
         protected bool playOnce = false;
-
+        //bgm音源
         [SerializeField]
         protected AudioSource source;
-
+        //台词音源
         [SerializeField]
         protected AudioSource TimelineSource;
-
+        //音轨
         [SerializeField]
         protected AudioClip[] clips;
-
+        //AI参数
         [SerializeField]
         protected WanderAIAgentInitParams wanderAIAgentParams;
 
         [SerializeField]
         protected TurretAIAgentInitParams turretAIAgentParams;
-
+        //只删一次boss
         protected bool destoryBoss = false;
         private void Start()
         {
@@ -72,7 +73,7 @@ namespace room2Battle
         {
 
         }
-
+        //没下一个小场景
         public override bool isTransitionTriggered()
         {
             return false;
@@ -82,6 +83,9 @@ namespace room2Battle
         {
         }
 
+        /// <summary>
+        /// @brief 播放timeline，关闭玩家的操作
+        /// </summary>
         public override void onSubsceneInit()
         {
             if (GameMgr.instance)
@@ -89,17 +93,19 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            Debug.Log(director.isActiveAndEnabled);
-            //director.Play();
+            director.Play();
         }
 
+        /// <summary>
+        /// @brief 判断timeline播放阶段，生成AI，boss，激活玩家
+        /// </summary>
         void Update()
         {
             if (getCamera != null)
                 mCamera = getCamera.GetCurrentUsedCamera();
-            if (!isTimelinePaused)
+            if (!isTimelinePaused)//bool值作为flag
             {
-                //if (director.time > 30.0f)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
                     trueBoss.transform.position = bossInitPos.position;
@@ -110,15 +116,13 @@ namespace room2Battle
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     mController.RPC(this, "openDoor");
-                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
-                    //AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
-                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
-                    //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
+                    AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
+                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
-                openDoor();
-                destoryBoss = true;
             }
-            else
+            else//播放台词
             {
                 if (!playOnce)
                 {
@@ -128,20 +132,24 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
             }
-            if (trueBoss == null && !destoryBoss)
+            //TODO:测试，删除
+            if (trueBoss == null)
             {
-                openDoor();
-                mController.RPC(this, "openDoor");
-                destoryBoss = true;
+                Debug.Log("======================");
+                if (!destoryBoss)
+                {
+                    openDoor();
+                    mController.RPC(this, "openDoor");
+                    destoryBoss = true;
+                }
             }
         }
 
+        /// <summary>
+        /// @brief RPC的关门
+        /// </summary>
         public void openDoor()
         {
-            //if (trueBoss != null)
-            //{
-            //    Destroy(trueBoss.gameObject);
-            //}
             if (door.gameObject)
             {
                 Destroy(door.gameObject);

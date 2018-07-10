@@ -114,14 +114,20 @@ namespace OperationTrident.Room1
 
         void OnGUI()
         {
-
-            // 显示物体可以获得的提示
-            if (toDisplayHint)
+            try
             {
-                if (usingGrammar)
-                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
-                else
-                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
+                // 显示物体可以获得的提示
+                if (toDisplayHint)
+                {
+                    if (usingGrammar)
+                        GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
+                    else
+                        GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.Log("物品交互提示相机错误");
             }
         }
     }

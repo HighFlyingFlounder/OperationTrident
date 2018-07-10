@@ -25,13 +25,20 @@ namespace OperationTrident.Room1
 
         void OnGUI()
         {
-            GUIUtil.DisplayWorldPointInScreen(
-                gameObject.transform.position,
-                Util.GetCamera() ? Util.GetCamera() : Camera.current,
-                name,
-                color,
-                fontSize,
-                labelOffsetHeight);
+            try
+            {
+                GUIUtil.DisplayWorldPointInScreen(
+                    gameObject.transform.position,
+                    Util.GetCamera() ? Util.GetCamera() : Camera.current,
+                    name,
+                    color,
+                    fontSize,
+                    labelOffsetHeight);
+            }
+            catch(System.Exception e)
+            {
+                Debug.Log("名字显示系统相机错误");
+            }
         }
     }
 }
