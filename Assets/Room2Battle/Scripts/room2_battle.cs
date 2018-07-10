@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
+using OperationTrident.Common.AI;
 using System;
 
 namespace room2Battle
@@ -19,18 +20,6 @@ namespace room2Battle
         [SerializeField]
         protected UnityEngine.Playables.PlayableDirector director;
 
-        [SerializeField]
-        protected Transform[] enemyInitPositions;
-
-        [SerializeField]
-        protected GameObject enemyPrefabs;
-        //敌人列表方便管理
-        protected ArrayList enemyList = new ArrayList();
-
-        //当前敌人数目，用于补充敌人数目
-        protected int currentEnemyNum = 0;
-        //最多敌人数目
-        protected int maxEnemyNum = 20;
         //timeline播放程度
         protected bool isTimelinePaused = false;
 
@@ -44,10 +33,6 @@ namespace room2Battle
 
         [SerializeField]
         protected GameObject trueBoss;
-        /*
-        [SerializeField] 
-        protected GameObject realBoss;
-        */
 
         [SerializeField]
         protected Transform bossInitPos;
@@ -72,6 +57,13 @@ namespace room2Battle
         [SerializeField]
         protected AudioClip[] clips;
 
+        [SerializeField]
+        protected WanderAIAgentInitParams wanderAIAgentParams;
+
+        [SerializeField]
+        protected TurretAIAgentInitParams turretAIAgentParams;
+
+        protected bool destoryBoss = false;
         private void Start()
         {
         }
@@ -88,13 +80,6 @@ namespace room2Battle
 
         public override void onSubsceneDestory()
         {
-            foreach (GameObject obj in enemyList)
-            {
-                if (obj != null)
-                {
-                    Destroy(obj);
-                }
-            }
         }
 
         public override void onSubsceneInit()
@@ -105,7 +90,7 @@ namespace room2Battle
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
             Debug.Log(director.isActiveAndEnabled);
-            director.Play();
+            //director.Play();
         }
 
         void Update()
@@ -114,7 +99,7 @@ namespace room2Battle
                 mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)
             {
-                if (director.time > 30.0f)
+                //if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
                     trueBoss.transform.position = bossInitPos.position;
@@ -124,9 +109,14 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    openDoor();
                     mController.RPC(this, "openDoor");
+                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
+                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
+                    //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
+                openDoor();
+                destoryBoss = true;
             }
             else
             {
@@ -138,11 +128,20 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
             }
-
+            if (trueBoss == null && !destoryBoss)
+            {
+                openDoor();
+                mController.RPC(this, "openDoor");
+                destoryBoss = true;
+            }
         }
 
         public void openDoor()
         {
+            //if (trueBoss != null)
+            //{
+            //    Destroy(trueBoss.gameObject);
+            //}
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
