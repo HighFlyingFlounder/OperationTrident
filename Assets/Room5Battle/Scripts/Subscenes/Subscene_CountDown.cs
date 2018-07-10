@@ -22,7 +22,7 @@ namespace OperationTrident.Room5
         public Transform[] m_EnemyGenPos = new Transform[4];
 
         //三分钟 180s
-        private float m_CountDownTime = 120.0f;
+        private float m_CountDownTime = 180.0f;
         private float m_EnemySpawnDeltaTime = 20.0f;
 
         //BGM播放
@@ -83,7 +83,7 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1(float t)
         {
             yield return new WaitForSeconds(t);
-            for (int i = 0; i < 2; ++i)
+            for (int i = 0; i < 1; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
             }
@@ -94,7 +94,7 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies2()
         {
             yield return new WaitForSeconds(60.0f);
-            for (int i = 0; i < 2; ++i)
+            for (int i = 0; i < 1; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
             }

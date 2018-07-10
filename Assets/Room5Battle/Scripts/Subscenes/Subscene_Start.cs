@@ -87,7 +87,7 @@ namespace OperationTrident.Room5
             //左下角任务细节
             string[] missionDetails =
             {
-                "2048.8.1 15:00 p.m. GMT+8",
+                "2048年8月1 15:00 p.m. GMT+8",
                 "鲲内部  核聚变反应室",
                 "三叉戟行动"
             };
