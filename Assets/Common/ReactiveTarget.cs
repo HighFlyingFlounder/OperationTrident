@@ -40,7 +40,6 @@ namespace OperationTrident.Common {
         }
 
         public void OnHit(string id, bool fromAI, float damage) {
-            Debug.LogFormat("id = {0} fromAI = {1} damage = {2} GameMgr.instance.id = {3} ", id, fromAI, damage, GameMgr.instance.id);
             //单机状态
             if (GameMgr.instance == null) {
                 HitImplement(damage);
@@ -85,7 +84,7 @@ namespace OperationTrident.Common {
             //生成替代模型
             if (ReplaceWhenDie) {
                 if(DeadReplacement != null) {
-                    GameObject replacement = Instantiate(DeadReplacement, transform.position + Vector3.up * 0.5f, transform.rotation);
+                    GameObject replacement = Instantiate(DeadReplacement, transform.position + Vector3.up * 0.3f, transform.rotation);
                     replacement.transform.localScale = this.transform.localScale;
                 } else {
                     Debug.LogWarning("Can not find DeadReplacement to Instantiate");
