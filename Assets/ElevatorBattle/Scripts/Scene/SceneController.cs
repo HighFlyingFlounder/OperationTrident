@@ -199,7 +199,12 @@ namespace OperationTrident.Elevator {
                 //进入关门
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
-                    changeState();
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -214,7 +219,12 @@ namespace OperationTrident.Elevator {
 
                 if (count <= 0 && Door.state && state == ElevatorState.Escape)
                 {
-                    changeState();
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
