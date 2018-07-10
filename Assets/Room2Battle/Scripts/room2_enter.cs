@@ -82,7 +82,7 @@ namespace room2Battle
         protected AudioClip[] clips;
 
         protected bool playOnce = false;
-
+        //AI的参数
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
 
@@ -95,7 +95,7 @@ namespace room2Battle
         {
             if (GameMgr.instance)
             {
-                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }
@@ -114,7 +114,11 @@ namespace room2Battle
         {
 
         }
-        //两次碰撞体检测
+        /// <summary>
+        /// @brief 两次碰撞体检测
+        /// @param i 碰撞体提供的magic number，相当于注册的事件
+        /// </summary>
+        /// <param name="i"></param>
         public override void notify(int i)
         {
             if (this.enabled)
@@ -134,7 +138,9 @@ namespace room2Battle
                 }
             }
         }
-
+        /// <summary>
+        /// 显示GUI
+        /// </summary>
         void OnGUI()
         {
             //仅当初始化完成
@@ -179,7 +185,7 @@ namespace room2Battle
                 GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
             }
         }
-
+        //设置状态
         public void near()
         {
             isNear = true;
@@ -204,7 +210,9 @@ namespace room2Battle
             m_controller = controller;
         }
 
-
+        /// <summary>
+        /// @brief 根据输入决定后处理特效
+        /// </summary>
         void LateUpdate()
         {
             //按H打开夜视仪
@@ -240,7 +248,9 @@ namespace room2Battle
             }
 
         }
-
+        /// <summary>
+        /// @brief 一直检测是否网络初始化，然后初始化玩家
+        /// </summary>
         void Update()
         {
             //到时间播放
@@ -250,18 +260,21 @@ namespace room2Battle
 
                 if (isNear)
                 {
+                    //bool值保证只调用一次
                     if (!playOnce)
                     {
+                        //播放台词
                         TimelineSource.clip = clips[1];
                         TimelineSource.Play();
                         playOnce = true;
-
-                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        //产生AI
+                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }
             else//初始化
             {
+                //确保是当前场景被enable才初始化
                 if (this.enabled)
                 {
                     if (GameMgr.instance)//联网状态
@@ -276,7 +289,7 @@ namespace room2Battle
                                 GameObject temp = a.Value;
                                 temp.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
                             }
-
+                            //加入后处理脚本
                             getCamera = PLAYER.GetComponent<GetCamera>();
 
                             playerCamera = getCamera.MainCamera;
@@ -320,7 +333,7 @@ namespace room2Battle
                             //bgm，台词
                             TimelineSource.clip = clips[0];
                             TimelineSource.Play();
-
+                            //bgm
                             source.clip = clips[2];
                             source.Play();
                             source.priority = TimelineSource.priority + 1;
@@ -329,7 +342,10 @@ namespace room2Battle
                 }
             }
         }
-        //关灯
+
+        /// <summary>
+        /// @brief 关灯
+        /// </summary>
         public void becomeDark()
         {
             if (isInit)
