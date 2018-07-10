@@ -32,6 +32,8 @@ namespace OperationTrident.Elevator {
         //结束时间
         private float e_time;
 
+        private float t_time;
+
         //碰撞次数
         private int count = 0;
 
@@ -57,9 +59,9 @@ namespace OperationTrident.Elevator {
 
             flag = true;
 
-            coroutine1 = WaitAndPrint1(5);
+            coroutine1 = WaitAndPrint1(10);
 
-            coroutine2 = WaitAndPrint2(5);
+            coroutine2 = WaitAndPrint2(10);
         }
 
         // Update is called once per frame
@@ -117,11 +119,18 @@ namespace OperationTrident.Elevator {
                     c_time = s_time;
                     e_time = s_time + d_time;
 
+                    t_time = s_time + 5;
+
                     changeState();
                     break;
 
                 case ElevatorState.Fighting:
                     c_time += Time.deltaTime;
+
+                    if (c_time >= t_time)
+                    {
+                        StartCoroutine(coroutine2);
+                    }
 
                     if(c_time >= e_time)
                     {
