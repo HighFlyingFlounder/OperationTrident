@@ -196,20 +196,24 @@ namespace room2Battle
                         {
                             bool work = false;
                             foreach (var a in SceneNetManager.instance.list)
-                            {
-                                //用头比较清真
-                                Vector3 dir = a.Value.transform.Find("Head").position - head.position;
-                                Ray ray = new Ray (head.position, dir);
-                                RaycastHit hit;
-                                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
+                            {                        
+                                if (a.Value != null)
                                 {
-                                    Debug.DrawLine(ray.origin, hit.point, Color.red,2.0f);
-                                    Debug.Log(hit.collider.tag);
-                                    if (hit.collider.tag == "Player")
+                                    //用头比较清真
+                                    Vector3 dir = (a.Value.transform.Find("Head").position - new Vector3(0.0f,0.5f,0.0f)) - head.position;
+                                    Ray ray = new Ray(head.position, dir);
+
+                                    RaycastHit hit;
+                                    if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                                     {
-                                        work = true;
-                                        target = a.Value.transform;
-                                        break;
+                                        Debug.DrawLine(ray.origin, hit.point, Color.red, 2.0f);
+                                        Debug.Log(hit.collider.tag);
+                                        if (hit.collider.tag == "Player")
+                                        {
+                                            work = true;
+                                            target = a.Value.transform;
+                                            break;
+                                        }
                                     }
                                 }
                             }
