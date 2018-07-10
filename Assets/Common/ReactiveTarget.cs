@@ -142,7 +142,6 @@ namespace OperationTrident.Common {
 
         private void Update()
         {
-            Debug.Log(_isParalyzed);
             if (_isParalyzed)
             {
                 _EMPEffectTime -= Time.deltaTime;
