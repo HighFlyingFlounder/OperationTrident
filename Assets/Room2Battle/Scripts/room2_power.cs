@@ -252,7 +252,7 @@ namespace room2Battle
                     //交互提示
                     if (!isSwitchOpen)
                     {
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.7f);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.8f);
                     }
                 }
                 //深度摄像头是否开启，是否黑
