@@ -192,6 +192,7 @@ namespace OperationTrident.Room1
         {
             if (GameMgr.instance)
             {
+                SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<Common.ReactiveTarget>().MaxHealth = 500;
                 foreach(var a in SceneNetManager.instance.list)
                 {
                     a.Value.transform.localScale = new Vector3(
