@@ -361,7 +361,7 @@ namespace OperationTrident.StartScene
             {
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                
+                InitTeamScene();
             }
             else
             {
