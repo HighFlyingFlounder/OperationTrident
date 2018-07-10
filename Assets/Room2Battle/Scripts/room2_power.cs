@@ -4,6 +4,7 @@ using UnityEngine;
 using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
+using OperationTrident.Common.AI;
 
 namespace room2Battle
 {
@@ -64,6 +65,18 @@ namespace room2Battle
         {
         };
 
+        [SerializeField]
+        WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+        [SerializeField]
+        TurretAIAgentInitParams[] turrentAIAgentInitParams;
+
+        protected bool initEnemyAgain = false;
+
+        /// <summary>
+        ///  method 
+        /// </summary>
+
         //获取相机句柄
         void Start()
         {
@@ -121,15 +134,11 @@ namespace room2Battle
                 {
                     playerCameraMirror.Add(cam);
                 }
-            }
 
-            //@TODO: 替换成老Y的AI
-            for (int i = 0; i < maxEnemyNum; ++i)
-            {
-                GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                enemyList.Add(obj);
+                //@TODO: 替换成老Y的AI
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
-
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
@@ -178,6 +187,16 @@ namespace room2Battle
             }
 
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
+
+            if (isSwitchOpen)
+            {
+                if (!initEnemyAgain)
+                {
+                    AIController.instance.CreateAI(4,1, "EnemyInitPos4",turrentAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    initEnemyAgain = true;
+                }
+            }
         }
 
         void LateUpdate()
