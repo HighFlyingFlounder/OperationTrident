@@ -265,11 +265,11 @@ namespace room2Battle
                 if (this.enabled)
                 {
                     if (GameMgr.instance)//联网状态
-                    {
-                        GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
+                    {              
                         //设置相机
-                        if (PLAYER != null)
+                        if (SceneNetManager.instance.list.Count != 0)
                         {
+                            GameObject PLAYER = (SceneNetManager.instance.list[GameMgr.instance.id]);
                             //设置合适大小
                             foreach (var a in (SceneNetManager.instance.list))
                             {
