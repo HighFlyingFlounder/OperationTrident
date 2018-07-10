@@ -158,8 +158,13 @@ namespace OperationTrident.Common {
             if (!IsAlive)
                 return;
 
-            _isParalyzed = true;
+            OnEMPImplement(effectTime);
+            m_NetSyncController.RPC(this, "OnEMPImplement", effectTime);
+        }
 
+        public void OnEMPImplement(float effectTime)
+        {
+            _isParalyzed = true;
             _EMPEffectTime = effectTime;
         }
 
