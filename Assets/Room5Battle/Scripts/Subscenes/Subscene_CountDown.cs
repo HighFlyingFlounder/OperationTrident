@@ -22,7 +22,8 @@ namespace OperationTrident.Room5
         public Transform[] m_EnemyGenPos = new Transform[4];
 
         //三分钟 180s
-        private float m_CountDownTime = 15.0f;
+        private float m_CountDownTime = 120.0f;
+        private float m_EnemySpawnDeltaTime = 20.0f;
 
         //BGM播放
         public AudioSource m_AudioSource;
@@ -49,7 +50,12 @@ namespace OperationTrident.Room5
         public override void onSubsceneInit()
         {
             m_ReactorPillar.StartCoolDownProcedure();
-            StartCoroutine(spawnEnemies1());
+
+            for (int i = 0; i < (int)m_CountDownTime / m_EnemySpawnDeltaTime; ++i)
+            {
+                StartCoroutine(spawnEnemies1(i * m_EnemySpawnDeltaTime));
+            }
+
             StartCoroutine(spawnEnemies2());
 
             //开始倒计时，换BGM
@@ -73,10 +79,10 @@ namespace OperationTrident.Room5
             return minStr + ":" + secStr;
         } 
 
-        //生成第一波敌人
-        private IEnumerator spawnEnemies1()
+        //生成一小波敌人
+        private IEnumerator spawnEnemies1(float t)
         {
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(t);
             for (int i = 0; i < 2; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
@@ -84,10 +90,10 @@ namespace OperationTrident.Room5
             //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
 
-        //生成第二波敌人
+        //生成一大波敌人
         private IEnumerator spawnEnemies2()
         {
-            yield return new WaitForSeconds(10.0f);
+            yield return new WaitForSeconds(60.0f);
             for (int i = 0; i < 2; ++i)
             {
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
