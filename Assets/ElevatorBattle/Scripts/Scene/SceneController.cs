@@ -232,6 +232,7 @@ namespace OperationTrident.Elevator {
 
         public void changeState()
         {
+            Debug.Log(state);
             switch (state)
             {
                 case ElevatorState.Initing:
