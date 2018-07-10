@@ -898,19 +898,52 @@ namespace OperationTrident.Util
             float labelOffsetHeight=0.0f
             )
         {
+            //Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
+            //Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            //Vector3 direction1 = ray.direction; // 摄像头的方向
+            //Vector3 direction2 = targetPosition - camera.transform.position; // 到摄像头的方向
+            //// 如果物体大方向在人视线背后的话，就不显示了
+            //if (Vector3.Dot(direction1, direction2) <= 0) return;
+            //float nowDistance = Vector3.Distance(targetPosition,
+            //         camera.transform.position);
+            //targetPosition = new Vector3(targetPosition.x, targetPosition.y + labelOffsetHeight, targetPosition.z);
+            //GUIStyle style = GetDefaultTextStyle(color, fontSize: 18);
+            //Rect rect = GetFixedRectDirectlyFromWorldPosition(targetPosition, camera);
+            //// 指定颜色
+            //GUI.Label(rect, (int)nowDistance + "m\n●", style);
+            float nowDistance = Vector3.Distance(targetPosition,camera.transform.position);
+            DisplayWorldPointInScreen(targetPosition, camera, (int)nowDistance + "m\n●", color, fontSize, labelOffsetHeight);
+        }
+
+
+        /// <summary>
+        /// 在屏幕上显示世界上的某个位置显示内容
+        /// </summary>
+        /// <param name="targetPosition">世界坐标</param>
+        /// <param name="camera">传入的相机</param>
+        /// <param name="content">要显示的内容</param>
+        /// <param name="color">颜色</param>
+        /// <param name="fontSize">显示的字体大小</param>
+        /// <param name="labelOffsetHeight">距离有多高</param>
+        public static void DisplayWorldPointInScreen(
+            Vector3 targetPosition,
+            Camera camera,
+            string content,
+            Color color,
+            int fontSize=defaultFontSize,
+            float labelOffsetHeight = 0.0f)
+        {
             Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
             Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
             Vector3 direction2 = targetPosition - camera.transform.position; // 到摄像头的方向
             // 如果物体大方向在人视线背后的话，就不显示了
             if (Vector3.Dot(direction1, direction2) <= 0) return;
-            float nowDistance = Vector3.Distance(targetPosition,
-                     camera.transform.position);
             targetPosition = new Vector3(targetPosition.x, targetPosition.y + labelOffsetHeight, targetPosition.z);
-            GUIStyle style = GetDefaultTextStyle(color, fontSize: 18);
+            GUIStyle style = GetDefaultTextStyle(color, fontSize: fontSize);
             Rect rect = GetFixedRectDirectlyFromWorldPosition(targetPosition, camera);
             // 指定颜色
-            GUI.Label(rect, (int)nowDistance + "m\n●", style);
+            GUI.Label(rect, content, style);
         }
 
         /// <summary>
