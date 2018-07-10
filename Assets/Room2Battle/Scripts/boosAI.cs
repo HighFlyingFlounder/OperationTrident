@@ -103,7 +103,6 @@ namespace room2Battle
                 //主机才思考
                 if (GameMgr.instance.isMasterClient)
                 {
-                    Debug.Log("think");
                     mind();
                 }
                 else
@@ -138,7 +137,6 @@ namespace room2Battle
                     //停住
                     case fireState.Idle:
                         {
-                            Debug.Log("idle");
                             animator.SetBool("StopFire", false);
 
                             if (thinkTime < 2.0f)
@@ -205,6 +203,7 @@ namespace room2Battle
                                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
                                 {
                                     Debug.DrawLine(ray.origin, hit.point, Color.red);
+                                    Debug.Log(hit.collider.tag);
                                     if (hit.collider.tag == "Player")
                                     {
                                         work = true;
