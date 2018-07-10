@@ -11,19 +11,6 @@ namespace room2Battle
     //能源房大战
     public class room2_power : Subscene, NetSyncInterface
     {
-        //敌人预设
-        [SerializeField]
-        protected GameObject enemyPrefabs;
-        //敌人列表方便管理
-        protected ArrayList enemyList = new ArrayList();
-        //当前敌人数目，用于补充敌人数目
-        protected int currentEnemyNum = 0;
-        //最多敌人数目
-        protected int maxEnemyNum = 20;
-        //敌人出生点
-        [SerializeField]
-        protected Transform[] enemyInitPositions;
-
         //钥匙
         [SerializeField]
         protected GameObject key;
@@ -136,8 +123,8 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
+                //AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                //AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
@@ -192,8 +179,8 @@ namespace room2Battle
             {
                 if (!initEnemyAgain)
                 {
-                    AIController.instance.CreateAI(4,1, "EnemyInitPos4",turrentAIAgentInitParams[0]);
-                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
+                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
                     initEnemyAgain = true;
                 }
             }

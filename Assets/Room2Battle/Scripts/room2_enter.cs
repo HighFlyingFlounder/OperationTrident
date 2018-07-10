@@ -95,7 +95,7 @@ namespace room2Battle
         {
             if (GameMgr.instance)
             {
-                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }

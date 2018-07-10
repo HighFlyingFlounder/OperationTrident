@@ -63,6 +63,7 @@ namespace room2Battle
         [SerializeField]
         protected TurretAIAgentInitParams turretAIAgentParams;
 
+        protected bool destoryBoss = false;
         private void Start()
         {
         }
@@ -109,12 +110,12 @@ namespace room2Battle
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     mController.RPC(this, "openDoor");
-
-                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
-                    AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
-                    AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
-                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
+                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
+                    //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
+                openDoor();
             }
             else
             {
@@ -126,10 +127,11 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
             }
-            if (trueBoss == null)
+            if (trueBoss == null && !destoryBoss)
             {
                 openDoor();
                 mController.RPC(this, "openDoor");
+                destoryBoss = true;
             }
         }
 
