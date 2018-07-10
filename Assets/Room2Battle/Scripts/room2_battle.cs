@@ -121,7 +121,6 @@ namespace room2Battle
                     AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
-                destoryBoss = true;
             }
             else//播放台词
             {
@@ -134,11 +133,15 @@ namespace room2Battle
                 }
             }
             //TODO:测试，删除
-            if (trueBoss == null && !destoryBoss)
+            if (trueBoss == null)
             {
-                openDoor();
-                mController.RPC(this, "openDoor");
-                destoryBoss = true;
+                Debug.Log("======================");
+                if (!destoryBoss)
+                {
+                    openDoor();
+                    mController.RPC(this, "openDoor");
+                    destoryBoss = true;
+                }
             }
         }
 

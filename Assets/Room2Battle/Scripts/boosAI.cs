@@ -219,7 +219,16 @@ namespace room2Battle
                             }
                             else
                             {
-                                currentState = fireState.Idle;
+                                if (thinkTime < 2.0f)
+                                {
+                                    currentState = fireState.SeekingPlayer;
+                                    thinkTime += Time.deltaTime;
+                                }
+                                else
+                                {
+                                    currentState = fireState.Idle;
+                                    thinkTime = 0.0f;
+                                }
                             }
                         }
                         break;
