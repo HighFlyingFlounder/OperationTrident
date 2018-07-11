@@ -30,7 +30,7 @@ namespace OperationTrident.Room1
         }
 
         // 门被打开的速度
-        public float openSpeed = 0.01f;
+        public float openSpeed = 0.1f;
 
         // 门移动的方向
         public enum DoorOpenDirection { XPositive,XNegative, YPositive,YNegative,ZPositive,ZNegative};
@@ -68,34 +68,34 @@ namespace OperationTrident.Room1
                 switch (direction)
                 {
                     case DoorOpenDirection.XNegative:
-                        transform.position = new Vector3(transform.position.x - openSpeed,
+                        transform.position = new Vector3(transform.position.x - openSpeed*Time.deltaTime,
                             transform.position.y,
                             transform.position.z);
                         break;
                     case DoorOpenDirection.XPositive:
-                        transform.position = new Vector3(transform.position.x + openSpeed,
+                        transform.position = new Vector3(transform.position.x + openSpeed * Time.deltaTime,
                             transform.position.y,
                             transform.position.z);
                         break;
                     case DoorOpenDirection.YNegative:
                         transform.position = new Vector3(transform.position.x,
-                            transform.position.y - openSpeed,
+                            transform.position.y - openSpeed * Time.deltaTime,
                             transform.position.z);
                         break;
                     case DoorOpenDirection.YPositive:
                         transform.position = new Vector3(transform.position.x,
-                            transform.position.y + openSpeed,
+                            transform.position.y + openSpeed * Time.deltaTime,
                             transform.position.z);
                         break;
                     case DoorOpenDirection.ZNegative:
                         transform.position = new Vector3(transform.position.x,
                             transform.position.y,
-                            transform.position.z - openSpeed);
+                            transform.position.z - openSpeed * Time.deltaTime);
                         break;
                     case DoorOpenDirection.ZPositive:
                         transform.position = new Vector3(transform.position.x,
                             transform.position.y,
-                            transform.position.z + openSpeed);
+                            transform.position.z + openSpeed * Time.deltaTime);
                         break;
                 }
 
