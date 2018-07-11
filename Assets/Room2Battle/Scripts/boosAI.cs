@@ -609,24 +609,24 @@ namespace room2Battle
                         1.0f);
                     return;
                 }
-                if (shoot || shootAgain)
-                {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
-                        getCamera.GetCurrentUsedCamera(),
-                        30,
-                        0.1f,
-                        1.0f);
-                    return;
-                }
-                if (isWalking)
-                {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
-                        getCamera.GetCurrentUsedCamera(),
-                        30,
-                        0.1f,
-                        1.0f);
-                    return;
-                }
+            }
+            if (shoot || shootAgain)
+            {
+                GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
+                    getCamera.GetCurrentUsedCamera(),
+                    30,
+                    0.1f,
+                    1.0f);
+                return;
+            }
+            if (isWalking)
+            {
+                GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
+                    getCamera.GetCurrentUsedCamera(),
+                    30,
+                    0.1f,
+                    1.0f);
+                return;
             }
         }
     }

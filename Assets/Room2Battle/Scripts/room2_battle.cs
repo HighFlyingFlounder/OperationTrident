@@ -183,17 +183,12 @@ namespace room2Battle
         {
             if (isTimelinePaused)
             {
-                if (mCamera)
-                {
-                    if(!playOnce_)
-                        GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
 
-                    GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                          mCamera,
-                          GUIUtil.whiteColor,
-                          0.5f, 0.1f, 16);
-                    playOnce_ = true;
-                }
+                GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                      mCamera,
+                      GUIUtil.whiteColor,
+                      0.5f, 0.1f, 16);
             }
         }
 
