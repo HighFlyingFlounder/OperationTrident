@@ -67,6 +67,10 @@ namespace room2Battle
         protected bool destoryBoss = false;
 
         protected float lastTimeInitAI = 0.0f;
+
+        [SerializeField]
+        protected GameObject escapeElevator;
+
         private void Start()
         {
         }
@@ -90,6 +94,7 @@ namespace room2Battle
         /// </summary>
         public override void onSubsceneInit()
         {
+            TimelineSource.Stop();
             if (GameMgr.instance)
             {
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
@@ -148,7 +153,6 @@ namespace room2Battle
             //TODO:测试，删除
             if (trueBoss == null)
             {
-                Debug.Log("======================");
                 if (!destoryBoss)
                 {
                     openDoor();
@@ -166,6 +170,7 @@ namespace room2Battle
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
+                escapeElevator.GetComponent<UnityEngine.Playables.PlayableDirector>().Play();
                 nextScene_.SetActive(true);
             }
         }
@@ -180,7 +185,7 @@ namespace room2Battle
 
                     GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
                           mCamera,
-                          GUIUtil.yellowColor,
+                          GUIUtil.whiteColor,
                           0.5f, 0.1f, 16);
                 }
             }

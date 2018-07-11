@@ -303,7 +303,7 @@ namespace room2Battle
                     //任务目标
                     GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                        mCamera,
-                       GUIUtil.yellowColor,
+                       GUIUtil.whiteColor,
                        0.5f, 0.1f, 16);
                     if (!open2 && open)
                     {
@@ -323,7 +323,7 @@ namespace room2Battle
                         //任务目标
                         GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                            mCamera,
-                           GUIUtil.yellowColor,
+                           GUIUtil.whiteColor,
                            0.5f, 0.1f, 16);
                         //任务目标位置
                         GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);

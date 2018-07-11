@@ -48,9 +48,9 @@ namespace room2Battle
         //任务详细
         public string[] missionDetails =
             {
-            "2018.6.22  星期五",
-            "外太空",
-            "三叉戟行动"
+            "行动代号：三叉戟",
+            "2048年8月1日，中华人民共和国 建军节",
+            "外太空****空域"
         };
         //台词
         public string[] line =
@@ -166,9 +166,9 @@ namespace room2Battle
                 {
                     GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
                         mCamera,
-                        GUIUtil.yellowColor,
+                        GUIUtil.whiteColor,
                         0.5f, 0.1f, 16);
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^g地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
                 }
                 else//遭遇
                 {
@@ -176,7 +176,7 @@ namespace room2Battle
                     bool open = playerCamera.GetComponent<depthSensor>().enabled;
                     GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
                         mCamera,
-                        GUIUtil.yellowColor,
+                        GUIUtil.whiteColor,
                         0.5f, 0.1f, 16);
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
@@ -264,8 +264,9 @@ namespace room2Battle
                     if (!playOnce)
                     {
                         //播放台词
-                        TimelineSource.clip = clips[1];
-                        TimelineSource.Play();
+                        source.Stop();
+                        source.clip = clips[1];
+                        source.Play();
                         playOnce = true;
                         //产生AI
                         AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
@@ -331,10 +332,10 @@ namespace room2Battle
 
                             isInit = true;
                             //bgm，台词
-                            TimelineSource.clip = clips[0];
+                            TimelineSource.clip = clips[2];
                             TimelineSource.Play();
-                            //bgm
-                            source.clip = clips[2];
+                            //台词
+                            source.clip = clips[0];
                             source.Play();
                             source.priority = TimelineSource.priority + 1;
                         }

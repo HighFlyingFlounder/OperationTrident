@@ -150,14 +150,14 @@ namespace room2Battle
                                 break;
                             //想一下
 
-                            if (thinkTime < 2.0f)
+                            if (thinkTime < 0.5f)
                             {
                                 thinkTime += Time.deltaTime;
                             }
                             else
                             {
                                 thinkTime = 0.0f;
-                                currentState = fireState.wandering;
+                                currentState = fireState.SeekingPlayer;
                             }
                         }
                         break;
@@ -219,18 +219,15 @@ namespace room2Battle
                                         break;
                                 }
                             }
+                            //维持seek状态2秒
+                            if (thinkTime >= 2.0f)
+                            {
+                                thinkTime = 0.0f;
+                                currentState = fireState.wandering;
+                            }
                             else
                             {
-                                if (thinkTime < 2.0f)
-                                {
-                                    currentState = fireState.SeekingPlayer;
-                                    thinkTime += Time.deltaTime;
-                                }
-                                else
-                                {
-                                    currentState = fireState.Idle;
-                                    thinkTime = 0.0f;
-                                }
+                                thinkTime += Time.deltaTime;
                             }
                         }
                         break;
@@ -281,7 +278,7 @@ namespace room2Battle
                             if (stateInfo.IsName("shoot"))
                             {
                                 //动画状态转移，同步
-                                if (stateInfo.normalizedTime >= 0.8f)
+                                if (stateInfo.normalizedTime >= 0.5f)
                                 {
                                     animator.SetBool("handup", false);
                                     animator.SetBool("shoot", true);
@@ -342,7 +339,7 @@ namespace room2Battle
                             if (stateInfo.IsName("shootback"))
                             {
                                 //开火
-                                if (stateInfo.normalizedTime >= 0.8f)
+                                if (stateInfo.normalizedTime >= 0.5f)
                                 {
                                     animator.SetBool("rightHandup", false);
                                     animator.SetBool("shootAgain", true);
@@ -374,7 +371,6 @@ namespace room2Battle
                                     fireFromLastTime += Time.deltaTime;
                                 }
                                 //直到开火完毕
-                                //if (stateInfo.normalizedTime >= 0.8f)
                                 if (animationCurrentTime >= 2.0f)
                                 {
                                     animator.SetBool("StopFire", true);
@@ -411,7 +407,6 @@ namespace room2Battle
                         break;
                     case fireState.MissileLaunch:
                         {
-                            Debug.Log("aunch");
                             if (stateInfo.IsName("missileLaunch"))
                             {
                                 if (stateInfo.normalizedTime >= 0.8f)
@@ -480,7 +475,6 @@ namespace room2Battle
 
                 Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
 
-
                 Quaternion newRotatio = Quaternion.Euler(newAngle);
 
                 float totalTime = 0.0f;
@@ -493,7 +487,6 @@ namespace room2Battle
                 transform.eulerAngles = newAngle;
             }
             beginTurnAround = false;
-            
         }
 
         /// <summary>
@@ -506,29 +499,31 @@ namespace room2Battle
             {
                 if (GameMgr.instance.isMasterClient)
                 {
-                    randomTurnImpl();
+                    fireTurnImpl();
                 }
             }
             else
             {
-                randomTurnImpl();
+                fireTurnImpl();
             }
         }
 
         /// <summary>
         /// 扫射时随机转动
         /// </summary>
-        public void randomTurnImpl()
+        public void fireTurnImpl()
         {
             switch (currentState)
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
-                    break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
+                    Transform temp = transform;
+                    temp.LookAt(target);
+                    Quaternion newRotation = Quaternion.Euler(0.0f, temp.eulerAngles.y, 0.0f);
+                    //转向目标
+                    transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
                     break;
                 case fireState.wandering:
                     {
@@ -572,19 +567,34 @@ namespace room2Battle
 
         void OnGUI()
         {
-            switch (currentState)
+            if (missilLaunch)
             {
-                case fireState.KeepFire:
-                case fireState.KeepFireAgain:
-                case fireState.MissileLaunch:
-                    if (Camera.current != null) {
-                        GUIUtil.DisplaySubtitleInDefaultPosition("注意boss的攻击",
-                            Camera.current,
-                            16,
-                            0.2f);
-                            }
-                    break;
+                GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
+                    Camera.current,
+                    30,
+                    0.1f,
+                    1.0f);
+                return;
             }
+            if (shoot || shootAgain)
+            {
+                GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
+                    Camera.current,
+                    30,
+                    0.1f,
+                    1.0f);
+                return;
+            }
+            if (isWalking)
+            {
+                GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
+                    Camera.current,
+                    30,
+                    0.1f,
+                    1.0f);
+                return;
+            }
+
         }
     }
 }
