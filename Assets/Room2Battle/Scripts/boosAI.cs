@@ -148,14 +148,18 @@ namespace room2Battle
                                 break;
                             //想一下
 
-                            if (thinkTime < 2.0f)
+                            if (thinkTime < 1.0f)
                             {
                                 thinkTime += Time.deltaTime;
                             }
                             else
                             {
                                 thinkTime = 0.0f;
-                                currentState = fireState.wandering;
+                                int i = (int)UnityEngine.Random.Range(0, 2);
+                                if (i == 0)
+                                    currentState = fireState.wandering;
+                                else
+                                    currentState = fireState.SeekingPlayer;
                             }
                         }
                         break;
@@ -219,16 +223,7 @@ namespace room2Battle
                             }
                             else
                             {
-                                if (thinkTime < 2.0f)
-                                {
-                                    currentState = fireState.SeekingPlayer;
-                                    thinkTime += Time.deltaTime;
-                                }
-                                else
-                                {
-                                    currentState = fireState.Idle;
-                                    thinkTime = 0.0f;
-                                }
+                                currentState = fireState.Idle;
                             }
                         }
                         break;
