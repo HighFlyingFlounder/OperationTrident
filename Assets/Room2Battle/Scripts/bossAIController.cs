@@ -41,9 +41,9 @@ namespace room2Battle
         public override IEnumerator Destroy()
         {
             isDestroy = true;
-            Instantiate(explosionPrefab, transform);
+            Instantiate(explosionPrefab, transform.position,Quaternion.identity);
             yield return new WaitForSeconds(1.0f);
-            Instantiate(explosionPrefab, transform);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
 

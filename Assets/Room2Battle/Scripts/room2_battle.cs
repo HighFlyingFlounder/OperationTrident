@@ -48,6 +48,8 @@ namespace room2Battle
 
         //语音只播放一次
         protected bool playOnce = false;
+
+        protected bool playOnce_ = false;
         //bgm音源
         [SerializeField]
         protected AudioSource source;
@@ -70,6 +72,8 @@ namespace room2Battle
 
         [SerializeField]
         protected GameObject escapeElevator;
+
+
 
         private void Start()
         {
@@ -181,13 +185,14 @@ namespace room2Battle
             {
                 if (mCamera)
                 {
-                    if(!playOnce)
+                    if(!playOnce_)
                         GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
 
                     GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
                           mCamera,
                           GUIUtil.whiteColor,
                           0.5f, 0.1f, 16);
+                    playOnce_ = true;
                 }
             }
         }

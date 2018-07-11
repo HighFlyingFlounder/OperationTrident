@@ -436,7 +436,7 @@ namespace room2Battle
                         }
                         break;
                     default:
-                        return;
+                        break;
                 }
             }
             bool[] states = {
