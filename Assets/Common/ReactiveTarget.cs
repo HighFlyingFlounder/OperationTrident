@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Common {
     public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface {
@@ -75,7 +76,13 @@ namespace OperationTrident.Common {
                     PlayerDie();
                 // 从controller List中移除现有AI
                 else
+                {
                     AIController.instance.DestroyAI(this.gameObject.name);
+                    AIActionController controller =  gameObject.GetComponent<AIActionController>();
+                    if (controller == null) Debug.LogError("Controller Not Found");
+                    controller.Die();
+                }
+                    
             }
         }
         #endregion

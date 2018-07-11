@@ -13,6 +13,9 @@ namespace OperationTrident.EndingScene
         //鲲
         public GameObject m_Kun;
 
+        //光源（用来禁掉）
+        public GameObject m_ExplosionLightSource;
+
         //太空垃圾铁板
         public GameObject m_SpaceRubbish;
         private Vector3 m_SpaceRubbishInitialPos;//铁板的起始位置，记录下来才方便插值
@@ -52,6 +55,9 @@ namespace OperationTrident.EndingScene
         private Vector3 m_DestLookat;
         private float m_LookingAtKunCamShakingAmp;//鲲爆炸的时候镜头的抖动幅度
 
+        //结尾视频
+        public UnityEngine.Video.VideoPlayer m_VideoPlayer;
+
         // Use this for initialization
         void Start()
         {
@@ -61,7 +67,7 @@ namespace OperationTrident.EndingScene
             m_ExplosionLensFlare.brightness = 0.0f;
 
             //启动淡入
-            FadeInOutUtil.SetFadingState(5.0f,m_CamFree, Color.black,FadeInOutUtil.FADING_STATE.FADING_IN);
+            FadeInOutUtil.SetFadingState(5.0f, m_CamFree, Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
         }
 
         // Update is called once per frame
@@ -121,7 +127,7 @@ namespace OperationTrident.EndingScene
         private void Update_ThirdPerson()
         {
 
-            if (m_Time > m_BgmBarTime * (8 + 16+ 16))
+            if (m_Time > m_BgmBarTime * (8 + 16 + 16))
             {
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 //并初始化camera的destPos和destLookat
@@ -145,7 +151,7 @@ namespace OperationTrident.EndingScene
 
                 //cam离注视中心的offset vector
                 Quaternion rotation = Quaternion.Euler(m_ThirdPersonCamOffsetEuler);
-                Vector3 posOffsetFromCenter = rotation * new Vector3(0,0, m_ThirdPersonCamRotateRadius);
+                Vector3 posOffsetFromCenter = rotation * new Vector3(0, 0, m_ThirdPersonCamRotateRadius);
 
                 //实际Camera位置向pos/lookat插值
                 const float posLerpScale = 10.0f;
@@ -172,10 +178,10 @@ namespace OperationTrident.EndingScene
                 Random.Range(-m_LookingAtKunCamShakingAmp, m_LookingAtKunCamShakingAmp)
                 );
             m_DestCamPos += new Vector3(0, 1.5f, -15.0f) * Time.deltaTime;
-            m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime) ;
+            m_CamFree.transform.position = Vector3.Lerp(m_CamFree.transform.position, m_DestCamPos, lerpScale * Time.deltaTime);
 
             m_DestLookat = Vector3.Lerp(m_DestLookat, m_Kun.transform.position, lerpScale * Time.deltaTime);
-            m_CamFree.transform.LookAt(m_DestLookat+ shakePosOffset);
+            m_CamFree.transform.LookAt(m_DestLookat + shakePosOffset);
 
             //爆炸特效（越来越密集的爆炸）
             m_ExplosionGenerator.GenerateExplosion();
@@ -186,24 +192,24 @@ namespace OperationTrident.EndingScene
             m_ExplosionLensFlare.brightness = 20.0f * Mathf.Pow(intensityRatio, 20);
 
             //每2个小节改变一点参数
-            for(int i=0;i<8;++i)
+            for (int i = 0; i < 8; ++i)
             {
-                if(m_Time > c_explodeStartTime + m_BgmBarTime * i*2 )
+                if (m_Time > c_explodeStartTime + m_BgmBarTime * i * 2)
                 {
                     m_ExplosionGenerator.SetExplodeMaxInterval(0.4f - 0.05f * i);
-                    m_LookingAtKunCamShakingAmp = 3f *(i+1);
+                    m_LookingAtKunCamShakingAmp = 3f * (i + 1);
                 }
             }
 
 
             //BGM最后8小节，太空垃圾飞过来撞镜头
-            if (m_Time > c_explodeStartTime +m_BgmBarTime *14)
+            if (m_Time > c_explodeStartTime + m_BgmBarTime * 14)
             {
                 m_SpaceRubbishPosLerpFactor += (Time.deltaTime / (m_BgmBarTime * 2));
 
                 //太空垃圾按BGM流逝时间从起始位置插值到camPos
                 m_SpaceRubbish.transform.position = Vector3.Lerp(
-                    m_SpaceRubbishInitialPos, 
+                    m_SpaceRubbishInitialPos,
                     m_CamFree.transform.position,
                     m_SpaceRubbishPosLerpFactor);
 
@@ -213,6 +219,7 @@ namespace OperationTrident.EndingScene
 
             if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 16))
             {
+                Destroy(m_ExplosionLightSource.gameObject);
                 //切至下一状态，不再绑定在玩家的第三人称，禁用控制
                 m_CamState = CameraState.VIDEO;
                 return;
@@ -221,8 +228,11 @@ namespace OperationTrident.EndingScene
 
         private void Update_Video()
         {
-
+            /*if (m_Time > m_BgmBarTime * (8 + 16 + 16 + 16) + 3.0f && m_VideoPlayer.isPlaying==false)
+            {
+                m_VideoPlayer.Play();
+            }*/
         }
-    }
 
+    }
 }
