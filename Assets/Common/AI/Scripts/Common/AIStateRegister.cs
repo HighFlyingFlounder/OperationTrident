@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace OperationTrident.Common.AI
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AI/State Register")]
     public class AIStateRegister : ScriptableObject
     {
         [SerializeField]

@@ -27,15 +27,15 @@ namespace OperationTrident.Common.AI
             _animator.SetBool("TargetDetected", isStart);
         }
 
-        public override void Shoot(Vector3 shootingPoint)
+        public override void Shoot(string shootingTargetName)
         {
-            _shooter.Shoot(shootingPoint);
+            _shooter.Shoot(Utility.GetPlayerByName(shootingTargetName).position);
         }
 
-        public override void LookAt(Vector3 interestPoint)
-        {
-            transform.forward = Utility.GetDirectionOnXOZ(transform.position, interestPoint);
-        }
+        // public override void LookAt(Vector3 interestPoint)
+        // {
+        //     transform.forward = Utility.GetDirectionOnXOZ(transform.position, interestPoint).normalized;
+        // }
 
         public override IEnumerator Destroy()
         {
@@ -47,6 +47,11 @@ namespace OperationTrident.Common.AI
             }
             yield return new WaitForSeconds(.2f);
             Destroy(gameObject);
+        }
+
+        public override bool DetectPlayer(Transform player)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
