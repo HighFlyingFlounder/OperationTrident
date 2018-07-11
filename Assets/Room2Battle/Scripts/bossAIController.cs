@@ -31,9 +31,14 @@ namespace room2Battle
         [SerializeField]
         protected float rotateSpeed = 1.0f;
 
+        [SerializeField]
+        protected GameObject explosionPrefab;
+
         public override IEnumerator Destroy()
         {
+            Instantiate(explosionPrefab, transform);
             yield return new WaitForSeconds(1.0f);
+            Instantiate(explosionPrefab, transform);
             Destroy(gameObject);
         }
 
