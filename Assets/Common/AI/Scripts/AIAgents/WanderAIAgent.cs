@@ -25,13 +25,6 @@ namespace OperationTrident.Common.AI
                 {
                     result[i] = prelocationTrans.GetChild(i).position;
                 }
-
-                //Vector3[] result = new Vector3[_initParams.patrolLocations.childCount];
-                //for (int i = 0; i < _initParams.patrolLocations.childCount; i++)
-                //{
-                //    result[i] = _initParams.patrolLocations.GetChild(i).position;
-                //}
-
                 return result;
             }
         }

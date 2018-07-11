@@ -38,9 +38,14 @@ namespace OperationTrident.Common.AI
 
         public virtual void DetectedTarget(bool isStart) { }
 
+        public virtual void Shoot() { }
         public virtual void Shoot(Vector3 shootingPoint) { }
+        public virtual void Shoot(string shootingTargetName) { }
+        public virtual void StopShoot() { }
 
         public virtual void LookAt(Vector3 interestPoint) { }
+        public virtual void LookAt(string targetName) { }
+        public virtual void StopLookAt() { }
 
         public void Die() {
             StartCoroutine(Destroy());
@@ -61,5 +66,8 @@ namespace OperationTrident.Common.AI
         {
             m_Controller = controller;
         }
+
+        // 不需要RPC的函数
+        public abstract bool DetectPlayer(Transform player);
     }
 }

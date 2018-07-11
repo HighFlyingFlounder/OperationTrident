@@ -72,5 +72,10 @@ namespace room2Battle
                         1.0f);
             }
         }
+
+        public override bool DetectPlayer(Transform player)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
