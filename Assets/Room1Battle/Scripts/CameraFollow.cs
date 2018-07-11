@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraFollow : MonoBehaviour
 {
-    //距离
+    //距离  
     public float distance = 8;
     //横向角度
     public float rot = 0;
