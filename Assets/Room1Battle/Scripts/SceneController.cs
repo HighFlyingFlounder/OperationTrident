@@ -236,7 +236,7 @@ namespace OperationTrident.Room1
 
             escapeGameObject.SetActive(false);
 
-            StartCoroutine(AIInit(1.0f));
+            StartCoroutine(AIInit(5.0f));
 
         }
 
