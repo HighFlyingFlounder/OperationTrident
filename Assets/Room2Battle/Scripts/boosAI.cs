@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using OperationTrident.Util;
+using OperationTrident.FPS.Common;
 
 namespace room2Battle
 {
@@ -64,6 +65,7 @@ namespace room2Battle
         //是否发现玩家
         protected bool isFoundPlayer = false;
 
+        protected GetCamera getCamera;
 
         //==================================================
         //=====================     需要同步的状态量 =======
@@ -98,6 +100,14 @@ namespace room2Battle
         private void Start()
         {
             animator = GetComponent<Animator>();
+
+            if (GameMgr.instance)
+            {
+                if (SceneNetManager.instance.list.Count != 0)
+                {
+                    getCamera = SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<GetCamera>();
+                }
+            }
         }
 
         void Update()
@@ -150,14 +160,14 @@ namespace room2Battle
                                 break;
                             //想一下
 
-                            if (thinkTime < 2.0f)
+                            if (thinkTime < 0.5f)
                             {
                                 thinkTime += Time.deltaTime;
                             }
                             else
                             {
                                 thinkTime = 0.0f;
-                                currentState = fireState.wandering;
+                                currentState = fireState.SeekingPlayer;
                             }
                         }
                         break;
@@ -204,7 +214,7 @@ namespace room2Battle
                                             currentState = fireState.OpenFire;
                                             handup = true;
                                             animator.SetBool("handup", true);
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                         }
                                         break;
                                     case 1:
@@ -214,23 +224,20 @@ namespace room2Battle
                                             //同步
                                             animator.SetBool("missileLaunch", true);
                                             missilLaunch = true;
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                         }
                                         break;
                                 }
                             }
+                            //维持seek状态2秒
+                            if (thinkTime >= 2.0f)
+                            {
+                                thinkTime = 0.0f;
+                                currentState = fireState.wandering;
+                            }
                             else
                             {
-                                if (thinkTime < 2.0f)
-                                {
-                                    currentState = fireState.SeekingPlayer;
-                                    thinkTime += Time.deltaTime;
-                                }
-                                else
-                                {
-                                    currentState = fireState.Idle;
-                                    thinkTime = 0.0f;
-                                }
+                                thinkTime += Time.deltaTime;
                             }
                         }
                         break;
@@ -254,7 +261,7 @@ namespace room2Battle
                                     {
                                         animator.SetBool("walk", true);
                                         isWalking = true;
-                                        netSyncController.SyncVariables();
+                                        //netSyncController.SyncVariables();
                                         isBeginWandering = true;
                                     }
                                     else
@@ -266,7 +273,7 @@ namespace room2Battle
 
                                             isWalking = false;
                                             animator.SetBool("walk", false);
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                             currentState = fireState.SeekingPlayer;
                                         }
                                     }
@@ -281,7 +288,7 @@ namespace room2Battle
                             if (stateInfo.IsName("shoot"))
                             {
                                 //动画状态转移，同步
-                                if (stateInfo.normalizedTime >= 0.8f)
+                                if (stateInfo.normalizedTime >= 0.5f)
                                 {
                                     animator.SetBool("handup", false);
                                     animator.SetBool("shoot", true);
@@ -289,7 +296,7 @@ namespace room2Battle
                                     handup = false;
                                     shoot = true;
 
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //转移状态
                                     currentState = fireState.KeepFire;
                                 }
@@ -322,7 +329,7 @@ namespace room2Battle
                                     rightHandup = true;
                                     shoot = false;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //下一个状态
                                     currentState = fireState.RightFire;
 
@@ -342,7 +349,7 @@ namespace room2Battle
                             if (stateInfo.IsName("shootback"))
                             {
                                 //开火
-                                if (stateInfo.normalizedTime >= 0.8f)
+                                if (stateInfo.normalizedTime >= 0.5f)
                                 {
                                     animator.SetBool("rightHandup", false);
                                     animator.SetBool("shootAgain", true);
@@ -350,7 +357,7 @@ namespace room2Battle
                                     rightHandup = false;
                                     shootAgain = true;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //下一个状态
                                     currentState = fireState.KeepFireAgain;
                                 }
@@ -374,7 +381,6 @@ namespace room2Battle
                                     fireFromLastTime += Time.deltaTime;
                                 }
                                 //直到开火完毕
-                                //if (stateInfo.normalizedTime >= 0.8f)
                                 if (animationCurrentTime >= 2.0f)
                                 {
                                     animator.SetBool("StopFire", true);
@@ -382,7 +388,7 @@ namespace room2Battle
 
                                     stopFire = true;
                                     shoot = false;
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
 
                                     currentState = fireState.StopFire;
 
@@ -411,7 +417,6 @@ namespace room2Battle
                         break;
                     case fireState.MissileLaunch:
                         {
-                            Debug.Log("aunch");
                             if (stateInfo.IsName("missileLaunch"))
                             {
                                 if (stateInfo.normalizedTime >= 0.8f)
@@ -420,7 +425,7 @@ namespace room2Battle
 
                                     missilLaunch = false;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
 
                                     missileLaunchImpl(target.position);
                                     netSyncController.RPC(this, "missileLaunchImpl", target.position);
@@ -431,9 +436,19 @@ namespace room2Battle
                         }
                         break;
                     default:
-                        return;
+                        break;
                 }
             }
+            bool[] states = {
+                shoot,
+                handup,
+                rightHandup,
+                shootAgain,
+                stopFire,
+                missilLaunch,
+                isWalking
+            };
+            netSyncController.RPC(this, "updateAState_Room2", states);
         }
 
         /// <summary>
@@ -480,7 +495,6 @@ namespace room2Battle
 
                 Vector3 newAngle = new Vector3(0.0f, temp.eulerAngles.y, 0.0f);
 
-
                 Quaternion newRotatio = Quaternion.Euler(newAngle);
 
                 float totalTime = 0.0f;
@@ -493,7 +507,6 @@ namespace room2Battle
                 transform.eulerAngles = newAngle;
             }
             beginTurnAround = false;
-            
         }
 
         /// <summary>
@@ -506,29 +519,31 @@ namespace room2Battle
             {
                 if (GameMgr.instance.isMasterClient)
                 {
-                    randomTurnImpl();
+                    fireTurnImpl();
                 }
             }
             else
             {
-                randomTurnImpl();
+                fireTurnImpl();
             }
         }
 
         /// <summary>
         /// 扫射时随机转动
         /// </summary>
-        public void randomTurnImpl()
+        public void fireTurnImpl()
         {
             switch (currentState)
             {
                 case fireState.OpenFire:
                 case fireState.KeepFire:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
-                    break;
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
-                    transform.Rotate(transform.up, UnityEngine.Random.Range(-2.0f, 2.0f));
+                    Transform temp = transform;
+                    temp.LookAt(target);
+                    Quaternion newRotation = Quaternion.Euler(0.0f, temp.eulerAngles.y, 0.0f);
+                    //转向目标
+                    transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
                     break;
                 case fireState.wandering:
                     {
@@ -542,27 +557,23 @@ namespace room2Battle
         }
 
         public void RecvData(SyncData data)
-        {
-            shoot = (bool)data.Get(typeof(bool));
-            handup = (bool)data.Get(typeof(bool));
-            rightHandup = (bool)data.Get(typeof(bool));
-            shootAgain = (bool)data.Get(typeof(bool));
-            stopFire = (bool)data.Get(typeof(bool));
-            missilLaunch = (bool)data.Get(typeof(bool));
-            isWalking = (bool)data.Get(typeof(bool));
+        { 
         }
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            data.Add(shoot);
-            data.Add(handup);
-            data.Add(rightHandup);
-            data.Add(shootAgain);
-            data.Add(stopFire);
-            data.Add(missilLaunch);
-            data.Add(isWalking);
-            return data;
+            return null;
+        }
+
+        public void updateAState_Room2(bool[] states)
+        {
+            shoot = states[0];
+            handup = states[1];
+            rightHandup = states[2];
+            shootAgain = states[3];
+            stopFire = states[4];
+            missilLaunch = states[5];
+            isWalking = states[6];
         }
 
         public void Init(NetSyncController controller)
@@ -572,18 +583,42 @@ namespace room2Battle
 
         void OnGUI()
         {
-            switch (currentState)
+            if (getCamera.GetCurrentUsedCamera() != null)
             {
-                case fireState.KeepFire:
-                case fireState.KeepFireAgain:
-                case fireState.MissileLaunch:
-                    if (Camera.current != null) {
-                        GUIUtil.DisplaySubtitleInDefaultPosition("注意boss的攻击",
-                            Camera.current,
-                            16,
-                            0.2f);
-                            }
-                    break;
+                Camera cam = getCamera.GetCurrentUsedCamera();
+                Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
+                GUIStyle style = GUIUtil.GetDefaultTextStyle(Color.red, 10);
+
+                if (missilLaunch)
+                {
+                    GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
+                            rect,
+                            style
+                        );
+                    return;
+                }
+                else if (shoot || shootAgain || handup || rightHandup)
+                {
+                    GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
+                            rect,
+                            style
+                        );
+                    return;
+                }
+                else if (isWalking)
+                {
+                    GUIUtil.DisplayContentInGivenPosition("SAFE",
+                            rect,
+                            style
+                        );
+                }
+                else
+                {
+                    GUIUtil.DisplayContentInGivenPosition("",
+                            rect,
+                            style
+                        );
+                }
             }
         }
     }

@@ -48,6 +48,8 @@ namespace room2Battle
 
         //语音只播放一次
         protected bool playOnce = false;
+
+        protected bool playOnce_ = false;
         //bgm音源
         [SerializeField]
         protected AudioSource source;
@@ -67,6 +69,12 @@ namespace room2Battle
         protected bool destoryBoss = false;
 
         protected float lastTimeInitAI = 0.0f;
+
+        [SerializeField]
+        protected GameObject escapeElevator;
+
+
+
         private void Start()
         {
         }
@@ -90,12 +98,13 @@ namespace room2Battle
         /// </summary>
         public override void onSubsceneInit()
         {
+            TimelineSource.Stop();
             if (GameMgr.instance)
             {
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            director.Play();
+            //director.Play();
         }
 
         /// <summary>
@@ -117,10 +126,10 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    mController.RPC(this, "openDoor");
+                       
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
                     //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
-                    AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
+                    //AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
             }
@@ -136,8 +145,8 @@ namespace room2Battle
 
                 if (lastTimeInitAI >= 6.0f)
                 {
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
                     lastTimeInitAI = 0.0f;
                 }
                 else
@@ -148,11 +157,10 @@ namespace room2Battle
             //TODO:测试，删除
             if (trueBoss == null)
             {
-                Debug.Log("======================");
                 if (!destoryBoss)
                 {
-                    openDoor();
-                    mController.RPC(this, "openDoor");
+                    openDoor_Room2();
+                    mController.RPC(this, "openDoor_Room2");
                     destoryBoss = true;
                 }
             }
@@ -161,11 +169,12 @@ namespace room2Battle
         /// <summary>
         /// @brief RPC的关门
         /// </summary>
-        public void openDoor()
+        public void openDoor_Room2()
         {
             if (door.gameObject)
             {
                 Destroy(door.gameObject);
+                escapeElevator.GetComponent<UnityEngine.Playables.PlayableDirector>().Play();
                 nextScene_.SetActive(true);
             }
         }
@@ -174,15 +183,12 @@ namespace room2Battle
         {
             if (isTimelinePaused)
             {
-                if (mCamera)
-                {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
 
-                    GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                          mCamera,
-                          GUIUtil.yellowColor,
-                          0.5f, 0.1f, 16);
-                }
+                GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                      mCamera,
+                      GUIUtil.whiteColor,
+                      0.5f, 0.1f, 16);
             }
         }
 

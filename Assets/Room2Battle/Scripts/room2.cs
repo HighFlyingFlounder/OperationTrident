@@ -20,7 +20,7 @@ namespace room2Battle
             subSceneController.setInitialSubScene("enterRoom2");
             subSceneController.enabled = true;
 
-            FadeInOutUtil.SetFadingState(5.0f, Camera.current, Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
+            FadeInOutUtil.SetFadingState(1.0f, Camera.current, Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
         }
 
         private void Update()

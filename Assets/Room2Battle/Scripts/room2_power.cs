@@ -129,7 +129,8 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                Debug.Log("7 enemy");
+                //AIController.instance.CreateAI(4, 2, "EnemyInitPos3", turrentAIAgentInitParams[0]);
                 AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
@@ -149,8 +150,8 @@ namespace room2Battle
                 {
                     if (isSwitchOpen)
                     {
-                        enterSecondFloor();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor");
+                        enterSecondFloor_Room2();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor_Room2");
                     }
                 }
             }
@@ -193,7 +194,8 @@ namespace room2Battle
             {
                 if (!initEnemyAgain)
                 {
-                    AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
+                    Debug.Log("7 enemy");
+                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
 
                     initEnemyAgain = true;
@@ -226,8 +228,8 @@ namespace room2Battle
                 {
                     if (distance <= 5.0f)
                     {
-                        switchOn();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn");
+                        switchOn_Room2();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn_Room2");
                     }
                 }
             }
@@ -303,7 +305,7 @@ namespace room2Battle
                     //任务目标
                     GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                        mCamera,
-                       GUIUtil.yellowColor,
+                       GUIUtil.whiteColor,
                        0.5f, 0.1f, 16);
                     if (!open2 && open)
                     {
@@ -323,7 +325,7 @@ namespace room2Battle
                         //任务目标
                         GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                            mCamera,
-                           GUIUtil.yellowColor,
+                           GUIUtil.whiteColor,
                            0.5f, 0.1f, 16);
                         //任务目标位置
                         GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
@@ -351,12 +353,12 @@ namespace room2Battle
 
         }
 
-        public void switchOn()
+        public void switchOn_Room2()
         {
             isSwitchOpen = true;
         }
 
-        public void enterSecondFloor()
+        public void enterSecondFloor_Room2()
         {
             isIntoSecondFloor = true;
         }

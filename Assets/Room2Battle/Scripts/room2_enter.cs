@@ -46,21 +46,21 @@ namespace room2Battle
         //当前相机
         Camera mCamera;
         //任务详细
-        public string[] missionDetails =
+        protected string[] missionDetails =
             {
-            "2018.6.22  星期五",
-            "外太空",
-            "三叉戟行动"
+            "行动代号：三叉戟",
+            "2048年8月1日，中华人民共和国 建军节",
+            "外太空****空域"
         };
         //台词
         public string[] line =
         {
         };
 
-        public float wordTransparentInterval = 0.005f; // 字变得更加透明的周期
-        public float wordAppearanceInterval = 0.1f; // 每行字一个个出现的速度
-        public float lineSubsequentlyInterval = 1.236f; // 每行字一行行出现的速度
-        public int fontSize = 16; // 字体大小
+        protected float wordTransparentInterval = 0.005f; // 字变得更加透明的周期
+        protected float wordAppearanceInterval = 0.02f; // 每行字一个个出现的速度
+        protected float lineSubsequentlyInterval = 1.236f; // 每行字一行行出现的速度
+        protected int fontSize = 16; // 字体大小
         //初始化网络玩家
         protected bool isInit = false;
 
@@ -82,9 +82,13 @@ namespace room2Battle
         protected AudioClip[] clips;
 
         protected bool playOnce = false;
+
+        protected bool playOnce_ = false;
         //AI的参数
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+       // protected bool playOnce = false;
 
 
         ///=======================================================
@@ -95,6 +99,7 @@ namespace room2Battle
         {
             if (GameMgr.instance)
             {
+                Debug.Log("3 ENEMY");
                 AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
@@ -125,16 +130,16 @@ namespace room2Battle
             {
                 if (i == 1)
                 {
-                    near();
-                    m_controller.RPC(this, "near");
+                    near_Room2();
+                    m_controller.RPC(this, "near_Room2");
                     //初始化
-                    becomeDark();
-                    m_controller.RPC(this, "becomeDark");
+                    becomeDark_Room2();
+                    m_controller.RPC(this, "becomeDark_Room2");
                 }
                 else if (i == 2)
                 {
-                    enter();
-                    m_controller.RPC(this, "enter");
+                    enter_Room2();
+                    m_controller.RPC(this, "enter_Room2");
                 }
             }
         }
@@ -151,47 +156,51 @@ namespace room2Battle
                 {
                     mCamera = getCamera.GetCurrentUsedCamera();
                 }
+                if (mCamera != null)
+                {
+                    //使命召唤风格
+                    GUIUtil.DisplayMissionDetailDefault(
+                                    missionDetails,
+                                    mCamera,
+                                    GUIUtil.whiteColor,
+                                    wordTransparentInterval: wordTransparentInterval,
+                                    wordAppearanceInterval: wordAppearanceInterval,
+                                    lineSubsequentlyInterval: lineSubsequentlyInterval,
+                                    fontSize: fontSize);
+                    //未遭遇
+                    if (!isNear)
+                    {
+                        GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
+                            mCamera,
+                            GUIUtil.whiteColor,
+                            0.5f, 0.1f, 16);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^g地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
+                    }
+                    else//遭遇
+                    {
+                        //深度摄像头是否开启
+                        bool open = playerCamera.GetComponent<depthSensor>().enabled;
+                        GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
+                            mCamera,
+                            GUIUtil.whiteColor,
+                            0.5f, 0.1f, 16);
+                        if (!open)
+                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
 
-                //使命召唤风格
-                GUIUtil.DisplayMissionDetailDefault(
-                                missionDetails,
-                                mCamera,
-                                GUIUtil.yellowColor,
-                                wordTransparentInterval: wordTransparentInterval,
-                                wordAppearanceInterval: wordAppearanceInterval,
-                                lineSubsequentlyInterval: lineSubsequentlyInterval,
-                                fontSize: fontSize);
-                //未遭遇
-                if (!isNear)
-                {
-                    GUIUtil.DisplayMissionTargetInMessSequently("突入电源室！",
-                        mCamera,
-                        GUIUtil.yellowColor,
-                        0.5f, 0.1f, 16);
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^y地球指挥部^w：你们已经进入了电源室，你们需要开启电源，电源室才能正常运作。", mCamera, 16, 0.9f, 0.5f, 3.0f);
+                        GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.1f, 1.5f);
+
+                    }
+                    GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
                 }
-                else//遭遇
-                {
-                    //深度摄像头是否开启
-                    bool open = playerCamera.GetComponent<depthSensor>().enabled;
-                    GUIUtil.DisplayMissionTargetInMessSequently("任务变化：开启照明开关！",
-                        mCamera,
-                        GUIUtil.yellowColor,
-                        0.5f, 0.1f, 16);
-                    if (!open)
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.0f);
-                }
-                GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
             }
         }
         //设置状态
-        public void near()
+        public void near_Room2()
         {
             isNear = true;
         }
 
-        public void enter()
+        public void enter_Room2()
         {
             isEnter = true;
         }
@@ -264,8 +273,9 @@ namespace room2Battle
                     if (!playOnce)
                     {
                         //播放台词
-                        TimelineSource.clip = clips[1];
-                        TimelineSource.Play();
+                        source.Stop();
+                        source.clip = clips[1];
+                        source.Play();
                         playOnce = true;
                         //产生AI
                         AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
@@ -331,10 +341,10 @@ namespace room2Battle
 
                             isInit = true;
                             //bgm，台词
-                            TimelineSource.clip = clips[0];
+                            TimelineSource.clip = clips[2];
                             TimelineSource.Play();
-                            //bgm
-                            source.clip = clips[2];
+                            //台词
+                            source.clip = clips[0];
                             source.Play();
                             source.priority = TimelineSource.priority + 1;
                         }
@@ -346,7 +356,7 @@ namespace room2Battle
         /// <summary>
         /// @brief 关灯
         /// </summary>
-        public void becomeDark()
+        public void becomeDark_Room2()
         {
             if (isInit)
             {
