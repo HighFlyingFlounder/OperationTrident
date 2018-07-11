@@ -122,11 +122,11 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    mController.RPC(this, "openDoor");
-                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
-                    AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
-                    AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
-                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    mController.RPC(this, "openDoor_");
+                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
+                    //AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
+                    //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
             }
             else//播放台词
@@ -141,8 +141,8 @@ namespace room2Battle
 
                 if (lastTimeInitAI >= 6.0f)
                 {
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
+                    //AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
                     lastTimeInitAI = 0.0f;
                 }
                 else
@@ -155,8 +155,8 @@ namespace room2Battle
             {
                 if (!destoryBoss)
                 {
-                    openDoor();
-                    mController.RPC(this, "openDoor");
+                    openDoor_();
+                    mController.RPC(this, "openDoor_");
                     destoryBoss = true;
                 }
             }
@@ -165,7 +165,7 @@ namespace room2Battle
         /// <summary>
         /// @brief RPC的关门
         /// </summary>
-        public void openDoor()
+        public void openDoor_()
         {
             if (door.gameObject)
             {
