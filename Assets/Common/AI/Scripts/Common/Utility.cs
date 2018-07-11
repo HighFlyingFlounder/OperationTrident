@@ -32,6 +32,17 @@ namespace OperationTrident.Common.AI
             return result;
         }
 
+        public static Transform GetPlayerByName(string playerName)
+        {
+            Transform[] players = GetPlayersPosition();
+            foreach(var player in players)
+            {
+                if(player.name == playerName)
+                    return player.transform;
+            }
+            return null;
+        }
+
         public static Transform DetectPlayers(AICamera camera)
         {
             camera.UpdateCamera();

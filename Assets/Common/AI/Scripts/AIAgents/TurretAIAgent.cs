@@ -48,7 +48,7 @@ namespace OperationTrident.Common.AI
     public class TurretAIAgentInitParams : AIAgentInitParams
     {
         [Tooltip("设置检测范围最大半径")]
-        [Range(50, 100)]
+        [Range(1, 100)]
         public float detectRangeMax;
     }
 }

@@ -38,11 +38,13 @@ namespace OperationTrident.Common.AI
 
         public virtual void DetectedTarget(bool isStart) { }
 
-        public virtual void Shoot(Transform shootingTarget) { }
+        public virtual void Shoot() { }
+        public virtual void Shoot(Vector3 shootingPoint) { }
+        public virtual void Shoot(string shootingTargetName) { }
         public virtual void StopShoot() { }
 
         public virtual void LookAt(Vector3 interestPoint) { }
-        public virtual void LookAt(Transform target) { }
+        public virtual void LookAt(string targetName) { }
         public virtual void StopLookAt() { }
 
         public void Die() {

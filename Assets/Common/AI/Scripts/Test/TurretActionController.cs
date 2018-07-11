@@ -15,11 +15,9 @@ namespace OperationTrident.Common.AI
         Transform _target = null;
         bool isShooting = false;
 
-        public override void LookAt(Transform target)
+        public override void LookAt(string shootingTargetName)
         {
-            _target = target;
-            // Transform joint = transform.Find("Rotation Joint");
-            // joint.right = -(interestPoint - joint.position).normalized;
+            _target = Utility.GetPlayerByName(shootingTargetName);
         }
 
         public override void StopLookAt()
@@ -27,14 +25,9 @@ namespace OperationTrident.Common.AI
             _target = null;
         }
 
-        public override void Shoot(Transform shootingTarget)
+        public override void Shoot()
         {
-            // _target = transform.GetComponent<AIAgent>().Target;
-            // // _shooter.Shoot(shootingPoint);
-            // LookAt(shootingTarget.position);
             _weapon.Shoot();
-            // isShooting = true;
-            // shootTime += transform.GetComponent<AIAgent>().fsmUpdateTime;
         }
 
         public override void StopShoot(){
@@ -51,26 +44,6 @@ namespace OperationTrident.Common.AI
         {
             if(_target != null)
                 _turret.SetNewTarget(_target.position);
-            // if(_target != null)
-            // {
-            //     LookAt(_target.position);
-            //     _weapon.Shoot();
-            //     isShooting = true;
-            // }
-            // else if(isShooting)
-            // {
-            //     _weapon.StopShoot();
-            // }
-            // shootTime -= Time.deltaTime;
-            // if(shootTime < 0)
-            // {
-            //     shootTime = 0;
-            //     if(isShooting)
-            //     {
-            //         isShooting = false;
-            //         _weapon.StopShoot();
-            //     }
-            // }
         }
 
         public override bool DetectPlayer(Transform player)
