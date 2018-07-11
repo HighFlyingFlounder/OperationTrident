@@ -52,7 +52,7 @@ namespace OperationTrident.Common.AI
             }
             else
             {
-                _agent.ActionController.RPC(_agent.ActionController.Shoot, shootingPoint);
+                // _agent.ActionController.RPC(_agent.ActionController.Shoot, shootingPoint);
                 //_agent.ActionController.Shoot(shootingPoint);
                 _agent.ActionController.RPC(_agent.ActionController.Move, false);
 			    //_agent.ActionController.Move(false);
