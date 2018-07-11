@@ -100,7 +100,7 @@ namespace room2Battle
             if (GameMgr.instance)
             {
                 Debug.Log("3 ENEMY");
-                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }
@@ -276,7 +276,7 @@ namespace room2Battle
                         source.Play();
                         playOnce = true;
                         //产生AI
-                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }

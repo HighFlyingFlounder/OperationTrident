@@ -583,45 +583,37 @@ namespace room2Battle
 
         void OnGUI()
         {
-            Debug.Log("draw text");
             if (getCamera.GetCurrentUsedCamera() != null)
             {
                 if (missilLaunch)
                 {
-                    GUIUtil.DisplayContentInGivenPosition("Warning: 导弹！",
+                    GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
                         getCamera.GetCurrentUsedCamera(),
                         0.4f,
                         0.1f,
                         Color.red,
-                        30);
+                        25);
                     return;
                 }
-                if (shoot || shootAgain || handup || rightHandup)
+                else if (shoot || shootAgain || handup || rightHandup)
                 {
-                    GUIUtil.DisplayContentInGivenPosition("Warning: 机枪！",
+                    GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
                         getCamera.GetCurrentUsedCamera(),
                         0.4f,
                         0.1f,
                         Color.red,
-                        30);
+                        25);
                     return;
                 }
-                if (isWalking)
+                else
                 {
-                    GUIUtil.DisplayContentInGivenPosition("它似乎在寻找什么",
+                    GUIUtil.DisplayContentInGivenPosition("SAFE",
                         getCamera.GetCurrentUsedCamera(),
                         0.4f,
                         0.1f,
                         Color.green,
-                        30);
-                    return;
+                        25);
                 }
-                GUIUtil.DisplayContentInGivenPosition("",
-                                        getCamera.GetCurrentUsedCamera(),
-                                        0.4f,
-                                        0.1f,
-                                        Color.red,
-                                        30);
             }
         }
     }
