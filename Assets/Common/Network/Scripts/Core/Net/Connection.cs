@@ -12,7 +12,7 @@ using System.Threading;
 public class Connection
 {
     //常量
-    const int BUFFER_SIZE = 1024;
+    const int BUFFER_SIZE = 4096;
     //Socket
     private Socket socket;
     //Buff

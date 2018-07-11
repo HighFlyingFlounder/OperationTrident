@@ -13,7 +13,8 @@ namespace OperationTrident.Common.AI
         {
             if (m_Controller == null) Debug.LogError("m_Controller");
             if (func.Method.Name == null) Debug.LogError("func.Method.Name");
-            m_Controller.RPC(this, func.Method.Name, args);
+            //m_Controller.RPC(this, func.Method.Name, args);
+            AIController.instance.AIRPC(gameObject.name, func.Method.Name, args);
             func(args);
         }
 
