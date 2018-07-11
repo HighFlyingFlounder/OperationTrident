@@ -131,7 +131,7 @@ namespace room2Battle
                 //@TODO: 替换成老Y的AI
                 Debug.Log("7 enemy");
                 //AIController.instance.CreateAI(4, 2, "EnemyInitPos3", turrentAIAgentInitParams[0]);
-                //AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
@@ -196,7 +196,7 @@ namespace room2Battle
                 {
                     Debug.Log("7 enemy");
                     //AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
-                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
 
                     initEnemyAgain = true;
                 }
@@ -204,7 +204,7 @@ namespace room2Battle
 
             if (lastTimeInitAI > 5.0f)
             {
-                //AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
                 lastTimeInitAI = 0.0f;
             }
             else

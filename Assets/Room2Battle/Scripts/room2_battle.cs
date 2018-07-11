@@ -116,7 +116,7 @@ namespace room2Battle
                 mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)//bool值作为flag
             {
-                //if (director.time > 30.0f)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
                     trueBoss.transform.position = bossInitPos.position;
@@ -127,10 +127,10 @@ namespace room2Battle
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                        
-                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
                     //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     //AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
-                    //AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
             }
             else//播放台词
