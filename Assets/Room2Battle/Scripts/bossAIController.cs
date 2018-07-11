@@ -64,12 +64,12 @@ namespace room2Battle
             if (isDestroy)
             {
                 if (Camera.current != null)
-                    GUIUtil.DisplaySubtitleInDefaultPosition(
-                        "boss要爆了",
+                    GUIUtil.DisplaySubtitleInGivenGrammar(
+                        "^rboss要爆了",
                         Camera.current,
-                        16,
-                        0.1f
-                        );
+                        30,
+                        0.1f,
+                        1.0f);
             }
         }
     }

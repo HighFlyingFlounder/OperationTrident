@@ -181,7 +181,8 @@ namespace room2Battle
             {
                 if (mCamera)
                 {
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                    if(!playOnce)
+                        GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
 
                     GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
                           mCamera,

@@ -82,9 +82,13 @@ namespace room2Battle
         protected AudioClip[] clips;
 
         protected bool playOnce = false;
+
+        protected bool playOnce_ = false;
         //AI的参数
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+       // protected bool playOnce = false;
 
 
         ///=======================================================
@@ -180,7 +184,12 @@ namespace room2Battle
                         0.5f, 0.1f, 16);
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
-                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.0f);
+
+                    if (!playOnce_)
+                    {
+                        GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.0f);
+                        playOnce_ = true;
+                    }
                 }
                 GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
             }

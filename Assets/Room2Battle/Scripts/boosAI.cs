@@ -204,7 +204,7 @@ namespace room2Battle
                                             currentState = fireState.OpenFire;
                                             handup = true;
                                             animator.SetBool("handup", true);
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                         }
                                         break;
                                     case 1:
@@ -214,7 +214,7 @@ namespace room2Battle
                                             //同步
                                             animator.SetBool("missileLaunch", true);
                                             missilLaunch = true;
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                         }
                                         break;
                                 }
@@ -251,7 +251,7 @@ namespace room2Battle
                                     {
                                         animator.SetBool("walk", true);
                                         isWalking = true;
-                                        netSyncController.SyncVariables();
+                                        //netSyncController.SyncVariables();
                                         isBeginWandering = true;
                                     }
                                     else
@@ -263,7 +263,7 @@ namespace room2Battle
 
                                             isWalking = false;
                                             animator.SetBool("walk", false);
-                                            netSyncController.SyncVariables();
+                                            //netSyncController.SyncVariables();
                                             currentState = fireState.SeekingPlayer;
                                         }
                                     }
@@ -286,7 +286,7 @@ namespace room2Battle
                                     handup = false;
                                     shoot = true;
 
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //转移状态
                                     currentState = fireState.KeepFire;
                                 }
@@ -319,7 +319,7 @@ namespace room2Battle
                                     rightHandup = true;
                                     shoot = false;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //下一个状态
                                     currentState = fireState.RightFire;
 
@@ -347,7 +347,7 @@ namespace room2Battle
                                     rightHandup = false;
                                     shootAgain = true;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
                                     //下一个状态
                                     currentState = fireState.KeepFireAgain;
                                 }
@@ -378,7 +378,7 @@ namespace room2Battle
 
                                     stopFire = true;
                                     shoot = false;
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
 
                                     currentState = fireState.StopFire;
 
@@ -415,7 +415,7 @@ namespace room2Battle
 
                                     missilLaunch = false;
                                     //同步
-                                    netSyncController.SyncVariables();
+                                    //netSyncController.SyncVariables();
 
                                     missileLaunchImpl(target.position);
                                     netSyncController.RPC(this, "missileLaunchImpl", target.position);
@@ -429,6 +429,16 @@ namespace room2Battle
                         return;
                 }
             }
+            bool[] states = {
+                shoot,
+                handup,
+                rightHandup,
+                shootAgain,
+                stopFire,
+                missilLaunch,
+                isWalking
+            };
+            netSyncController.RPC(this, "updateState", states);
         }
 
         /// <summary>
@@ -560,6 +570,17 @@ namespace room2Battle
             return data;
         }
 
+        public void updateState(bool[] states)
+        {
+            shoot = states[0];
+            handup = states[1];
+            rightHandup = states[2];
+            shootAgain = states[3];
+            stopFire = states[4];
+            missilLaunch = states[5];
+            isWalking = states[6];
+        }
+
         public void Init(NetSyncController controller)
         {
             netSyncController = controller;
@@ -569,32 +590,34 @@ namespace room2Battle
         {
             if (missilLaunch)
             {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
-                    Camera.current,
-                    30,
-                    0.1f,
-                    1.0f);
-                return;
+                if (Camera.current)
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
+                        Camera.current,
+                        30,
+                        0.1f,
+                        1.0f);
+                    return;
+                }
+                if (shoot || shootAgain)
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
+                        Camera.current,
+                        30,
+                        0.1f,
+                        1.0f);
+                    return;
+                }
+                if (isWalking)
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
+                        Camera.current,
+                        30,
+                        0.1f,
+                        1.0f);
+                    return;
+                }
             }
-            if (shoot || shootAgain)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
-                    Camera.current,
-                    30,
-                    0.1f,
-                    1.0f);
-                return;
-            }
-            if (isWalking)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
-                    Camera.current,
-                    30,
-                    0.1f,
-                    1.0f);
-                return;
-            }
-
         }
     }
 }
