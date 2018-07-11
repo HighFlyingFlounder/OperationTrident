@@ -90,7 +90,8 @@ public class AsyncLoadScene : MonoBehaviour
         string player_id = proto.GetString(start, ref start);
         Debug.Log(player_id + " finish Loading");
         player_finishLoading++;
-        if(player_finishLoading == GameMgr.instance.player_num)//加载完成的人数等于该局游戏人数总数
+        Debug.Log(" GameMgr.instance.player_num is " + GameMgr.instance.player_num);
+        if (player_finishLoading == GameMgr.instance.player_num)//加载完成的人数等于该局游戏人数总数
         {
             StartFight();//可以开始战斗了
         }
