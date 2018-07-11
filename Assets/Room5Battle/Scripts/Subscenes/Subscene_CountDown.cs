@@ -12,6 +12,7 @@ namespace OperationTrident.Room5
         public TokamakReactorPillar m_ReactorPillar;
 
         public WanderAIAgentInitParams[] wanderAIAgentInitParams;
+        public TurretAIAgentInitParams[] turretAIAgentInitParams;
 
         public TurretActionController[] turretActionController;
 
@@ -56,7 +57,7 @@ namespace OperationTrident.Room5
                 StartCoroutine(spawnEnemies1(i * m_EnemySpawnDeltaTime));
             }
 
-            StartCoroutine(spawnEnemies2());
+            StartCoroutine(spawnEnemyTurret());
 
             //开始倒计时，换BGM
             m_AudioSource.clip = m_BGM_CountingDown;
@@ -91,13 +92,12 @@ namespace OperationTrident.Room5
         }
 
         //生成一大波敌人
-        private IEnumerator spawnEnemies2()
+        private IEnumerator spawnEnemyTurret()
         {
-            yield return new WaitForSeconds(120.0f);
-            for (int i = 0; i < 8; ++i)
-            {
-                AIController.instance.CreateAI(1, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[0]);
-            }
+            yield return new WaitForSeconds(30.0f);
+            AIController.instance.CreateAI(4, 1, "AI-SpawnPositions-turret", turretAIAgentInitParams[0]);
+            yield return new WaitForSeconds(60.0f);
+            AIController.instance.CreateAI(4, 2, "AI-SpawnPositions-turret2", turretAIAgentInitParams[0]);
         }
 
         /***************************************************

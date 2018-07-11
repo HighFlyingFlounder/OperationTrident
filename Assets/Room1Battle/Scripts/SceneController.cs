@@ -86,6 +86,9 @@ namespace OperationTrident.Room1
         [SerializeField]
         WanderAIAgentInitParams[] _wanderAIAgentInitParams;
 
+        [SerializeField]
+        TurretAIAgentInitParams[] _turretAIAgentInitParams;
+
         private void Awake()
         {
             // 增加第一个key的侦听器
@@ -110,6 +113,7 @@ namespace OperationTrident.Room1
 
         public void ElevatorOpenImpl()
         {
+            escapeGameObject.tag = string.Empty;
             elevator.Play();
         }
 
@@ -144,6 +148,8 @@ namespace OperationTrident.Room1
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
+            AIController.instance.CreateAI(9, 1, "Turrent1Born", _turretAIAgentInitParams[0]);
+            AIController.instance.CreateAI(9, 2, "Turrent2BOrn", _turretAIAgentInitParams[0]);
         }
 
         // Update is called once per frame
