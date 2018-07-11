@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OperationTrident.Common.AI
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "AI/FSM Data")]
     public class AIFSMData : ScriptableObject
     {
 #if UNITY_EDITOR
