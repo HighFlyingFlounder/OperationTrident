@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+using OperationTrident.Util;
 using OperationTrident.Common.AI;
 using System;
 
@@ -34,8 +36,11 @@ namespace room2Battle
         [SerializeField]
         protected GameObject explosionPrefab;
 
+        protected bool isDestroy = false;
+
         public override IEnumerator Destroy()
         {
+            isDestroy = true;
             Instantiate(explosionPrefab, transform);
             yield return new WaitForSeconds(1.0f);
             Instantiate(explosionPrefab, transform);
@@ -52,6 +57,20 @@ namespace room2Battle
         void Update()
         {
 
+        }
+
+        private void OnGUI()
+        {
+            if (isDestroy)
+            {
+                if (Camera.current != null)
+                    GUIUtil.DisplaySubtitleInDefaultPosition(
+                        "boss要爆了",
+                        Camera.current,
+                        16,
+                        0.1f
+                        );
+            }
         }
     }
 }
