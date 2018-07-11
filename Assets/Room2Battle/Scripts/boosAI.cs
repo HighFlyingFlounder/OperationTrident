@@ -584,35 +584,44 @@ namespace room2Battle
         void OnGUI()
         {
             Debug.Log("draw text");
-            if (Camera.current != null)
+            if (getCamera.GetCurrentUsedCamera() != null)
             {
                 if (missilLaunch)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
-                        Camera.current,
-                        30,
+                    GUIUtil.DisplayContentInGivenPosition("Warning: 导弹！",
+                        getCamera.GetCurrentUsedCamera(),
+                        0.4f,
                         0.1f,
-                        1.0f);
+                        Color.red,
+                        30);
                     return;
                 }
                 if (shoot || shootAgain || handup || rightHandup)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
-                        Camera.current,
-                        30,
+                    GUIUtil.DisplayContentInGivenPosition("Warning: 机枪！",
+                        getCamera.GetCurrentUsedCamera(),
+                        0.4f,
                         0.1f,
-                        1.0f);
+                        Color.red,
+                        30);
                     return;
                 }
                 if (isWalking)
                 {
-                    GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
-                        Camera.current,
-                        30,
+                    GUIUtil.DisplayContentInGivenPosition("它似乎在寻找什么",
+                        getCamera.GetCurrentUsedCamera(),
+                        0.4f,
                         0.1f,
-                        1.0f);
+                        Color.green,
+                        30);
                     return;
                 }
+                GUIUtil.DisplayContentInGivenPosition("",
+                                        getCamera.GetCurrentUsedCamera(),
+                                        0.4f,
+                                        0.1f,
+                                        Color.red,
+                                        30);
             }
         }
     }
