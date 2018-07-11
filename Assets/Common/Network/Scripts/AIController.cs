@@ -406,15 +406,18 @@ public class AIController : MonoBehaviour, NetSyncInterface
             object[] parameters = proto.GetObjects(start, ref start);   // 应该为(start, ref start)
             //Debug.Log("aiName :" + aiName);
             //Debug.Log("methodName:" + methodName);
-            AIActionController actionController = AI_Action_List[aiName];
-            Type t = actionController.GetType();
-            //Debug.Log("Type t:" + t);
-            MethodInfo method = t.GetMethod(methodName);
-            if (method == null)
+            if (AI_List.ContainsKey(aiName))
             {
-                Debug.LogError("No public method in class " + t);
+                AIActionController actionController = AI_Action_List[aiName];
+                Type t = actionController.GetType();
+                //Debug.Log("Type t:" + t);
+                MethodInfo method = t.GetMethod(methodName);
+                if (method == null)
+                {
+                    Debug.LogError("No public method in class " + t);
+                }
+                method.Invoke(actionController, parameters);
             }
-            method.Invoke(actionController, parameters);
         }
     }
 }
