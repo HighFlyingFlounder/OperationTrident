@@ -51,8 +51,8 @@ namespace OperationTrident.Elevator
             //打开门
             if (open)
             {
-                child1.transform.position += new Vector3(0, 0, speed * Time.deltaTime);
-                child2.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
+                child1.transform.position += new Vector3(0, 0, speed * Time.deltaTime * 20);
+                child2.transform.position -= new Vector3(0, 0, speed * Time.deltaTime * 20);
             }
 
             //关上门
@@ -95,7 +95,11 @@ namespace OperationTrident.Elevator
 
         private void Operate()
         {
-            openDoor();
+            if (Elevator.SceneController.state == SceneController.ElevatorState.Initing)
+            {
+                openDoor();
+                RayShooter.state = true;
+            }
         }
 
         public void closeDoor_Imp()
