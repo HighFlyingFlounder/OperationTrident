@@ -54,7 +54,10 @@ namespace OperationTrident.Common {
                     return;
                 }
 
-                //AudioSource.PlayClipAtPoint(AC, this.transform.position);
+                if (AC != null)
+                {
+                    AudioSource.PlayClipAtPoint(AC, this.transform.position);
+                }
 
                 HitImplement(damage);
                 m_NetSyncController.RPC(this, "HitImplement", damage);
