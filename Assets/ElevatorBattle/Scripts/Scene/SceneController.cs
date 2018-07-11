@@ -68,7 +68,7 @@ namespace OperationTrident.Elevator {
         // Update is called once per frame
         void Update()
         {
-            Debug.Log(count);
+            Debug.Log(state);
             switch (state)
             {
                 case ElevatorState.Initing:
