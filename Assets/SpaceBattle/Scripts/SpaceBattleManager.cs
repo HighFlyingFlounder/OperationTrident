@@ -155,4 +155,8 @@ public class SpaceBattleManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        
+    }
 }
