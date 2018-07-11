@@ -8,6 +8,8 @@ namespace OperationTrident.FPS.Weapons {
         public float scale = 1.0f;
         public float speed = 0.1f;
         public float alpha = 1.0f;
+        public float r = 20.0f;
+        public float t = 10.0f;
 
         float DistortStrength;
         float IntersectPower;
@@ -20,12 +22,12 @@ namespace OperationTrident.FPS.Weapons {
             DistortStrength = 1;
             IntersectPower = 0;
 
-            cols = Physics.OverlapSphere(transform.position, 20f);
+            cols = Physics.OverlapSphere(transform.position, r);
 
             foreach (Collider col in cols)
             {
                 //Debug.Log(col);
-                col.SendMessageUpwards("OnEMP", 10, SendMessageOptions.DontRequireReceiver);
+                col.SendMessageUpwards("OnEMP", t, SendMessageOptions.DontRequireReceiver);
             }
         }
 

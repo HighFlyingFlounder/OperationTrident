@@ -39,6 +39,7 @@ namespace OperationTrident.Elevator
             {
                 state = false;
                 close = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //开门过程结束
@@ -46,6 +47,7 @@ namespace OperationTrident.Elevator
             {
                 state = true;
                 open = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //打开门
@@ -95,13 +97,18 @@ namespace OperationTrident.Elevator
 
         private void Operate()
         {
-            openDoor();
+            if (Elevator.SceneController.state == SceneController.ElevatorState.Initing)
+            {
+                openDoor();
+                RayShooter.state = true;
+            }
         }
 
         public void closeDoor_Imp()
         {
             if (state)
             {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
                 //关门
                 close = true;
             }
@@ -111,6 +118,7 @@ namespace OperationTrident.Elevator
         {
             if (!state)
             {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
                 //开门
                 open = true;
             }
