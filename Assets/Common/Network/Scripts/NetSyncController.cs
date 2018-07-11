@@ -144,7 +144,6 @@ public class NetSyncController : MonoBehaviour
 
     public void RecvRPC(ProtocolBase protoBase)
     {
-        //Debug.Log("Reach RecvRPC");
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
@@ -162,9 +161,6 @@ public class NetSyncController : MonoBehaviour
         string methodName = proto.GetString(start, ref start);
 
         object[] parameters = proto.GetObjects(start);
-
-        //Debug.Log("componentName:" + componentName);
-        //Debug.Log("methodName:" + methodName);
 
         for (int i = 0; i < parameters.Length; i++)
         {
