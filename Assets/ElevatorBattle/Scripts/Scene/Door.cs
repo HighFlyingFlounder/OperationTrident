@@ -39,6 +39,7 @@ namespace OperationTrident.Elevator
             {
                 state = false;
                 close = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //开门过程结束
@@ -46,13 +47,14 @@ namespace OperationTrident.Elevator
             {
                 state = true;
                 open = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //打开门
             if (open)
             {
-                child1.transform.position += new Vector3(0, 0, speed * Time.deltaTime * 20);
-                child2.transform.position -= new Vector3(0, 0, speed * Time.deltaTime * 20);
+                child1.transform.position += new Vector3(0, 0, speed * Time.deltaTime);
+                child2.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
             }
 
             //关上门
@@ -106,6 +108,7 @@ namespace OperationTrident.Elevator
         {
             if (state)
             {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
                 //关门
                 close = true;
             }
@@ -115,6 +118,7 @@ namespace OperationTrident.Elevator
         {
             if (!state)
             {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
                 //开门
                 open = true;
             }
