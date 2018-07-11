@@ -25,7 +25,7 @@ namespace OperationTrident.FPS.Weapons {
             foreach (Collider col in cols)
             {
                 //Debug.Log(col);
-                col.SendMessageUpwards("OnEMP", 5, SendMessageOptions.DontRequireReceiver);
+                col.SendMessageUpwards("OnEMP", 10, SendMessageOptions.DontRequireReceiver);
             }
         }
 

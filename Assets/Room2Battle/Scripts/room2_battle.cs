@@ -65,6 +65,8 @@ namespace room2Battle
         protected TurretAIAgentInitParams turretAIAgentParams;
         //只删一次boss
         protected bool destoryBoss = false;
+
+        protected float lastTimeInitAI = 0.0f;
         private void Start()
         {
         }
@@ -117,8 +119,8 @@ namespace room2Battle
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     mController.RPC(this, "openDoor");
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
-                    AIController.instance.CreateAI(3, 1, "EnemyInitPos5", turretAIAgentParams);
-                    AIController.instance.CreateAI(4, 1, "EnemyInitPos6", turretAIAgentParams);
+                    //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
+                    AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
             }
@@ -130,6 +132,17 @@ namespace room2Battle
                     source.clip = clips[0];
                     source.Play();
                     source.priority = TimelineSource.priority + 1;
+                }
+
+                if (lastTimeInitAI >= 6.0f)
+                {
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    lastTimeInitAI = 0.0f;
+                }
+                else
+                {
+                    lastTimeInitAI += Time.deltaTime;
                 }
             }
             //TODO:测试，删除
