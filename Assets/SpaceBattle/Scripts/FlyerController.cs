@@ -141,14 +141,13 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
     private void OnTriggerEnter(Collider other)
     {
         //只有本地玩家才会触发这些事件
-        if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
+        if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player && !shield.isPlaying)
         {
             if (other.tag == "Hinder")
             {
                 AudioSource.PlayClipAtPoint(AC, new Vector3(0f, 0f, 0f));
 
-                float shakeViolence = 1 / (Vector3.Distance(transform.position, this.transform.position) * 0.5f);
-                this.transform.GetComponentInChildren<Vibration>().StartShakingRandom(-shakeViolence, shakeViolence, -shakeViolence, shakeViolence);
+                this.transform.GetComponentInChildren<CameraShake>().begin();
 
                 ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
                 shield.Play();
