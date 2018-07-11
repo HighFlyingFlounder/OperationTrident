@@ -32,33 +32,33 @@ namespace OperationTrident.Elevator
         // Update is called once per frame
         void Update()
         {
-        //    // 提示玩家按键
-        //    if (toNotify)
-        //    {
-        //        Vector3 point = new Vector3(Room1.Util.GetCamera().pixelWidth / 2, Room1.Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
-        //        Ray ray = Room1.Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
-        //        RaycastHit hit;//射线交叉信息的包装
-        //                       //Raycast给引用的变量填充信息
-        //        if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
-        //        {
-        //            //hit.point:射线击中的坐标
-        //            GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-        //            if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
-        //            {
-        //                HintableObject target = hitObject.GetComponent<HintableObject>();
-        //                if (target != null)
-        //                {
-        //                    toDisplayHint = true;
-        //                    hintToDisplay = target.WhatToHint;
-        //                    usingGrammar = target.UsingGrammar;
-        //                    hintFontSize = target.FontSize;
-        //                    goto secondIf;
-        //                }
-        //            }
-        //            else toDisplayHint = false;
-        //        }
-        //    }
-        //secondIf:
+            // 提示玩家按键
+            if (toNotify)
+            {
+                Vector3 point = new Vector3(Room1.Util.GetCamera().pixelWidth / 2, Room1.Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Room1.Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
+                RaycastHit hit;//射线交叉信息的包装
+                               //Raycast给引用的变量填充信息
+                if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
+                {
+                    //hit.point:射线击中的坐标
+                    GameObject hitObject = hit.transform.gameObject;//获取射中的对象
+                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
+                    {
+                        HintableObject target = hitObject.GetComponent<HintableObject>();
+                        if (target != null)
+                        {
+                            toDisplayHint = true;
+                            hintToDisplay = target.WhatToHint;
+                            usingGrammar = target.UsingGrammar;
+                            hintFontSize = target.FontSize;
+                            goto secondIf;
+                        }
+                    }
+                    else toDisplayHint = false;
+                }
+            }
+        secondIf:
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
             {

@@ -9,6 +9,7 @@ public class GameMgr : MonoBehaviour
 
     public string nextScene = "StoryBoard2";//用于全局的状态，传入到AsynLoadingScene
 
+    public int player_num = 0;//该局房间总人数
     //[HideInInspector]
     public bool isMasterClient = false;//暂时用isOwner（房主）来定master_client
     //服务器信息

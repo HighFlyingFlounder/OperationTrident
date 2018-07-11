@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.EventSystem;
 using OperationTrident.Util;
 using OperationTrident.Common.AI;
 
@@ -32,12 +31,20 @@ namespace OperationTrident.Elevator {
         //结束时间
         private float e_time;
 
-        //碰撞次数（为偶数）
+        private float t_time;
+
+        //碰撞次数
         private int count = 0;
 
         private bool change;
 
         private bool flag;
+
+        private bool flag1;
+
+        private IEnumerator coroutine1;
+
+        private IEnumerator coroutine2;
 
         //碰撞体
         private BoxCollider bcollider;
@@ -52,6 +59,10 @@ namespace OperationTrident.Elevator {
             change = true;
 
             flag = true;
+            flag1 = true;
+
+            coroutine1 = WaitAndPrint1(10);
+            coroutine2 = WaitAndPrint2(10);
         }
 
         // Update is called once per frame
@@ -66,7 +77,7 @@ namespace OperationTrident.Elevator {
                         foreach (var player in SceneNetManager.instance.list)
                         {
                             GameObject temp = player.Value;
-                            temp.transform.localScale = new Vector3(4f, 4f, 4f);
+                            temp.transform.localScale = new Vector3(3f, 3f, 3f);
                         }
                         flag = false;
                     }
@@ -92,34 +103,48 @@ namespace OperationTrident.Elevator {
                         
 
                         //准备时间结束，切换到下一个场景
-                        if (c_time >= e_time)
+                        if (c_time >= e_time && GameMgr.instance.isMasterClient)
                         {
                             changeState();
+                            m_controller.RPC(this, "changeState");
                         }
                     }
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    //Messenger.Broadcast(GameEvent.Enemy_Start);
-                    AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
-                    AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[1]);
-                    AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[2]);
-                    AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[3]);
-
                     //开始计时
                     s_time = Time.time;
                     c_time = s_time;
                     e_time = s_time + d_time;
 
-                    changeState();
+                    t_time = s_time + 5;
+
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
                     break;
 
                 case ElevatorState.Fighting:
                     c_time += Time.deltaTime;
 
-                    if(c_time >= e_time)
+                    if (!flag)
+                    {
+                        StartCoroutine(coroutine1);
+                        flag = true;
+                    }
+
+                    if (flag1&&c_time >= t_time)
+                    {
+                        StartCoroutine(coroutine2);
+                        flag1 = false;
+                    }
+
+                    if (c_time >= e_time && GameMgr.instance.isMasterClient)
                     {
                         changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
@@ -130,14 +155,17 @@ namespace OperationTrident.Elevator {
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
 
-                    if (OperationTrident.Elevator.Wall.state)
+                    if (OperationTrident.Elevator.Wall.state && GameMgr.instance.isMasterClient)
                     {
                         changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
 
                 case ElevatorState.Escape:
+                    StopCoroutine(coroutine1);
+                    StopCoroutine(coroutine2);
                     break;
             }
         }
@@ -171,7 +199,14 @@ namespace OperationTrident.Elevator {
                 //进入关门
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
-                    changeState();
+                    Debug.Log("fuck?");
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        Debug.Log("fuck");
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -186,7 +221,12 @@ namespace OperationTrident.Elevator {
 
                 if (count <= 0 && Door.state && state == ElevatorState.Escape)
                 {
-                    changeState();
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
                     GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
@@ -215,6 +255,32 @@ namespace OperationTrident.Elevator {
                 case ElevatorState.End:
                     state = ElevatorState.Escape;
                     break;
+            }
+        }
+
+        private IEnumerator WaitAndPrint1(float waitTime)
+        {
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+
+        private IEnumerator WaitAndPrint2(float waitTime)
+        {
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
             }
         }
     }

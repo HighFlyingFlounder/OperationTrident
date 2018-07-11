@@ -16,6 +16,8 @@ public class AsyncLoadScene : MonoBehaviour
 
     private AsyncOperation operation;
 
+    private int player_finishLoading = 0;
+
     // Use this for initialization
     void Start()
     {
@@ -63,8 +65,43 @@ public class AsyncLoadScene : MonoBehaviour
 
         if ((int)(loadingSlider.value * 100) == 100)
         {
+            SendFinishLoading();
             //允许异步加载完毕后自动切换场景
-            operation.allowSceneActivation = true;
+            //operation.allowSceneActivation = true;
         }
+    }
+
+    void SendFinishLoading()
+    {
+        //监听
+        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
+        //协议
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("FinishLoading");
+        NetMgr.srvConn.Send(protocol);
+    }
+
+    public void RecvLoading(ProtocolBase protocol)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        //解析协议
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        string player_id = proto.GetString(start, ref start);
+        Debug.Log(player_id + " finish Loading");
+        player_finishLoading++;
+        Debug.Log(" GameMgr.instance.player_num is " + GameMgr.instance.player_num);
+        if (player_finishLoading == GameMgr.instance.player_num)//加载完成的人数等于该局游戏人数总数
+        {
+            operation.allowSceneActivation = true;//允许异步加载完毕后自动切换场景
+        }
+        
+    }
+
+
+
+    private void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
     }
 }

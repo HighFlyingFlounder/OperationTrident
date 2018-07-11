@@ -98,6 +98,7 @@ namespace OperationTrident.StartScene
 
         public void InitTeamScene()
         {
+            roomNameText.text = "Room  " + roomName;
             NetMgr.srvConn.msgDist.AddListener("GetRoomInfo", RecvGetRoomInfo);
             NetMgr.srvConn.msgDist.AddListener("EnterGame", RecvEnterGame);
             //发送查询
@@ -168,7 +169,35 @@ namespace OperationTrident.StartScene
 
         public void RecvEnterGame(ProtocolBase protocol)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Loading", 
+            //解析协议
+            ProtocolBytes proto = (ProtocolBytes)protocol;
+            int start = 0;
+            string protoName = proto.GetString(start, ref start);
+            int player_num = proto.GetInt(start, ref start);
+
+            GameMgr.instance.player_num = player_num;//该局房间总人数
+            StartFight();//获得战场信息
+
+            
+        }
+
+        public void StartFight()
+        {
+            //协议
+            ProtocolBytes protocol = new ProtocolBytes();
+            protocol.AddString("StartFight");
+            NetMgr.srvConn.Send(protocol);
+            //监听
+            NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
+        }
+
+        public void RecvStartFight(ProtocolBase protocol)
+        {
+            SceneNetManager.fight_protocol = (ProtocolBytes)protocol;
+            //StartBattle((ProtocolBytes)protocol);
+            //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
+            NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Loading",
                 UnityEngine.SceneManagement.LoadSceneMode.Single);
         }
 
@@ -322,7 +351,7 @@ namespace OperationTrident.StartScene
                 GameMgr.instance.isMasterClient = true;
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                roomNameText.text = "Room  "+roomName;
+                
                 InitTeamScene();
             }
             else
@@ -360,7 +389,6 @@ namespace OperationTrident.StartScene
             {
                 roomListCanvas.enabled = false;
                 teamCanvas.enabled = true;
-                roomNameText.text = "Room  " + roomName;
                 InitTeamScene();
             }
             else

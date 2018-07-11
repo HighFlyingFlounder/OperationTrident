@@ -75,7 +75,11 @@ namespace OperationTrident.Elevator
                 case SceneController.ElevatorState.Initing:
                     missionContentsIndex = 1;
                     display = true;
-                    targetWorldPosition = new Vector3(16, 2, 5);
+                    targetWorldPosition = new Vector3(7.683f, -4.0818f, 5.3866f);
+                    if(Door.state == true)
+                    {
+                        targetWorldPosition = new Vector3(-10f, -3.8844f, -0.4f);
+                    }
                     break;
                 case SceneController.ElevatorState.Ready:
                     missionContentsIndex = 2;
@@ -94,7 +98,8 @@ namespace OperationTrident.Elevator
                     break;
                 case SceneController.ElevatorState.Escape:
                     missionContentsIndex = 5;
-                    display = false;
+                    display = true;
+                    targetWorldPosition = new Vector3(150.96f, -13.647f, 78.372f);
                     break;
             }
 
@@ -120,7 +125,7 @@ namespace OperationTrident.Elevator
                 GUIUtil.DisplayMissionTargetInMessSequently(
                     missionContent,
                     Room1.Util.GetCamera(),
-                    GUIUtil.brightGreenColor,
+                    GUIUtil.whiteColor,
                     interval: appearInterval,
                     blingInterval: blingInterval,
                     fontSize: 16,

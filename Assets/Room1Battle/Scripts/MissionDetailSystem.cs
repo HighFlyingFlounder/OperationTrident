@@ -40,7 +40,7 @@ namespace OperationTrident.Util
             {
                 GUIUtil.DisplayMissionDetailDefault(
                         missionDetails,
-                        Room1.Util.GetCamera(),
+                        Room1.Util.GetCamera()? Room1.Util.GetCamera():Camera.current,
                         theColor,
                         wordTransparentInterval: wordTransparentInterval,
                         wordAppearanceInterval: wordAppearanceInterval,
@@ -49,14 +49,7 @@ namespace OperationTrident.Util
             }
             catch(Exception e)
             {
-                GUIUtil.DisplayMissionDetailDefault(
-                        missionDetails,
-                        Camera.current,
-                        theColor,
-                        wordTransparentInterval: wordTransparentInterval,
-                        wordAppearanceInterval: wordAppearanceInterval,
-                        lineSubsequentlyInterval: lineSubsequentlyInterval,
-                        fontSize: fontSize);
+                Debug.Log("任务目标系统相机错误");
             }
         }
     }

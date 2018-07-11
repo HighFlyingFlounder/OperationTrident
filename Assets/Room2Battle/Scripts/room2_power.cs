@@ -39,38 +39,46 @@ namespace room2Battle
         //挂载相机的对象，单机可用
         //[SerializeField]
         //protected GameObject player;
-
+        
+        //开关位置
         [SerializeField]
         protected Transform switchPos;
 
+        //二楼
         [SerializeField]
         protected Transform secondFloor;
+        
+        //玩家距离开关距离
+        protected float distance = float.MaxValue;
 
-        protected bool isShowTarget = false;
-
+        //台词
         public string[] line =
         {
         };
 
+        //AI的参数
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
 
         [SerializeField]
         TurretAIAgentInitParams[] turrentAIAgentInitParams;
 
+        //bool值保证只生成一次AI
         protected bool initEnemyAgain = false;
+
+        protected float lastTimeInitAI = 0.0f;
 
         /// <summary>
         ///  method 
         /// </summary>
 
-        //获取相机句柄
+        ///==============================
+        //@brief 获取相机句柄,不至于为空
+        //===============================
         void Start()
         {
             mCamera = Camera.main;
         }
-
-        protected float distance = float.MaxValue;
 
         //@override
         public override bool isTransitionTriggered()
@@ -84,6 +92,10 @@ namespace room2Battle
             return "room2_battle";
         }
 
+        /// <summary>
+        /// @override 
+        /// @brief 删除加入的后处理脚本
+        /// </summary>
         public override void onSubsceneDestory()
         {
             playerCamera.GetComponent<depthSensor>().enabled = false;
@@ -100,6 +112,9 @@ namespace room2Battle
             }
         }
 
+        /// <summary>
+        /// @brief 联网状态下，获取相机句柄，方便GUI显示
+        /// </summary>
         public override void onSubsceneInit()
         {
             //RenderSettings.ambientIntensity = 0.1f;
@@ -114,12 +129,17 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
-                //AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
-                //AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
 
+        /// <summary>
+        /// @brief 类似消息处理函数
+        /// @param i 消息
+        /// </summary>
+        /// <param name="i"></param>
         public override void notify(int i)
         {
             if (this.enabled)
@@ -136,6 +156,9 @@ namespace room2Battle
             }
         }
 
+        /// <summary>
+        /// @brief 判断是否看向开关，生成AI
+        /// </summary>
         void Update()
         {
             mCamera = getCamera.GetCurrentUsedCamera();
@@ -170,13 +193,29 @@ namespace room2Battle
             {
                 if (!initEnemyAgain)
                 {
-                    //AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
-                    //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+
                     initEnemyAgain = true;
                 }
             }
+
+            if (lastTimeInitAI > 5.0f)
+            {
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                lastTimeInitAI = 0.0f;
+            }
+            else
+            {
+                lastTimeInitAI += Time.deltaTime;
+            }
+
         }
 
+
+        /// <summary>
+        /// @brief 根据输入控制相机后处理，开开关
+        /// </summary>
         void LateUpdate()
         {
             //当看到物品时
@@ -228,7 +267,7 @@ namespace room2Battle
                     isOpenDepthSensor = false;
                 }
             }
-
+            //开关被开了
             if (isSwitchOpen)
             {
                 playerCamera.GetComponent<becomeDark>().enabled = false;

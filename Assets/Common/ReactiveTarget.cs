@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Common {
     public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface {
@@ -19,7 +20,7 @@ namespace OperationTrident.Common {
         private float m_CurrentHealth;
         private bool m_Death;
         private bool m_HasSendDeadMessage;
-    
+
         private bool _isParalyzed;
         private float _EMPEffectTime;
 
@@ -75,7 +76,13 @@ namespace OperationTrident.Common {
                     PlayerDie();
                 // 从controller List中移除现有AI
                 else
+                {
                     AIController.instance.DestroyAI(this.gameObject.name);
+                    AIActionController controller =  gameObject.GetComponent<AIActionController>();
+                    if (controller == null) Debug.LogError("Controller Not Found");
+                    controller.Die();
+                }
+                    
             }
         }
         #endregion
@@ -158,9 +165,14 @@ namespace OperationTrident.Common {
             if (!IsAlive)
                 return;
 
-            _isParalyzed = true;
+            OnEMPImplement(effectTime);
+            m_NetSyncController.RPC(this, "OnEMPImplement", effectTime);
+        }
 
-            _EMPEffectTime += effectTime;
+        public void OnEMPImplement(float effectTime)
+        {
+            _isParalyzed = true;
+            _EMPEffectTime = effectTime;
         }
 
         public bool isDeath

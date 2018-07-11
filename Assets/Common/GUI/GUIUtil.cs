@@ -74,7 +74,7 @@ namespace OperationTrident.Util
         }
             
 
-
+        
         // 默认的字体大小
         private const int defaultFontSize = 18;
 
@@ -101,6 +101,17 @@ namespace OperationTrident.Util
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
         // 微软Sans Serif
         public readonly static Font microsoftSansSerif = Font.CreateDynamicFontFromOSFont("Microsoft Sans Serif", defaultFontSize);
+        // 幼圆
+        public readonly static Font YouYuan = Font.CreateDynamicFontFromOSFont("YouYuan", defaultFontSize);
+        // Verdana
+        public readonly static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", defaultFontSize);
+        public readonly static Font BankGothicLtBt = Font.CreateDynamicFontFromOSFont("BankGothic Lt BT", defaultFontSize);
+
+        //public readonly static GUISkin globalSkin = GUI.skin;
+
+        public readonly static Font defaultFont = microsoftYaHei;
+
+        public readonly static GUIStyle mLabelStyle = "label";
 
         public static int DefaultFontSize
         {
@@ -492,7 +503,7 @@ namespace OperationTrident.Util
             GUIStyle style = new GUIStyle();
             style.normal.textColor = color;
             style.fontStyle = FontStyle.Normal;
-            style.font = microsoftSansSerif;
+            style.font = defaultFont;
             style.alignment = textAnchor;
             style.fontSize = fontSize;
             return style;
@@ -830,6 +841,7 @@ namespace OperationTrident.Util
             // 记录上一帧的字符串
             if (!hasRememberStringInitDMTDS)
             {
+                ResetFrame(Timer.DMTDS);
                 hasRememberStringInitDMTDS = true;
                 rememberStringDMTDS = missionContent;
             }
@@ -890,29 +902,18 @@ namespace OperationTrident.Util
         /// <param name="color">显示的颜色，可以直接获得missionPointColor</param>
         /// <param name="fontSize">字体大小</param>
         /// <param name="labelOffsetHeight">目标点显示有多高</param>
+        /// <param name="distanceScale">显示距离的缩放：乘法</param>
         public static void DisplayMissionPoint(
             Vector3 targetPosition,
             Camera camera,
             Color color,
             int fontSize = defaultFontSize,
-            float labelOffsetHeight=0.0f
+            float labelOffsetHeight=0.0f,
+            float distanceScale=1.0f
             )
         {
-            //Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
-            //Ray ray = camera.ScreenPointToRay(point); // 在摄像机所在位置创建射线
-            //Vector3 direction1 = ray.direction; // 摄像头的方向
-            //Vector3 direction2 = targetPosition - camera.transform.position; // 到摄像头的方向
-            //// 如果物体大方向在人视线背后的话，就不显示了
-            //if (Vector3.Dot(direction1, direction2) <= 0) return;
-            //float nowDistance = Vector3.Distance(targetPosition,
-            //         camera.transform.position);
-            //targetPosition = new Vector3(targetPosition.x, targetPosition.y + labelOffsetHeight, targetPosition.z);
-            //GUIStyle style = GetDefaultTextStyle(color, fontSize: 18);
-            //Rect rect = GetFixedRectDirectlyFromWorldPosition(targetPosition, camera);
-            //// 指定颜色
-            //GUI.Label(rect, (int)nowDistance + "m\n●", style);
             float nowDistance = Vector3.Distance(targetPosition,camera.transform.position);
-            DisplayWorldPointInScreen(targetPosition, camera, (int)nowDistance + "m\n●", color, fontSize, labelOffsetHeight);
+            DisplayWorldPointInScreen(targetPosition, camera, (int)nowDistance*distanceScale + "m\n●", color, fontSize, labelOffsetHeight);
         }
 
 
@@ -953,7 +954,7 @@ namespace OperationTrident.Util
         /// <returns type="bool"></returns>
         private static bool IsDigit(char a)
         {
-            if (a >= 'A' && a <= 'Z') return false; 
+            //if (a >= 'A' && a <= 'Z') return false; 
             return a >= ' ' && a <= '~';
         }
 
@@ -1001,6 +1002,7 @@ namespace OperationTrident.Util
             // 记录上一帧的字符串
             if (!hasRememberStringInitDCIGPS)
             {
+                ResetFrame(Timer.DCIGPS);
                 hasRememberStringInitDCIGPS = true;
                 rememberStringDCIGPS = content;
             }
@@ -1127,6 +1129,7 @@ namespace OperationTrident.Util
             frameTimerDMTIMS2 += FrameTime(Timer.DMTIMS2);
             if (!hasRememberStringInitDMTIMS)
             {
+                ResetFrame(Timer.DMTIMS1);
                 hasRememberStringInitDMTIMS = true;
                 rememberStringDMTIMS = missionContent;
             }
@@ -1536,6 +1539,7 @@ namespace OperationTrident.Util
             // 最开始的时候调用，这时候还没有初始化记下字幕的变量
             if (!hasInitRememberStringDSIGG)
             {
+                ResetFrame(Timer.DSIGG);
                 rememberStringDSIGG = subtitle;
                 hasInitRememberStringDSIGG = true;
             }
@@ -1605,6 +1609,7 @@ namespace OperationTrident.Util
         {
             if (rememberSubtitlesDSsIGG == null)
             {
+                ResetFrame(Timer.DSsIGG);
                 rememberSubtitlesDSsIGG = subtitles;
             }
             // 要显示的总字幕发生了变化
@@ -1662,6 +1667,7 @@ namespace OperationTrident.Util
         {
             if (rememberSubtitlesDSsIGGWT == null)
             {
+                ResetFrame(Timer.DSsIGGWT);
                 rememberSubtitlesDSsIGGWT = subtitles;
             }
             if (subtitles == null)

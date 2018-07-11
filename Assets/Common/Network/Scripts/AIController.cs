@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using OperationTrident.Common.AI;
 using UnityEngine.AI;
+using System.Reflection;
 
 public class AIController : MonoBehaviour, NetSyncInterface
 {
@@ -18,7 +19,10 @@ public class AIController : MonoBehaviour, NetSyncInterface
     bool is_master_client = false;
     [SerializeField]
     private float syncPerSecond = 10;
+
     private Dictionary<string, GameObject> AI_List;
+    // 提前获取Conponent, 提升Rpc速度
+    private Dictionary<string, AIActionController> AI_Action_List;  
     private Dictionary<string, Vector3> AI_fPosition_List;
     private Dictionary<string, Vector3> AI_lPosition_List;
     private Dictionary<string, Vector3> AI_fRotation_List;
@@ -26,6 +30,13 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public GameObject[] AIPrefabs;
     private NetSyncController m_NetSyncController;
     private int begin_id = 0;
+
+    [SerializeField]
+    private float Rpc_syncPerSecond = 20;
+    float lastSendRpcTime = float.MinValue;
+    private ProtocolBytes proto = new ProtocolBytes();
+    private static object bufferlock = new object();
+    private int protoCnt = 0;
 
     void Awake()
     {
@@ -39,10 +50,18 @@ public class AIController : MonoBehaviour, NetSyncInterface
             Debug.Log("Exception:" + ex);
         }
         AI_List = new Dictionary<string, GameObject>();
+        AI_Action_List = new Dictionary<string, AIActionController>();
         AI_fPosition_List = new Dictionary<string, Vector3>();
         AI_lPosition_List = new Dictionary<string, Vector3>();
         AI_fRotation_List = new Dictionary<string, Vector3>();
         AI_lRotation_List = new Dictionary<string, Vector3>();
+        
+        NetMgr.srvConn.msgDist.AddListener("AIRPC", RecvAIRPC);
+    }
+
+    public void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener("AIRPC", RecvAIRPC);
     }
     /// <summary> 
     /// 不会自动同步！将obj添加进AIController的管理，将确保AI的位置在所有客户端一致，以master-Client为准
@@ -56,6 +75,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
             return;
         }
         AI_List.Add(obj.name, obj);
+        AI_Action_List.Add(obj.name, obj.GetComponent<AIActionController>());
         AI_fPosition_List.Add(obj.name, obj.transform.position);
         AI_lPosition_List.Add(obj.name, obj.transform.position);
         AI_fRotation_List.Add(obj.name, obj.transform.eulerAngles);
@@ -95,6 +115,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
         if (GameMgr.instance.isMasterClient)
         {
+            Debug.Log("call CreateAI");
             createAIImplement(num, type, swopPoints, args);
             m_NetSyncController.RPC(this, "createAIImplement", num, type, swopPoints, args);
         }
@@ -102,6 +123,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
     public void createAIImplement(int num, int type, string swopPoints, AIAgentInitParams args)
     {
+        Debug.Log("createAIImplement");
         if (GameObject.Find(swopPoints) == null)
         {
             Debug.LogError("SwopPoints Not Found!");
@@ -137,7 +159,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
 
             AI.GetComponent<AIAgent>().SetInitParams(args);
             AI_List.Add(AI.name, AI);
-
+            AI_Action_List.Add(AI.name, AI.GetComponent<AIActionController>());
             //初始化位置和转向预测数据
             AI_fPosition_List.Add(AI.name, AI.transform.position);
             AI_lPosition_List.Add(AI.name, AI.transform.position);
@@ -204,6 +226,26 @@ public class AIController : MonoBehaviour, NetSyncInterface
                 m_NetSyncController.SyncVariables();
                 lastSendInfoTime = Time.time;
             }
+            // 每秒发送Rpc_syncPerSecond次AI RPC
+            if (Time.time - lastSendRpcTime > 1.0f / Rpc_syncPerSecond)
+            {
+                if (protoCnt!=0)
+                {
+                    lock (bufferlock)
+                    {
+                        ProtocolBytes AIRPC_proto = new ProtocolBytes();
+                        AIRPC_proto.AddString("AIRPC");
+                        AIRPC_proto.AddInt(protoCnt);
+                        AIRPC_proto.bytes = AIRPC_proto.bytes.Concat(proto.bytes).ToArray();
+                        NetMgr.srvConn.Send(AIRPC_proto);
+                        //Debug.LogFormat("Reach Send AIRPC in Update, protoCnt = {0}, bytesLength = {1}", protoCnt, AIRPC_proto.bytes.Length);
+                        // 更新缓冲区
+                        proto = new ProtocolBytes();
+                        protoCnt = 0;
+                        lastSendRpcTime = Time.time;
+                    }                    
+                }
+            }
         }
         else //非master_client接受网络同步并预测更新
         {
@@ -216,6 +258,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
+        AI_Action_List.Remove(AI_name);  // 此时Remove会无法接受Destroy()
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
         AI_fRotation_List.Remove(AI_name);
@@ -225,6 +268,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void ClearAI()
     {
         AI_List.Clear();
+        AI_Action_List.Clear();
+        AI_fPosition_List.Clear();
+        AI_lPosition_List.Clear();
+        AI_fRotation_List.Clear();
+        AI_lRotation_List.Clear();
     }
 
     public void NetForecastInfo(string id, Vector3 nPos, Vector3 nRot)
@@ -314,5 +362,67 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void Init(NetSyncController controller)
     {
         m_NetSyncController = controller;
+    }
+
+    // AIRPC将所有AI的RPC进行合包操作
+    public void AIRPC(string AIName, string methodName, params object[] args)
+    {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
+        
+        lock (bufferlock)
+        {
+            ++protoCnt;
+            proto.AddString(AIName);
+            proto.AddString(methodName);
+            proto.AddAIObjects(args);
+            // 快满了直接发送，保留1K空间
+            if(proto.bytes.Length > 3072 )
+            {
+                ProtocolBytes AIRPC_proto = new ProtocolBytes();
+                AIRPC_proto.AddString("AIRPC");
+                AIRPC_proto.AddInt(protoCnt);
+                AIRPC_proto.bytes = AIRPC_proto.bytes.Concat(proto.bytes).ToArray();
+                NetMgr.srvConn.Send(AIRPC_proto);
+                // 更新缓冲区
+                proto = new ProtocolBytes();
+                protoCnt = 0;
+            }
+        }
+    }
+
+    public void RecvAIRPC(ProtocolBase protoBase)
+    {
+        //Debug.Log("Reach RecvAIRPC");
+        if (is_master_client)
+            return;
+        
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        // master_client 直接忽略AI的RPC信息
+        
+        int rpcCnt = proto.GetInt(start, ref start);
+        //Debug.Log("rpcCnt = " + rpcCnt);
+        for (int i = 0; i < rpcCnt; i++)
+        {
+            string aiName = proto.GetString(start, ref start);
+            string methodName = proto.GetString(start, ref start);
+            object[] parameters = proto.GetObjects(start, ref start);   // 应该为(start, ref start)
+            //Debug.Log("aiName :" + aiName);
+            //Debug.Log("methodName:" + methodName);
+            if (AI_List.ContainsKey(aiName))
+            {
+                AIActionController actionController = AI_Action_List[aiName];
+                Type t = actionController.GetType();
+                //Debug.Log("Type t:" + t);
+                MethodInfo method = t.GetMethod(methodName);
+                if (method == null)
+                {
+                    Debug.LogError("No public method in class " + t);
+                }
+                method.Invoke(actionController, parameters);
+            }
+        }
     }
 }

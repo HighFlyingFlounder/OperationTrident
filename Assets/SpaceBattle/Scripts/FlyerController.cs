@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using OperationTrident.FPS.Weapons;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -17,6 +18,7 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
     public float limitY, limitZ;
     public GameObject sh;
     private ParticleSystem shield;
+    public AudioClip AC;
 
     // Use this for initialization
     void Start()
@@ -141,8 +143,13 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
         //只有本地玩家才会触发这些事件
         if (transform.GetComponent<NetSyncTransform>().ctrlType == NetSyncTransform.CtrlType.player)
         {
-            if(other.tag == "Hinder")
+            if (other.tag == "Hinder")
             {
+                AudioSource.PlayClipAtPoint(AC, new Vector3(0f, 0f, 0f));
+
+                float shakeViolence = 1 / (Vector3.Distance(transform.position, this.transform.position) * 0.5f);
+                this.transform.GetComponentInChildren<Vibration>().StartShakingRandom(-shakeViolence, shakeViolence, -shakeViolence, shakeViolence);
+
                 ChangeHp(other.gameObject.GetComponent<Hinder>().damage);
                 shield.Play();
                 //ChangeHp(-40.0f);
