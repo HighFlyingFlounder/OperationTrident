@@ -115,5 +115,9 @@ namespace Room2Battle
             Instantiate(missilePrefabs, rocketInitPos.position, launchQuaternion);
         }
 
+        public override bool DetectPlayer(Transform player)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

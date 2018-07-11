@@ -14,41 +14,24 @@ namespace OperationTrident.Common.AI
             public static readonly string SIGHT_PLAYER = "Sight Player";
         }
 
-        float _rangeMin;
+        float _depressionAngle;
         float _rangeMax;
         public override void Init()
         {
             if (IsFirstInit)
             {
-                _rangeMin = _agent.DetectRangeMin;
+                _depressionAngle = _agent.DepressionAngle;
                 _rangeMax = _agent.DetectRangeMax;
             }
         }
 
         public override string Execute()
         {
-            Transform[] players = Utility.GetPlayersPosition();
-			Vector3 origin = transform.position;
-
-            foreach (var player in players)
+            _agent.Target = Utility.RangeDetectAll(_agent.Center.position, _depressionAngle);
+            if(_agent.Target != null)
             {
-                Vector3 direction = player.position - origin;
-                direction.y = 0;
-                if (direction.magnitude > _rangeMax || direction.magnitude < _rangeMin)
-                    continue;
-
-                Ray ray = new Ray(origin, player.position - origin);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
-                {
-                    if (hit.collider.tag == "Player")
-                    {
-                        _agent.Target = player;
-                        return Conditions.SIGHT_PLAYER;
-                    }
-                }
+                return Conditions.SIGHT_PLAYER;
             }
-
             return null;
         }
 
