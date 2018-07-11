@@ -48,6 +48,7 @@ namespace OperationTrident.Common.AI
         public virtual void StopLookAt() { }
 
         public void Die() {
+            StopShoot();
             StartCoroutine(Destroy());
         }
 
