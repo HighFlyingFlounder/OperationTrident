@@ -58,6 +58,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
         
         NetMgr.srvConn.msgDist.AddListener("AIRPC", RecvAIRPC);
     }
+
+    public void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener("AIRPC", RecvAIRPC);
+    }
     /// <summary> 
     /// 不会自动同步！将obj添加进AIController的管理，将确保AI的位置在所有客户端一致，以master-Client为准
     /// </summary> 
@@ -253,6 +258,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
+        AI_Action_List.Remove(AI_name);  // 此时Remove会无法接受Destroy()
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
         AI_fRotation_List.Remove(AI_name);
@@ -262,6 +268,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void ClearAI()
     {
         AI_List.Clear();
+        AI_Action_List.Clear();
+        AI_fPosition_List.Clear();
+        AI_lPosition_List.Clear();
+        AI_fRotation_List.Clear();
+        AI_lRotation_List.Clear();
     }
 
     public void NetForecastInfo(string id, Vector3 nPos, Vector3 nRot)
@@ -400,15 +411,18 @@ public class AIController : MonoBehaviour, NetSyncInterface
             object[] parameters = proto.GetObjects(start, ref start);   // 应该为(start, ref start)
             //Debug.Log("aiName :" + aiName);
             //Debug.Log("methodName:" + methodName);
-            AIActionController actionController = AI_Action_List[aiName];
-            Type t = actionController.GetType();
-            //Debug.Log("Type t:" + t);
-            MethodInfo method = t.GetMethod(methodName);
-            if (method == null)
+            if (AI_List.ContainsKey(aiName))
             {
-                Debug.LogError("No public method in class " + t);
+                AIActionController actionController = AI_Action_List[aiName];
+                Type t = actionController.GetType();
+                //Debug.Log("Type t:" + t);
+                MethodInfo method = t.GetMethod(methodName);
+                if (method == null)
+                {
+                    Debug.LogError("No public method in class " + t);
+                }
+                method.Invoke(actionController, parameters);
             }
-            method.Invoke(actionController, parameters);
         }
     }
 }
