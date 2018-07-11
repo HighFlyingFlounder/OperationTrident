@@ -155,7 +155,7 @@ namespace OperationTrident.Elevator {
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
 
-                    if (OperationTrident.Elevator.Wall.state && GameMgr.instance.isMasterClient)
+                    if (OperationTrident.Elevator.Wall.state)
                     {
                         changeState();
                         m_controller.RPC(this, "changeState");
