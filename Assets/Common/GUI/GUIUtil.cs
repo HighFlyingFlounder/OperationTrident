@@ -74,7 +74,7 @@ namespace OperationTrident.Util
         }
             
 
-
+        
         // 默认的字体大小
         private const int defaultFontSize = 18;
 
@@ -101,6 +101,17 @@ namespace OperationTrident.Util
         public readonly static Font microsoftYaHei = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", defaultFontSize);
         // 微软Sans Serif
         public readonly static Font microsoftSansSerif = Font.CreateDynamicFontFromOSFont("Microsoft Sans Serif", defaultFontSize);
+        // 幼圆
+        public readonly static Font YouYuan = Font.CreateDynamicFontFromOSFont("YouYuan", defaultFontSize);
+        // Verdana
+        public readonly static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", defaultFontSize);
+        public readonly static Font BankGothicLtBt = Font.CreateDynamicFontFromOSFont("BankGothic Lt BT", defaultFontSize);
+
+        //public readonly static GUISkin globalSkin = GUI.skin;
+
+        public readonly static Font defaultFont = microsoftYaHei;
+
+        public readonly static GUIStyle mLabelStyle = "label";
 
         public static int DefaultFontSize
         {
@@ -492,7 +503,7 @@ namespace OperationTrident.Util
             GUIStyle style = new GUIStyle();
             style.normal.textColor = color;
             style.fontStyle = FontStyle.Normal;
-            style.font = microsoftSansSerif;
+            style.font = defaultFont;
             style.alignment = textAnchor;
             style.fontSize = fontSize;
             return style;
@@ -943,7 +954,7 @@ namespace OperationTrident.Util
         /// <returns type="bool"></returns>
         private static bool IsDigit(char a)
         {
-            if (a >= 'A' && a <= 'Z') return false; 
+            //if (a >= 'A' && a <= 'Z') return false; 
             return a >= ' ' && a <= '~';
         }
 
