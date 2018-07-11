@@ -100,7 +100,17 @@ namespace OperationTrident.Room1
 
         private void OnElevatorOpen()
         {
-            if(state==Room1State.EscapingRoom) elevator.Play();
+            if (state == Room1State.EscapingRoom)
+            {
+                ElevatorOpenImpl();
+                m_controller.RPC(this, "ElevatorOpenImpl");
+            }
+                
+        }
+
+        public void ElevatorOpenImpl()
+        {
+            elevator.Play();
         }
 
         private void Destroy()
@@ -124,10 +134,16 @@ namespace OperationTrident.Room1
             elevator.playOnAwake = false;
             //camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             //enemysList = new List<GameObject>();
+            
+            FadeInOutUtil.SetFadingState(5.0f, Util.GetCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
+        }
+
+        IEnumerator AIInit(float delay)
+        {
+            yield return new WaitForSeconds(delay);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
             AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
-            FadeInOutUtil.SetFadingState(5.0f, Util.GetCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
         }
 
         // Update is called once per frame
@@ -229,6 +245,8 @@ namespace OperationTrident.Room1
             Util.SetParent(door2, door2Transform);
 
             escapeGameObject.SetActive(false);
+
+            StartCoroutine(AIInit(5.0f));
 
         }
 

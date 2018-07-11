@@ -18,9 +18,17 @@ namespace OperationTrident.Common.AI
             func(args);
         }
 
+        public void RPCDie()
+        {
+            m_Controller.RPC(this, "Die");
+            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
+            Die();
+        }
+
         public void RPC(Action func)
         {
             m_Controller.RPC(this, func.Method.Name);
+            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
             func();
         }
 
