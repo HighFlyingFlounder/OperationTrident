@@ -75,7 +75,7 @@ namespace room2Battle
 
         public override bool DetectPlayer(Transform player)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

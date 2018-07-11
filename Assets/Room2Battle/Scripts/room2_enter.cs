@@ -186,11 +186,8 @@ namespace room2Battle
                     if (!open)
                         GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
 
-                    if (!playOnce_)
-                    {
                         GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 2.0f);
                         playOnce_ = true;
-                    }
                 }
                 GUIUtil.DisplayMissionPoint(roomPos.position, mCamera, Color.white);
             }
