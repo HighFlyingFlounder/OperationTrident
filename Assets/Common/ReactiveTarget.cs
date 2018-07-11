@@ -19,7 +19,7 @@ namespace OperationTrident.Common {
         private float m_CurrentHealth;
         private bool m_Death;
         private bool m_HasSendDeadMessage;
-    
+
         private bool _isParalyzed;
         private float _EMPEffectTime;
 
@@ -158,9 +158,14 @@ namespace OperationTrident.Common {
             if (!IsAlive)
                 return;
 
-            _isParalyzed = true;
+            OnEMPImplement(effectTime);
+            m_NetSyncController.RPC(this, "OnEMPImplement", effectTime);
+        }
 
-            _EMPEffectTime += effectTime;
+        public void OnEMPImplement(float effectTime)
+        {
+            _isParalyzed = true;
+            _EMPEffectTime = effectTime;
         }
 
         public bool isDeath
