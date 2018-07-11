@@ -100,7 +100,17 @@ namespace OperationTrident.Room1
 
         private void OnElevatorOpen()
         {
-            if(state==Room1State.EscapingRoom) elevator.Play();
+            if (state == Room1State.EscapingRoom)
+            {
+                ElevatorOpenImpl();
+                m_controller.RPC(this, "ElevatorOpenImpl");
+            }
+                
+        }
+
+        public void ElevatorOpenImpl()
+        {
+            elevator.Play();
         }
 
         private void Destroy()
