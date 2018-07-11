@@ -15,7 +15,7 @@ namespace OperationTrident.Common.AI
         Transform _target = null;
         bool isShooting = false;
 
-        public override void LookAt(string shootingTargetName)
+        public override void LookAtWithTargetName(string shootingTargetName)
         {
             _target = Utility.GetPlayerByName(shootingTargetName);
         }

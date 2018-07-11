@@ -41,7 +41,7 @@ namespace Room2Battle
 
         protected Coroutine lastShoot = null;
 
-        public override void LookAt(Vector3 interestPoint)
+        public override void LookAtWithVector3(Vector3 interestPoint)
         {
             Transform tempLauncherTransform = transform;
             tempLauncherTransform.LookAt(interestPoint);
@@ -50,7 +50,7 @@ namespace Room2Battle
             transform.eulerAngles = newAngle;
         }
 
-        public override void Shoot(Vector3 shootingPoint)
+        public override void ShootWithVector3(Vector3 shootingPoint)
         {
             if (lastShoot != null)
             {

@@ -24,7 +24,7 @@ namespace OperationTrident.Common.AI
 
         public override string Execute()
         {
-            _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.position);
+            _agent.ActionController.RPC(_agent.ActionController.LookAtWithVector3, _agent.Target.position);
             //_agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();

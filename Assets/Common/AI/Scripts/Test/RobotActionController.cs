@@ -27,7 +27,7 @@ namespace OperationTrident.Common.AI
             _animator.SetBool("TargetDetected", isStart);
         }
 
-        public override void Shoot(string shootingTargetName)
+        public override void ShootWithTargetName(string shootingTargetName)
         {
             _shooter.Shoot(Utility.GetPlayerByName(shootingTargetName).position);
         }
