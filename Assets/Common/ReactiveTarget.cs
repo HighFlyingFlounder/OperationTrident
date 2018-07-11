@@ -17,6 +17,8 @@ namespace OperationTrident.Common {
         public bool UseDeadCamera = false;
         public GameObject DeathCamera;
 
+        public AudioClip AC;
+
         private float m_CurrentHealth;
         private bool m_Death;
         private bool m_HasSendDeadMessage;
@@ -51,6 +53,9 @@ namespace OperationTrident.Common {
                 if (gameObject.name == id) {
                     return;
                 }
+
+                AudioSource.PlayClipAtPoint(AC, this.transform.position);
+
                 HitImplement(damage);
                 m_NetSyncController.RPC(this, "HitImplement", damage);
             }
