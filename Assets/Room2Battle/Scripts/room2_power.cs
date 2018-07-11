@@ -66,6 +66,8 @@ namespace room2Battle
         //bool值保证只生成一次AI
         protected bool initEnemyAgain = false;
 
+        protected float lastTimeInitAI = 0.0f;
+
         /// <summary>
         ///  method 
         /// </summary>
@@ -193,10 +195,23 @@ namespace room2Battle
                 {
                     AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+
                     initEnemyAgain = true;
                 }
             }
+
+            if (lastTimeInitAI > 5.0f)
+            {
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                lastTimeInitAI = 0.0f;
+            }
+            else
+            {
+                lastTimeInitAI += Time.deltaTime;
+            }
+
         }
+
 
         /// <summary>
         /// @brief 根据输入控制相机后处理，开开关
