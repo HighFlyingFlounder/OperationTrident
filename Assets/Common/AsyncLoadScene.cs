@@ -93,29 +93,12 @@ public class AsyncLoadScene : MonoBehaviour
         Debug.Log(" GameMgr.instance.player_num is " + GameMgr.instance.player_num);
         if (player_finishLoading == GameMgr.instance.player_num)//加载完成的人数等于该局游戏人数总数
         {
-            StartFight();//可以开始战斗了
+            operation.allowSceneActivation = true;//允许异步加载完毕后自动切换场景
         }
         
     }
 
-    public void StartFight()
-    {
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("StartFight");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
-    }
 
-    public void RecvStartFight(ProtocolBase protocol)
-    {
-        SceneNetManager.fight_protocol =(ProtocolBytes) protocol;
-        //StartBattle((ProtocolBytes)protocol);
-        //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
-        NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
-        operation.allowSceneActivation = true;//允许异步加载完毕后自动切换场景
-    }
 
     private void OnDestroy()
     {
