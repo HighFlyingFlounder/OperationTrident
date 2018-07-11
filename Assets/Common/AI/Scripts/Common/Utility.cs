@@ -50,7 +50,54 @@ namespace OperationTrident.Common.AI
         {
             Vector3 result = target - origin;
             result.y = 0;
-            return result.normalized;
+            return result;
+        }
+
+        public static Transform RangeDetectAll(Vector3 detectorPosition, float depressionAngle)
+        {
+            Transform[] players = Utility.GetPlayersPosition();
+			Vector3 origin = detectorPosition;
+
+            foreach (var player in players)
+            {
+                Vector3 direction = player.position - origin;
+                Vector3 projectionOnXOZ = GetDirectionOnXOZ(origin, player.position);
+                float angle = Vector3.Angle(direction, projectionOnXOZ);
+                if (angle > depressionAngle)
+                    continue;
+
+                Ray ray = new Ray(origin, player.position - origin);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
+                {
+                    if (hit.collider.tag == "Player")
+                    {
+                        return player;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static bool RangeDetect(Transform player, Vector3 detectorPosition, float depressionAngle)
+        {
+			Vector3 origin = detectorPosition;
+            Vector3 direction = player.position - origin;
+            Vector3 projectionOnXOZ = GetDirectionOnXOZ(origin, player.position);
+            float angle = Vector3.Angle(direction, projectionOnXOZ);
+            if (angle > depressionAngle)
+                return false;
+
+            Ray ray = new Ray(origin, player.position - origin);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~(LayerMask.GetMask("IgnoreBullets") | LayerMask.GetMask("Enemy"))))
+            {
+                if (hit.collider.tag != "Player")
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
 #if UNITY_EDITOR

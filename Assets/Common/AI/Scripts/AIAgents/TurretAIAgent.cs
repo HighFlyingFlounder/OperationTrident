@@ -9,13 +9,13 @@ namespace OperationTrident.Common.AI
     {
         [SerializeField]
         TurretAIAgentInitParams _initParams;
+        Transform _center = null;
         
-
-        public override float DetectRangeMin
+        public override float DepressionAngle
         {
             get
             {
-                return _initParams.detectRangeMin;
+                return transform.GetComponent<Forge3D.F3DTurret>().ElevationLimit.y;
             }
         }
         public override float DetectRangeMax
@@ -25,6 +25,18 @@ namespace OperationTrident.Common.AI
                 return _initParams.detectRangeMax;
             }
         }
+        public override Transform Center 
+        {
+            get
+            {
+                if(_center == null)
+                {
+                    _center = transform.Find("center").transform;
+                }
+                return _center;
+            }
+        }
+
 
         public override void SetInitParams(AIAgentInitParams initParams)
         {
@@ -35,10 +47,6 @@ namespace OperationTrident.Common.AI
     [System.Serializable]
     public class TurretAIAgentInitParams : AIAgentInitParams
     {
-        [Tooltip("设置检测范围最小半径")]
-        [Range(10, 30)]
-        public float detectRangeMin;
-
         [Tooltip("设置检测范围最大半径")]
         [Range(50, 100)]
         public float detectRangeMax;

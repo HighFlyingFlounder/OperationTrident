@@ -9,7 +9,7 @@ namespace OperationTrident.Common.AI
     {
         public ScriptableObject AIFSMAsset = null;
         public AIActionController ActionController = null;
-        public Component AIReactiveTarget = null;
+        public ReactiveTarget AIReactiveTarget = null;
 
         protected AIFSM FSM = new AIFSM();
         Transform _target;
@@ -27,7 +27,8 @@ namespace OperationTrident.Common.AI
         public virtual float CameraSightDistance { get; set; }
         public virtual float AttackPrecisionAngle { get; set; }
         public virtual float AttackPrecisionRadius { get; set; }
-        public virtual float DetectRangeMin { get; set; }
+        public virtual Transform Center { get; set; }
+        public virtual float DepressionAngle { get; set; }
         public virtual float DetectRangeMax { get; set; }
 
         AIFSMData FSMData

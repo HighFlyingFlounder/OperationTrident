@@ -92,5 +92,10 @@ namespace room2Battle
             else
                 animator.SetFloat("speed", 0.0f);
         }
+
+        public override bool DetectPlayer(Transform player)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
