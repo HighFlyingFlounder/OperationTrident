@@ -253,6 +253,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
+        AI_Action_List.Remove(AI_name);
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
         AI_fRotation_List.Remove(AI_name);
@@ -262,6 +263,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
     public void ClearAI()
     {
         AI_List.Clear();
+        AI_Action_List.Clear();
+        AI_fPosition_List.Clear();
+        AI_lPosition_List.Clear();
+        AI_fRotation_List.Clear();
+        AI_lRotation_List.Clear();
     }
 
     public void NetForecastInfo(string id, Vector3 nPos, Vector3 nRot)
