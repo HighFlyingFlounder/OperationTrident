@@ -129,7 +129,7 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(4, 2, "EnemyInitPos3", turrentAIAgentInitParams[0]);
                 AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);

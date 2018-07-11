@@ -124,7 +124,7 @@ namespace room2Battle
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
                     mController.RPC(this, "openDoor");
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
-                    //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
+                    AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
                 }
