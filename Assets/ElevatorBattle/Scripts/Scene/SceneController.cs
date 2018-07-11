@@ -158,7 +158,6 @@ namespace OperationTrident.Elevator {
                     if (OperationTrident.Elevator.Wall.state)
                     {
                         changeState();
-                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
