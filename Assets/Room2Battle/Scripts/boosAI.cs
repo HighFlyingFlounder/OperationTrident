@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using OperationTrident.Util;
+using OperationTrident.FPS.Common;
 
 namespace room2Battle
 {
@@ -64,6 +65,7 @@ namespace room2Battle
         //是否发现玩家
         protected bool isFoundPlayer = false;
 
+        protected GetCamera getCamera;
 
         //==================================================
         //=====================     需要同步的状态量 =======
@@ -98,6 +100,14 @@ namespace room2Battle
         private void Start()
         {
             animator = GetComponent<Animator>();
+
+            if (GameMgr.instance)
+            {
+                if (SceneNetManager.instance.list.Count != 0)
+                {
+                    getCamera = SceneNetManager.instance.list[GameMgr.instance.id].GetComponent<GetCamera>();
+                }
+            }
         }
 
         void Update()
@@ -438,7 +448,7 @@ namespace room2Battle
                 missilLaunch,
                 isWalking
             };
-            netSyncController.RPC(this, "updateState", states);
+            netSyncController.RPC(this, "updateAState", states);
         }
 
         /// <summary>
@@ -570,7 +580,7 @@ namespace room2Battle
             return data;
         }
 
-        public void updateState(bool[] states)
+        public void updateAState(bool[] states)
         {
             shoot = states[0];
             handup = states[1];
@@ -590,10 +600,10 @@ namespace room2Battle
         {
             if (missilLaunch)
             {
-                if (Camera.current)
+                if (getCamera.GetCurrentUsedCamera())
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
-                        Camera.current,
+                        getCamera.GetCurrentUsedCamera(),
                         30,
                         0.1f,
                         1.0f);
@@ -602,7 +612,7 @@ namespace room2Battle
                 if (shoot || shootAgain)
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
-                        Camera.current,
+                        getCamera.GetCurrentUsedCamera(),
                         30,
                         0.1f,
                         1.0f);
@@ -611,7 +621,7 @@ namespace room2Battle
                 if (isWalking)
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
-                        Camera.current,
+                        getCamera.GetCurrentUsedCamera(),
                         30,
                         0.1f,
                         1.0f);

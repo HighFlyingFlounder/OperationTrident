@@ -129,6 +129,7 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
+                Debug.Log("7 enemy");
                 AIController.instance.CreateAI(4, 2, "EnemyInitPos3", turrentAIAgentInitParams[0]);
                 AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
             }
@@ -193,6 +194,7 @@ namespace room2Battle
             {
                 if (!initEnemyAgain)
                 {
+                    Debug.Log("7 enemy");
                     AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
 
