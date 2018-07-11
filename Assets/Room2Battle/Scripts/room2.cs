@@ -32,11 +32,11 @@ namespace room2Battle
         {
             FadeInOutUtil.RenderGUI();
 
-            if (Camera.current)
-            {
-                Rect re = new Rect(Camera.current.pixelWidth - 100, 0, 100, 100);
-                GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
-            }
+            //if (Camera.current)
+            //{
+            //    Rect re = new Rect(Camera.current.pixelWidth - 100, 0, 100, 100);
+            //    GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
+            //}
         }
     }
 }

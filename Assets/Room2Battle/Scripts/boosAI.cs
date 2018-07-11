@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using OperationTrident.Util;
+
 namespace room2Battle
 {
 
@@ -566,6 +568,23 @@ namespace room2Battle
         public void Init(NetSyncController controller)
         {
             netSyncController = controller;
+        }
+
+        void OnGUI()
+        {
+            switch (currentState)
+            {
+                case fireState.KeepFire:
+                case fireState.KeepFireAgain:
+                case fireState.MissileLaunch:
+                    if (Camera.current != null) {
+                        GUIUtil.DisplaySubtitleInDefaultPosition("注意boss的攻击",
+                            Camera.current,
+                            16,
+                            0.2f);
+                            }
+                    break;
+            }
         }
     }
 }
