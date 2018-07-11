@@ -17,7 +17,7 @@ namespace OperationTrident.Common {
         public bool UseDeadCamera = false;
         public GameObject DeathCamera;
 
-        public AudioClip AC;
+        public AudioClip AC = null;
 
         private float m_CurrentHealth;
         private bool m_Death;
