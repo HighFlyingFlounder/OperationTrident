@@ -34,11 +34,12 @@ namespace OperationTrident.Common.AI
 
         public static Transform GetPlayerByName(string playerName)
         {
-            Transform[] players = GetPlayersPosition();
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            
             foreach(var player in players)
             {
                 if(player.name == playerName)
-                    return player.transform;
+                    return player.transform.Find("ShootedTarget");
             }
             return null;
         }
