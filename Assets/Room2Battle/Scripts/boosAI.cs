@@ -448,7 +448,7 @@ namespace room2Battle
                 missilLaunch,
                 isWalking
             };
-            netSyncController.RPC(this, "updateAState", states);
+            netSyncController.RPC(this, "updateAState_", states);
         }
 
         /// <summary>
@@ -557,30 +557,15 @@ namespace room2Battle
         }
 
         public void RecvData(SyncData data)
-        {
-            shoot = (bool)data.Get(typeof(bool));
-            handup = (bool)data.Get(typeof(bool));
-            rightHandup = (bool)data.Get(typeof(bool));
-            shootAgain = (bool)data.Get(typeof(bool));
-            stopFire = (bool)data.Get(typeof(bool));
-            missilLaunch = (bool)data.Get(typeof(bool));
-            isWalking = (bool)data.Get(typeof(bool));
+        { 
         }
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            data.Add(shoot);
-            data.Add(handup);
-            data.Add(rightHandup);
-            data.Add(shootAgain);
-            data.Add(stopFire);
-            data.Add(missilLaunch);
-            data.Add(isWalking);
-            return data;
+            return null;
         }
 
-        public void updateAState(bool[] states)
+        public void updateAState_(bool[] states)
         {
             shoot = states[0];
             handup = states[1];

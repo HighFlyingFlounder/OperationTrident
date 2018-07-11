@@ -100,7 +100,7 @@ namespace room2Battle
             if (GameMgr.instance)
             {
                 Debug.Log("3 ENEMY");
-                //AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[0]);
             }
 
         }
@@ -130,16 +130,16 @@ namespace room2Battle
             {
                 if (i == 1)
                 {
-                    near();
-                    m_controller.RPC(this, "near");
+                    near_();
+                    m_controller.RPC(this, "near_");
                     //初始化
-                    becomeDark();
-                    m_controller.RPC(this, "becomeDark");
+                    becomeDark_();
+                    m_controller.RPC(this, "becomeDark_");
                 }
                 else if (i == 2)
                 {
-                    enter();
-                    m_controller.RPC(this, "enter");
+                    enter_();
+                    m_controller.RPC(this, "enter_");
                 }
             }
         }
@@ -193,12 +193,12 @@ namespace room2Battle
             }
         }
         //设置状态
-        public void near()
+        public void near_()
         {
             isNear = true;
         }
 
-        public void enter()
+        public void enter_()
         {
             isEnter = true;
         }
@@ -276,7 +276,7 @@ namespace room2Battle
                         source.Play();
                         playOnce = true;
                         //产生AI
-                        //AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
                     }
                 }
             }
@@ -354,7 +354,7 @@ namespace room2Battle
         /// <summary>
         /// @brief 关灯
         /// </summary>
-        public void becomeDark()
+        public void becomeDark_()
         {
             if (isInit)
             {
