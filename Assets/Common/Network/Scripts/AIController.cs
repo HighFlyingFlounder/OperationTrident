@@ -58,6 +58,11 @@ public class AIController : MonoBehaviour, NetSyncInterface
         
         NetMgr.srvConn.msgDist.AddListener("AIRPC", RecvAIRPC);
     }
+
+    public void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener("AIRPC", RecvAIRPC);
+    }
     /// <summary> 
     /// 不会自动同步！将obj添加进AIController的管理，将确保AI的位置在所有客户端一致，以master-Client为准
     /// </summary> 
@@ -253,7 +258,7 @@ public class AIController : MonoBehaviour, NetSyncInterface
     {
         Debug.LogFormat("DestroyAI : {0}", AI_name);
         AI_List.Remove(AI_name);
-        AI_Action_List.Remove(AI_name);
+        AI_Action_List.Remove(AI_name);  // 此时Remove会无法接受Destroy()
         AI_fPosition_List.Remove(AI_name);
         AI_lPosition_List.Remove(AI_name);
         AI_fRotation_List.Remove(AI_name);
