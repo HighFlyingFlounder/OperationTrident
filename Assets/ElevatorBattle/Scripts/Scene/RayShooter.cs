@@ -23,6 +23,8 @@ namespace OperationTrident.Elevator
         private string hintToDisplay;  // 要显示的字幕
         private int hintFontSize;  // 显示的字幕大小
 
+        public static bool state = false;
+
         // Use this for initialization
         void Start()
         {
@@ -46,12 +48,12 @@ namespace OperationTrident.Elevator
                     if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
                     {
                         HintableObject target = hitObject.GetComponent<HintableObject>();
-                        if (target != null)
+                        if (target != null && !state)
                         {
                             toDisplayHint = true;
-                            hintToDisplay = target.WhatToHint;
-                            usingGrammar = target.UsingGrammar;
-                            hintFontSize = target.FontSize;
+                            hintToDisplay = "^w按^yF^w与物品交互";
+                            usingGrammar = true;
+                            hintFontSize = 12;
                             goto secondIf;
                         }
                     }
@@ -60,7 +62,7 @@ namespace OperationTrident.Elevator
             }
         secondIf:
             // 处理玩家的物品交互按键
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && SceneController.state == SceneController.ElevatorState.Initing)
             {
                 Vector3 point = new Vector3(Room1.Util.GetCamera().pixelWidth / 2, Room1.Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
                 Ray ray = Room1.Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
