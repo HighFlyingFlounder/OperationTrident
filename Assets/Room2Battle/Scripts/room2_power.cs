@@ -150,8 +150,8 @@ namespace room2Battle
                 {
                     if (isSwitchOpen)
                     {
-                        enterSecondFloor_();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor_");
+                        enterSecondFloor_Room2();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor_Room2");
                     }
                 }
             }
@@ -228,8 +228,8 @@ namespace room2Battle
                 {
                     if (distance <= 5.0f)
                     {
-                        switchOn_();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn_");
+                        switchOn_Room2();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn_Room2");
                     }
                 }
             }
@@ -353,12 +353,12 @@ namespace room2Battle
 
         }
 
-        public void switchOn_()
+        public void switchOn_Room2()
         {
             isSwitchOpen = true;
         }
 
-        public void enterSecondFloor_()
+        public void enterSecondFloor_Room2()
         {
             isIntoSecondFloor = true;
         }

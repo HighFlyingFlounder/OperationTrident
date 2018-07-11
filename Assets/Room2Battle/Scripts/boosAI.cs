@@ -448,7 +448,7 @@ namespace room2Battle
                 missilLaunch,
                 isWalking
             };
-            netSyncController.RPC(this, "updateAState_", states);
+            netSyncController.RPC(this, "updateAState_Room2", states);
         }
 
         /// <summary>
@@ -565,7 +565,7 @@ namespace room2Battle
             return null;
         }
 
-        public void updateAState_(bool[] states)
+        public void updateAState_Room2(bool[] states)
         {
             shoot = states[0];
             handup = states[1];
@@ -583,35 +583,36 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (missilLaunch)
+            Debug.Log("draw text");
+            if (Camera.current != null)
             {
-                if (getCamera.GetCurrentUsedCamera())
+                if (missilLaunch)
                 {
                     GUIUtil.DisplaySubtitleInGivenGrammar("^r 导弹来袭，迅速寻找掩体",
-                        getCamera.GetCurrentUsedCamera(),
+                        Camera.current,
                         30,
                         0.1f,
                         1.0f);
                     return;
                 }
-            }
-            if (shoot || shootAgain)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
-                    getCamera.GetCurrentUsedCamera(),
-                    30,
-                    0.1f,
-                    1.0f);
-                return;
-            }
-            if (isWalking)
-            {
-                GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
-                    getCamera.GetCurrentUsedCamera(),
-                    30,
-                    0.1f,
-                    1.0f);
-                return;
+                if (shoot || shootAgain || handup || rightHandup)
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^r 机枪扫射，迅速寻找掩体",
+                        Camera.current,
+                        30,
+                        0.1f,
+                        1.0f);
+                    return;
+                }
+                if (isWalking)
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar("^g 它似乎在寻找什么",
+                        Camera.current,
+                        30,
+                        0.1f,
+                        1.0f);
+                    return;
+                }
             }
         }
     }

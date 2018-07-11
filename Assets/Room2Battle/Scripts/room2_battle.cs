@@ -104,7 +104,7 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            director.Play();
+            //director.Play();
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace room2Battle
                 mCamera = getCamera.GetCurrentUsedCamera();
             if (!isTimelinePaused)//bool值作为flag
             {
-                if (director.time > 30.0f)
+                //if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
                     trueBoss.transform.position = bossInitPos.position;
@@ -126,7 +126,7 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                    mController.RPC(this, "openDoor_");
+                       
                     //AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
                     //AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     //AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
@@ -159,8 +159,8 @@ namespace room2Battle
             {
                 if (!destoryBoss)
                 {
-                    openDoor_();
-                    mController.RPC(this, "openDoor_");
+                    openDoor_Room2();
+                    mController.RPC(this, "openDoor_Room2");
                     destoryBoss = true;
                 }
             }
@@ -169,7 +169,7 @@ namespace room2Battle
         /// <summary>
         /// @brief RPC的关门
         /// </summary>
-        public void openDoor_()
+        public void openDoor_Room2()
         {
             if (door.gameObject)
             {
