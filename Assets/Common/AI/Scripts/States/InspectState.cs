@@ -20,16 +20,15 @@ namespace OperationTrident.Common.AI
         public override void Init()
         {
             _agent.ActionController.RPC(_agent.ActionController.FindTarget, true);
-            //_agent.ActionController.FindTarget(true);
+            // _agent.ActionController.FindTarget(true);
             _duration = 8f;
         }
 
         public override string Execute()
         {
-            Transform target = Utility.DetectPlayers(_agent.Camera);
-            if (target != null)
+            _agent.Target = Utility.DetectAllPlayersWithCamera(_agent.Camera);
+            if (_agent.Target != null)
             {
-                _agent.Target = target;
                 return Conditions.SIGHT_PLAYER;
             }
 
@@ -45,7 +44,7 @@ namespace OperationTrident.Common.AI
         public override void Exit()
         {
             _agent.ActionController.RPC(_agent.ActionController.FindTarget, false);
-            //_agent.ActionController.FindTarget(false);
+            // _agent.ActionController.FindTarget(false);
         }
     }
 }

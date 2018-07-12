@@ -32,10 +32,10 @@ namespace OperationTrident.Common.AI
 
         public override void Exit()
         {
-            _agent.ActionController.RPC(_agent.ActionController.StopShoot);
-            _agent.ActionController.RPC(_agent.ActionController.StopLookAt);
-            // _agent.ActionController.StopShoot();
-            // _agent.ActionController.StopLookAt();
+            // _agent.ActionController.RPC(_agent.ActionController.StopShoot);
+            // _agent.ActionController.RPC(_agent.ActionController.StopLookAt);
+            _agent.ActionController.StopShoot();
+            _agent.ActionController.StopLookAt();
         }
     }
 }

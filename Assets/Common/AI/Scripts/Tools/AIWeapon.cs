@@ -29,7 +29,7 @@ namespace OperationTrident.Common.AI
             }
         }
 
-        public void ShootImplement()
+        void ShootImplement()
         {
             // Get random rotation that offset spawned projectile
             // Quaternion offset = Quaternion.Euler(UnityEngine.Random.onUnitSphere);

@@ -35,12 +35,12 @@ namespace OperationTrident.Common.AI
             _agent.PathfindingAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
             _agent.PathfindingAgent.isStopped = false;
             _agent.ActionController.RPC(_agent.ActionController.Move, true);
-			//_agent.ActionController.Move(true);
+			// _agent.ActionController.Move(true);
         }
 
         public override string Execute()
         {
-            Transform target = Utility.DetectPlayers(_agent.Camera);
+            Transform target = Utility.DetectAllPlayersWithCamera(_agent.Camera);
             if(target != null)
             {
                 _agent.Target = target;
@@ -51,7 +51,7 @@ namespace OperationTrident.Common.AI
             {
                 _remainDistance = _agent.PathfindingAgent.remainingDistance;
                 if (_remainDistance != Mathf.Infinity && _remainDistance - _agent.PathfindingAgent.stoppingDistance <= float.Epsilon
-                && _agent.PathfindingAgent.pathStatus == NavMeshPathStatus.PathComplete)
+                && _agent.PathfindingAgent.pathStatus == NavMeshPathStatus.PathComplete || _agent.PathfindingAgent.velocity == Vector3.zero)
                 {
                     // 当到达一个巡逻点时，设置下一个巡逻点，并返回已满足ARRIVE_AT_LOCATION条件
                     _nextPatrolLocationIndex = (_nextPatrolLocationIndex + 1) % _patrolLocations.Length;
@@ -66,7 +66,7 @@ namespace OperationTrident.Common.AI
 		{
             _agent.PathfindingAgent.isStopped = true;
             _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			//_agent.ActionController.Move(false);
+			// _agent.ActionController.Move(false);
         }
     }
 }
