@@ -8,6 +8,7 @@ namespace OperationTrident.Common.AI
 {
     public abstract class AIActionController : MonoBehaviour, NetSyncInterface
     {
+        public AudioSource explosionAudio;
         protected NetSyncController m_Controller;
         public void RPC<T>(Action<T> func, T args)
         {
