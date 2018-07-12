@@ -16,7 +16,7 @@ namespace OperationTrident.Common.AI
 
         public override void Init()
         {
-            _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.name);
+            _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.parent.name);
             _agent.ActionController.RPC(_agent.ActionController.Shoot);
             // _agent.ActionController.LookAt(_agent.Target.name);
             // _agent.ActionController.Shoot();

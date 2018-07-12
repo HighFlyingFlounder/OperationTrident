@@ -60,7 +60,7 @@ namespace OperationTrident.FPS.Player {
 
         private void Awake() {
             m_CharacterController = GetComponent<CharacterController>();
-            m_AudioSource = GetComponent<AudioSource>();
+            m_AudioSource = GetComponents<AudioSource>()[0];
         }
 
         // 初始化数据成员
@@ -229,7 +229,7 @@ namespace OperationTrident.FPS.Player {
             m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
 
             //站立和蹲下
-            if (Input.GetKeyDown(KeyCode.X)) {
+            if (Input.GetKeyDown(KeyCode.LeftControl)) {
                 if (m_IsCrouching) {
                     //这里需要调用RPC
                     StandUp();

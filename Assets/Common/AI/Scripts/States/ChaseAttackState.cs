@@ -29,8 +29,8 @@ namespace OperationTrident.Common.AI
                 _precisionRadius = _agent.AttackPrecisionRadius;
             }
             _isShooting = false;
-            _agent.ActionController.RPC(_agent.ActionController.LookAt, _agent.Target.name);
-            // _agent.ActionController.LookAt(_agent.Target.name);
+            _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.name);
+            // _agent.ActionController.LookAtWithTargetName(_agent.Target.name);
         }
 
         public override string Execute()

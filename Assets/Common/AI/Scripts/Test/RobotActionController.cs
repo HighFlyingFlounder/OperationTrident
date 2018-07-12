@@ -39,7 +39,7 @@ namespace OperationTrident.Common.AI
         // {
         //     transform.forward = Utility.GetDirectionOnXOZ(transform.position, interestPoint).normalized;
         // }
-        public override void LookAt(string targetName)
+        public override void LookAtWithTargetName(string targetName)
         {
             _target = Utility.GetPlayerByName(targetName);
         }

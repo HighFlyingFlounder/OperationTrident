@@ -41,9 +41,9 @@ namespace room2Battle
         public override IEnumerator Destroy()
         {
             isDestroy = true;
-            Instantiate(explosionPrefab, transform);
+            Instantiate(explosionPrefab, transform.position,Quaternion.identity);
             yield return new WaitForSeconds(1.0f);
-            Instantiate(explosionPrefab, transform);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
 
@@ -64,18 +64,20 @@ namespace room2Battle
             if (isDestroy)
             {
                 if (Camera.current != null)
-                    GUIUtil.DisplaySubtitleInDefaultPosition(
-                        "boss要爆了",
+                {
+                    GUIUtil.DisplaySubtitleInGivenGrammar(
+                        "^rboss要爆了",
                         Camera.current,
-                        16,
-                        0.1f
-                        );
+                        30,
+                        0.1f,
+                        1.0f);
+                }
             }
         }
 
         public override bool DetectPlayer(Transform player)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

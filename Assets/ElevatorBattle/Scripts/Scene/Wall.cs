@@ -80,9 +80,9 @@ namespace OperationTrident.Elevator
                     }
 
                     //移动
-                    child1.transform.position += new Vector3(0, speed, 0);
-                    child2.transform.position += new Vector3(0, speed, 0);
-                    child3.transform.position += new Vector3(0, speed, 0);
+                    child1.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
+                    child2.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
+                    child3.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
                     break;
 
                 case SceneController.ElevatorState.End:
@@ -123,11 +123,11 @@ namespace OperationTrident.Elevator
                         }
 
                         //移动
-                        child1.transform.position += new Vector3(0, speed, 0);
-                        child2.transform.position += new Vector3(0, speed, 0);
-                        child3.transform.position += new Vector3(0, speed, 0);
+                        child1.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
+                        child2.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
+                        child3.transform.position += new Vector3(0, speed * Time.deltaTime * 20, 0);
 
-                        dis += speed;
+                        dis += speed * Time.deltaTime * 20;
 
                         if (dis >= 0)
                         {

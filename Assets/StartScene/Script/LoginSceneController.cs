@@ -28,6 +28,9 @@ namespace OperationTrident.StartScene
         [SerializeField]
         private Canvas titleTextCanvas;
 
+        [SerializeField]
+        private Text ipPortText;
+
         // Use this for initialization
         void Start()
         {
@@ -41,13 +44,14 @@ namespace OperationTrident.StartScene
                 titleCanvas.enabled = false;
                 roomCanvas.enabled = false;
                 titleTextCanvas.enabled = false;
+                settingCanvas.enabled = false;
             }
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            
         }
 
         private void LoginInit()
@@ -57,6 +61,8 @@ namespace OperationTrident.StartScene
             roomCanvas.enabled = false;
             titleTextCanvas.enabled = true;
             regCanvas.enabled = false;
+            settingCanvas.enabled = false;
+            ipPortText.text = "IP:" + GameMgr.instance.host + "\n端口:" + GameMgr.instance.port;
         }
 
         public void RegInit()
@@ -66,6 +72,17 @@ namespace OperationTrident.StartScene
             roomCanvas.enabled = false;
             titleTextCanvas.enabled = true;
             regCanvas.enabled = true;
+            settingCanvas.enabled = false;
+        }
+
+        public void TitleInit()
+        {
+            GameMgr.instance.id = idInput.text;
+            loginCanvas.enabled = false;
+            titleCanvas.enabled = true;
+            roomCanvas.enabled = false;
+            settingCanvas.enabled = false;
+            StartSceneEvent.startSceneState = StartSceneEvent.StartSceneState.Title;
         }
 
         public void OnLoginClick()
@@ -105,12 +122,8 @@ namespace OperationTrident.StartScene
                 Debug.Log("登陆成功");
                 //开始游戏
                 // TODO 打开开始游戏场景
-
-                GameMgr.instance.id = idInput.text;
-                loginCanvas.enabled = false;
-                titleCanvas.enabled = true;
-                roomCanvas.enabled = false;
-                StartSceneEvent.startSceneState = StartSceneEvent.StartSceneState.Title;
+                TitleInit();
+                
             }
             else
             {
@@ -188,5 +201,52 @@ namespace OperationTrident.StartScene
                 Debug.Log("注册失败");
             }
         }
+
+        public void OnSettingInit()
+        {
+            loginCanvas.enabled = false;
+            titleCanvas.enabled = false;
+            roomCanvas.enabled = false;
+            titleTextCanvas.enabled = true;
+            regCanvas.enabled = false;
+            settingCanvas.enabled = true;
+        }
+
+        [SerializeField]
+        private Canvas settingCanvas;
+
+        [SerializeField]
+        private InputField ipInput;
+
+        [SerializeField]
+        private InputField portInput;
+
+        public void OnSettingConfirm()
+        {
+            UpdateIpAndPort(ipInput.text,portInput.text);
+        }
+
+        public void OnSettingReturn()
+        {
+            LoginInit();
+        }
+
+        public void UpdateIpAndPort(string ip, string port)
+        {
+            if (!Room1.Util.IsValidIP(ip))
+            {
+                Debug.Log("IP不合法");
+                return;
+            }
+            if (!Room1.Util.IsValidPort(port)) {
+                Debug.Log("端口号不合法");
+                return;
+            }
+            GameMgr.instance.host = ip;
+            GameMgr.instance.port = int.Parse(port);
+            ipPortText.text = "IP:" + GameMgr.instance.host + "\n端口:" + GameMgr.instance.port;
+        }
+
+
     }
 }

@@ -68,8 +68,8 @@ namespace OperationTrident.Room5
             if(m_ControlPanel.IsInteractionDone())
             {
                 //交互完毕，可以转到“核心开始冷却”场景了
-                m_isTokamakeStartToCoolDown = true;
-                gameObject.GetComponent<NetSyncController>().SyncVariables();
+                coolDown();
+                gameObject.GetComponent<NetSyncController>().RPC(this,"coolDown");
             }
 
             //TryInitPlayerScale();
@@ -87,8 +87,8 @@ namespace OperationTrident.Room5
             //左下角任务细节
             string[] missionDetails =
             {
-                "2048年8月1 15:00 p.m. GMT+8",
-                "鲲内部  核聚变反应室",
+                "2048年8月1日 15:00",
+                "鲲内部 核聚变反应室",
                 "三叉戟行动"
             };
             GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white,18,0.005f,0.1f,0.5f);
@@ -116,14 +116,14 @@ namespace OperationTrident.Room5
 
         public void RecvData(SyncData data)
         {
-            m_isTokamakeStartToCoolDown = (bool)data.Get(typeof(bool));
+            //m_isTokamakeStartToCoolDown = (bool)data.Get(typeof(bool));
         }
 
         public SyncData SendData()
         {
-            SyncData data = new SyncData();
-            data.Add(m_isTokamakeStartToCoolDown);
-            return data;
+            //SyncData data = new SyncData();
+            //data.Add(m_isTokamakeStartToCoolDown);
+            return null;
         }
 
         public void Init(NetSyncController controller)
@@ -155,6 +155,11 @@ namespace OperationTrident.Room5
             {
                 GameObject.FindWithTag("Player").transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
             }
+        }
+
+        public void coolDown()
+        {
+            m_isTokamakeStartToCoolDown = true;
         }
         
     }

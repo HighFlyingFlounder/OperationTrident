@@ -5,6 +5,7 @@ using OperationTrident.Util;
 
 using OperationTrident.FPS.Common;
 using OperationTrident.Common.AI;
+using OperationTrident.Common;
 
 namespace room2Battle
 {
@@ -129,8 +130,9 @@ namespace room2Battle
                 }
 
                 //@TODO: 替换成老Y的AI
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos3",wanderAIAgentInitParams[0]);
+                Debug.Log("7 enemy");
                 AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(3, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
@@ -149,8 +151,8 @@ namespace room2Battle
                 {
                     if (isSwitchOpen)
                     {
-                        enterSecondFloor();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor");
+                        enterSecondFloor_Room2();
+                        gameObject.GetComponent<NetSyncController>().RPC(this, "enterSecondFloor_Room2");
                     }
                 }
             }
@@ -161,46 +163,52 @@ namespace room2Battle
         /// </summary>
         void Update()
         {
-            mCamera = getCamera.GetCurrentUsedCamera();
-
-            Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
-
-            Ray ray = mCamera.ScreenPointToRay(point);
-
-            //通过摄像机，射向对应物体，判断标签
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            
+            if (getCamera != null)
             {
-                //获取物体
-                GameObject obj = hit.transform.gameObject;
-                //判断标签
-                if (obj.tag == "switch")
+                mCamera = getCamera.GetCurrentUsedCamera();
+
+                Vector3 point = new Vector3(mCamera.pixelWidth / 2, mCamera.pixelHeight / 2, 0);
+
+                Ray ray = mCamera.ScreenPointToRay(point);
+
+                //通过摄像机，射向对应物体，判断标签
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit))
                 {
+                    //获取物体
+                    GameObject obj = hit.transform.gameObject;
+                    //判断标签
+                    if (obj.tag == "switch")
                     {
-                        isFocus = true;
+                        {
+                            isFocus = true;
+                        }
                     }
-                }
-                else
-                {
-                    isFocus = false;
+                    else
+                    {
+                        isFocus = false;
+
+                    }
 
                 }
+
+                distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
             }
-
-            distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
-
             if (isSwitchOpen)
             {
                 if (!initEnemyAgain)
                 {
-                    AIController.instance.CreateAI(4, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
-                    AIController.instance.CreateAI(3, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    Debug.Log("7 enemy");
+                    AIController.instance.CreateAI(2, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(2, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(2, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
 
                     initEnemyAgain = true;
                 }
             }
 
-            if (lastTimeInitAI > 5.0f)
+            if (lastTimeInitAI > 13.0f)
             {
                 AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
                 lastTimeInitAI = 0.0f;
@@ -218,65 +226,67 @@ namespace room2Battle
         /// </summary>
         void LateUpdate()
         {
-            //当看到物品时
-            if (isFocus)
+            if (getCamera != null)
             {
-
-                if (Input.GetKey(KeyCode.F))
+                //当看到物品时
+                if (isFocus)
                 {
-                    if (distance <= 5.0f)
+
+                    if (Input.GetKey(KeyCode.F))
                     {
-                        switchOn();
-                        gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn");
+                        if (distance <= 5.0f)
+                        {
+                            switchOn_Room2();
+                            gameObject.GetComponent<NetSyncController>().RPC(this, "switchOn_Room2");
+                        }
                     }
                 }
-            }
-            //按H打开夜视仪
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                //通过只有一个后处理，减少post processing的pass
-                if (!isOpenDepthSensor)
+                //按H打开夜视仪
+                if (Input.GetKeyDown(KeyCode.H))
                 {
-                    playerCamera.GetComponent<depthSensor>().enabled = true;
-                    playerCamera.GetComponent<becomeDark>().enabled = false;
-
-                    foreach (GameObject mirror in playerCameraMirror)
+                    //通过只有一个后处理，减少post processing的pass
+                    if (!isOpenDepthSensor)
                     {
-                        mirror.GetComponent<depthSensor>().enabled = true;
-                        mirror.GetComponent<becomeDark>().enabled = false;
-                    }
-
-                    isOpenDepthSensor = true;
-                }
-                else
-                {
-                    if (!isSwitchOpen)
-                    {
-                        playerCamera.GetComponent<becomeDark>().enabled = true;
+                        playerCamera.GetComponent<depthSensor>().enabled = true;
+                        playerCamera.GetComponent<becomeDark>().enabled = false;
 
                         foreach (GameObject mirror in playerCameraMirror)
                         {
-                            mirror.GetComponent<becomeDark>().enabled = true;
+                            mirror.GetComponent<depthSensor>().enabled = true;
+                            mirror.GetComponent<becomeDark>().enabled = false;
                         }
+
+                        isOpenDepthSensor = true;
                     }
-                    playerCamera.GetComponent<depthSensor>().enabled = false;
+                    else
+                    {
+                        if (!isSwitchOpen)
+                        {
+                            playerCamera.GetComponent<becomeDark>().enabled = true;
+
+                            foreach (GameObject mirror in playerCameraMirror)
+                            {
+                                mirror.GetComponent<becomeDark>().enabled = true;
+                            }
+                        }
+                        playerCamera.GetComponent<depthSensor>().enabled = false;
+                        foreach (GameObject mirror in playerCameraMirror)
+                        {
+                            mirror.GetComponent<depthSensor>().enabled = false;
+                        }
+                        isOpenDepthSensor = false;
+                    }
+                }
+                //开关被开了
+                if (isSwitchOpen)
+                {
+                    playerCamera.GetComponent<becomeDark>().enabled = false;
                     foreach (GameObject mirror in playerCameraMirror)
                     {
-                        mirror.GetComponent<depthSensor>().enabled = false;
+                        mirror.GetComponent<becomeDark>().enabled = false;
                     }
-                    isOpenDepthSensor = false;
                 }
             }
-            //开关被开了
-            if (isSwitchOpen)
-            {
-                playerCamera.GetComponent<becomeDark>().enabled = false;
-                foreach (GameObject mirror in playerCameraMirror)
-                {
-                    mirror.GetComponent<becomeDark>().enabled = false;
-                }
-            }
-
         }
 
         //TODO： 更新到佩炜的GUI
@@ -291,7 +301,8 @@ namespace room2Battle
                     //交互提示
                     if (!isSwitchOpen)
                     {
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.8f);
+                        if (distance <= 5.0f)
+                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.8f);
                     }
                 }
                 //深度摄像头是否开启，是否黑
@@ -303,7 +314,7 @@ namespace room2Battle
                     //任务目标
                     GUIUtil.DisplayMissionTargetInMessSequently("清除附近敌人，打通到电源室的道路！",
                        mCamera,
-                       GUIUtil.yellowColor,
+                       GUIUtil.whiteColor,
                        0.5f, 0.1f, 16);
                     if (!open2 && open)
                     {
@@ -323,7 +334,7 @@ namespace room2Battle
                         //任务目标
                         GUIUtil.DisplayMissionTargetInMessSequently("挺进2楼！",
                            mCamera,
-                           GUIUtil.yellowColor,
+                           GUIUtil.whiteColor,
                            0.5f, 0.1f, 16);
                         //任务目标位置
                         GUIUtil.DisplayMissionPoint(secondFloor.position, mCamera, Color.white);
@@ -351,12 +362,12 @@ namespace room2Battle
 
         }
 
-        public void switchOn()
+        public void switchOn_Room2()
         {
             isSwitchOpen = true;
         }
 
-        public void enterSecondFloor()
+        public void enterSecondFloor_Room2()
         {
             isIntoSecondFloor = true;
         }

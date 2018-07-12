@@ -15,7 +15,7 @@ namespace OperationTrident.Common.AI
         Transform _target = null;
         bool isShooting = false;
 
-        public override void LookAt(string shootingTargetName)
+        public override void LookAtWithTargetName(string shootingTargetName)
         {
             _target = Utility.GetPlayerByName(shootingTargetName);
         }
@@ -49,6 +49,8 @@ namespace OperationTrident.Common.AI
         public override bool DetectPlayer(Transform player)
         {
             AIAgent agent = transform.GetComponent<AIAgent>();
+            if (player == null)
+                return false;
             return Utility.RangeDetect(player, agent.Center.position, agent.DepressionAngle);
         }
     }
