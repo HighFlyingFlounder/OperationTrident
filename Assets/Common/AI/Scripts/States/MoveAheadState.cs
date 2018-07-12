@@ -24,15 +24,14 @@ namespace OperationTrident.Common.AI
             _agent.PathfindingAgent.SetDestination(_agent.TargetPosition);
             _agent.PathfindingAgent.isStopped = false;
             _agent.ActionController.RPC(_agent.ActionController.Move, true);
-            //_agent.ActionController.Move(true);
+            // _agent.ActionController.Move(true);
         }
 
         public override string Execute()
         {
-			Transform target = Utility.DetectPlayers(_agent.Camera);
-            if(target != null)
+			_agent.Target = Utility.DetectAllPlayersWithCamera(_agent.Camera);
+            if(_agent.Target != null)
             {
-                _agent.Target = target;
                 return Conditions.SIGHT_PLAYER;
             }
 
@@ -40,7 +39,7 @@ namespace OperationTrident.Common.AI
             {
                 _remainDistance = _agent.PathfindingAgent.remainingDistance;
                 if (_remainDistance != Mathf.Infinity && _remainDistance - _agent.PathfindingAgent.stoppingDistance <= float.Epsilon
-                && _agent.PathfindingAgent.pathStatus == NavMeshPathStatus.PathComplete)
+                && _agent.PathfindingAgent.pathStatus == NavMeshPathStatus.PathComplete || _agent.PathfindingAgent.velocity == Vector3.zero)
                 {
                     return Conditions.ARRIVE_AT_LOCATION;
                 }
@@ -52,7 +51,7 @@ namespace OperationTrident.Common.AI
 		{
             _agent.PathfindingAgent.isStopped = true;
             _agent.ActionController.RPC(_agent.ActionController.Move, false);
-            //_agent.ActionController.Move(false);
+            // _agent.ActionController.Move(false);
         }
     }
 }

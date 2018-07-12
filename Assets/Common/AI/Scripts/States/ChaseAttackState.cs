@@ -6,19 +6,20 @@ using UnityEngine.AI;
 namespace OperationTrident.Common.AI
 {
     [DisallowMultipleComponent]
-    public class InaccurateAttackState : AIState
+    public class ChaseAttackState : AIState
     {
-        public static readonly string STATE_NAME = "Inaccurate Attack";
+        public static readonly string STATE_NAME = "Chase Attack";
 
 
         public class Conditions
         {
             public static readonly string LOST_TARGET = "Lost Target";
-            public static readonly string FINISH_ONCE_SHOOT = "Finish Once Shoot";
+            public static readonly string TARGET_DOWN = "Target Down";
         }
 
         float _precisionAngle;
         float _precisionRadius;
+        bool _isShooting;
 
         public override void Init()
         {
@@ -27,6 +28,9 @@ namespace OperationTrident.Common.AI
                 _precisionAngle = _agent.AttackPrecisionAngle;
                 _precisionRadius = _agent.AttackPrecisionRadius;
             }
+            _isShooting = false;
+            _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.name);
+            // _agent.ActionController.LookAtWithTargetName(_agent.Target.name);
         }
 
         public override string Execute()
@@ -34,10 +38,8 @@ namespace OperationTrident.Common.AI
             string satisfy = null;
             if(_agent.Target == null)
             {
-                return Conditions.LOST_TARGET;
+                return Conditions.TARGET_DOWN;
             }
-            _agent.ActionController.RPC(_agent.ActionController.LookAtWithVector3, _agent.Target.position);
-            //_agent.ActionController.LookAt(_agent.Target.position);
 
             _agent.Camera.UpdateCamera();
 
@@ -47,16 +49,22 @@ namespace OperationTrident.Common.AI
             {
                 _agent.PathfindingAgent.SetDestination(_agent.Target.position);
                 _agent.PathfindingAgent.isStopped = false;
+                if(_isShooting){
+                _agent.ActionController.RPC(_agent.ActionController.StopShoot);
+                    // _agent.ActionController.StopShoot();
+                    _isShooting = false;
+                }
                 _agent.ActionController.RPC(_agent.ActionController.Move, true);
-                //_agent.ActionController.Move(true);
+                // _agent.ActionController.Move(true);
             }
-            else
+            else if(!_isShooting)
             {
-                // _agent.ActionController.RPC(_agent.ActionController.Shoot, shootingPoint);
-                //_agent.ActionController.Shoot(shootingPoint);
+                _isShooting = true;
+                _agent.ActionController.RPC(_agent.ActionController.Shoot);
+                // _agent.ActionController.Shoot();
+                _agent.PathfindingAgent.isStopped = true;
                 _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			    //_agent.ActionController.Move(false);
-                satisfy = Conditions.FINISH_ONCE_SHOOT;
+			    // _agent.ActionController.Move(false);
             }
 
             // 敌人可能已死亡或躲到障碍后
@@ -75,8 +83,14 @@ namespace OperationTrident.Common.AI
         public override void Exit()
 		{
 			_agent.PathfindingAgent.isStopped = true;
+            if(_isShooting){
+            _agent.ActionController.RPC(_agent.ActionController.StopShoot);
+                // _agent.ActionController.StopShoot();
+            }
+            _agent.ActionController.RPC(_agent.ActionController.StopLookAt);
+            // _agent.ActionController.StopLookAt();
             _agent.ActionController.RPC(_agent.ActionController.Move, false);
-            //_agent.ActionController.Move(false);
+            // _agent.ActionController.Move(false);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace OperationTrident.Common.AI
             return null;
         }
 
-        public static Transform DetectPlayers(AICamera camera)
+        public static Transform DetectAllPlayersWithCamera(AICamera camera)
         {
             camera.UpdateCamera();
             Transform[] players = Utility.GetPlayersPosition();
