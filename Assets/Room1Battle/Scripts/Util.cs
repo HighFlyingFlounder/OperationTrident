@@ -63,5 +63,42 @@ namespace OperationTrident.Room1
             a.transform.localEulerAngles = b.localEulerAngles;
             a.transform.localScale = b.localScale;
         }
+
+        public static bool IsValidIP(string ip)
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"))
+            {
+                string[] ips = ip.Split('.');
+                if (ips.Length == 4 || ips.Length == 6)
+                {
+                    if (System.Int32.Parse(ips[0]) < 256 && System.Int32.Parse(ips[1]) < 256 & System.Int32.Parse(ips[2]) < 256 & System.Int32.Parse(ips[3]) < 256)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                    return false;
+
+            }
+            else
+                return false;
+        }
+
+        public static bool IsValidPort(string port)
+        {
+            try
+            {
+                GameMgr.instance.port = int.Parse(port);
+                if (int.Parse(port) < 1 || int.Parse(port) > 65536)
+                {
+                    return false;
+                }
+                else return true;
+            }
+            catch (System.Exception e)
+            {
+                return false;
+            }
+        }
     }
 }
