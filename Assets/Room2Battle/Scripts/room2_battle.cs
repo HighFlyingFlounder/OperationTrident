@@ -110,7 +110,7 @@ namespace room2Battle
             {
                 p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
             }
-            //director.Play();
+            director.Play();
         }
 
         /// <summary>
