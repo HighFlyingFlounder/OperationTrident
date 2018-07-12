@@ -91,7 +91,7 @@ namespace OperationTrident.Util
         // 任务详细信息从屏幕的哪里开始啊，两个Offset值
         private const float defaultMissionDetailOffsetLeft = 1.0f / 20.0f;
         private const float defaultMissionDetailOffsetUp = 2.0f / 3.0f;
-        private const float defaultMissionDetailInterval = 0.5f; // 任务细节每行显示的间隔
+        private const float defaultMissionDetailInterval = 0.6f; // 任务细节每行显示的间隔
 
         //================================================================================
         //==========        一些可以获得的默认的参数         ===============================
@@ -1251,7 +1251,7 @@ namespace OperationTrident.Util
             Color color,
             int fontSize = defaultFontSize,
             float wordTransparentInterval = 0.005f,  // 字变得透明的速度
-            float wordAppearanceInterval = 0.5f,  // 字出现的速度
+            float wordAppearanceInterval = 0.1f,  // 字出现的速度
             float lineSubsequentlyInterval = defaultMissionDetailInterval  // 每一行出现的速度
             )
         {

@@ -311,10 +311,13 @@ namespace room2Battle
                                 //开火
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
-                                    //开火
-                                    leftHandFireImpl(target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
-                                    netSyncController.RPC(this, "leftHandFireImpl", target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
-                                    fireFromLastTime = 0.0f;
+                                    if (target != null)
+                                    {
+                                        //开火
+                                        leftHandFireImpl(target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
+                                        netSyncController.RPC(this, "leftHandFireImpl", target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
+                                        fireFromLastTime = 0.0f;
+                                    }
                                 }
                                 else
                                 {
@@ -371,10 +374,13 @@ namespace room2Battle
                             {
                                 if (fireFromLastTime > intervalBetweenShot)
                                 {
-                                    //开火
-                                    rightHandFireImpl(target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
-                                    netSyncController.RPC(this, "rightHandFireImpl", target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
-                                    fireFromLastTime = 0.0f;
+                                    if (target != null)
+                                    {
+                                        //开火
+                                        rightHandFireImpl(target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
+                                        netSyncController.RPC(this, "rightHandFireImpl", target.transform.Find("Head").position - new Vector3(0.0f, 0.5f, 0.0f));
+                                        fireFromLastTime = 0.0f;
+                                    }
                                 }
                                 else
                                 {
@@ -421,15 +427,17 @@ namespace room2Battle
                             {
                                 if (stateInfo.normalizedTime >= 0.8f)
                                 {
+
                                     animator.SetBool("missileLaunch", false);
 
                                     missilLaunch = false;
                                     //同步
                                     //netSyncController.SyncVariables();
-
-                                    missileLaunchImpl(target.position);
-                                    netSyncController.RPC(this, "missileLaunchImpl", target.position);
-
+                                    if (target != null)
+                                    {
+                                        missileLaunchImpl(target.position);
+                                        netSyncController.RPC(this, "missileLaunchImpl", target.position);
+                                    }
                                     currentState = fireState.StopFire;
                                 }
                             }
@@ -540,7 +548,8 @@ namespace room2Battle
                 case fireState.RightFire:
                 case fireState.KeepFireAgain:
                     Transform temp = transform;
-                    temp.LookAt(target);
+                    if(target != null)
+                        temp.LookAt(target);
                     Quaternion newRotation = Quaternion.Euler(0.0f, temp.eulerAngles.y, 0.0f);
                     //转向目标
                     transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
@@ -583,43 +592,43 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (getCamera.GetCurrentUsedCamera() != null)
-            {
-                Camera cam = getCamera.GetCurrentUsedCamera();
-                Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
-                GUIStyle style = GUIUtil.GetDefaultTextStyle(Color.red, 10);
+            //if (getCamera != null && getCamera.GetCurrentUsedCamera() != null)
+            //{
+            //    Camera cam = getCamera.GetCurrentUsedCamera();
+            //    Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
+            //    GUIStyle style = GUIUtil.GetDefaultTextStyle(Color.red, 10);
 
-                if (missilLaunch)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
-                            rect,
-                            style
-                        );
-                    return;
-                }
-                else if (shoot || shootAgain || handup || rightHandup)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
-                            rect,
-                            style
-                        );
-                    return;
-                }
-                else if (isWalking)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("SAFE",
-                            rect,
-                            style
-                        );
-                }
-                else
-                {
-                    GUIUtil.DisplayContentInGivenPosition("",
-                            rect,
-                            style
-                        );
-                }
-            }
+            //    if (missilLaunch)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
+            //                rect,
+            //                style
+            //            );
+            //        return;SS
+            //    }
+            //    else if (shoot || shootAgain || handup || rightHandup)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
+            //                rect,
+            //                style
+            //            );
+            //        return;
+            //    }
+            //    else if (isWalking)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("SAFE",
+            //                rect,
+            //                style
+            //            );
+            //    }
+            //    else
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("",
+            //                rect,
+            //                style
+            //            );
+            //    }
+            //}
         }
     }
 }

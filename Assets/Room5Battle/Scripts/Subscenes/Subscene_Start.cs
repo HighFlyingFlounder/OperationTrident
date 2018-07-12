@@ -87,8 +87,8 @@ namespace OperationTrident.Room5
             //左下角任务细节
             string[] missionDetails =
             {
-                "2048年8月1 15:00 p.m. GMT+8",
-                "鲲内部  核聚变反应室",
+                "2048年8月1日 15:00",
+                "鲲内部 核聚变反应室",
                 "三叉戟行动"
             };
             GUIUtil.DisplayMissionDetailDefault(missionDetails, GetCameraUtil.GetCurrentCamera(), Color.white,18,0.005f,0.1f,0.5f);
