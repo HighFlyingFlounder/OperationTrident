@@ -57,6 +57,12 @@ namespace room2Battle
         {
         };
 
+        [SerializeField]
+        protected AudioSource anotherSource;
+
+        [SerializeField]
+        protected AudioClip[] clips;
+
         //AI的参数
         [SerializeField]
         WanderAIAgentInitParams[] wanderAIAgentInitParams;
@@ -68,6 +74,8 @@ namespace room2Battle
         protected bool initEnemyAgain = false;
 
         protected float lastTimeInitAI = 0.0f;
+
+        protected bool autoOpenDepthSensor = false;
 
         /// <summary>
         ///  method 
@@ -281,9 +289,24 @@ namespace room2Battle
                 if (isSwitchOpen)
                 {
                     playerCamera.GetComponent<becomeDark>().enabled = false;
+                    
                     foreach (GameObject mirror in playerCameraMirror)
                     {
                         mirror.GetComponent<becomeDark>().enabled = false;
+                        mirror.GetComponent<depthSensor>().enabled = false;
+                    }
+
+                    if (!autoOpenDepthSensor)
+                    {
+                        playerCamera.GetComponent<depthSensor>().enabled = false;
+
+                        foreach (GameObject mirror in playerCameraMirror)
+                        {
+                            mirror.GetComponent<depthSensor>().enabled = false;
+                        }
+                        anotherSource.clip = clips[0];
+                        anotherSource.Play();
+                        autoOpenDepthSensor = true;
                     }
                 }
             }

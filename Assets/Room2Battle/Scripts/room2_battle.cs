@@ -104,11 +104,11 @@ namespace room2Battle
             {
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
-            (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
 
             foreach (var p in SceneNetManager.instance.list)
             {
                 p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
+                p.Value.SetActive(false);
             }
             director.Play();
         }
@@ -131,10 +131,11 @@ namespace room2Battle
                     Destroy(boss.gameObject);
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
-                    (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
+
                     foreach (var p in SceneNetManager.instance.list)
                     {
                         p.Value.GetComponent<ReactiveTarget>().CanBeHurt = true;
+                        p.Value.SetActive(true);
                     }
 
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
@@ -154,7 +155,7 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
 
-                if (lastTimeInitAI >= 15.0f)
+                if (lastTimeInitAI >= 10.0f)
                 {
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
