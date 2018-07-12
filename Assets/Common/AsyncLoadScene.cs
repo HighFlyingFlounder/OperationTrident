@@ -23,6 +23,8 @@ public class AsyncLoadScene : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //监听
+        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
         loadingSlider.value = 0.0f;
 
         if (SceneManager.GetActiveScene().name == "Loading")
@@ -80,8 +82,7 @@ public class AsyncLoadScene : MonoBehaviour
 
     void SendFinishLoading()
     {
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
+       
         //协议
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("FinishLoading");
