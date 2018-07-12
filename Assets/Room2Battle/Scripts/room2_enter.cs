@@ -48,9 +48,9 @@ namespace room2Battle
         //任务详细
         protected string[] missionDetails =
             {
-            "行动代号：三叉戟",
-            "2048年8月1日，中华人民共和国 建军节",
-            "外太空****空域"
+            "2048年8月1日, 14:00",
+            "鲲内部 电源控制室",
+            "三叉戟行动"
         };
         //台词
         public string[] line =
