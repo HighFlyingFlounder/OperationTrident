@@ -6,6 +6,7 @@ using OperationTrident.Util;
 using OperationTrident.FPS.Common;
 using OperationTrident.Common.AI;
 using System;
+using OperationTrident.Common;
 
 namespace room2Battle
 {
@@ -104,7 +105,12 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
-            //director.Play();
+
+            foreach (var p in SceneNetManager.instance.list)
+            {
+                p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
+            }
+            director.Play();
         }
 
         /// <summary>
@@ -126,7 +132,11 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                       
+                    foreach (var p in SceneNetManager.instance.list)
+                    {
+                        p.Value.GetComponent<ReactiveTarget>().CanBeHurt = true;
+                    }
+
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
                     AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
@@ -143,7 +153,7 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
 
-                if (lastTimeInitAI >= 6.0f)
+                if (lastTimeInitAI >= 15.0f)
                 {
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
@@ -181,14 +191,17 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (isTimelinePaused)
+            if (mCamera != null)
             {
-                GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+                if (isTimelinePaused)
+                {
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
 
-                GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                      mCamera,
-                      GUIUtil.whiteColor,
-                      0.5f, 0.1f, 16);
+                    GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                          mCamera,
+                          GUIUtil.whiteColor,
+                          0.5f, 0.1f, 16);
+                }
             }
         }
 
