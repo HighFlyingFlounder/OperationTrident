@@ -141,6 +141,7 @@ namespace room2Battle
                     AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
                     AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(2, 2, "EnemyInitPos7", turretAIAgentParams);
                 }
             }
             else//播放台词

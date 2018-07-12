@@ -205,7 +205,7 @@ namespace room2Battle
                             //找到了
                             if (isFoundPlayer)
                             {
-                                int choice = (int)UnityEngine.Random.Range(0, 2);
+                                int choice = (int)UnityEngine.Random.Range(0, 3);
                                 switch (choice)
                                 {
                                     case 0:
@@ -218,6 +218,7 @@ namespace room2Battle
                                         }
                                         break;
                                     case 1:
+                                    case 2:
                                         {
                                             //转移到下一个状态
                                             currentState = fireState.MissileLaunch;

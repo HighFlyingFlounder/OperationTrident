@@ -200,8 +200,8 @@ namespace room2Battle
                 if (!initEnemyAgain)
                 {
                     Debug.Log("7 enemy");
-                    AIController.instance.CreateAI(2, 2, "EnemyInitPos3", turrentAIAgentInitParams[0]);
-                    AIController.instance.CreateAI(2, 1, "EnemyInitPos4", turrentAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(2, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(2, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
                     AIController.instance.CreateAI(2, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
 
                     initEnemyAgain = true;
