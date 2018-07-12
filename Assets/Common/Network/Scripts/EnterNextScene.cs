@@ -9,7 +9,7 @@ public class EnterNextScene : MonoBehaviour {
 
     private Camera m_FadeOutGuiCamera;
 
-    public string nextScene = "PlayerTest2";
+    public string nextScene = "SpaceBattle";
 
     public void SetGuiCamera(Camera cam)
     {
@@ -38,10 +38,17 @@ public class EnterNextScene : MonoBehaviour {
         {
             if (!arrived)
             {
-                if(other.gameObject.name == GameMgr.instance.id)//是本地玩家到达
+                if (GameMgr.instance)//联机状态
                 {
-                    SendSpaceArriveEnd();
-                    arrived = true;
+                    if (other.gameObject.name == GameMgr.instance.id)//是本地玩家到达
+                    {
+                        SendSpaceArriveEnd();
+                        arrived = true;
+                    }
+                }
+                else
+                {
+                    SceneManager.LoadScene(nextScene, LoadSceneMode.Single);//单机直接进入下一个场景
                 }
             }
         }
