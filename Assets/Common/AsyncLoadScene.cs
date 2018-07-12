@@ -18,6 +18,8 @@ public class AsyncLoadScene : MonoBehaviour
 
     private int player_finishLoading = 0;
 
+    private bool finished_loading = false;
+
     // Use this for initialization
     void Start()
     {
@@ -65,7 +67,8 @@ public class AsyncLoadScene : MonoBehaviour
 
         if ((int)(loadingSlider.value * 100) == 100)
         {
-            SendFinishLoading();
+            if(!finished_loading)//happen once
+                SendFinishLoading();
             //允许异步加载完毕后自动切换场景
             //operation.allowSceneActivation = true;
         }
