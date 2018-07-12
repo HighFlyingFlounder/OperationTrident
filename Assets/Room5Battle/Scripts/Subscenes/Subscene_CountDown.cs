@@ -84,9 +84,9 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1(float t)
         {
             yield return new WaitForSeconds(t);
-            for (int i = 0; i < 3; ++i)
+            AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+            for (int i = 0; i < 4; ++i)
             {
-                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
                 AIController.instance.CreateAI(4, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[0]);
             }
             //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
