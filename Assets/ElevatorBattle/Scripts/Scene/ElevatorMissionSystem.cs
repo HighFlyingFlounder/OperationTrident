@@ -56,6 +56,13 @@ namespace OperationTrident.Elevator
         // 是否显示距离
         private bool display;
 
+        string[] missionDetail =
+{
+                "2048年8月1日 16：35",
+                "鲲内部 中央电梯",
+                "三叉戟行动"
+        };
+
         // Use this for initialization
         void Start()
         {
@@ -131,7 +138,13 @@ namespace OperationTrident.Elevator
                     fontSize: 16,
                     sequentClear: sequentClear);
             }
+
+
+            GUIUtil.DisplayMissionDetailDefault(missionDetail, OperationTrident.Room1.Util.GetCamera(), Color.white);
             GUIUtil.DisplayMissionPoint(targetWorldPosition, Room1.Util.GetCamera(), GUIUtil.missionPointColor);
+
+
+
 
             //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
             //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
