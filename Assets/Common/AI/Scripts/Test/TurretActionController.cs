@@ -36,7 +36,9 @@ namespace OperationTrident.Common.AI
 
         public override IEnumerator Destroy()
         {
-			yield return new WaitForSeconds(.2f);
+            transform.Find("AIExplosion").gameObject.SetActive(true);
+            explosionAudio.Play();
+            yield return new WaitForSeconds(1f);
 			Destroy(gameObject);
         }
 

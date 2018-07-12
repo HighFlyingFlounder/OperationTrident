@@ -52,12 +52,15 @@ namespace OperationTrident.Common.AI
         public override IEnumerator Destroy()
         {
             int duration = 15;
+            transform.Find("AIExplosion").gameObject.SetActive(true);
+            explosionAudio.Play();
+
             for (int i = 0; i < duration; i++)
             {
                 transform.Rotate(-90 / duration, 0, 0);
                 yield return null;
             }
-            yield return new WaitForSeconds(.2f);
+            yield return new WaitForSeconds(.5f);
             Destroy(gameObject);
         }
 
