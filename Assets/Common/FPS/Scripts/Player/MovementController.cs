@@ -60,7 +60,7 @@ namespace OperationTrident.FPS.Player {
 
         private void Awake() {
             m_CharacterController = GetComponent<CharacterController>();
-            m_AudioSource = GetComponent<AudioSource>();
+            m_AudioSource = GetComponents<AudioSource>()[0];
         }
 
         // 初始化数据成员

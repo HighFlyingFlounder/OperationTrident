@@ -17,8 +17,6 @@ namespace OperationTrident.Common {
         public bool UseDeadCamera = false;
         public GameObject DeathCamera;
 
-        public AudioClip AC = null;
-
         private float m_CurrentHealth;
         private bool m_Death;
         private bool m_HasSendDeadMessage;
@@ -28,11 +26,21 @@ namespace OperationTrident.Common {
 
         private NetSyncController m_NetSyncController;
 
+        private AudioSource AS = null;
+
         // Use this for initialization
         void Start() {
             m_CurrentHealth = MaxHealth;
             m_Death = false;
             m_HasSendDeadMessage = false;
+
+            if (!IsPlayer)
+            {
+                AS = this.GetComponent<AudioSource>();
+            }else
+            {
+                AS = this.GetComponents<AudioSource>()[1];
+            }
         }
 
         private void OnGUI() {
@@ -54,9 +62,9 @@ namespace OperationTrident.Common {
                     return;
                 }
 
-                if (AC != null)
+                if (AS != null)
                 {
-                    AudioSource.PlayClipAtPoint(AC, this.transform.position);
+                    AS.Play();
                 }
 
                 HitImplement(damage);

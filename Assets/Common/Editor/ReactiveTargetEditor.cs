@@ -35,8 +35,6 @@ public class ReactiveTargetEditor : Editor {
             }
         }
 
-        reactiveTarget.AC = (AudioClip)EditorGUILayout.ObjectField(new GUIContent("Hit Sound", "啊！我被击中了！"), reactiveTarget.AC, typeof(AudioClip), false);
-
         //当值改变时，让Inspector面板重新绘制
         if (GUI.changed) {
             EditorUtility.SetDirty(target);
