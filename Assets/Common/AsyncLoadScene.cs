@@ -67,8 +67,12 @@ public class AsyncLoadScene : MonoBehaviour
 
         if ((int)(loadingSlider.value * 100) == 100)
         {
-            if(!finished_loading)//happen once
+            if (!finished_loading)
+            {
                 SendFinishLoading();
+                finished_loading = true;
+            }
+                
             //允许异步加载完毕后自动切换场景
             //operation.allowSceneActivation = true;
         }
