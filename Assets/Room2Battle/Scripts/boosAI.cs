@@ -592,7 +592,7 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (getCamera.GetCurrentUsedCamera() != null)
+            if (getCamera != null && getCamera.GetCurrentUsedCamera() != null)
             {
                 Camera cam = getCamera.GetCurrentUsedCamera();
                 Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
