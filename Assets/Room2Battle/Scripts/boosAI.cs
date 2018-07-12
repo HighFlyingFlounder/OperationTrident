@@ -592,43 +592,43 @@ namespace room2Battle
 
         void OnGUI()
         {
-            if (getCamera != null && getCamera.GetCurrentUsedCamera() != null)
-            {
-                Camera cam = getCamera.GetCurrentUsedCamera();
-                Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
-                GUIStyle style = GUIUtil.GetDefaultTextStyle(Color.red, 10);
+            //if (getCamera != null && getCamera.GetCurrentUsedCamera() != null)
+            //{
+            //    Camera cam = getCamera.GetCurrentUsedCamera();
+            //    Rect rect = new Rect(cam.pixelWidth * 0.4f, 0, 100, 100);
+            //    GUIStyle style = GUIUtil.GetDefaultTextStyle(Color.red, 10);
 
-                if (missilLaunch)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
-                            rect,
-                            style
-                        );
-                    return;
-                }
-                else if (shoot || shootAgain || handup || rightHandup)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
-                            rect,
-                            style
-                        );
-                    return;
-                }
-                else if (isWalking)
-                {
-                    GUIUtil.DisplayContentInGivenPosition("SAFE",
-                            rect,
-                            style
-                        );
-                }
-                else
-                {
-                    GUIUtil.DisplayContentInGivenPosition("",
-                            rect,
-                            style
-                        );
-                }
-            }
+            //    if (missilLaunch)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("WARNING:MISSILE!",
+            //                rect,
+            //                style
+            //            );
+            //        return;SS
+            //    }
+            //    else if (shoot || shootAgain || handup || rightHandup)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("WARNING:MACHINEGUN!",
+            //                rect,
+            //                style
+            //            );
+            //        return;
+            //    }
+            //    else if (isWalking)
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("SAFE",
+            //                rect,
+            //                style
+            //            );
+            //    }
+            //    else
+            //    {
+            //        GUIUtil.DisplayContentInGivenPosition("",
+            //                rect,
+            //                style
+            //            );
+            //    }
+            //}
         }
     }
 }
