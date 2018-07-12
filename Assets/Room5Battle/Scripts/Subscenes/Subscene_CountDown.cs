@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Room5
 {
@@ -10,15 +11,24 @@ namespace OperationTrident.Room5
         //反应柱开始冷却（变色）
         public TokamakReactorPillar m_ReactorPillar;
 
+        public WanderAIAgentInitParams[] wanderAIAgentInitParams;
+        public TurretAIAgentInitParams[] turretAIAgentInitParams;
+
+        public TurretActionController[] turretActionController;
+
         //敌人的prefab
-        public GameObject m_EnemyPrefab1;
+       // public GameObject m_EnemyPrefab1;
 
         //四个高台可以生成敌人
-        public Transform[] m_EnemyGenPos = new Transform[4];
+        //public Transform[] m_EnemyGenPos = new Transform[4];
 
-        //五分钟 300s
-        private float m_CountDownTime = 15.0f;
+        //三分钟 180s
+        private float m_CountDownTime = 180.0f;
+        private float m_EnemySpawnDeltaTime = 20.0f;
 
+        //BGM播放
+        public AudioSource m_AudioSource;
+        public AudioClip m_BGM_CountingDown;
 
         public override bool isTransitionTriggered()
         {
@@ -41,8 +51,17 @@ namespace OperationTrident.Room5
         public override void onSubsceneInit()
         {
             m_ReactorPillar.StartCoolDownProcedure();
-            StartCoroutine(spawnEnemies1());
-            StartCoroutine(spawnEnemies2());
+
+            for (int i = 0; i < (int)m_CountDownTime / m_EnemySpawnDeltaTime; ++i)
+            {
+                StartCoroutine(spawnEnemies1(i * m_EnemySpawnDeltaTime));
+            }
+
+            StartCoroutine(spawnEnemyTurret());
+
+            //开始倒计时，换BGM
+            m_AudioSource.clip = m_BGM_CountingDown;
+            m_AudioSource.Play();
         }
 
         /***************************************************
@@ -61,19 +80,25 @@ namespace OperationTrident.Room5
             return minStr + ":" + secStr;
         } 
 
-        //生成第一波敌人
-        private IEnumerator spawnEnemies1()
+        //生成一小波敌人
+        private IEnumerator spawnEnemies1(float t)
         {
-            yield return new WaitForSeconds(5.0f);
-            for(int i=0;i<4;++i) EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
+            yield return new WaitForSeconds(t);
+            AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+            for (int i = 0; i < 4; ++i)
+            {
+                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[0]);
+            }
+            //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
 
-        //生成第二波敌人
-        private IEnumerator spawnEnemies2()
+        //生成一大波敌人
+        private IEnumerator spawnEnemyTurret()
         {
-            yield return new WaitForSeconds(10.0f);
-            for (int i = 0; i < 4; ++i)
-                EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1, m_EnemyGenPos[i]);
+            yield return new WaitForSeconds(30.0f);
+            AIController.instance.CreateAI(4, 1, "AI-SpawnPositions-turret", turretAIAgentInitParams[0]);
+            yield return new WaitForSeconds(60.0f);
+            AIController.instance.CreateAI(4, 2, "AI-SpawnPositions-turret2", turretAIAgentInitParams[0]);
         }
 
         /***************************************************
@@ -92,7 +117,7 @@ namespace OperationTrident.Room5
 
         private void OnGUI()
         {
-            GUIUtil.DisplayMissionTargetDefault("托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), Camera.main, Color.white);
+            GUIUtil.DisplayMissionTargetDefault("托卡马克之心冷却剩余时间: " + getMinSecStrFromSeconds(), Room5.GetCameraUtil.GetCurrentCamera(), Color.white);
         }
     }
 }

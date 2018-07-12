@@ -1,32 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.CrossInput;
-using OperationTrident.Player;
+
 
 public class SceneNetManager : MonoBehaviour
 {
+    public static ProtocolBytes fight_protocol;
     public static SceneNetManager instance;
-    //玩家预设
-    public GameObject[] PlayerPrefabs;
+    //本地玩家实体预设
+    public GameObject[] LocalPlayerPrefabs;
+    //其他玩家实体预设
+    public GameObject[] NetPlayerPrefabs;
     //游戏中给所有的角色
     public Dictionary<string, GameObject> list;
 
-    void Awake()
+    public virtual void Awake()
     {
         instance = this;
-        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
-            return;
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("FinishLoading");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
-    }
-    // Use this for initialization
-    void Start()
-    {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
         if (GameObject.FindGameObjectWithTag("Player"))
@@ -37,12 +27,7 @@ public class SceneNetManager : MonoBehaviour
     void StartGame()
     {
         list = new Dictionary<string, GameObject>();
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("StartFight");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
+        StartBattle(fight_protocol);
     }
 
     //清理场景
@@ -68,7 +53,6 @@ public class SceneNetManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             string id = proto.GetString(start, ref start);
-            Debug.Log("id = " + id);
             int swopID = proto.GetInt(start, ref start);
             GeneratePlayer(id, swopID);
         }
@@ -86,9 +70,26 @@ public class SceneNetManager : MonoBehaviour
             Debug.LogError("GeneratePlayer出生点错误！");
             return;
         }
-        //产生玩家角色 0暂时代表只有一种玩家prefab
-        GameObject playerObj = (GameObject)Instantiate(PlayerPrefabs[0]);
+        //产生玩家角色
+        GameObject playerObj;
+        if (id == GameMgr.instance.id)//本地玩家
+        {
+            playerObj = Instantiate(LocalPlayerPrefabs[0]);
+        }
+        else
+        {
+            playerObj = Instantiate(NetPlayerPrefabs[0]);
+        }
+        //playerObj所有子节点都得改名
+        NetSyncController[] net_sync_controllers = playerObj.GetComponentsInChildren<NetSyncController>();
+        foreach (var temp in net_sync_controllers)
+        {
+            temp.name = id + temp.name;
+            temp.setSyncID(temp.name);//确保sync_id正确
+        }
         playerObj.name = id;
+        playerObj.GetComponent<NetSyncController>().setSyncID(playerObj.name);//确保sync_id正确
+
         playerObj.transform.position = swopTrans.position;
         playerObj.transform.rotation = swopTrans.rotation;
 
@@ -98,16 +99,11 @@ public class SceneNetManager : MonoBehaviour
         if (id == GameMgr.instance.id)
         {
             netsyn.ctrlType = NetSyncTransform.CtrlType.player;//CtrlType默认为none，none不发送消息，模拟单人模式
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = true;
         }
         else
         {
 
             netsyn.ctrlType = NetSyncTransform.CtrlType.net;
-            playerObj.GetComponent<InputManager>().IsLocalPlayer = false;
-            playerObj.GetComponent<PlayerController>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<AudioListener>().enabled = false;
         }
         //玩家特殊处理，例如禁用掉某些脚本或者添加新的脚本
         HandlePlayer(id,playerObj);
@@ -123,20 +119,5 @@ public class SceneNetManager : MonoBehaviour
 
     }
 
-    public void RecvStartFight(ProtocolBase protocol)
-    {
-        StartBattle((ProtocolBytes)protocol);
-        //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
-        NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
-    }
 
-    public void RecvLoading(ProtocolBase protocol)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protocol;
-        //解析协议
-        int start = 0;
-        string protoName = proto.GetString(start, ref start);
-        string player_id = proto.GetString(start, ref start);
-        Debug.Log(player_id + " finish Loading");
-    }
 }

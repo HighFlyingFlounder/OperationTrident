@@ -11,24 +11,12 @@ public class SpaceBattleManager : MonoBehaviour
     public Dictionary<string, GameObject> list;
     public Dictionary<string, Hinder> rock_list;
     private GameObject[] rocks;
+    public GameObject timeline;
+    public Camera camera = null;
     void Awake()
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
             return;
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("FinishLoading");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
-    }
-    // Use this for initialization
-    void Start()
-    {
-        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
-            return;
-        if (GameObject.FindGameObjectWithTag("flyer"))
-            Destroy(GameObject.FindGameObjectWithTag("flyer"));
         StartGame();
     }
 
@@ -37,12 +25,7 @@ public class SpaceBattleManager : MonoBehaviour
     {
         list = new Dictionary<string, GameObject>();
         rock_list = new Dictionary<string, Hinder>();
-        //协议
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("StartFight");
-        NetMgr.srvConn.Send(protocol);
-        //监听
-        NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
+        StartBattle(SceneNetManager.fight_protocol);
     }
 
     //清理场景
@@ -109,14 +92,19 @@ public class SpaceBattleManager : MonoBehaviour
 
         if (id == GameMgr.instance.id)
         {
+            //找到camera，然后把该playerObj
+            //camera.GetComponent<FlyerTracker>().setFollowObject(playerObj);
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.player;
+            stone.cam = playerObj.transform;
+            Hinder.cam = playerObj.transform;
         }
         else
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
-            playerObj.transform.Find("Camera").gameObject.GetComponent<Camera>().enabled = false;
-            playerObj.transform.Find("Camera/sand_effect").gameObject.SetActive(false);
+            playerObj.transform.Find("Camera").gameObject.SetActive(false);
+            playerObj.GetComponent<showHp>().enabled = false;
         }
+        
     }
 
     public void RecvHitRock(ProtocolBase protocol)
@@ -154,26 +142,21 @@ public class SpaceBattleManager : MonoBehaviour
         //取消监听
         NetMgr.srvConn.msgDist.DelListener("HitRock", RecvHitRock);
         NetMgr.srvConn.msgDist.DelListener("Result", RecvResult);
-        NetMgr.srvConn.msgDist.DelListener("FinishLoading", RecvLoading);
         ClearBattle();
 
-        SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
+        //SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
+        if (isWin == 0)//失败
+        {
+            OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+        }
+        else//胜利
+        {
+            timeline.SetActive(true);
+        }
     }
 
-    public void RecvStartFight(ProtocolBase protocol)
+    private void Update()
     {
-        StartBattle((ProtocolBytes)protocol);
-        //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
-        NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
-    }
-
-    public void RecvLoading(ProtocolBase protocol)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protocol;
-        //解析协议
-        int start = 0;
-        string protoName = proto.GetString(start, ref start);
-        string player_id = proto.GetString(start, ref start);
-        Debug.Log(player_id + " finish Loading");
+        
     }
 }

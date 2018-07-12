@@ -4,10 +4,18 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TimeLineLoadScene : MonoBehaviour {
-    public string nextScene = "SpaceBattle";
+    public string nextScene;
 	// Use this for initialization
 	void Start () {
-        SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+        if (GameMgr.instance)//联网状态
+        {
+            GameMgr.instance.nextScene = nextScene;
+            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+        }
+        else
+        {
+            SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+        }
     }
 	
 	// Update is called once per frame

@@ -1,19 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OperationTrident.EventSystem;
+using OperationTrident.Util;
+using OperationTrident.Common.AI;
 
 namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
     {
         [SerializeField]
-        //电梯开关的预设
-        public GameObject buttonPre;
+        WanderAIAgentInitParams[] wanderAIAgentInitParams;
+
+        [SerializeField]
+        TurretAIAgentInitParams[] turretAIAgentInitParams;
+
+        [SerializeField]
         //持续时间
         public int d_time = 60;
 
+        //准备时间
+        public int r_time = 10;
+
         //状态
-        public enum ElevatorState { Initing, FindingButton, Start_Fighting ,Fighting, End, Escape };
+        public enum ElevatorState { Initing, Ready, Start_Fighting ,Fighting, End, Escape };
         public static ElevatorState state;
 
         //开始战斗的时间
@@ -23,16 +31,20 @@ namespace OperationTrident.Elevator {
         //结束时间
         private float e_time;
 
-        //按钮
-        private GameObject button;
-        //button的位置
-        public static Vector3 ButtonPosition;
+        private float t_time;
 
-        //碰撞次数（为偶数）
+        //碰撞次数
         private int count = 0;
 
-        //是否更改碰撞体
-        private bool change = false;
+        private bool change;
+
+        private bool flag;
+
+        private bool flag1;
+
+        private IEnumerator coroutine1;
+
+        private IEnumerator coroutine2;
 
         //碰撞体
         private BoxCollider bcollider;
@@ -42,69 +54,119 @@ namespace OperationTrident.Elevator {
         // Use this for initialization
         void Start()
         {
-            //初始化BUTTON
-            button = GameObject.Instantiate(buttonPre);
-            button.transform.localPosition = new Vector3(0, 2, 0);
-            ButtonPosition = button.transform.localPosition;
             state = ElevatorState.Initing;
             bcollider = this.GetComponent<BoxCollider>();
+            change = true;
+
+            flag = true;
+            flag1 = true;
+
+            coroutine1 = WaitAndPrint1(10);
+            coroutine2 = WaitAndPrint2(10);
         }
 
         // Update is called once per frame
         void Update()
         {
+            Debug.Log(state);
             switch (state)
             {
                 case ElevatorState.Initing:
+                    if (GameMgr.instance && flag)
+                    {
+                        foreach (var player in SceneNetManager.instance.list)
+                        {
+                            GameObject temp = player.Value;
+                            temp.transform.localScale = new Vector3(3f, 3f, 3f);
+                        }
+                        flag = false;
+                    }
                     break;
 
-                case ElevatorState.FindingButton:
+                case ElevatorState.Ready:
+                    if (change)
+                    {
+                        //开始计时
+                        s_time = Time.time;
+                        c_time = s_time;
+                        e_time = s_time + r_time;
+
+                        bcollider.size = new Vector3(bcollider.size.x * 2f, bcollider.size.y, bcollider.size.z);
+
+                        change = false;
+
+                        GameObject.Find("BGM").GetComponent<AudioSource>().Play();
+                    }
+                    else
+                    {
+                        c_time += Time.deltaTime;
+                        
+
+                        //准备时间结束，切换到下一个场景
+                        if (c_time >= e_time && GameMgr.instance.isMasterClient)
+                        {
+                            changeState();
+                            m_controller.RPC(this, "changeState");
+                        }
+                    }
                     break;
 
                 case ElevatorState.Start_Fighting:
-                    Messenger<int>.Broadcast(GameEvent.Enemy_Start, 0);
-                    state = ElevatorState.Fighting;
+                    //开始计时
                     s_time = Time.time;
                     c_time = s_time;
                     e_time = s_time + d_time;
-                    bcollider.size = new Vector3(12f, bcollider.size.y, bcollider.size.z);
+
+                    t_time = s_time + 5;
+
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
                     break;
 
                 case ElevatorState.Fighting:
                     c_time += Time.deltaTime;
-                    if(c_time >= e_time)
+
+                    if (!flag)
                     {
-                        change = true;
-                        state = ElevatorState.End;
+                        StartCoroutine(coroutine1);
+                        flag = true;
+                    }
+
+                    if (flag1&&c_time >= t_time)
+                    {
+                        StartCoroutine(coroutine2);
+                        flag1 = false;
+                    }
+
+                    if (c_time >= e_time && GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
                     }
 
                     break;
 
                 case ElevatorState.End:
-                    Messenger<int>.Broadcast(GameEvent.End, 0);
+                    //Messenger.Broadcast(GameEvent.End);
 
-                    if (change)
+                    //开门
+                    GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
+
+                    if (OperationTrident.Elevator.Wall.state)
                     {
-                        //开门
-                        GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
-                        change = false;
+                        changeState();
                     }
+
                     break;
 
                 case ElevatorState.Escape:
+                    StopCoroutine(coroutine1);
+                    StopCoroutine(coroutine2);
                     break;
             }
-        }
-
-        //监听器
-        private void Awake()
-        {
-            Messenger<int>.AddListener(GameEvent.Push_Button, fight);
-        }
-
-        private void Destroy()
-        {
-            Messenger<int>.RemoveListener(GameEvent.Push_Button, fight);
         }
 
         //网络同步
@@ -125,42 +187,47 @@ namespace OperationTrident.Elevator {
 
         void OnTriggerEnter(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.End)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
+                //if (other.GetComponent<NetSyncTransform>().ctrlType != NetSyncTransform.CtrlType.player)
+                //return;
                 int number = SceneNetManager.instance.list.Count;
-                //进入关门
+
                 count++;
-                Debug.Log("Enter" + count);
+
+                //进入关门
                 if (count >= number && Door.state && state == ElevatorState.Initing)
                 {
-                    changeState();
-                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
+                    Debug.Log("fuck?");
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        Debug.Log("fuck");
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
+                    GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
                 }
             }
         }
 
         void OnTriggerExit(Collider other)
         {
-            if (state == ElevatorState.Initing || state == ElevatorState.End)
+            if ((state == ElevatorState.Initing || state == ElevatorState.Escape) && other.tag == "Player")
             {
                 //离开关门
                 count--;
-                Debug.Log("Exit" + count);
-                if (count <= 0 && Door.state && state == ElevatorState.End)
-                {
-                    changeState();
-                    GameObject.Find("DoorTrigger").SendMessage("Operate", SendMessageOptions.DontRequireReceiver);
-                }
-            }
-        }
 
-        private void fight(int id)
-        {
-            //点击按钮
-            if (state == ElevatorState.FindingButton && !Door.state)
-            {
-                changeState();
-                m_controller.RPC(this, "changeState");
+                if (count <= 0 && Door.state && state == ElevatorState.Escape)
+                {
+                    if (GameMgr.instance.isMasterClient)
+                    {
+                        changeState();
+                        m_controller.RPC(this, "changeState");
+                    }
+
+                    GameObject.Find("DoorTrigger").SendMessage("closeDoor", SendMessageOptions.DontRequireReceiver);
+                }
             }
         }
 
@@ -169,16 +236,50 @@ namespace OperationTrident.Elevator {
             switch (state)
             {
                 case ElevatorState.Initing:
-                    state = ElevatorState.FindingButton;
+                    state = ElevatorState.Ready;
                     break;
 
-                case ElevatorState.FindingButton:
+                case ElevatorState.Ready:
                     state = ElevatorState.Start_Fighting;
+                    break;
+
+                case ElevatorState.Start_Fighting:
+                    state = ElevatorState.Fighting;
+                    break;
+
+                case ElevatorState.Fighting:
+                    state = ElevatorState.End;
                     break;
 
                 case ElevatorState.End:
                     state = ElevatorState.Escape;
                     break;
+            }
+        }
+
+        private IEnumerator WaitAndPrint1(float waitTime)
+        {
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+
+        private IEnumerator WaitAndPrint2(float waitTime)
+        {
+            while (true)
+            {
+                //生成物体
+                AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
+                AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
+                yield return new WaitForSeconds(waitTime);
             }
         }
     }

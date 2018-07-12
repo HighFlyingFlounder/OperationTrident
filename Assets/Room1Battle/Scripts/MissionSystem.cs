@@ -52,6 +52,10 @@ namespace OperationTrident.Room1
         // 任务目标是随机的生成正确的还是顺序
         public bool sequentClear = true;
 
+        public Color missionTargetColor;
+
+        public Color distanceColor;
+
         private float nowDistance;
         // Use this for initialization
         void Start()
@@ -89,7 +93,7 @@ namespace OperationTrident.Room1
                     break;
                 case SceneController.Room1State.EscapingRoom:
                     missionContentsIndex = 6;
-                    // TODO: 逃跑的时候任务目标是啥
+                    targetWorldPosition = SceneController.escapePosition;
                     break;
             }
             
@@ -99,14 +103,22 @@ namespace OperationTrident.Room1
                      GameObject.FindWithTag("Player").transform.position); // 两个世界坐标的
             else
             {
-                Debug.Log(SceneNetManager.instance.list.Count);
-                nowDistance = Vector3.Distance(targetWorldPosition,
-                     SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+                try
+                {
+                    nowDistance = Vector3.Distance(targetWorldPosition,
+                         SceneNetManager.instance.list[GameMgr.instance.id].transform.position); // 两个世界坐标的
+                }
+                catch(Exception e)
+                {
+                    missionContent = string.Empty;
+                    return;
+                }
             }
-            Vector3 point = new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2, 0); // 屏幕中心
-            Ray ray = Camera.main.ScreenPointToRay(point); // 在摄像机所在位置创建射线
+            
+            Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0); // 屏幕中心
+            Ray ray = Util.GetCamera().ScreenPointToRay(point); // 在摄像机所在位置创建射线
             Vector3 direction1 = ray.direction; // 摄像头的方向
-            Vector3 direction2 = targetWorldPosition - GetComponentInParent<Transform>().position; // 到物体的方向
+            Vector3 direction2 = targetWorldPosition - GameObject.FindWithTag("Player").transform.position; // 到物体的方向
             // 如果物体大方向在人视线背后的话，就不显示了
             if (Vector3.Dot(direction1, direction2) <= 0) toDisplayTheMissionPoint = false;
             else toDisplayTheMissionPoint = true;
@@ -123,43 +135,30 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            // 显示任务目标
-
-            if (missionContent != string.Empty)
+            try
             {
-                //GUIUtil.DisplayMissionTargetDefaultSequently(missionContent, camera,
-                //    GUIUtil.brightGreenColor, interval: 0.4f, fontSize: 16, inLeft: true);
-                GUIUtil.DisplayMissionTargetInMessSequently(missionContent, 
-                    Camera.main,
-                    GUIUtil.brightGreenColor,
-                    interval: appearInterval,
-                    blingInterval:blingInterval,
-                    fontSize: 16,
-                    sequentClear:sequentClear);
+                // 显示任务目标
+
+                if (missionContent != string.Empty)
+                {
+
+                    GUIUtil.DisplayMissionTargetInMessSequently(missionContent,
+                        Util.GetCamera(),
+                        missionTargetColor,
+                        interval: appearInterval,
+                        blingInterval: blingInterval,
+                        fontSize: 16,
+                        sequentClear: sequentClear);
+                }
+                GUIUtil.DisplayMissionPoint(
+                    targetWorldPosition,
+                    Util.GetCamera(),
+                    GUIUtil.missionPointColor);
             }
-
-
-            GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.FadeAColor(GUIUtil.greyColor,60.0f));
-            Rect rect = GUIUtil.GetFixedRectDirectlyFromWorldPosition(targetWorldPosition, Camera.main);
-            // 指定颜色
-            if (toDisplayTheMissionPoint)
+            catch(Exception e)
             {
-                GUI.Label(rect, (int)nowDistance + "m", style);
+                Debug.Log("任务系统摄像头错误");
             }
-
-            //string subtitle = "^w你好,^r一勺^w,我是^b鸡哥^w,我们要找到^y飞奔的啦啦啦";
-            //GUIUtil.DisplaySubtitleInGivenGrammar(subtitle, camera, 20, 0.8f, subtitle.Length * timePerSubTitleWord);
-            //string[] subtitles ={
-            //    "^b地球指挥官:^w 根据情报显示，开启电源室入口的^y智能感应芯片^w在仓库里的几个可能位置",
-            //    "^b地球指挥官:^w 你们要拿到它，小心里面的^r巡逻机器人"
-            //};
-            //GUIUtil.DisplaySubtitlesInGivenGrammar(
-            //    subtitles, 
-            //    camera, 
-            //    fontSize: 16,
-            //    subtitleRatioHeight: 0.9f, 
-            //    secondOfEachWord: 0.5f, 
-            //    secondBetweenLine: 3.0f);
         }
     }
 }

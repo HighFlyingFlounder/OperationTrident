@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Runtime.InteropServices;
+using UnityEngine;
+using UnityObject;
 
 //字节流协议模型
 public class ProtocolBytes : ProtocolBase
@@ -160,6 +162,7 @@ public class ProtocolBytes : ProtocolBase
 
     public void AddSyncData(SyncData data)
     {
+        if (data.Bytes.Length == 0) return;
         bytes = bytes.Concat(data.Bytes).ToArray();
     }
 
@@ -167,7 +170,8 @@ public class ProtocolBytes : ProtocolBase
     {
         SyncData data = new SyncData();
         data.Bytes = new byte[bytes.Length - start];
-
+        if (data.Bytes.Length == 0)
+            return data;
         Array.Copy(bytes, start, data.Bytes, 0, bytes.Length - start);
 
         return data;
@@ -187,43 +191,127 @@ public class ProtocolBytes : ProtocolBase
         return Marshal.PtrToStructure(ptr, type);
     }
 
+
     public void AddObjects(object[] objs)
     {
-        byte[] buff = null;
+        AddInt(objs.Length);
         using (MemoryStream ms = new MemoryStream())
         {
             BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(ms, objs);
+            byte[] buff = null;
+            for (int i = 0; i < objs.Length; i++)
+            {
+                if (objs[i] is Vector3)// 用is会出问题
+                {
+                    Vector3 vec = (Vector3)objs[i];
+                    MyVector3 myvec = new MyVector3 { x = vec.x, y = vec.y, z = vec.z };
+                    objs[i] = myvec;
+                }
+                else if (objs[i] is Vector2)
+                {
+                    Vector2 vec = (Vector2)objs[i];
+                    MyVector2 myvec = new MyVector2 { x = vec.x, y = vec.y };
+                    objs[i] = myvec;
+                }
+                bf.Serialize(ms, objs[i]);
+            }
             buff = ms.ToArray();
+            bytes = bytes.Concat(buff).ToArray();
         }
-        bytes = bytes.Concat(buff).ToArray();
-        Object obj = null;
-        using (MemoryStream ms = new MemoryStream(buff))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            obj = bf.Deserialize(ms);
-        }
-        //foreach (var ob in objs)
-        //{
-        //    byte[] buff = Object2Bytes(ob);
-        //    bytes = bytes.Concat(buff).ToArray();
-        //}
     }
 
-    public Object GetObjects(int start)
+    public void AddAIObjects(object[] objs)
+    {
+        AddInt(objs.Length);
+        using (MemoryStream ms = new MemoryStream())
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            byte[] buff = null;
+            for (int i = 0; i < objs.Length; i++)
+            {
+                if (objs[i] is Vector3)// 用is会出问题
+                {
+                    Vector3 vec = (Vector3)objs[i];
+                    MyVector3 myvec = new MyVector3 { x = vec.x, y = vec.y, z = vec.z };
+                    objs[i] = myvec;
+                }
+                else if (objs[i] is Vector2)
+                {
+                    Vector2 vec = (Vector2)objs[i];
+                    MyVector2 myvec = new MyVector2 { x = vec.x, y = vec.y };
+                    objs[i] = myvec;
+                }
+                bf.Serialize(ms, objs[i]);
+            }
+            buff = ms.ToArray();
+            AddInt(buff.Length);    //新增字段
+            bytes = bytes.Concat(buff).ToArray();
+        }
+    }
+
+    public object[] GetObjects(int start)
     {
         if (bytes == null)
             return null;
         if (bytes.Length < start)
             return null;
-        Object obj = new object();
+        int length = GetInt(start, ref start);
+        object[] objs = new object[length];
 
         using (MemoryStream ms = new MemoryStream(bytes, start, bytes.Length - start))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            obj = bf.Deserialize(ms);
+            for (int i = 0; i < length; i++)
+            {
+                objs[i] = bf.Deserialize(ms);
+                if (objs[i] is MyVector3)
+                {
+                    MyVector3 myvec = (MyVector3)objs[i];
+                    Vector3 vec = new Vector3 { x = myvec.x, y = myvec.y, z = myvec.z };
+                    objs[i] = vec;
+                }
+                else if (objs[i] is MyVector2)
+                {
+                    MyVector2 myvec = (MyVector2)objs[i];
+                    Vector3 vec = new Vector3 { x = myvec.x, y = myvec.y };
+                    objs[i] = vec;
+                }
+            }
         }
-        return obj;
+        return objs;
+    }
+
+    public object[] GetObjects(int start, ref int end)
+    {
+        if (bytes == null)
+            return null;
+        if (bytes.Length < start)
+            return null;
+        int obj_num = GetInt(start, ref start);
+        int length = GetInt(start, ref start);
+        object[] objs = new object[obj_num];
+        end = start + length;
+        using (MemoryStream ms = new MemoryStream(bytes, start, length))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            for (int i = 0; i < obj_num; i++)
+            {
+                objs[i] = bf.Deserialize(ms);
+                if (objs[i] is MyVector3)
+                {
+                    MyVector3 myvec = (MyVector3)objs[i];
+                    Vector3 vec = new Vector3 { x = myvec.x, y = myvec.y, z = myvec.z };
+                    objs[i] = vec;
+                }
+                else if (objs[i] is MyVector2)
+                {
+                    MyVector2 myvec = (MyVector2)objs[i];
+                    Vector3 vec = new Vector3 { x = myvec.x, y = myvec.y };
+                    objs[i] = vec;
+                }
+            }
+        }
+        return objs;
     }
 
 }

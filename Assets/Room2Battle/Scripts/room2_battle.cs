@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
 
+using OperationTrident.FPS.Common;
+using OperationTrident.Common.AI;
+using System;
+using OperationTrident.Common;
 
-namespace room2Battle {
+namespace room2Battle
+{
     //小boss大战
-    public class room2_battle :  Subscene{
+    public class room2_battle : Subscene, NetSyncInterface
+    {
+        protected GetCamera getCamera;
 
         [SerializeField]
         protected Camera mCamera;
@@ -14,31 +21,70 @@ namespace room2Battle {
         [SerializeField]
         protected UnityEngine.Playables.PlayableDirector director;
 
-        [SerializeField]
-        protected Transform[] enemyInitPositions;
-
-        [SerializeField]
-        protected GameObject enemyPrefabs;
-        //敌人列表方便管理
-        protected ArrayList enemyList = new ArrayList();
-
-        //当前敌人数目，用于补充敌人数目
-        protected int currentEnemyNum = 0;
-        //最多敌人数目
-        protected int maxEnemyNum = 20;
-
+        //timeline播放程度
         protected bool isTimelinePaused = false;
 
         [SerializeField]
         protected GameObject nextScene_;
+        //台词
+        public string[] line = { "" };
+        //boss，可能到时候有两个，一个过场，一个动作
+        [SerializeField]
+        protected GameObject boss;
 
-        public string[] line = {"" };
+        //真·boss
+        [SerializeField]
+        protected GameObject trueBoss;
+        //boss的摆放位置
+        [SerializeField]
+        protected Transform bossInitPos;
+        //门
+        [SerializeField]
+        protected GameObject door;
+
+        [SerializeField]
+        protected Transform doorPos;
+        //同步控制器
+        protected NetSyncController mController;
+
+        //语音只播放一次
+        protected bool playOnce = false;
+
+        protected bool playOnce_ = false;
+        //bgm音源
+        [SerializeField]
+        protected AudioSource source;
+        //台词音源
+        [SerializeField]
+        protected AudioSource TimelineSource;
+        //音轨
+        [SerializeField]
+        protected AudioClip[] clips;
+        //AI参数
+        [SerializeField]
+        protected WanderAIAgentInitParams wanderAIAgentParams;
+
+        [SerializeField]
+        protected TurretAIAgentInitParams turretAIAgentParams;
+        //只删一次boss
+        protected bool destoryBoss = false;
+
+        protected float lastTimeInitAI = 0.0f;
+
+        [SerializeField]
+        protected GameObject escapeElevator;
+
+
+
+        private void Start()
+        {
+        }
 
         public override void notify(int i)
         {
-            
-        }
 
+        }
+        //没下一个小场景
         public override bool isTransitionTriggered()
         {
             return false;
@@ -46,68 +92,135 @@ namespace room2Battle {
 
         public override void onSubsceneDestory()
         {
-            foreach (GameObject obj in enemyList)
-            {
-                if (obj != null)
-                {
-                    Destroy(obj);
-                }
-            }
         }
 
+        /// <summary>
+        /// @brief 播放timeline，关闭玩家的操作
+        /// </summary>
         public override void onSubsceneInit()
         {
-            //Debug.Log(director.isActiveAndEnabled);
+            TimelineSource.Stop();
+            if (GameMgr.instance)
+            {
+                getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
+            }
+
+            foreach (var p in SceneNetManager.instance.list)
+            {
+                p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
+                p.Value.SetActive(false);
+            }
             director.Play();
         }
 
+        /// <summary>
+        /// @brief 判断timeline播放阶段，生成AI，boss，激活玩家
+        /// </summary>
         void Update()
         {
-            Debug.Log(isTimelinePaused);
-            if (!isTimelinePaused)
+            if (getCamera != null)
+                mCamera = getCamera.GetCurrentUsedCamera();
+            if (!isTimelinePaused)//bool值作为flag
             {
-                if (director.state != UnityEngine.Playables.PlayState.Playing)
+                if (director.time > 30.0f)
                 {
                     isTimelinePaused = true;
-                    //播放完动画在生成敌人
-                    for (int i = 0; i < maxEnemyNum; ++i)
+                    trueBoss.transform.position = bossInitPos.position;
+                    trueBoss.SetActive(true);
+
+                    Destroy(boss.gameObject);
+                    //动画位置同步
+                    AIController.instance.AddAIObject(trueBoss);
+
+                    foreach (var p in SceneNetManager.instance.list)
                     {
-                        GameObject obj = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        enemyList.Add(obj);
+                        p.Value.GetComponent<ReactiveTarget>().CanBeHurt = true;
+                        p.Value.SetActive(true);
                     }
+
+                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
+                    AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
+                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(2, 2, "EnemyInitPos7", turretAIAgentParams);
                 }
             }
-            else {
-                nextScene_.SetActive(true);
-                //补充敌人
-                for (int i = 0; i < enemyList.Count; ++i)
+            else//播放台词
+            {
+                if (!playOnce)
                 {
-                    if (enemyList[i] == null)
-                    {
-                        enemyList[i] = Instantiate(enemyPrefabs, enemyInitPositions[Random.Range(0, enemyInitPositions.Length)].position, Quaternion.identity);
-                        break;
-                    }
+                    playOnce = true;
+                    source.clip = clips[0];
+                    source.Play();
+                    source.priority = TimelineSource.priority + 1;
                 }
+
+                if (lastTimeInitAI >= 10.0f)
+                {
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    lastTimeInitAI = 0.0f;
+                }
+                else
+                {
+                    lastTimeInitAI += Time.deltaTime;
+                }
+            }
+            //TODO:测试，删除
+            if (trueBoss == null)
+            {
+                if (!destoryBoss)
+                {
+                    openDoor_Room2();
+                    mController.RPC(this, "openDoor_Room2");
+                    destoryBoss = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// @brief RPC的关门
+        /// </summary>
+        public void openDoor_Room2()
+        {
+            if (door.gameObject)
+            {
+                Destroy(door.gameObject);
+                escapeElevator.GetComponent<UnityEngine.Playables.PlayableDirector>().Play();
+                nextScene_.SetActive(true);
             }
         }
 
         void OnGUI()
         {
-            if (isTimelinePaused)
+            if (mCamera != null)
             {
-                GUIUtil.DisplaySubtitlesInGivenGrammar(line, Camera.main, 16, 0.9f, 0.2f, 1.2f);
-                OperationTrident.Util.GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
-                      Camera.main,
-                      OperationTrident.Util.GUIUtil.yellowColor,
-                      0.5f, 0.1f, 16);
+                if (isTimelinePaused)
+                {
+                    GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.2f, 1.2f);
+
+                    GUIUtil.DisplayMissionTargetInMessSequently("击退敌人，继续前进！",
+                          mCamera,
+                          GUIUtil.whiteColor,
+                          0.5f, 0.1f, 16);
+                }
             }
-            if (!isTimelinePaused)
-            {
-                GUIUtil.DisplayMissionTargetDefault("???", mCamera, OperationTrident.Util.GUIUtil.yellowColor);
-            }
-            
         }
 
+        public void RecvData(SyncData data)
+        {
+
+        }
+
+        public SyncData SendData()
+        {
+            return null;
+        }
+
+        public void Init(NetSyncController controller)
+        {
+            mController = controller;
+        }
     }
 
 }

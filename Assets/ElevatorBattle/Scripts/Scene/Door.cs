@@ -25,6 +25,7 @@ namespace OperationTrident.Elevator
         {
             child1 = GameObject.Find("left");
             child2 = GameObject.Find("right");
+
             open = false;
             close = false;
             state = false;
@@ -34,31 +35,33 @@ namespace OperationTrident.Elevator
         void Update()
         {
             //关门过程结束
-            if (child1.transform.position.z <= 2.5 || child2.transform.position.z >= -2.5)
+            if ((child1.transform.position.z <= 2.4 || child2.transform.position.z >= -2.4) && state)
             {
                 state = false;
                 close = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //开门过程结束
-            if (child1.transform.position.z >= 6 || child2.transform.position.z <= -6)
+            if ((child1.transform.position.z >= 7 || child2.transform.position.z <= -7) && !state)
             {
                 state = true;
                 open = false;
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = false;
             }
 
             //打开门
             if (open)
             {
-                child1.transform.position += new Vector3(0, 0, speed);
-                child2.transform.position -= new Vector3(0, 0, speed);
+                child1.transform.position += new Vector3(0, 0, speed * Time.deltaTime);
+                child2.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
             }
 
             //关上门
             if (close)
             {
-                child1.transform.position -= new Vector3(0, 0, speed);
-                child2.transform.position += new Vector3(0, 0, speed);
+                child1.transform.position -= new Vector3(0, 0, speed * Time.deltaTime);
+                child2.transform.position += new Vector3(0, 0, speed * Time.deltaTime);
             }
 
         }
@@ -80,65 +83,45 @@ namespace OperationTrident.Elevator
         }
 
         //发信息
-        private void Operate()
+        private void closeDoor()
         {
-            Operate_Imp();
-            m_controller.RPC(this, "Operate_Imp");
+            closeDoor_Imp();
+            m_controller.RPC(this, "closeDoor_Imp");
         }
 
-        public void Operate_Imp()
+        private void openDoor()
         {
-            switch (SceneController.state)
+            openDoor_Imp();
+            m_controller.RPC(this, "openDoor_Imp");
+        }
+
+        private void Operate()
+        {
+            if (Elevator.SceneController.state == SceneController.ElevatorState.Initing)
             {
-                case SceneController.ElevatorState.Initing:
-                    if (!state)
-                    {
-                        //开门
-                        open = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.FindingButton:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Start_Fighting:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Fighting:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.End:
-                    if (!state)
-                    {
-                        //开门
-                        open = true;
-                    }
-                    break;
-
-                case SceneController.ElevatorState.Escape:
-                    if (state)
-                    {
-                        //关门
-                        close = true;
-                    }
-                    break;
+                openDoor();
+                RayShooter.state = true;
             }
+        }
 
+        public void closeDoor_Imp()
+        {
+            if (state)
+            {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
+                //关门
+                close = true;
+            }
+        }
+
+        public void openDoor_Imp()
+        {
+            if (!state)
+            {
+                GameObject.Find("d_w").GetComponent<BoxCollider>().enabled = true;
+                //开门
+                open = true;
+            }
         }
     }
 }

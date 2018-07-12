@@ -84,7 +84,6 @@ public class RoomPanel : PanelBase
             if (isOwner == 1)
             {
                 str += "【房主】";
-                GameMgr.instance.isMasterClient = true;
                 NetSyncController.isMasterClient = true;
             }
                 
@@ -158,7 +157,7 @@ public class RoomPanel : PanelBase
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        SceneManager.LoadScene(GameMgr.instance.startScene, LoadSceneMode.Single);
+        SceneManager.LoadScene("Loading", LoadSceneMode.Single);
         Close();
     }
 

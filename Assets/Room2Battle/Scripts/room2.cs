@@ -19,12 +19,24 @@ namespace room2Battle
             subSceneController.addSubscene("room2_battle", "room2_battle");
             subSceneController.setInitialSubScene("enterRoom2");
             subSceneController.enabled = true;
+
+            FadeInOutUtil.SetFadingState(1.0f, Camera.current, Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
+        }
+
+        private void Update()
+        {
+            FadeInOutUtil.UpdateState();
         }
 
         void OnGUI()
         {
-            Rect re = new Rect(Camera.main.pixelWidth - 100, 0, 100, 100);
-            GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
+            FadeInOutUtil.RenderGUI();
+
+            //if (Camera.current)
+            //{
+            //    Rect re = new Rect(Camera.current.pixelWidth - 100, 0, 100, 100);
+            //    GUIUtil.DisplayContentInGivenPosition("RTT " + NetMgr.srvConn.RTT + "ms", re);
+            //}
         }
     }
 }

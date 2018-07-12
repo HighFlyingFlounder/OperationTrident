@@ -18,13 +18,15 @@ public class NetSyncController : MonoBehaviour
     // Use this for initialization
     public void AddSyncScripts(Component Component){
         sync_scripts.Add(Component);
-        for (int i = 0; i < sync_scripts.Count; i++)
-        {
-            (sync_scripts[i] as NetSyncInterface).Init(this);
-        }
+        (sync_scripts[sync_scripts.Count - 1] as NetSyncInterface).Init(this);
     }
 
-    void Start()
+    public void RemoveSyncScripts(Component Component)
+    {
+        sync_scripts.Remove(Component);
+    }
+
+    void Awake()
     {
         for (int i = 0; i < sync_scripts.Count; i++)
         {
@@ -34,6 +36,23 @@ public class NetSyncController : MonoBehaviour
             return;
         //用名字来标识，GetInstanceID()可以获得任何对象独一无二的id，但在不同客户端或许不同
         sync_id = this.gameObject.name;
+        NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.AddListener(sync_id + "RPC", RecvRPC);
+    }
+
+    void OnDestroy()
+    {
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "RPC", RecvRPC);
+    }
+
+    public void setSyncID(string _sync_id)
+    {
+        if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
+            return;
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "NetSyncController", RecvNetSync);
+        NetMgr.srvConn.msgDist.DelListener(sync_id + "RPC", RecvRPC);
+        sync_id = _sync_id;
         NetMgr.srvConn.msgDist.AddListener(sync_id + "NetSyncController", RecvNetSync);
         NetMgr.srvConn.msgDist.AddListener(sync_id + "RPC", RecvRPC);
     }
@@ -51,8 +70,17 @@ public class NetSyncController : MonoBehaviour
         //sync_scripts
         for (int i = 0; i < sync_scripts.Count; i++)
         {
+            //移除禁用脚本
+            if( ((MonoBehaviour)sync_scripts[i]).enabled == false)
+            {
+                sync_scripts.Remove(sync_scripts[i]);
+            }
             Component temp = sync_scripts[i];
             SyncData data = (temp as NetSyncInterface).SendData();
+            //加入空检测
+            if(data == null) {
+                continue;
+            }
             proto.AddSyncData(data);
         }
         NetMgr.srvConn.Send(proto);
@@ -116,7 +144,6 @@ public class NetSyncController : MonoBehaviour
 
     public void RecvRPC(ProtocolBase protoBase)
     {
-        //Debug.Log("Reach RecvRPC");
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
@@ -133,10 +160,7 @@ public class NetSyncController : MonoBehaviour
         string componentName = proto.GetString(start, ref start);
         string methodName = proto.GetString(start, ref start);
 
-        object[] parameters = (object[])proto.GetObjects(start);
-
-        //Debug.Log("componentName:" + componentName);
-        //Debug.Log("methodName:" + methodName);
+        object[] parameters = proto.GetObjects(start);
 
         for (int i = 0; i < parameters.Length; i++)
         {

@@ -9,6 +9,8 @@ namespace OperationTrident.Room1
 {
     public class RayShooter : MonoBehaviour,NetSyncInterface
     {
+        [SerializeField]
+        private GameObject bulletPrefab;
 
         NetSyncController m_NetSyncController;
         // 射速：一秒钟能射多少枪
@@ -24,12 +26,9 @@ namespace OperationTrident.Room1
         public bool isLocalPlayer = true;
 
 
-        // 附加在这个东西上的摄像机
-        private new Camera camera;
         // Use this for initialization
         void Start()
         {
-            camera = Camera.main;
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -54,29 +53,35 @@ namespace OperationTrident.Room1
                 )
             {
                 StartCoroutine(ShootRoutine());
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 Vector3 direction = ray.direction;
                 Vector3 origin = ray.origin;
-                ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
-                if(m_NetSyncController!=null)
-                    m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
+                //ShootWithRay(direction.x,direction.y,direction.z,origin.x,origin.y,origin.z);
+                ShootWithRay(direction, origin);
+                //BulletGenerator.GeneratorBullet(ray, bulletPrefab,50.0F,-2.0f);
+                if (m_NetSyncController != null)
+                {
+                    //m_NetSyncController.RPC(this, "ShootWithRay", direction.x, direction.y, direction.z, origin.x, origin.y, origin.z);
+                    m_NetSyncController.RPC(this, "ShootWithRay", direction, origin);
+                }
                 // 是否开启镜头抖动
                 if (jitterOn)
                 {
                     // 镜头随机的抖动！！
-                    float rotationX = camera.transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
-                    float rotationY = camera.transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
-                    float rotationZ = camera.transform.localEulerAngles.z;
-                    camera.transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
+                    float rotationX = Util.GetCamera().transform.localEulerAngles.x + Random.Range(-jitterFactorX, jitterFactorX / 4);
+                    float rotationY = Util.GetCamera().transform.localEulerAngles.y + Random.Range(-jitterFactorY, jitterFactorY);
+                    float rotationZ = Util.GetCamera().transform.localEulerAngles.z;
+                    Util.GetCamera().transform.localEulerAngles = new Vector3(rotationX, rotationY, rotationZ);
                 }
             }
         }
-        //public void ShootWithRay(Vector3 direction,Vector3 origin)
-        public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
+
+        //public void ShootWithRay(float d_x,float d_y,float d_z, float o_x,float o_y,float o_z)
+        public void ShootWithRay(Vector3 direction, Vector3 origin)
         {
-            Vector3 origin = new Vector3(o_x, o_y, o_z);
-            Vector3 direction = new Vector3(d_x, d_y, d_z);
+            //Vector3 origin = new Vector3(o_x, o_y, o_z);
+            //Vector3 direction = new Vector3(d_x, d_y, d_z);
 
             Ray ray = new Ray(origin, direction);
             RaycastHit hit;//射线交叉信息的包装
@@ -85,11 +90,10 @@ namespace OperationTrident.Room1
             {
                 //hit.point:射线击中的坐标
                 GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                OperationTrident.Room1.ReactiveTarget target = hitObject.GetComponent<ReactiveTarget>();
+                Common.ReactiveTarget target = hitObject.GetComponent<Common.ReactiveTarget>();
                 if (target != null)   //检查对象上是否有ReactiveTarget组件
                 {
-                    target.ReactToHit();
-                    //Messenger.Broadcast(GameEvent.ENEMY_HIT);
+                     target.OnHit(gameObject.name,false,1);
                 }
                 else
                 {
@@ -100,8 +104,8 @@ namespace OperationTrident.Room1
         //onGUI在每帧被渲染之后执行
         private void OnGUI()
         {
-            float posX = camera.pixelWidth / 2;
-            float posY = camera.pixelHeight / 2; ;
+            float posX = Util.GetCamera().pixelWidth / 2;
+            float posY = Util.GetCamera().pixelHeight / 2; ;
 
             // 红色的准心
             GUIStyle style = GUIUtil.GetDefaultTextStyle(GUIUtil.redColor);

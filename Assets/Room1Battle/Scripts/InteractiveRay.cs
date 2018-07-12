@@ -11,10 +11,9 @@ namespace OperationTrident.Room1
     {
         // 判断能否够到物体的距离
         [SerializeField]
-        private float distanceQuota = 3.0f;
+        private float distanceQuota = 5.0f;
 
         // 附加在这个游戏对象上的摄像头
-        private new Camera camera;
 
         // 是否提示玩家按下某个键
         public bool toNotify = true;
@@ -27,7 +26,6 @@ namespace OperationTrident.Room1
         // Use this for initialization
         void Start()
         {
-            camera = Camera.main;
             hintToDisplay = string.Empty;
         }
 
@@ -37,15 +35,15 @@ namespace OperationTrident.Room1
             // 提示玩家按键
             if (toNotify)
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) <= distanceQuota)
                     {
                         HintableObject target = hitObject.GetComponent<HintableObject>();
                         if (target != null)
@@ -64,17 +62,19 @@ namespace OperationTrident.Room1
             // 处理玩家的物品交互按键
             if (Input.GetKeyDown(KeyCode.F))
             {
-                Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0);//屏幕中心
-                Ray ray = camera.ScreenPointToRay(point);//在摄像机所在位置创建射线
+                Vector3 point = new Vector3(Util.GetCamera().pixelWidth / 2, Util.GetCamera().pixelHeight / 2, 0);//屏幕中心
+                Ray ray = Util.GetCamera().ScreenPointToRay(point);//在摄像机所在位置创建射线
                 RaycastHit hit;//射线交叉信息的包装
                                //Raycast给引用的变量填充信息
                 if (Physics.Raycast(ray, out hit))   //out确保在函数内外是同一个变量
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
+                    Debug.Log("物体" + hitObject.name);
+                    //Debug.DrawLine(ray.origin, hitObject.transform.position, Color.red);
+                    Debug.Log("距离: "+Vector3.Distance(ray.origin, hitObject.transform.position));
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) > distanceQuota)
                     {
-                        Debug.Log(Vector3.Distance(this.transform.position, hitObject.transform.position));
                         return;
                     }
                     KeyScript target =
@@ -96,6 +96,11 @@ namespace OperationTrident.Room1
                         Messenger.Broadcast(GameEvent.CROPSE_TRY);
                         return; 
                     }
+                    if (hitObject.CompareTag("Elevator"))
+                    {
+                        Messenger.Broadcast(GameEvent.ELEVATOR_OPEN);
+                        return;
+                    }
                     //InteractiveThing target2 =
                     //    hitObject.GetComponent<InteractiveThing>();
                     //if (target2 != null)
@@ -109,14 +114,20 @@ namespace OperationTrident.Room1
 
         void OnGUI()
         {
-
-            // 显示物体可以获得的提示
-            if (toDisplayHint)
+            try
             {
-                if (usingGrammar)
-                    GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, camera, hintFontSize, 0.5f);
-                else
-                    GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, camera, hintFontSize, 0.5f);
+                // 显示物体可以获得的提示
+                if (toDisplayHint)
+                {
+                    if (usingGrammar)
+                        GUIUtil.DisplaySubtitleInGivenGrammar(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
+                    else
+                        GUIUtil.DisplaySubtitleInDefaultPosition(hintToDisplay, Util.GetCamera(), hintFontSize, 0.5f);
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.Log("物品交互提示相机错误");
             }
         }
     }

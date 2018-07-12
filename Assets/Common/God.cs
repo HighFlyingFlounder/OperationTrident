@@ -12,9 +12,11 @@ public class God : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown("p"))
         {
-            SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
+            GameMgr.instance.nextScene = nextScene;
+            SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+            //SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
         }
 	}
 }
