@@ -153,7 +153,7 @@ namespace room2Battle
                     source.priority = TimelineSource.priority + 1;
                 }
 
-                if (lastTimeInitAI >= 6.0f)
+                if (lastTimeInitAI >= 15.0f)
                 {
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
