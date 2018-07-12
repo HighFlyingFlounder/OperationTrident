@@ -6,6 +6,7 @@ using OperationTrident.Util;
 using OperationTrident.FPS.Common;
 using OperationTrident.Common.AI;
 using System;
+using OperationTrident.Common;
 
 namespace room2Battle
 {
@@ -104,6 +105,11 @@ namespace room2Battle
                 getCamera = (SceneNetManager.instance.list[GameMgr.instance.id]).GetComponent<GetCamera>();
             }
             (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(false);
+
+            foreach (var p in SceneNetManager.instance.list)
+            {
+                p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
+            }
             //director.Play();
         }
 
@@ -126,7 +132,11 @@ namespace room2Battle
                     //动画位置同步
                     AIController.instance.AddAIObject(trueBoss);
                     (SceneNetManager.instance.list[GameMgr.instance.id]).SetActive(true);
-                       
+                    foreach (var p in SceneNetManager.instance.list)
+                    {
+                        p.Value.GetComponent<ReactiveTarget>().CanBeHurt = true;
+                    }
+
                     AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
                     AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
