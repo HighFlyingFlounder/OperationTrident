@@ -12,6 +12,7 @@ public class LoginPanel : PanelBase
     private Button regBtn;
     private Button UpdateServerBtn;
     private Button SettingBtn;
+    private Text ipPortText;
 
     #region 生命周期
     //初始化
@@ -30,15 +31,16 @@ public class LoginPanel : PanelBase
         pwInput = skinTrans.Find("PWInput").GetComponent<InputField>();
         loginBtn = skinTrans.Find("LoginBtn").GetComponent<Button>();
         regBtn = skinTrans.Find("RegBtn").GetComponent<Button>();
-
+        ipPortText = skinTrans.Find ("ipPortText").GetComponent<Text> ();
         //IPInput = skinTrans.Find("IPInput").GetComponent<InputField>();
         //PORTInput = skinTrans.Find("PORTInput").GetComponent<InputField>();
         SettingBtn = skinTrans.Find("SettingBtn").GetComponent<Button>();
 
-
         loginBtn.onClick.AddListener(OnLoginClick);
         regBtn.onClick.AddListener(OnRegClick);
         SettingBtn.onClick.AddListener(OnSettingClick);
+
+        ipPortText.text = "IP:" + GameMgr.instance.host + "\n端口:" + GameMgr.instance.port;
     }
     #endregion
 
