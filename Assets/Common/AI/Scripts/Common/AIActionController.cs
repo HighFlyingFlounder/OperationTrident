@@ -14,22 +14,20 @@ namespace OperationTrident.Common.AI
         {
             if (m_Controller == null) Debug.LogError("m_Controller");
             if (func.Method.Name == null) Debug.LogError("func.Method.Name");
-            //m_Controller.RPC(this, func.Method.Name, args);
-            AIController.instance.AIRPC(gameObject.name, func.Method.Name, args);
+            if (AIController.instance != null)
+                AIController.instance.AIRPC(gameObject.name, func.Method.Name, args);
             func(args);
         }
 
         public void RPCDie()
         {
             m_Controller.RPC(this, "Die");
-            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
             Die();
         }
 
         public void RPC(Action func)
         {
             m_Controller.RPC(this, func.Method.Name);
-            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
             func();
         }
 

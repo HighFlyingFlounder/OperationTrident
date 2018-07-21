@@ -27,7 +27,6 @@ namespace OperationTrident.Common.AI
 
         public override void Shoot()
         {
-            // _shooter.Shoot(Utility.GetPlayerByName(shootingTargetName).position);
             _weapon.Shoot();
         }
         public override void StopShoot() 
@@ -35,13 +34,10 @@ namespace OperationTrident.Common.AI
             _weapon.StopShoot();
         }
 
-        // public override void LookAt(Vector3 interestPoint)
-        // {
-        //     transform.forward = Utility.GetDirectionOnXOZ(transform.position, interestPoint).normalized;
-        // }
         public override void LookAtWithTargetName(string targetName)
         {
-            _target = Utility.GetPlayerByName(targetName);
+            _target = Utility.GetShootedTargetByPlayerName(targetName);
+            Debug.Log(targetName);
         }
 
         public override void StopLookAt()
