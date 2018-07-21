@@ -20,7 +20,6 @@ namespace OperationTrident.Common.AI
         public override void Init()
         {
             _agent.ActionController.RPC(_agent.ActionController.FindTarget, true);
-            // _agent.ActionController.FindTarget(true);
             _duration = 8f;
         }
 
@@ -44,7 +43,6 @@ namespace OperationTrident.Common.AI
         public override void Exit()
         {
             _agent.ActionController.RPC(_agent.ActionController.FindTarget, false);
-            // _agent.ActionController.FindTarget(false);
         }
     }
 }

@@ -29,14 +29,13 @@ namespace OperationTrident.Common.AI
                 _precisionRadius = _agent.AttackPrecisionRadius;
             }
             _isShooting = false;
-            _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.name);
-            // _agent.ActionController.LookAtWithTargetName(_agent.Target.name);
+            _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.parent.name);
         }
 
         public override string Execute()
         {
             string satisfy = null;
-            if(_agent.Target == null)
+            if (_agent.Target == null)
             {
                 return Conditions.TARGET_DOWN;
             }
@@ -45,26 +44,23 @@ namespace OperationTrident.Common.AI
 
             Vector3 shootingPoint;
             // 先判断是否在射击范围内，若不在，先追击敌人，等敌人进入射击范围后，开始射击
-            if(!_agent.Camera.GetShootPoint(_precisionAngle, _precisionRadius, _agent.Target.position, out shootingPoint))
+            if (!_agent.Camera.GetShootPoint(_precisionAngle, _precisionRadius, _agent.Target.position, out shootingPoint))
             {
                 _agent.PathfindingAgent.SetDestination(_agent.Target.position);
                 _agent.PathfindingAgent.isStopped = false;
-                if(_isShooting){
-                _agent.ActionController.RPC(_agent.ActionController.StopShoot);
-                    // _agent.ActionController.StopShoot();
+                if (_isShooting)
+                {
+                    _agent.ActionController.RPC(_agent.ActionController.StopShoot);
                     _isShooting = false;
                 }
                 _agent.ActionController.RPC(_agent.ActionController.Move, true);
-                // _agent.ActionController.Move(true);
             }
-            else if(!_isShooting)
+            else if (!_agent.PathfindingAgent.isOnOffMeshLink && !_isShooting)
             {
                 _isShooting = true;
                 _agent.ActionController.RPC(_agent.ActionController.Shoot);
-                // _agent.ActionController.Shoot();
                 _agent.PathfindingAgent.isStopped = true;
                 _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			    // _agent.ActionController.Move(false);
             }
 
             // 敌人可能已死亡或躲到障碍后
@@ -81,16 +77,14 @@ namespace OperationTrident.Common.AI
         }
 
         public override void Exit()
-		{
-			_agent.PathfindingAgent.isStopped = true;
-            if(_isShooting){
-            _agent.ActionController.RPC(_agent.ActionController.StopShoot);
-                // _agent.ActionController.StopShoot();
+        {
+            _agent.PathfindingAgent.isStopped = true;
+            if (_isShooting)
+            {
+                _agent.ActionController.RPC(_agent.ActionController.StopShoot);
             }
             _agent.ActionController.RPC(_agent.ActionController.StopLookAt);
-            // _agent.ActionController.StopLookAt();
             _agent.ActionController.RPC(_agent.ActionController.Move, false);
-            // _agent.ActionController.Move(false);
         }
     }
 }

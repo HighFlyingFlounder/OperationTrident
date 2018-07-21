@@ -21,6 +21,7 @@ namespace OperationTrident.Common.AI
             return Resources.Load<AIStateRegister>("AIStateRegister");
         }
 
+        /// <summary>返回所有玩家的受击点的位置</summary>
         public static Transform[] GetPlayersPosition()
         {
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -32,7 +33,9 @@ namespace OperationTrident.Common.AI
             return result;
         }
 
-        public static Transform GetPlayerByName(string playerName)
+        /// <summary>获取特定玩家的受击点</summary>
+        /// <param name="playerName">玩家名字</param>
+        public static Transform GetShootedTargetByPlayerName(string playerName)
         {
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             
