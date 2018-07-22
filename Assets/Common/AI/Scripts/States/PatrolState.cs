@@ -28,23 +28,26 @@ namespace OperationTrident.Common.AI
             if (IsFirstInit)
             {
                 _patrolLocations = _agent.PatrolLocations;
-                if(_patrolLocations == null)
+                if (_patrolLocations == null)
                     Debug.Log("没有设置巡逻路径");
                 _nextPatrolLocationIndex = _agent.PatrolStartLocationIndex;
             }
             _agent.PathfindingAgent.SetDestination(_patrolLocations[_nextPatrolLocationIndex]);
             _agent.PathfindingAgent.isStopped = false;
             _agent.ActionController.RPC(_agent.ActionController.Move, true);
-			// _agent.ActionController.Move(true);
         }
 
         public override string Execute()
         {
-            Transform target = Utility.DetectAllPlayersWithCamera(_agent.Camera);
-            if(target != null)
+            // 当AI不在Link上时才检测玩家，不然会在半空中发现玩家改变状态
+            if (!_agent.PathfindingAgent.isOnOffMeshLink)
             {
-                _agent.Target = target;
-                return Conditions.SIGHT_PLAYER;
+                Transform target = Utility.DetectAllPlayersWithCamera(_agent.Camera);
+                if (target != null)
+                {
+                    _agent.Target = target;
+                    return Conditions.SIGHT_PLAYER;
+                }
             }
 
             if (!_agent.PathfindingAgent.pathPending)
@@ -63,10 +66,9 @@ namespace OperationTrident.Common.AI
         }
 
         public override void Exit()
-		{
+        {
             _agent.PathfindingAgent.isStopped = true;
             _agent.ActionController.RPC(_agent.ActionController.Move, false);
-			// _agent.ActionController.Move(false);
         }
     }
 }

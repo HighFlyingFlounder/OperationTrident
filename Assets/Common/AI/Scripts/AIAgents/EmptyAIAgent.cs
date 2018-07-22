@@ -9,11 +9,11 @@ namespace OperationTrident.Common.AI
     public class EmptyAIAgent : AIAgent
     {
         [SerializeField]
-        TurretAIAgentInitParams _initParams;
+        EmptyAIAgentInitParams _initParams;
         
         public override void SetInitParams(AIAgentInitParams initParams)
         {
-            _initParams = (TurretAIAgentInitParams)initParams;
+            _initParams = (EmptyAIAgentInitParams)initParams;
         }
     }
 

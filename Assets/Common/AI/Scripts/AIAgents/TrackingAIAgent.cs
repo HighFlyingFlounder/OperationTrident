@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,40 +6,16 @@ using UnityEngine.AI;
 namespace OperationTrident.Common.AI
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class WanderAIAgent : AIAgent
+    public class TrackingAIAgent : AIAgent
     {
         [SerializeField]
-        WanderAIAgentInitParams _initParams;
+        TrackingAIAgentInitParams _initParams;
 
-        public override Vector3[] PatrolLocations
-        {
-            get
-            {
-                if (_initParams.patrolLocations == null)
-                    return null;
-
-                Transform prelocationTrans = GameObject.Find(_initParams.patrolLocations).transform;
-                Vector3[] result = new Vector3[prelocationTrans.childCount];
-                for (int i = 0; i < prelocationTrans.childCount; i++)
-                {
-                    result[i] = prelocationTrans.GetChild(i).position;
-                }
-                return result;
-            }
-        }
         public override NavMeshAgent PathfindingAgent
         {
             get
             {
                 return transform.GetComponent<NavMeshAgent>();
-            }
-        }
-
-        public override int PatrolStartLocationIndex
-        {
-            get
-            {
-                return _initParams.patrolStartLocationIndex;
             }
         }
 
@@ -110,11 +85,6 @@ namespace OperationTrident.Common.AI
             }
         }
 
-        public void SetPatrolLocations(string locationsRoot)
-        {
-            _initParams.patrolLocations = locationsRoot;
-        }
-
         private void Awake()
         {
             Camera.InitCamera(CameraHorizontalFOV, CameraVerticalFOV, CameraSightDistance);
@@ -132,19 +102,14 @@ namespace OperationTrident.Common.AI
 
         public override void SetInitParams(AIAgentInitParams initParams)
         {
-            _initParams = (WanderAIAgentInitParams)initParams;
+            _initParams = (TrackingAIAgentInitParams)initParams;
         }
+
     }
 
-    [System.Serializable]
-    public class WanderAIAgentInitParams : AIAgentInitParams
+	[System.Serializable]
+    public class TrackingAIAgentInitParams : AIAgentInitParams
     {
-        [Tooltip("设置巡逻路径，传入一个根节点")]
-        public string patrolLocations = null;
-
-        [Tooltip("设置巡逻路径起始点")]
-        public int patrolStartLocationIndex = 0;
-
         [Tooltip("设置水平FOV角度")]
         [Range(0, 180)]
         public float horizontalFOV = 120f;
