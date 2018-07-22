@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class StartPanel : PanelBase
 {
@@ -38,6 +39,10 @@ public class StartPanel : PanelBase
     public void OnSingleBtnClick()
     {
         //单人游戏
+        //AsyncLoadScene.SingleMode = true;
+        //SceneManager.LoadScene("Loading",LoadSceneMode.Single);
+        //Close();
+        PanelMgr.instance.OpenPanel<TipPanel>("", "单人模式还未完成！");
     }
 
     public void OnMultiplayerBtnClick()
