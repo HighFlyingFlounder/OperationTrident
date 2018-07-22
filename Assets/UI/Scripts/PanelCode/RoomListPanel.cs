@@ -27,21 +27,19 @@ public class RoomListPanel : PanelBase
         base.OnShowing();
         //获取Transform
         Transform skinTrans = skin.transform;
-        Transform listTrans = skinTrans.Find("ListImage");
-        Transform winTrans = skinTrans.Find("WinImage");
         //获取成绩栏部件
-        idText = winTrans.Find("IDText").GetComponent<Text>();
-        winText = winTrans.Find("WinText").GetComponent<Text>();
-        lostText = winTrans.Find("LostText").GetComponent<Text>();
+        idText = skinTrans.Find("IDText").GetComponent<Text>();
+        winText = skinTrans.Find("WinText").GetComponent<Text>();
+        lostText = skinTrans.Find("LostText").GetComponent<Text>();
         //获取列表栏部件
-        Transform scroolRect = listTrans.Find("ScrollRect");
+        Transform scroolRect = skinTrans.Find("ScrollRect");
         content = scroolRect.Find("Content");
         roomPrefab = content.Find("RoomPrefab").gameObject;
         roomPrefab.SetActive(false);
 
-        closeBtn = listTrans.Find("CloseBtn").GetComponent<Button>();
-        newBtn = listTrans.Find("NewBtn").GetComponent<Button>();
-        reflashBtn = listTrans.Find("ReflashBtn").GetComponent<Button>();
+        closeBtn = skinTrans.Find("CloseBtn").GetComponent<Button>();
+        newBtn = skinTrans.Find("NewBtn").GetComponent<Button>();
+        reflashBtn = skinTrans.Find("RefreshBtn").GetComponent<Button>();
         //按钮事件
         reflashBtn.onClick.AddListener(OnReflashClick);
         newBtn.onClick.AddListener(OnNewClick);
@@ -127,16 +125,16 @@ public class RoomListPanel : PanelBase
         Text nameText = trans.Find("nameText").GetComponent<Text>();
         Text countText = trans.Find("CountText").GetComponent<Text>();
         Text statusText = trans.Find("StatusText").GetComponent<Text>();
-        nameText.text = "序号：" + (i + 1).ToString();
+        nameText.text = "房间号：" + (i + 1).ToString();
         countText.text = "人数：" + num.ToString();
         if (status == 1)
         {
-            statusText.color = Color.black;
+            //statusText.color = Color.black;
             statusText.text = "状态：准备中";
         }
         else
         {
-            statusText.color = Color.red;
+            //statusText.color = Color.red;
             statusText.text = "状态：开战中";
         }
         //按钮事件
@@ -180,7 +178,6 @@ public class RoomListPanel : PanelBase
         //处理
         if (ret == 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "成功进入房间!");
             PanelMgr.instance.OpenPanel<RoomPanel>("");
             Close();
         }
@@ -193,6 +190,10 @@ public class RoomListPanel : PanelBase
     //新建按钮
     public void OnNewClick()
     {
+        ////test
+        //PanelMgr.instance.OpenPanel<RoomPanel>("");
+        //GameMgr.instance.isMasterClient = true;
+        //Close();
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("CreateRoom");
         NetMgr.srvConn.Send(protocol, OnNewBack);
@@ -209,7 +210,6 @@ public class RoomListPanel : PanelBase
         //处理
         if (ret == 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "创建成功!");
             PanelMgr.instance.OpenPanel<RoomPanel>("");
             GameMgr.instance.isMasterClient = true;
             Close();
