@@ -11,6 +11,7 @@ public class RoomPanel : PanelBase
     private Button closeBtn;
     private Button startBtn;
     private Text roomIDText;
+    private Text welcomeText;
 
     #region 生命周期
     /// <summary> 初始化 </summary>
@@ -35,6 +36,7 @@ public class RoomPanel : PanelBase
         closeBtn = skinTrans.Find("CloseBtn").GetComponent<Button>();
         startBtn = skinTrans.Find("StartBtn").GetComponent<Button>();
         roomIDText = skinTrans.Find("RoomIDText").GetComponent<Text>();
+        welcomeText = skinTrans.Find("welcomeText").GetComponent<Text>();
         //按钮事件
         closeBtn.onClick.AddListener(OnCloseClick);
         startBtn.onClick.AddListener(OnStartClick);
@@ -76,7 +78,9 @@ public class RoomPanel : PanelBase
             int isOwner = proto.GetInt(start, ref start);
             int room_id = proto.GetInt(start, ref start);
             //房间号码
-            roomIDText.text = room_id.ToString();
+            roomIDText.text = "Room " + (1+room_id).ToString();
+            //欢迎提示
+            welcomeText.text = "您好， " + id + "\n 请召集您的战友.";
             //房间信息
             Transform trans = prefabs[i];
             Text text = trans.Find("Text").GetComponent<Text>();
