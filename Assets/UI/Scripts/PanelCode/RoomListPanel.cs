@@ -143,8 +143,7 @@ public class RoomListPanel : PanelBase
         btn.onClick.AddListener(delegate()
         {
             OnJoinBtnClick(btn.name);
-        }
-        );
+        });
     }
 
 
@@ -233,6 +232,7 @@ public class RoomListPanel : PanelBase
     {
         PanelMgr.instance.OpenPanel<TipPanel>("", "登出成功！");
         PanelMgr.instance.OpenPanel<LoginPanel>("", "");
+        Close();
         NetMgr.srvConn.Close();
     }
 }
