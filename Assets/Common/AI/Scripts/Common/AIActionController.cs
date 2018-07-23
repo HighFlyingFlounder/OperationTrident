@@ -19,12 +19,6 @@ namespace OperationTrident.Common.AI
             func(args);
         }
 
-        public void RPCDie()
-        {
-            m_Controller.RPC(this, "Die");
-            Die();
-        }
-
         public void RPC(Action func)
         {
             m_Controller.RPC(this, func.Method.Name);
@@ -35,8 +29,6 @@ namespace OperationTrident.Common.AI
 
         public virtual void FindTarget(bool isStart) { }
 
-        public virtual void DetectedTarget(bool isStart) { }
-
         public virtual void Shoot() { }
         public virtual void ShootWithVector3(Vector3 shootingPoint) { }
         public virtual void ShootWithTargetName(string shootingTargetName) { }
@@ -46,9 +38,15 @@ namespace OperationTrident.Common.AI
         public virtual void LookAtWithTargetName(string targetName) { }
         public virtual void StopLookAt() { }
 
-        public void Die() {
+        public void StopAllAction()
+        {
             StopShoot();
             StopLookAt();
+        }
+
+        public void Die()
+        {
+            StopAllAction();
             StartCoroutine(Destroy());
         }
 
