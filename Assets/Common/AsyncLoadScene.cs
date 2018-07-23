@@ -20,6 +20,8 @@ public class AsyncLoadScene : MonoBehaviour
 
     public static bool ToNextScene = false;
 
+    public static bool SingleMode = false;
+
     // Use this for initialization
     void Start()
     {
@@ -72,7 +74,7 @@ public class AsyncLoadScene : MonoBehaviour
                 SendFinishLoading();
                 finished_loading = true;
             }
-            if (ToNextScene)
+            if (ToNextScene || SingleMode)
             {
                 operation.allowSceneActivation = true;
                 ToNextScene = false;
