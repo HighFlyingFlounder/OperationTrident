@@ -80,7 +80,7 @@ public class RoomPanel : PanelBase
             //房间号码
             roomIDText.text = "Room " + (1+room_id).ToString();
             //欢迎提示
-            welcomeText.text = "您好， " + id + "\n 请召集您的战友.";
+            welcomeText.text = "您好， " + GameMgr.instance.id + "\n 请召集您的战友.";
             //房间信息
             Transform trans = prefabs[i];
             Text text = trans.Find("Text").GetComponent<Text>();

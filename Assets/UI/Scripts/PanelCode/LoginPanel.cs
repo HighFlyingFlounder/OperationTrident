@@ -94,7 +94,6 @@ public class LoginPanel : PanelBase
         int ret = proto.GetInt(start, ref start);
         if (ret == 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "登录成功!");
             PanelMgr.login_in = true;
             //开始游戏
             PanelMgr.instance.OpenPanel<RoomListPanel>("");

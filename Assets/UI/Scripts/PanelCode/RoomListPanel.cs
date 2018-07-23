@@ -32,14 +32,15 @@ public class RoomListPanel : PanelBase
         winText = skinTrans.Find("WinText").GetComponent<Text>();
         lostText = skinTrans.Find("LostText").GetComponent<Text>();
         //获取列表栏部件
-        Transform scroolRect = skinTrans.Find("ScrollRect");
+        Transform RoomPart = skinTrans.Find("RoomPart");
+        Transform scroolRect = RoomPart.Find("ScrollRect");
         content = scroolRect.Find("Content");
         roomPrefab = content.Find("RoomPrefab").gameObject;
         roomPrefab.SetActive(false);
 
         closeBtn = skinTrans.Find("CloseBtn").GetComponent<Button>();
-        newBtn = skinTrans.Find("NewBtn").GetComponent<Button>();
-        reflashBtn = skinTrans.Find("RefreshBtn").GetComponent<Button>();
+        newBtn = RoomPart.Find("NewBtn").GetComponent<Button>();
+        reflashBtn = RoomPart.Find("RefreshBtn").GetComponent<Button>();
         //按钮事件
         reflashBtn.onClick.AddListener(OnReflashClick);
         newBtn.onClick.AddListener(OnNewClick);
