@@ -140,18 +140,18 @@ namespace OperationTrident.FPS.Weapons {
 
         private void StartShooting() {
             //如果是连续开枪或者静止，那么后面的跳过
-            if (m_IsFiring || !m_IsWalking) {
+            if (m_IsFiring) {
                 //重置计时器
                 m_FireTimer = 0f;
                 return;
             }
 
+            m_IsFiring = true;
+
             //恢复枪的位置为初始位置
             this.transform.localPosition = m_OriginalPosition;
             this.transform.localRotation = m_OriginalRotation;
             m_Bobbing.Init(this.transform);
-
-            m_IsFiring = true;
         }
 
         private void UpdateMirrorState(bool mirrorState) {
@@ -176,6 +176,11 @@ namespace OperationTrident.FPS.Weapons {
 
                 yield return null;
             }
+
+            //确保能到达终点
+            this.transform.localPosition = RunningPosition.localPosition;
+            this.transform.localRotation = RunningPosition.localRotation;
+            m_Bobbing.Init(this.transform);
         }
 
         private void UpdateReloadState(bool reloading) {
