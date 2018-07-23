@@ -21,8 +21,10 @@ namespace OperationTrident.Common.AI
         public override string Execute()
         {
             Transform[] players = Utility.GetPlayersPosition();
-            if (players.Length != 0)
-                _agent.Target = players[Random.Range(0, players.Length)];
+            if (players.Length == 0)
+                return null;
+            
+            _agent.Target = players[Random.Range(0, players.Length)];
             return Conditions.FINISH_TRACK;
         }
 
