@@ -14,7 +14,7 @@ public class Root : MonoBehaviour
     {
         Application.runInBackground = true;
         if(PanelMgr.instance)//旧版本的UI系统
-            PanelMgr.instance.OpenPanel<StartPanel>("");
+            PanelMgr.instance.OpenPanel<LoginPanel>("");
         SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
 
         //监听
