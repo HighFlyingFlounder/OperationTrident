@@ -14,7 +14,7 @@ namespace OperationTrident.Common.AI
         protected AIFSM FSM = new AIFSM();
         Transform _target;
         Vector3 _targetPosition;
-        bool _isDestory = false;
+        bool _isParalyzed = false;
         public float fsmUpdateTime = 0.5f;
         float _time = 0;
 
@@ -86,14 +86,29 @@ namespace OperationTrident.Common.AI
         // Update is called once per frame
         protected void Update()
         {
-            if (!ReactiveTarget.IsAlive && !_isDestory)
+            // AI已经死亡
+            if (!ReactiveTarget.IsAlive)
             {
-                _isDestory = true;
                 return;
             }
 
-            if (ReactiveTarget.IsParalyzed || !ReactiveTarget.IsAlive)
+            // AI第一次进入麻痹状态，暂停AI动作
+            if (ReactiveTarget.IsParalyzed && !_isParalyzed)
+            {
+                ActionController.RPC(ActionController.StopAllAction);
+                _isParalyzed = true;
                 return;
+            }
+            // 还处于麻痹状态中
+            else if (ReactiveTarget.IsParalyzed)
+            {
+                return;
+            }
+            // 解除麻痹状态
+            else if (!ReactiveTarget.IsParalyzed)
+            {
+                _isParalyzed = false;
+            }
 
             _time += Time.deltaTime;
             if (_time > fsmUpdateTime)

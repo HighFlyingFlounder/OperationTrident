@@ -8,10 +8,7 @@ namespace OperationTrident.Elevator {
     public class SceneController : MonoBehaviour, NetSyncInterface
     {
         [SerializeField]
-        WanderAIAgentInitParams[] wanderAIAgentInitParams;
-
-        [SerializeField]
-        TurretAIAgentInitParams[] turretAIAgentInitParams;
+        TrackingAIAgentInitParams[] trackingAIAgentInitParams;
 
         [SerializeField]
         //持续时间
@@ -154,6 +151,8 @@ namespace OperationTrident.Elevator {
 
                     //开门
                     GameObject.Find("DoorTrigger").SendMessage("openDoor", SendMessageOptions.DontRequireReceiver);
+                    if(GameObject.Find("f") != null)
+                        GameObject.Find("f").SetActive(false);
 
                     if (OperationTrident.Elevator.Wall.state)
                     {
@@ -262,10 +261,10 @@ namespace OperationTrident.Elevator {
             while (true)
             {
                 //生成物体
-                AIController.instance.CreateAI(1, 0, "AIborn0", wanderAIAgentInitParams[0]);
-                AIController.instance.CreateAI(1, 0, "AIborn2", wanderAIAgentInitParams[1]);
-                AIController.instance.CreateAI(1, 0, "AIborn4", wanderAIAgentInitParams[2]);
-                AIController.instance.CreateAI(1, 0, "AIborn6", wanderAIAgentInitParams[3]);
+                AIController.instance.CreateAI(1, 0, "AIborn0", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn2", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn4", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn6", trackingAIAgentInitParams[0]);
                 yield return new WaitForSeconds(waitTime);
             }
         }
@@ -275,10 +274,10 @@ namespace OperationTrident.Elevator {
             while (true)
             {
                 //生成物体
-                AIController.instance.CreateAI(1, 0, "AIborn1", wanderAIAgentInitParams[0]);
-                AIController.instance.CreateAI(1, 0, "AIborn3", wanderAIAgentInitParams[1]);
-                AIController.instance.CreateAI(1, 0, "AIborn5", wanderAIAgentInitParams[2]);
-                AIController.instance.CreateAI(1, 0, "AIborn7", wanderAIAgentInitParams[3]);
+                AIController.instance.CreateAI(1, 0, "AIborn1", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn3", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn5", trackingAIAgentInitParams[0]);
+                AIController.instance.CreateAI(1, 0, "AIborn7", trackingAIAgentInitParams[0]);
                 yield return new WaitForSeconds(waitTime);
             }
         }

@@ -85,6 +85,8 @@ namespace OperationTrident.Room1
 
         [SerializeField]
         WanderAIAgentInitParams[] _wanderAIAgentInitParams;
+        [SerializeField]
+        TrackingAIAgentInitParams[] _trackingAIAgentInitParams;
 
         [SerializeField]
         TurretAIAgentInitParams[] _turretAIAgentInitParams;
@@ -299,18 +301,18 @@ namespace OperationTrident.Room1
                         state = Room1State.EscapingRoom;
                         escapeGameObject.SetActive(true);
                         escapePosition = escapeGameObject.transform.position;
-                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[0]);
-                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[1]);
-                        AIController.instance.CreateAI(2, 0, "AIborn1", _wanderAIAgentInitParams[2]);
-                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[3]);
-                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[4]);
-                        AIController.instance.CreateAI(2, 0, "AIborn2", _wanderAIAgentInitParams[5]);
-                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[6]);
-                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[7]);
-                        AIController.instance.CreateAI(2, 0, "AIborn3", _wanderAIAgentInitParams[8]);
-                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[9]);
-                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[10]);
-                        AIController.instance.CreateAI(2, 0, "AIborn4", _wanderAIAgentInitParams[11]);
+                        AIController.instance.CreateAI(2, 3, "AIborn1", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn1", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn1", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn2", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn2", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn2", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn3", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn3", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn3", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn4", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn4", _trackingAIAgentInitParams[0]);
+                        AIController.instance.CreateAI(2, 3, "AIborn4", _trackingAIAgentInitParams[0]);
                     }
                     break;
             }

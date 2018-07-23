@@ -62,7 +62,7 @@ namespace room2Battle
         protected AudioClip[] clips;
         //AI参数
         [SerializeField]
-        protected WanderAIAgentInitParams wanderAIAgentParams;
+        protected WanderAIAgentInitParams[] wanderAIAgentParams;
 
         [SerializeField]
         protected TurretAIAgentInitParams turretAIAgentParams;
@@ -138,10 +138,15 @@ namespace room2Battle
                         p.Value.SetActive(true);
                     }
 
-                    AIController.instance.CreateAI(3, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[4]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[5]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[6]);
                     AIController.instance.CreateAI(3, 2, "EnemyInitPos5", turretAIAgentParams);
                     AIController.instance.CreateAI(3, 1, "EnemyInitPos6", turretAIAgentParams);
-                    AIController.instance.CreateAI(4, 0, "EnemyInitPos7", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos7", wanderAIAgentParams[0]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos7", wanderAIAgentParams[1]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos7", wanderAIAgentParams[2]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos7", wanderAIAgentParams[3]);
                     AIController.instance.CreateAI(2, 2, "EnemyInitPos7", turretAIAgentParams);
                 }
             }
@@ -157,8 +162,8 @@ namespace room2Battle
 
                 if (lastTimeInitAI >= 10.0f)
                 {
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams);
-                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos5", wanderAIAgentParams[3]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[4]);
                     lastTimeInitAI = 0.0f;
                 }
                 else
