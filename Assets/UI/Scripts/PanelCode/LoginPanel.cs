@@ -11,6 +11,9 @@ public class LoginPanel : PanelBase
     private Button loginBtn;
     private Button regBtn;
     private Button UpdateServerBtn;
+    private Button SettingBtn;
+    private Button ReturnBtn;
+    private Text ipPortText;
 
     #region 生命周期
     //初始化
@@ -27,19 +30,26 @@ public class LoginPanel : PanelBase
         Transform skinTrans = skin.transform;
         idInput = skinTrans.Find("IDInput").GetComponent<InputField>();
         pwInput = skinTrans.Find("PWInput").GetComponent<InputField>();
-        IPInput = skinTrans.Find("IPInput").GetComponent<InputField>();
-        PORTInput = skinTrans.Find("PORTInput").GetComponent<InputField>();
         loginBtn = skinTrans.Find("LoginBtn").GetComponent<Button>();
         regBtn = skinTrans.Find("RegBtn").GetComponent<Button>();
-        UpdateServerBtn = skinTrans.Find("UpdateServerBtn").GetComponent<Button>();
+        ipPortText = skinTrans.Find ("ipPortText").GetComponent<Text> ();
+        SettingBtn = skinTrans.Find("SettingBtn").GetComponent<Button>();
+        ReturnBtn = skinTrans.Find("ReturnBtn").GetComponent<Button>();
 
         loginBtn.onClick.AddListener(OnLoginClick);
         regBtn.onClick.AddListener(OnRegClick);
-        UpdateServerBtn.onClick.AddListener(OnUpdateServerClick);
+        SettingBtn.onClick.AddListener(OnSettingClick);
+        ReturnBtn.onClick.AddListener(OnReturnBtnClick);
+
+        ipPortText.text = "IP:" + GameMgr.instance.host + "\n端口:" + GameMgr.instance.port;
     }
     #endregion
 
-
+    public void OnReturnBtnClick()
+    {
+        PanelMgr.instance.OpenPanel<StartPanel>("");
+        Close();
+    }
 
     public void OnRegClick()
     {
@@ -55,6 +65,11 @@ public class LoginPanel : PanelBase
             PanelMgr.instance.OpenPanel<TipPanel>("", "用户名密码不能为空!");
             return;
         }
+        //PanelMgr.login_in = true;
+        ////开始游戏
+        //PanelMgr.instance.OpenPanel<RoomListPanel>("");
+        //GameMgr.instance.id = idInput.text;
+        //Close();
         //连接服务器
         if (NetMgr.srvConn.status != Connection.Status.Connected)
         {
@@ -69,7 +84,6 @@ public class LoginPanel : PanelBase
         protocol.AddString(pwInput.text);
         Debug.Log("发送 " + protocol.GetDesc());
         NetMgr.srvConn.Send(protocol, OnLoginBack);
-
     }
 
     public void OnLoginBack(ProtocolBase protocol)
@@ -93,10 +107,9 @@ public class LoginPanel : PanelBase
         }
     }
 
-    public void OnUpdateServerClick()
+    public void OnSettingClick()
     {
-        PanelMgr.instance.OpenPanel<TipPanel>("", "修改成功!");
-        GameMgr.instance.host = IPInput.text;
-        GameMgr.instance.port = int.Parse(PORTInput.text);
+        PanelMgr.instance.ClosePanel("LoginPanel");
+        PanelMgr.instance.OpenPanel<SettingPanel>("");
     }
 }
