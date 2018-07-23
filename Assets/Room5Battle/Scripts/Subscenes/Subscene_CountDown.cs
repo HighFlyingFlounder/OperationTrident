@@ -14,8 +14,6 @@ namespace OperationTrident.Room5
         public WanderAIAgentInitParams[] wanderAIAgentInitParams;
         public TurretAIAgentInitParams[] turretAIAgentInitParams;
 
-        public TurretActionController[] turretActionController;
-
         //敌人的prefab
        // public GameObject m_EnemyPrefab1;
 
@@ -84,10 +82,10 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1(float t)
         {
             yield return new WaitForSeconds(t);
-            AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[0]);
+            AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[Random.Range(0,9)]);
             for (int i = 0; i < 4; ++i)
             {
-                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[0]);
+                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[Random.Range(0,9)]);
             }
             //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }

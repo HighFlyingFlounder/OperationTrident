@@ -139,8 +139,12 @@ namespace room2Battle
 
                 //@TODO: 替换成老Y的AI
                 Debug.Log("7 enemy");
-                AIController.instance.CreateAI(4, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
-                AIController.instance.CreateAI(3, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentInitParams[3]);
+                AIController.instance.CreateAI(2, 0, "EnemyInitPos4", wanderAIAgentInitParams[4]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentInitParams[5]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentInitParams[3]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentInitParams[4]);
+                AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentInitParams[5]);
             }
             distance = Vector3.Distance(switchPos.position, playerCamera.GetComponent<Transform>().position);
         }
@@ -208,9 +212,12 @@ namespace room2Battle
                 if (!initEnemyAgain)
                 {
                     Debug.Log("7 enemy");
-                    AIController.instance.CreateAI(2, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
-                    AIController.instance.CreateAI(2, 0, "EnemyInitPos4", wanderAIAgentInitParams[1]);
-                    AIController.instance.CreateAI(2, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos3", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentInitParams[0]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentInitParams[2]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[1]);
+                    AIController.instance.CreateAI(1, 0, "EnemyInitPos1", wanderAIAgentInitParams[2]);
 
                     initEnemyAgain = true;
                 }
