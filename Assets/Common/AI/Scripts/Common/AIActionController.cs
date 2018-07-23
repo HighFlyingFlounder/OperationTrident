@@ -14,30 +14,20 @@ namespace OperationTrident.Common.AI
         {
             if (m_Controller == null) Debug.LogError("m_Controller");
             if (func.Method.Name == null) Debug.LogError("func.Method.Name");
-            //m_Controller.RPC(this, func.Method.Name, args);
-            AIController.instance.AIRPC(gameObject.name, func.Method.Name, args);
+            if (AIController.instance != null)
+                AIController.instance.AIRPC(gameObject.name, func.Method.Name, args);
             func(args);
-        }
-
-        public void RPCDie()
-        {
-            m_Controller.RPC(this, "Die");
-            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
-            Die();
         }
 
         public void RPC(Action func)
         {
             m_Controller.RPC(this, func.Method.Name);
-            //AIController.instance.AIRPC(gameObject.name, func.Method.Name);
             func();
         }
 
         public virtual void Move(bool isStart) { }
 
         public virtual void FindTarget(bool isStart) { }
-
-        public virtual void DetectedTarget(bool isStart) { }
 
         public virtual void Shoot() { }
         public virtual void ShootWithVector3(Vector3 shootingPoint) { }
@@ -48,9 +38,15 @@ namespace OperationTrident.Common.AI
         public virtual void LookAtWithTargetName(string targetName) { }
         public virtual void StopLookAt() { }
 
-        public void Die() {
+        public void StopAllAction()
+        {
             StopShoot();
             StopLookAt();
+        }
+
+        public void Die()
+        {
+            StopAllAction();
             StartCoroutine(Destroy());
         }
 

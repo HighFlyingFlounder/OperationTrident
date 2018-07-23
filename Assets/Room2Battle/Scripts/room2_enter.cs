@@ -278,7 +278,9 @@ namespace room2Battle
                         source.Play();
                         playOnce = true;
                         //产生AI
-                        AIController.instance.CreateAI(4, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        AIController.instance.CreateAI(1, 0, "EnemyInitPos2", wanderAIAgentInitParams[1]);
+                        AIController.instance.CreateAI(1, 0, "EnemyInitPos2", wanderAIAgentInitParams[2]);
+                        AIController.instance.CreateAI(1, 0, "EnemyInitPos2", wanderAIAgentInitParams[3]);
                     }
                 }
             }

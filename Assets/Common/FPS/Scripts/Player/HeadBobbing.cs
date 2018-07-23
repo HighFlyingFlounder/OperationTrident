@@ -36,7 +36,9 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void StopWalking() {
-            StopCoroutine(m_Coroutine);
+            if(m_Coroutine != null) {
+                StopCoroutine(m_Coroutine);
+            }
 
             transform.localPosition = m_OriginalPosition;
         }

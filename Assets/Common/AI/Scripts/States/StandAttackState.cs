@@ -18,8 +18,6 @@ namespace OperationTrident.Common.AI
         {
             _agent.ActionController.RPC(_agent.ActionController.LookAtWithTargetName, _agent.Target.parent.name);
             _agent.ActionController.RPC(_agent.ActionController.Shoot);
-            // _agent.ActionController.LookAt(_agent.Target.name);
-            // _agent.ActionController.Shoot();
         }
 
         public override string Execute()
@@ -32,8 +30,6 @@ namespace OperationTrident.Common.AI
 
         public override void Exit()
         {
-            // _agent.ActionController.RPC(_agent.ActionController.StopShoot);
-            // _agent.ActionController.RPC(_agent.ActionController.StopLookAt);
             _agent.ActionController.StopShoot();
             _agent.ActionController.StopLookAt();
         }
