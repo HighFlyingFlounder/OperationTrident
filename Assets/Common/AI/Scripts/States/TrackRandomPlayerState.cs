@@ -7,7 +7,7 @@ namespace OperationTrident.Common.AI
     [DisallowMultipleComponent]
     public class TrackRandomPlayerState : AIState
     {
-		public static readonly string STATE_NAME = "Track Random Player";
+        public static readonly string STATE_NAME = "Track Random Player";
 
         public class Conditions
         {
@@ -20,10 +20,10 @@ namespace OperationTrident.Common.AI
 
         public override string Execute()
         {
-			Transform[] players = Utility.GetPlayersPosition();
-            _agent.Target = players[Random.Range(0, players.Length)];
-			Debug.Log(_agent.Target.parent);
-			return Conditions.FINISH_TRACK;
+            Transform[] players = Utility.GetPlayersPosition();
+            if (players.Length != 0)
+                _agent.Target = players[Random.Range(0, players.Length)];
+            return Conditions.FINISH_TRACK;
         }
 
         public override void Exit()
