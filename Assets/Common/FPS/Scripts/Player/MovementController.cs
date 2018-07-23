@@ -70,6 +70,10 @@ namespace OperationTrident.FPS.Player {
 
         // 初始化数据成员
         private void Start() {
+            if(m_JumpMoveSpeed == 0f) {
+                m_JumpMoveSpeed = m_WalkSpeed;
+            }
+
             m_DisableMovemonet = false;
 
             m_StepCycle = 0f;
@@ -201,6 +205,7 @@ namespace OperationTrident.FPS.Player {
         }
 
         private void GetInput() {
+            Debug.Log(Input.GetButtonDown("Jump"));
             // 在跳跃的过程中不能重复跳跃
             if (!m_Jump) {
                 m_Jump = Input.GetButtonDown("Jump");
