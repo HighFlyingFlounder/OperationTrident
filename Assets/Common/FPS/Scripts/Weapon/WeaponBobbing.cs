@@ -177,10 +177,12 @@ namespace OperationTrident.FPS.Weapons {
                 yield return null;
             }
 
-            //确保能到达终点
-            this.transform.localPosition = RunningPosition.localPosition;
-            this.transform.localRotation = RunningPosition.localRotation;
-            m_Bobbing.Init(this.transform);
+            if(!m_IsFiring && m_IsRunning) {
+                //确保能到达终点
+                this.transform.localPosition = RunningPosition.localPosition;
+                this.transform.localRotation = RunningPosition.localRotation;
+                m_Bobbing.Init(this.transform);
+            }
         }
 
         private void UpdateReloadState(bool reloading) {
