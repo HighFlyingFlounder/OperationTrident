@@ -12,13 +12,10 @@ namespace OperationTrident.FPS.Player {
         [SerializeField] private float m_WalkSpeed;
         [Tooltip("跑步的速度")]
         [SerializeField] private float m_RunSpeed;
-        [Tooltip("跳跃时移动的速度")]
-        [SerializeField] private float m_JumpMoveSpeed;
-
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
-        [Tooltip("跳跃时上升的速度")]
+        //跳跃的速度
         [SerializeField] private float m_JumpSpeed;
-        [Tooltip("走路的间隔")]
+        //走路的间隔
         [SerializeField] private float m_StepInterval;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
@@ -43,8 +40,6 @@ namespace OperationTrident.FPS.Player {
         private bool m_Jump;
         //判断当前是否处于跳跃状态
         private bool m_Jumping;
-
-        private bool m_IsWalking;
         //获取用户输入
         private Vector2 m_Input;
         //保存用户上一帧的输入
@@ -76,7 +71,6 @@ namespace OperationTrident.FPS.Player {
             m_NextStep = m_StepCycle / 2f;
             m_Jumping = false;
             m_IsCrouching = false;
-            m_IsWalking = false;
 
             m_Input = Vector2.zero;
             m_PreInput = Vector2.zero;
@@ -92,23 +86,23 @@ namespace OperationTrident.FPS.Player {
                 return;
             }
 
-            //获取用户的输入
-            GetInput();
-
-            //用户即将移动的方向
-            Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
-
-            // get a normal for the surface that is being touched to move along it
-            RaycastHit hitInfo;
-            Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
-                               m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
-            desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
-            //确定x和z方向上移动的距离
-            m_MoveDir.x = desiredMove.x * m_Speed;
-            m_MoveDir.z = desiredMove.z * m_Speed;
-
             //只有站在地面上时才能移动
             if (m_CharacterController.isGrounded) {
+                //获取用户的输入
+                GetInput();
+
+                //用户即将移动的方向
+                Vector3 desiredMove = transform.forward * m_Input.y + transform.right * m_Input.x;
+
+                // get a normal for the surface that is being touched to move along it
+                RaycastHit hitInfo;
+                Physics.SphereCast(transform.position, m_CharacterController.radius, Vector3.down, out hitInfo,
+                                   m_CharacterController.height / 2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
+                //确定x和z方向上移动的距离
+                m_MoveDir.x = desiredMove.x * m_Speed;
+                m_MoveDir.z = desiredMove.z * m_Speed;
+
                 //保持Player贴在地面上
                 m_MoveDir.y = -m_StickToGroundForce;
 
@@ -232,50 +226,38 @@ namespace OperationTrident.FPS.Player {
             }
 #endif
             // 根据当前的状态设置速度
-            if (m_CharacterController.isGrounded) {
-                m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
+            m_Speed = m_IsRunning ? m_RunSpeed : m_WalkSpeed;
 
-                //站立和蹲下
-                if (Input.GetKeyDown(KeyCode.LeftControl)) {
-                    if (m_IsCrouching) {
-                        //这里需要调用RPC
-                        StandUp();
-                    } else {
-                        //这里需要调用RPC
-                        Underarm();
-                    }
-                }
-                //如果是蹲着，那么速度减半
+            //站立和蹲下
+            if (Input.GetKeyDown(KeyCode.LeftControl)) {
                 if (m_IsCrouching) {
-                    m_Speed /= 2;
+                    //这里需要调用RPC
+                    StandUp();
+                } else {
+                    //这里需要调用RPC
+                    Underarm();
                 }
-
-                //更新速度信息
-                BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
-
-                //发送开始行走的消息
-                if (m_Input.magnitude > 0f && !m_IsWalking) {
-                    m_IsWalking = true;
-
-                    BroadcastMessage("StartWalking", SendMessageOptions.DontRequireReceiver);
-                }
-
-                //停止行走
-                if (m_Input.magnitude == 0f && m_IsWalking) {
-                    m_IsWalking = false;
-
-                    BroadcastMessage("StopWalking", SendMessageOptions.DontRequireReceiver);
-                }
-
-                //重置上一帧的输入
-                m_PreInput = m_Input;
-            } else {
-                m_IsWalking = false;
-
-                BroadcastMessage("StopWalking", SendMessageOptions.DontRequireReceiver);
-
-                m_Speed = m_JumpMoveSpeed;
             }
+            //如果是蹲着，那么速度减半
+            if (m_IsCrouching) {
+                m_Speed /= 2;
+            }
+
+            //更新速度信息
+            BroadcastMessage("ChangeMovementSpeed", m_Speed, SendMessageOptions.DontRequireReceiver);
+
+            //发送开始行走的消息
+            if (m_Input.magnitude > 0f && m_PreInput.magnitude == 0f) {
+                BroadcastMessage("StartWalking", SendMessageOptions.DontRequireReceiver);
+            }
+
+            //停止行走
+            if (m_PreInput.magnitude > 0f && m_Input.magnitude == 0f) {
+                BroadcastMessage("StopWalking", SendMessageOptions.DontRequireReceiver);
+            }
+
+            //重置变量
+            m_PreInput = m_Input;
         }
 
         //碰到物体时让玩家往后退
@@ -360,7 +342,6 @@ namespace OperationTrident.FPS.Player {
         }
         #endregion
 
-        #region 接口
         public void RecvData(SyncData data) {
             throw new System.NotImplementedException();
         }
@@ -372,6 +353,5 @@ namespace OperationTrident.FPS.Player {
         public void Init(NetSyncController controller) {
             m_NetSyncController = controller;
         }
-        #endregion
     }
 }
