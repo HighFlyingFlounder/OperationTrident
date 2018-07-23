@@ -207,7 +207,7 @@ namespace OperationTrident.FPS.Player {
         private void GetInput() {
             Debug.Log(Input.GetButtonDown("Jump"));
             // 在跳跃的过程中不能重复跳跃
-            if (!m_Jump) {
+            if (!m_Jump && m_CharacterController.isGrounded) {
                 m_Jump = Input.GetButtonDown("Jump");
             }
 
