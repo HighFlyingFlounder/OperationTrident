@@ -59,22 +59,22 @@ namespace OperationTrident.Util
 
 
         private static float lastTime = Time.time;
-        private enum Timer { DCIGPS,DMDD,DMTDS,DMTIMS1,DMTIMS2,DSIGG,DSsIGG,DSsIGGWT};
-        private static float[] startTime = { Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time , Time.time , Time.time , Time.time , Time.time , Time.time };
+        private enum Timer { DCIGPS, DMDD, DMTDS, DMTIMS1, DMTIMS2, DSIGG, DSsIGG, DSsIGGWT };
+        private static float[] startTime = { Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time, Time.time };
         private static float FrameTime(Timer what)
         {
             float toReturn = Time.time - startTime[(int)what];
             startTime[(int)what] = Time.time;
             return toReturn;
         }
-            
+
         private static void ResetFrame(Timer what)
         {
             startTime[(int)what] = Time.time;
         }
-            
 
-        
+
+
         // 默认的字体大小
         private const int defaultFontSize = 18;
 
@@ -192,7 +192,7 @@ namespace OperationTrident.Util
         /// <returns type="Color">
         /// 返回混合后的颜色
         /// </returns>
-        public static Color MixTwoColor(Color colorA,Color colorB)
+        public static Color MixTwoColor(Color colorA, Color colorB)
         {
             return GetColorFromVector3(
                 MixTwoColor
@@ -497,7 +497,7 @@ namespace OperationTrident.Util
         /// <returns type="GUIStyle"></returns>
         public static GUIStyle GetDefaultTextStyle(
             Color color,
-            int fontSize, 
+            int fontSize,
             TextAnchor textAnchor)
         {
             GUIStyle style = new GUIStyle();
@@ -575,7 +575,7 @@ namespace OperationTrident.Util
         public static Rect GetFixedRectDueToFontSize(
             Vector2 guiPosition,
             int fontSize = defaultFontSize,
-            bool fixedTopDown = false, 
+            bool fixedTopDown = false,
             int cameraPixelHeight = 0)
         {
             // 传高+Bool
@@ -671,8 +671,8 @@ namespace OperationTrident.Util
         /// <param name="color" type="Color"></param>
         public static void DisplaySubtitleInDefaultPosition(
             string subtitle,
-            Camera camera, 
-            int fontSize, 
+            Camera camera,
+            int fontSize,
             float subtitleRatioHeight,
             Color color)
         {
@@ -737,12 +737,12 @@ namespace OperationTrident.Util
             float offsetRatioX,
             float offsetRatioY,
             Color color,
-            int fontSize=defaultFontSize,
+            int fontSize = defaultFontSize,
             TextAnchor textAnchor = defaultAnchor)
         {
             // 当前计算字母位的漂移距离
             float nowXOffset = 0.0f;
-            for(int i = 0; i < content.Length; i++)
+            for (int i = 0; i < content.Length; i++)
             {
 
                 if (IsDigit(content[i]))
@@ -771,8 +771,8 @@ namespace OperationTrident.Util
                 }
             }
         }
-        
-        
+
+
         //================================================================================
         //==========        一些关于任务目标的显示函数         ===============================
         //================================================================================
@@ -797,15 +797,18 @@ namespace OperationTrident.Util
         /// <param name="inLeft" type="bool">是否靠左显示</param>
         /// <param name="fontSize" type="int">字体大小</param>
         public static void DisplayMissionTargetDefault(string missionContent, Camera camera,
-            Color color, bool inLeft = true,int fontSize=defaultFontSize)
+            Color color, bool inLeft = true, int fontSize = defaultFontSize)
         {
+            if (camera == null)
+                return;
+
             if (inLeft)
             {
                 DisplayContentInGivenPosition(missionContent,
                         new Rect(
                             defaultMissionTargetOffsetLeft
-                            *camera.pixelWidth, 
-                            camera.pixelHeight / 20.0f + fontSize, 
+                            * camera.pixelWidth,
+                            camera.pixelHeight / 20.0f + fontSize,
                             fontSize * missionContent.Length, fontSize),
                         GetDefaultTextStyle(color, fontSize, TextAnchor.LowerLeft));
             }
@@ -832,10 +835,10 @@ namespace OperationTrident.Util
         /// <param name="inLeft" type="bool">是否靠左显示</param>
         public static void DisplayMissionTargetDefaultSequently(
             string missionContent,
-            Camera camera, 
+            Camera camera,
             Color color,
-            float interval = 0.5f, 
-            int fontSize = defaultFontSize, 
+            float interval = 0.5f,
+            int fontSize = defaultFontSize,
             bool inLeft = true)
         {
             // 记录上一帧的字符串
@@ -874,7 +877,7 @@ namespace OperationTrident.Util
                             "" + missionContent[i],
                             new Rect(
                                 new Vector2(defaultMissionTargetOffsetLeft * camera.pixelWidth + i * fontSize, camera.pixelHeight / 15.0f),
-                                new Vector2(fontSize, fontSize)),GetDefaultTextStyle(color,fontSize)
+                                new Vector2(fontSize, fontSize)), GetDefaultTextStyle(color, fontSize)
                             );
                 }
             }
@@ -885,7 +888,7 @@ namespace OperationTrident.Util
                     DisplayContentInGivenPosition(
                             "" + missionContent[i],
                             new Rect(
-                                new Vector2(camera.pixelWidth-defaultMissionTargetOffsetLeft * camera.pixelWidth - i * fontSize, 
+                                new Vector2(camera.pixelWidth - defaultMissionTargetOffsetLeft * camera.pixelWidth - i * fontSize,
                                 camera.pixelHeight / 15.0f),
                                 new Vector2(fontSize, fontSize)), GetDefaultTextStyle(color, fontSize)
                             );
@@ -908,12 +911,14 @@ namespace OperationTrident.Util
             Camera camera,
             Color color,
             int fontSize = defaultFontSize,
-            float labelOffsetHeight=0.0f,
-            float distanceScale=1.0f
+            float labelOffsetHeight = 0.0f,
+            float distanceScale = 1.0f
             )
         {
-            float nowDistance = Vector3.Distance(targetPosition,camera.transform.position);
-            DisplayWorldPointInScreen(targetPosition, camera, (int)nowDistance*distanceScale + "m\n●", color, fontSize, labelOffsetHeight);
+            if (camera == null)
+                return;
+            float nowDistance = Vector3.Distance(targetPosition, camera.transform.position);
+            DisplayWorldPointInScreen(targetPosition, camera, (int)nowDistance * distanceScale + "m\n●", color, fontSize, labelOffsetHeight);
         }
 
 
@@ -931,7 +936,7 @@ namespace OperationTrident.Util
             Camera camera,
             string content,
             Color color,
-            int fontSize=defaultFontSize,
+            int fontSize = defaultFontSize,
             float labelOffsetHeight = 0.0f)
         {
             Vector3 point = new Vector3(camera.pixelWidth / 2, camera.pixelHeight / 2, 0); // 屏幕中心
@@ -964,10 +969,10 @@ namespace OperationTrident.Util
         /// <param name="source" type="string">字符串</param>
         /// <param name="fontSize" type="int">字体大小</param>
         /// <returns type="int">返回字符串的总长度fontSize</returns>
-        private static int GetTrueStringFontTotalSize(string source,int fontSize)
+        private static int GetTrueStringFontTotalSize(string source, int fontSize)
         {
             int toReturn = 0;
-            foreach(char a in source)
+            foreach (char a in source)
             {
                 toReturn += IsDigit(a) ? fontSize / 2 : fontSize;
             }
@@ -997,7 +1002,7 @@ namespace OperationTrident.Util
             float startPositionOffsetYRatio,  // 内容离屏幕上面的距离占整个屏幕的比例
             float interval = 0.5f,
             int fontSize = defaultFontSize,
-            bool withALine_=false)
+            bool withALine_ = false)
         {
             // 记录上一帧的字符串
             if (!hasRememberStringInitDCIGPS)
@@ -1117,11 +1122,11 @@ namespace OperationTrident.Util
             Color color,
             float interval = 0.5f,
             float blingInterval = 0.1f,
-            int fontSize=defaultFontSize,
-            bool inLeft=true,
-            bool sequentClear=true)
+            int fontSize = defaultFontSize,
+            bool inLeft = true,
+            bool sequentClear = true)
         {
-            if (frameTimerDMTIMS2 > blingInterval||frameTimerDMTIMS2==0.0f)
+            if (frameTimerDMTIMS2 > blingInterval || frameTimerDMTIMS2 == 0.0f)
             {
                 frameTimerDMTIMS2 = 0.0f;
                 toDisplayDMTIMS = GetMessyCodeInFrequentChar(missionContent.Length).ToCharArray();
@@ -1183,7 +1188,7 @@ namespace OperationTrident.Util
             string toDisplayStr = new string(toDisplayDMTIMS);
             DisplayMissionTargetDefault(toDisplayStr, camera, color, inLeft, fontSize);
             rememberStringDMTIMS = missionContent;
-            
+
         }
 
         /// <summary>
@@ -1217,7 +1222,7 @@ namespace OperationTrident.Util
             int min = 33;
             int max = 126;
             string toReturn = string.Empty;
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 toReturn += (char)UnityEngine.Random.Range(min, max + 1);
             }
@@ -1233,7 +1238,7 @@ namespace OperationTrident.Util
         private static float frameTimerDMDD = 0.01f; // 一个计时器
         private static int missionDetailIndexDMDD = 0; // 任务细节数组的索引
         private static bool canBeStopDMDD = false; // 是否可以停止
-        private static float minusFactorAlphaDMDD=0.0f; // 结束时变得透明的速度
+        private static float minusFactorAlphaDMDD = 0.0f; // 结束时变得透明的速度
 
         /// <summary>
         /// 显示任务时间地点等等的任务细节
@@ -1275,11 +1280,11 @@ namespace OperationTrident.Util
                         defaultMissionDetailOffsetUp + missionDetailIndexDMDD * fontSize / camera.pixelHeight,
                         interval: wordAppearanceInterval,
                         fontSize: fontSize,
-                        withALine_:true);
+                        withALine_: true);
             }
             else
             {
-                for(int i = 0; i < Math.Min(missionDetailIndexDMDD,missionDetails.Length-1); i++)
+                for (int i = 0; i < Math.Min(missionDetailIndexDMDD, missionDetails.Length - 1); i++)
                 {
                     //DisplayContentInGivenPosition(missionDetails[i],
                     //    new Rect(new Vector2(defaultMissionDetailOffsetLeft * camera.pixelWidth,
@@ -1289,7 +1294,7 @@ namespace OperationTrident.Util
                     DisplayContentInGivenPosition(
                         missionDetails[i],
                         camera, defaultMissionDetailOffsetLeft,
-                        defaultMissionDetailOffsetUp + (float)fontSize*i / camera.pixelHeight,
+                        defaultMissionDetailOffsetUp + (float)fontSize * i / camera.pixelHeight,
                         color,
                         fontSize);
                 }
@@ -1301,14 +1306,14 @@ namespace OperationTrident.Util
                         defaultMissionDetailOffsetUp + (float)missionDetailIndexDMDD * (fontSize) / camera.pixelHeight,
                         interval: wordAppearanceInterval,
                         fontSize: fontSize,
-                        withALine_:true);
+                        withALine_: true);
             }
             //float startPositionX = defaultMissionDetailOffsetLeft * camera.pixelWidth;
             //float startPositionY = defaultMissionDetailOffsetUp * camera.pixelHeight;
-            if (frameTimerDMDD > 
-                lineSubsequentlyInterval+wordAppearanceInterval*3.0f*(missionDetails[missionDetailIndexDMDD].Length))
+            if (frameTimerDMDD >
+                lineSubsequentlyInterval + wordAppearanceInterval * 3.0f * (missionDetails[missionDetailIndexDMDD].Length))
             {
-                if (missionDetailIndexDMDD+1 >= missionDetails.Length)
+                if (missionDetailIndexDMDD + 1 >= missionDetails.Length)
                 {
                     canBeStopDMDD = true;
                 }
@@ -1319,7 +1324,7 @@ namespace OperationTrident.Util
                 }
                 frameTimerDMDD = 0.0f;
             }
-            
+
         }
 
 
@@ -1331,7 +1336,7 @@ namespace OperationTrident.Util
             int fontSize = defaultFontSize,
             float wordTransparentInterval = 0.005f,  // 字变得透明的速度
             float wordAppearanceInterval = 0.5f,  // 字出现的速度
-            float lineSubsequentlyInterval = defaultMissionDetailInterval ) // 每一行出现的速度)
+            float lineSubsequentlyInterval = defaultMissionDetailInterval) // 每一行出现的速度)
         {
 
         }
@@ -1362,16 +1367,19 @@ namespace OperationTrident.Util
             int transparent = 0
             )
         {
+            if (camera == null)
+                return;
+                
             List<ColorTempMemory> colors;
             // 先进行文法编译
             string theTrueSubtitle = SubtitleParser.ParseALine(subtitle, out colors);
             // 四种颜色的GUIStyle
-            GUIStyle styleYellow = GetDefaultTextStyle(TransparentMoreColor(subtitleYellow,transparent), fontSize);
+            GUIStyle styleYellow = GetDefaultTextStyle(TransparentMoreColor(subtitleYellow, transparent), fontSize);
             GUIStyle styleBlue = GetDefaultTextStyle(TransparentMoreColor(subtitleBlue, transparent), fontSize);
             GUIStyle styleRed = GetDefaultTextStyle(TransparentMoreColor(subtitleRed, transparent), fontSize);
             GUIStyle styleGreen = GetDefaultTextStyle(TransparentMoreColor(subtitleGreen, transparent), fontSize);
             GUIStyle styleWhite = GetDefaultTextStyle(TransparentMoreColor(whiteColor, transparent), fontSize);
-            GUIStyle styleBlack= GetDefaultTextStyle(TransparentMoreColor(blackColor, transparent), fontSize);
+            GUIStyle styleBlack = GetDefaultTextStyle(TransparentMoreColor(blackColor, transparent), fontSize);
             // 先计算出来整行字幕的位置
             float startPositionX = camera.pixelWidth / 2 - theTrueSubtitle.Length * fontSize / 2;
             float positionY = camera.pixelHeight * subtitleRatioHeight;
@@ -1483,12 +1491,12 @@ namespace OperationTrident.Util
         /// <param name="fontSize" type="int">字体大小</param>
         /// <param name="subtitleRatioHeight" type="float">字幕距离屏幕上方的距离占整个屏幕高的比例</param>
         /// <param name="frames" type="int">显示持续的帧数</param>
-        [Obsolete]   
+        [Obsolete]
         public static void DisplaySubtitleInGivenGrammarInFrames(
             string subtitle,
             Camera camera,
-            int fontSize, 
-            float subtitleRatioHeight, 
+            int fontSize,
+            float subtitleRatioHeight,
             int frames)
         {
             if (canBeStopDisplaySubtitleInGivenGrammarInFrames) return;
@@ -1531,10 +1539,10 @@ namespace OperationTrident.Util
         public static void DisplaySubtitleInGivenGrammar(
             string subtitle,
             Camera camera,
-            int fontSize, 
+            int fontSize,
             float subtitleRatioHeight,
             float secondOfEachWord,
-            float secondOfEachLine=0.0f)
+            float secondOfEachLine = 0.0f)
         {
             // 最开始的时候调用，这时候还没有初始化记下字幕的变量
             if (!hasInitRememberStringDSIGG)
@@ -1556,22 +1564,22 @@ namespace OperationTrident.Util
             {
                 transparentFactorDSIGG += 4;
                 frameTimerDSIGG = 0;
-                DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:transparentFactorDSIGG);
+                DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight, transparent: transparentFactorDSIGG);
 
                 return;
             }
             frameTimerDSIGG += FrameTime(Timer.DSIGG);
             transparentFactorDSIGG = Math.Min(transparentFactorDSIGG + 4, 255);
-            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight,transparent:255-transparentFactorDSIGG);
-             //如果采用每一行的时间
+            DisplaySubtitleInGivenGrammar(subtitle, camera, fontSize, subtitleRatioHeight, transparent: 255 - transparentFactorDSIGG);
+            //如果采用每一行的时间
             if (secondOfEachLine == 0.0f)
             {
-                 //达到时间了
+                //达到时间了
                 if (frameTimerDSIGG >= secondOfEachWord * (subtitle.Length))
                 {
                     canBeStopDisplaySubtitleInGivenGrammarInSeconds = true;
                     transparentFactorDSIGG = 0;
-                    frameTimerDSIGG=0.0f;
+                    frameTimerDSIGG = 0.0f;
                 }
             }
             else
@@ -1676,22 +1684,22 @@ namespace OperationTrident.Util
                 return;
             }
             // 要显示的总字幕发生了变化
-            if (!IsEqual(rememberSubtitlesDSsIGGWT,subtitles) )
+            if (!IsEqual(rememberSubtitlesDSsIGGWT, subtitles))
             {
                 ResetFrame(Timer.DSsIGGWT);
                 frameTimerDSsIGGWT = 0.0f;
                 displayingSubtitlesIndexDSsIGGWT = 0;
                 canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
             }
-            if (canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp&&frameTimerDSsIGGWT>3.0F) return;
+            if (canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp && frameTimerDSsIGGWT > 3.0F) return;
             rememberSubtitlesDSsIGGWT = subtitles;
             DisplaySubtitleInGivenGrammar(
                 subtitles[displayingSubtitlesIndexDSsIGGWT],
                 camera,
                 fontSize: fontSize,
                 subtitleRatioHeight: subtitleRatioHeight,
-                secondOfEachWord: 
-                    secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]/
+                secondOfEachWord:
+                    secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT] /
                         subtitles[displayingSubtitlesIndexDSsIGGWT].Length,
                 secondOfEachLine: secondsOfEachLine[displayingSubtitlesIndexDSsIGGWT]);
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
@@ -1699,22 +1707,22 @@ namespace OperationTrident.Util
                 frameTimerDSsIGGWT += FrameTime(Timer.DSsIGGWT);
                 if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
                 {
-                    if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length-1)
+                    if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length - 1)
                     {
                         canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = true;
                     }
-                    displayingSubtitlesIndexDSsIGGWT = 
-                        Math.Min(displayingSubtitlesIndexDSsIGGWT + 1, subtitles.Length-1);
+                    displayingSubtitlesIndexDSsIGGWT =
+                        Math.Min(displayingSubtitlesIndexDSsIGGWT + 1, subtitles.Length - 1);
 
                     frameTimerDSsIGGWT = 0;
                 }
             }
         }
 
-        private static bool IsEqual(string[] a,string[] b)
+        private static bool IsEqual(string[] a, string[] b)
         {
             if (a.Length != b.Length) return false;
-            for(int i = 0; i < a.Length; i++)
+            for (int i = 0; i < a.Length; i++)
             {
                 if (a[i] != b[i]) return false;
             }

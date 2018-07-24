@@ -179,8 +179,8 @@ namespace OperationTrident.StartScene
             //发送
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("Register");
-            protocol.AddString(idInput.text);
-            protocol.AddString(pwInput.text);
+            protocol.AddString(regIdInput.text);
+            protocol.AddString(regPwInput.text);
             Debug.Log("发送 " + protocol.GetDesc());
             NetMgr.srvConn.Send(protocol, OnRegBack);
         }
