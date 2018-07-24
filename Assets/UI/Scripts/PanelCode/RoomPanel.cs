@@ -158,7 +158,7 @@ public class RoomPanel : PanelBase
         //处理
         if (ret != 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "开始游戏失败！两队至少都需要一名玩家，只有队长可以开始战斗！");
+            PanelMgr.instance.OpenPanel<TipPanel>("", "开始游戏失败！只有队长可以开始战斗！");
         }
     }
 
