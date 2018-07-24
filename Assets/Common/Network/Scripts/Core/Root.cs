@@ -13,8 +13,8 @@ public class Root : MonoBehaviour
     void Start() //切换场景时，该object不会再调用Start了
     {
         Application.runInBackground = true;
-        if(PanelMgr.instance)//旧版本的UI系统
-            PanelMgr.instance.OpenPanel<StartPanel>("");
+        //if(PanelMgr.instance)//旧版本的UI系统
+        //    PanelMgr.instance.OpenPanel<StartPanel>("");
         SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
 
         //监听

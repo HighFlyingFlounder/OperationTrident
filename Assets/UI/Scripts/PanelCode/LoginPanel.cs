@@ -54,7 +54,7 @@ public class LoginPanel : PanelBase
     public void OnRegClick()
     {
         PanelMgr.instance.OpenPanel<RegPanel>("");
-        //Close();
+        Close();
     }
 
     public void OnLoginClick()
