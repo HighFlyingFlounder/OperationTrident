@@ -10,6 +10,8 @@ public class RoomPanel : PanelBase
     private List<Transform> prefabs = new List<Transform>();
     private Button closeBtn;
     private Button startBtn;
+    private Text roomIDText;
+    private Text welcomeText;
 
     #region 生命周期
     /// <summary> 初始化 </summary>
@@ -33,6 +35,8 @@ public class RoomPanel : PanelBase
         }
         closeBtn = skinTrans.Find("CloseBtn").GetComponent<Button>();
         startBtn = skinTrans.Find("StartBtn").GetComponent<Button>();
+        roomIDText = skinTrans.Find("RoomIDText").GetComponent<Text>();
+        welcomeText = skinTrans.Find("welcomeText").GetComponent<Text>();
         //按钮事件
         closeBtn.onClick.AddListener(OnCloseClick);
         startBtn.onClick.AddListener(OnStartClick);
@@ -72,22 +76,27 @@ public class RoomPanel : PanelBase
             int win = proto.GetInt(start, ref start);
             int fail = proto.GetInt(start, ref start);
             int isOwner = proto.GetInt(start, ref start);
-            //信息处理
+            int room_id = proto.GetInt(start, ref start);
+            //房间号码
+            roomIDText.text = "Room " + (1+room_id).ToString();
+            //欢迎提示
+            welcomeText.text = "您好， " + GameMgr.instance.id + "\n 请召集您的战友.";
+            //房间信息
             Transform trans = prefabs[i];
             Text text = trans.Find("Text").GetComponent<Text>();
-            string str = "名字：" + id + "\r\n";
+            string str = "";
             //str += "阵营：" + (team == 1 ? "红" : "蓝") + "\r\n";
-            str += "胜利：" + win.ToString() + "   ";
-            str += "失败：" + fail.ToString() + "\r\n";
+            //str += "胜利：" + win.ToString() + "   ";
+            //str += "失败：" + fail.ToString() + "\r\n";
             if (id == GameMgr.instance.id)
-                str += "【我自己】";
+                str += "*";
             if (isOwner == 1)
             {
                 str += "【房主】";
                 NetSyncController.isMasterClient = true;
             }
-                
-            text.text = str;
+           str += " "+id;
+           text.text = str;
 
             // if (team == 1)
             //     trans.GetComponent<Image>().color = Color.red;
@@ -99,8 +108,8 @@ public class RoomPanel : PanelBase
         {
             Transform trans = prefabs[i];
             Text text = trans.Find("Text").GetComponent<Text>();
-            text.text = "【等待玩家】";
-            trans.GetComponent<Image>().color = Color.gray;
+            text.text = " ";
+            //trans.GetComponent<Image>().color = Color.gray;
         }
     }
 
@@ -122,7 +131,6 @@ public class RoomPanel : PanelBase
         //处理
         if (ret == 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "退出成功!");
             PanelMgr.instance.OpenPanel<RoomListPanel>("");
             Close();
         }
@@ -150,15 +158,44 @@ public class RoomPanel : PanelBase
         //处理
         if (ret != 0)
         {
-            PanelMgr.instance.OpenPanel<TipPanel>("", "开始游戏失败！两队至少都需要一名玩家，只有队长可以开始战斗！");
+            PanelMgr.instance.OpenPanel<TipPanel>("", "开始游戏失败！只有队长可以开始战斗！");
         }
     }
 
 
     public void RecvEnterGame(ProtocolBase protocol)
     {
-        SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+        //SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+        
+        //解析协议
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        int player_num = proto.GetInt(start, ref start);
+
+        GameMgr.instance.player_num = player_num;//该局房间总人数
+        StartFight();//获得战场信息
         Close();
+    }
+
+    public void StartFight()
+    {
+        //协议
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("StartFight");
+        NetMgr.srvConn.Send(protocol);
+        //监听
+        NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
+    }
+
+    public void RecvStartFight(ProtocolBase protocol)
+    {
+        SceneNetManager.fight_protocol = (ProtocolBytes)protocol;
+        //StartBattle((ProtocolBytes)protocol);
+        //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
+        NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Loading",
+            UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
     #endregion

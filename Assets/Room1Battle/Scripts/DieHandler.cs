@@ -64,7 +64,7 @@ namespace OperationTrident.Room1
             // 返回主界面的按钮加上回调
             dieUIPrefab.transform.Find("DieCanvas").Find("Image").Find("Button").GetComponent<Button>().enabled = true;
             dieUIPrefab.transform.Find("DieCanvas").Find("Image").Find("Button").GetComponent<Button>().onClick.AddListener(delegate () {
-                GameMgr.instance.nextScene = "StartScene";
+                GameMgr.instance.nextScene = "GameHall";
                 SceneManager.LoadScene("Loading", LoadSceneMode.Single);
 
                 //SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
