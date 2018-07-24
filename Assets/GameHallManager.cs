@@ -8,9 +8,8 @@ public class GameHallManager : MonoBehaviour {
 	void Start () {
         if (PanelMgr.instance)//旧版本的UI系统
             if(PanelMgr.login_in)
-                PanelMgr.instance.OpenPanel<RoomListPanel>("");
+                PanelMgr.instance.OpenPanel<RoomPanel>("");
             else PanelMgr.instance.OpenPanel<StartPanel>("");
-
     }
 	
 	// Update is called once per frame
