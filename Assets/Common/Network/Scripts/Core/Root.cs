@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using OperationTrident.Common;
 
 public class Root : MonoBehaviour
 {
     private int player_finishLoading = 0;
+    [SerializeField]
+    string gameHall;
     // Use this for initialization
     void Awake()
     {
@@ -15,7 +18,7 @@ public class Root : MonoBehaviour
         Application.runInBackground = true;
         if(PanelMgr.instance)//旧版本的UI系统
             PanelMgr.instance.OpenPanel<LoginPanel>("");
-        SceneManager.LoadScene("GameHall", LoadSceneMode.Single);
+        SceneManager.LoadScene(gameHall, LoadSceneMode.Single);
 
         //监听
         NetMgr.srvConn.msgDist.AddListener("FinishLoading", RecvLoading);
