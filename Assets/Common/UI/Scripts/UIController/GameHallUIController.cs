@@ -103,10 +103,11 @@ namespace OperationTrident.Common.UI
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int ret = proto.GetInt(start, ref start);
-            GameMgr.instance.roomID = roomInfoList.Count;
+            GameMgr.instance.roomID = roomInfoList.Count + 1;
             //处理
             if (ret == 0)
             {
+                GetRoomList();
                 GameHallUIManager.Instance.Open(roomUIPrefab);
             }
             else
@@ -131,6 +132,7 @@ namespace OperationTrident.Common.UI
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int ret = proto.GetInt(start, ref start);
+            GameMgr.instance.roomID = roomInfoList.Count;
             //处理
             if (ret == 0)
             {
