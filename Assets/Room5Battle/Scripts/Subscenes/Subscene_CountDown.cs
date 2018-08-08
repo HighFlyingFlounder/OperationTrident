@@ -22,7 +22,7 @@ namespace OperationTrident.Room5
 
         //三分钟 180s
         private float m_CountDownTime = 180.0f;
-        private float m_EnemySpawnDeltaTime = 20.0f;
+        private float m_EnemySpawnDeltaTime = 30.0f;
 
         //BGM播放
         public AudioSource m_AudioSource;
@@ -82,10 +82,10 @@ namespace OperationTrident.Room5
         private IEnumerator spawnEnemies1(float t)
         {
             yield return new WaitForSeconds(t);
-            AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[Random.Range(0,9)]);
-            for (int i = 0; i < 4; ++i)
+            //AIController.instance.CreateAI(4, 0, "AI-SpawnPositions", wanderAIAgentInitParams[Random.Range(0,9)]);
+            for (int i = 0; i < 2; ++i)
             {
-                AIController.instance.CreateAI(4, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[Random.Range(0,9)]);
+                AIController.instance.CreateAI(5, 0, "AI-SpawnPositions2", wanderAIAgentInitParams[Random.Range(0,9)]);
             }
             //EnemyGenerator.SpawnEnemy_ExactPos(m_EnemyPrefab1,m_EnemyGenPos[i]);
         }
@@ -93,9 +93,9 @@ namespace OperationTrident.Room5
         //生成一大波敌人
         private IEnumerator spawnEnemyTurret()
         {
-            yield return new WaitForSeconds(30.0f);
-            AIController.instance.CreateAI(4, 1, "AI-SpawnPositions-turret", turretAIAgentInitParams[0]);
             yield return new WaitForSeconds(60.0f);
+            AIController.instance.CreateAI(4, 1, "AI-SpawnPositions-turret", turretAIAgentInitParams[0]);
+            yield return new WaitForSeconds(120.0f);
             AIController.instance.CreateAI(4, 2, "AI-SpawnPositions-turret2", turretAIAgentInitParams[0]);
         }
 
