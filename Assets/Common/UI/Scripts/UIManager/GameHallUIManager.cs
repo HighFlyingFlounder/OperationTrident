@@ -4,42 +4,45 @@ using UnityEngine;
 
 namespace OperationTrident.Common.UI
 {
-    public class GameHallUIManager : Singleton<GameHallUIManager>
+    public class GameHallUIManager : UIManager
     {
-        static Stack<GameObject> UIStack = new Stack<GameObject>();
+        static GameHallUIManager instance;
 
-        public void Open(GameObject UIPrefab)
+        public static GameHallUIManager Instance
         {
-            if(GameObject.Find(UIPrefab.name) != null)
-                return;
-
-            if (UIStack.Count != 0)
-                UIStack.Peek().SetActive(false);
-
-            UIStack.Push(Instantiate(UIPrefab));
-            UIStack.Peek().GetComponent<UIBase>().Show();
-            UIStack.Peek().name = UIPrefab.name;
-            DontDestroyOnLoad(UIStack.Peek());
-        }
-        public void Show()
-        {
-            if (UIStack.Count != 0)
-                UIStack.Peek().SetActive(true);
+            get
+            {
+                return instance;
+            }
         }
 
-        public void Hide()
+        protected void Awake()
         {
-            if (UIStack.Count != 0)
-                UIStack.Peek().SetActive(false);
+            if (instance == null)
+            {
+                instance = this as GameHallUIManager;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
         }
 
-        public void CloseCurrent()
-        {
-            UIStack.Peek().GetComponent<UIBase>().Close();
-            Destroy(UIStack.Pop());
+        [Header("UI Prefab")]
+        [SerializeField]
+        GameObject firstInitUIPrefab;
 
-            if (UIStack.Count != 0)
-                UIStack.Peek().SetActive(true);
+        public void EnterGameHall()
+        {
+            if (UIStack.Count == 0)
+            {
+                Open(firstInitUIPrefab);
+            }
+            else
+            {
+                ShowLast();
+            }
         }
     }
 }

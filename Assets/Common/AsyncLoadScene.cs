@@ -25,7 +25,7 @@ namespace OperationTrident.Common
         // Use this for initialization
         void Start()
         {
-            UI.GameHallUIManager.Instance.Hide();
+            UI.GameHallUIManager.Instance.HideCurrent();
             loadingSlider.value = 0.0f;
 
             if (SceneManager.GetActiveScene().name == "Loading")

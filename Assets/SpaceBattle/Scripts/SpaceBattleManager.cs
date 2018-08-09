@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using OperationTrident.Common.UI;
 
 public class SpaceBattleManager : MonoBehaviour
 {
@@ -102,7 +103,7 @@ public class SpaceBattleManager : MonoBehaviour
         {
             playerObj.GetComponent<NetSyncTransform>().ctrlType = NetSyncTransform.CtrlType.net;
             playerObj.transform.Find("Camera").gameObject.SetActive(false);
-            playerObj.GetComponent<showHp>().enabled = false;
+            // playerObj.GetComponent<showHp>().enabled = false;
         }
         
     }
@@ -151,6 +152,7 @@ public class SpaceBattleManager : MonoBehaviour
         }
         else//胜利
         {
+            GetComponent<SpaceBattlePlayerInfo>().Hide();
             timeline.SetActive(true);
         }
     }

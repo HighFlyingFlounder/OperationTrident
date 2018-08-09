@@ -12,7 +12,9 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
     private Animator m_Animator;
     public float Speed = 8.0f;//向前的速度（向前不可控制）
     public float OffsetSpeed = 4.0f;//在xy轴上的偏移速度（上下左右偏移可控制）
-    public float Hp = 500f;
+    [HideInInspector]
+    public int Hp;
+    public int TotalHp = 500;
     private float t = 0.0f;//计时器,在喷射系统从零开始加速时使用
     private bool isPushed = false;
     public float limitY, limitZ;
@@ -26,6 +28,7 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
         m_RigidBody = GetComponent<Rigidbody>();
         m_Animator = GetComponent<Animator>();
         shield = sh.transform.GetComponent<ParticleSystem>();
+        Hp = TotalHp;
     }
 
     private Vector2 GetInput()
@@ -114,10 +117,10 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
         
     }
 
-    void ChangeHp(float x)
+    void ChangeHp(int x)
     {
         Hp += x;
-        Hp = Mathf.Clamp(Hp, 0f, 500f);
+        Hp = Mathf.Clamp(Hp, 0, 500);
     }
 
     public void RecvData(SyncData data)

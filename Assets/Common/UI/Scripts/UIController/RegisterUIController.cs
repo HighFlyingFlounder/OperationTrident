@@ -32,7 +32,6 @@ namespace OperationTrident.Common.UI
             tabSelectFields.Add(returnButton.gameObject);
 
             firstSelectField = usernameInputField.gameObject;
-            SelectFirstField();
 
             usernameInputField.onValueChanged.AddListener(delegate { Utility.ToUpperCase(usernameInputField); });
 
@@ -49,7 +48,12 @@ namespace OperationTrident.Common.UI
             isFocused = usernameInputField.isFocused || passwordInputField.isFocused || confirmationInputField.isFocused;
         }
 
-        public void Register()
+        protected override void FirstInit()
+        {
+            SelectFirstField();
+        }
+
+        void Register()
         {
             //用户名密码为空
             if (usernameInputField.text == "" || passwordInputField.text == "")
@@ -78,7 +82,7 @@ namespace OperationTrident.Common.UI
             NetMgr.srvConn.Send(protocol, RegisterBack);
         }
 
-        public void RegisterBack(ProtocolBase protocol)
+        void RegisterBack(ProtocolBase protocol)
         {
             ProtocolBytes proto = (ProtocolBytes)protocol;
             int start = 0;

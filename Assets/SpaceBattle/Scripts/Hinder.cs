@@ -9,7 +9,7 @@ public class Hinder : MonoBehaviour
     public GameObject explosion;
     //public GameObject stone;
     public float tumble = 1.0f;
-    public float damage = -40.0f;
+    public int damage = -40;
     public static Transform cam;
 
     public void Boom()

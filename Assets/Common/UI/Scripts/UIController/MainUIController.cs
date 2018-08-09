@@ -41,14 +41,19 @@ namespace OperationTrident.Common.UI
             Utility.DisableButton(rewardButton);
         }
 
-        public void Logout()
+        protected override void FirstInit()
+        {
+            SelectFirstField();
+        }
+
+        void Logout()
         {
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("Logout");
             NetMgr.srvConn.Send(protocol, LogoutBack);
         }
 
-        public void LogoutBack(ProtocolBase protocol)
+        void LogoutBack(ProtocolBase protocol)
         {
             GameHallUIManager.Instance.CloseCurrent();
             Debug.Log("注销成功");

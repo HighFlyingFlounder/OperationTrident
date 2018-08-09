@@ -43,11 +43,8 @@ namespace OperationTrident.Common.UI
             tabSelectFields.Add(exitButton.gameObject);
 
             firstSelectField = usernameInputField.gameObject;
-            SelectFirstField();
 
             usernameInputField.onValueChanged.AddListener(delegate { Utility.ToUpperCase(usernameInputField); });
-            // usernameInputField.onEndEdit.AddListener(delegate { Login(); });
-            // passwordInputField.onEndEdit.AddListener(delegate { Login(); });
 
             loginButton.onClick.AddListener(delegate { Login(); });
             registerButton.onClick.AddListener(delegate { GameHallUIManager.Instance.Open(registerUIPrefab); });
@@ -63,6 +60,11 @@ namespace OperationTrident.Common.UI
                 Login();
             }
             isFocused = usernameInputField.isFocused || passwordInputField.isFocused;
+        }
+
+        protected override void FirstInit()
+        {
+            SelectFirstField();
         }
 
         void Login()
