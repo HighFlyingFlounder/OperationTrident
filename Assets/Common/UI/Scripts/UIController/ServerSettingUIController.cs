@@ -50,7 +50,11 @@ namespace OperationTrident.Common.UI
             resetButton.onClick.AddListener(delegate { ResetIPandPort(); });
             saveButton.onClick.AddListener(delegate { SaveIPandPort(); });
             returnButton.onClick.AddListener(delegate { GameHallUIManager.Instance.CloseCurrent(); });
+        }
 
+        protected override void FirstInit()
+        {
+            SelectFirstField();
             GetIPandPort();
         }
 

@@ -30,10 +30,6 @@ namespace OperationTrident.Common.UI
 
             exitRoomButton.onClick.AddListener(delegate { ExitRoom(); });
             startGameButton.onClick.AddListener(delegate { StartGame(); });
-
-            ProtocolBytes protocol = new ProtocolBytes();
-            protocol.AddString("GetRoomInfo");
-            NetMgr.srvConn.Send(protocol);
         }
 
         void OnDestroy()
@@ -42,6 +38,13 @@ namespace OperationTrident.Common.UI
             NetMgr.srvConn.msgDist.DelListener("EnterGame", RecvEnterGame);
             if (isInRoom)
                 ExitRoom();
+        }
+
+        protected override void FirstInit()
+        {
+            ProtocolBytes protocol = new ProtocolBytes();
+            protocol.AddString("GetRoomInfo");
+            NetMgr.srvConn.Send(protocol);
         }
 
         void RecvGetRoomInfo(ProtocolBase protocol)

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace OperationTrident.Common.UI
 {
-    public class GameHallUIController : UIBase
+    public class RoomListUIController : UIBase
     {
         [Header("Text")]
         [SerializeField]
@@ -43,9 +43,6 @@ namespace OperationTrident.Common.UI
             returnButton.onClick.AddListener(delegate { GameHallUIManager.Instance.CloseCurrent(); });
             createRoomButton.onClick.AddListener(delegate { CreateRoom(); });
             reloadButton.onClick.AddListener(delegate { GetRoomList(); });
-
-            GetRoomList();
-            dt = autoUpdateRoomListTime;
         }
 
         new void Update()
@@ -56,6 +53,12 @@ namespace OperationTrident.Common.UI
                 dt = autoUpdateRoomListTime;
                 GetRoomList();
             }
+        }
+
+        protected override void FirstInit()
+        {
+            GetRoomList();
+            dt = autoUpdateRoomListTime;
         }
 
         void GetRoomList()

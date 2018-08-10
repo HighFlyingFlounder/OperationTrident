@@ -12,12 +12,39 @@ namespace OperationTrident.Common.UI
 
         protected UnityEngine.EventSystems.EventSystem system;
 
+        // 判断是不是第一次初始化
+        bool _firstInit;
+
+        protected bool IsFirstInit
+        {
+            get
+            {
+                if (_firstInit)
+                {
+                    _firstInit = false;
+                    return true;
+                }
+                return false;
+            }
+        }
+
         protected void Awake()
         {
             system = UnityEngine.EventSystems.EventSystem.current;
         }
+
+        protected void OnEnable()
+        {
+            _firstInit = true;
+        }
+
         protected void Update()
         {
+            if (IsFirstInit)
+            {
+                FirstInit();
+            }
+
             if(tabSelectFields.Count > 0)
             {
                 if (system.currentSelectedGameObject != null && Input.GetKeyDown(KeyCode.Tab))
@@ -34,7 +61,9 @@ namespace OperationTrident.Common.UI
             }
         }
 
-        public virtual void Show()
+        protected virtual void FirstInit(){}
+
+        public virtual void Open()
 		{
 			this.gameObject.SetActive(true);
 		}
