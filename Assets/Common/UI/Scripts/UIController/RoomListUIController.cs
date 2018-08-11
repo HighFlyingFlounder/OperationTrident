@@ -47,6 +47,7 @@ namespace OperationTrident.Common.UI
 
         new void Update()
         {
+            base.Update();
             dt -= Time.deltaTime;
             if (dt < 0)
             {
@@ -81,8 +82,9 @@ namespace OperationTrident.Common.UI
             {
                 int num = proto.GetInt(start, ref start);
                 int status = proto.GetInt(start, ref start);
+                int roomID = proto.GetInt(start, ref start);
 
-                roomInfoList.Add(new UIRoomInfo.RoomInfo(i + 1, status, num));
+                roomInfoList.Add(new UIRoomInfo.RoomInfo(roomID, status, num));
             }
 
             Utility.DeleteAllChildren(content);
@@ -106,7 +108,7 @@ namespace OperationTrident.Common.UI
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int ret = proto.GetInt(start, ref start);
-            GameMgr.instance.roomID = roomInfoList.Count + 1;
+            GameMgr.instance.roomID = proto.GetInt(start, ref start);
             //处理
             if (ret == 0)
             {
@@ -135,7 +137,7 @@ namespace OperationTrident.Common.UI
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int ret = proto.GetInt(start, ref start);
-            GameMgr.instance.roomID = roomInfoList.Count;
+            GameMgr.instance.roomID = proto.GetInt(start, ref start);
             //处理
             if (ret == 0)
             {
@@ -151,7 +153,8 @@ namespace OperationTrident.Common.UI
         {
             GameObject go = Instantiate(roomInfoUIPrefab, content.transform);
             go.GetComponent<UIRoomInfo>().SetRoomInfo(roomInfo);
-            go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfo.roomID - 1); });
+            // go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfo.roomID); });
+            go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfoList.IndexOf(roomInfo)); });
         }
     }
 }
