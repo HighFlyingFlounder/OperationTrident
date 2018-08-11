@@ -56,7 +56,8 @@ namespace OperationTrident.Common.UI
 
         public void HidePlayerInfoUI()
         {
-            playerInfoUI.SetActive(false);
+            if(playerInfoUI != null)
+                playerInfoUI.SetActive(false);
         }
     }
 }

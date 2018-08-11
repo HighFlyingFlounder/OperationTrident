@@ -37,7 +37,6 @@ namespace OperationTrident.Common.AI
         public override void LookAtWithTargetName(string targetName)
         {
             _target = Utility.GetShootedTargetByPlayerName(targetName);
-            Debug.Log(targetName);
         }
 
         public override void StopLookAt()

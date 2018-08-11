@@ -5,7 +5,7 @@ using UnityEngine;
 using OperationTrident.Common.AI;
 
 namespace OperationTrident.Common {
-    public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface {
+    public class ReactiveTarget : MonoBehaviour,NetSyncInterface, AI.AIReacitiveInterface, UI.IPlayerInfo {
         public bool IsPlayer = false;
         public bool CanBeHurt = true;
         public bool ShowHealth = false;
@@ -220,6 +220,22 @@ namespace OperationTrident.Common {
             get
             {
                 return m_CurrentHealth / MaxHealth;
+            }
+        }
+
+        public int CurrentHP
+        {
+            get
+            {
+                return (int)m_CurrentHealth;
+            }
+        }
+
+        public int TotalHP
+        {
+            get
+            {
+                return (int)MaxHealth;
             }
         }
 

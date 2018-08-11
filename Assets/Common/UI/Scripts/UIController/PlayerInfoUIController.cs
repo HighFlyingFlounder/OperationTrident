@@ -17,6 +17,8 @@ namespace OperationTrident.Common.UI
         [Header("Slider")]
         [SerializeField]
         Slider HpSlider;
+        [SerializeField]
+        GameObject HpColor;
 
         [Header("Text")]
         [SerializeField]
@@ -33,6 +35,12 @@ namespace OperationTrident.Common.UI
         Text infiniteAmmo;
         [SerializeField]
         Text currentAmmo;
+
+        [Header("Color")]
+        [SerializeField]
+        Color HPBasic;
+        [SerializeField]
+        Color HPCriticle;
 
         public void HideAmmoInfo()
         {
@@ -61,6 +69,14 @@ namespace OperationTrident.Common.UI
             currentHP = hp;
             currentHPText.text = hp.ToString();
             HpSlider.value = (float)currentHP / (float)totalHP;
+            if(HpSlider.value > 0.3f)
+            {
+                HpColor.GetComponent<Image>().color = HPBasic;
+            }
+            else
+            {
+                HpColor.GetComponent<Image>().color = HPCriticle;
+            }
         }
 
         public void SetTotalAmmo(bool isInfinite, int ammoNum)

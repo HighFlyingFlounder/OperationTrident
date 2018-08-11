@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using OperationTrident.Common.UI;
 
 namespace OperationTrident.FPS.Weapons {
-    public class WeaponSystem : MonoBehaviour, NetSyncInterface {
+    public class WeaponSystem : MonoBehaviour, NetSyncInterface, IWeaponInfo {
         public bool IsLocalObject = true;
 
         //保存武器对象的数组
@@ -18,6 +19,30 @@ namespace OperationTrident.FPS.Weapons {
         private Weapon[] m_Weapons;
 
         private NetSyncController m_NetSyncController;
+
+        public int CurrentAmmo
+        {
+            get
+            {
+                return m_Weapons[m_WeaponIndex].m_CurrentAmmo;
+            }
+        }
+
+        public int TotalAmmo
+        {
+            get
+            {
+                return m_Weapons[m_WeaponIndex].m_CurrentTotalAmmo;
+            }
+        }
+
+        public bool isInfinite
+        {
+            get
+            {
+                return !m_Weapons[m_WeaponIndex].LimitedTotalAmmo;
+            }
+        }
 
         void Start() {
             //初始化武器系统

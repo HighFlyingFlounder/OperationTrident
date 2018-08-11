@@ -332,7 +332,7 @@ namespace room2Battle
                     if (!isSwitchOpen)
                     {
                         if (distance <= 5.0f)
-                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yF^w与物品交互", mCamera, 12, 0.8f);
+                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按 ^yF ^w与物品交互", mCamera, 16, 0.75f);
                     }
                 }
                 //深度摄像头是否开启，是否黑
@@ -348,7 +348,7 @@ namespace room2Battle
                        0.5f, 0.1f, 16);
                     if (!open2 && open)
                     {
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按 ^yH ^w开启/关闭探测器", mCamera, 16, 0.7f);
                     }
                     //目标位置
                     GUIUtil.DisplayMissionPoint(switchPos.position, mCamera, Color.white);
@@ -371,7 +371,7 @@ namespace room2Battle
                     }
                     if (open2 && !isFocus)
                     {
-                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w关闭探测器", mCamera, 12, 0.7f);
+                        GUIUtil.DisplaySubtitleInGivenGrammar("^w按 ^yH ^w关闭探测器", mCamera, 16, 0.7f);
                     }
                 }
             }
