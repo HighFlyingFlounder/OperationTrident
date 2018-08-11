@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.FPS.Weapons;
+using OperationTrident.Common.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 
-public class FlyerController : MonoBehaviour, NetSyncInterface
+public class FlyerController : MonoBehaviour, NetSyncInterface, IPlayerInfo
 {
     private NetSyncController m_NetSyncController;
     private Rigidbody m_RigidBody;
@@ -21,6 +22,22 @@ public class FlyerController : MonoBehaviour, NetSyncInterface
     public GameObject sh;
     private ParticleSystem shield;
     public AudioClip AC;
+
+    public int CurrentHP
+    {
+        get
+        {
+            return Hp;
+        }
+    }
+
+    public int TotalHP
+    {
+        get
+        {
+            return TotalHp;
+        }
+    }
 
     // Use this for initialization
     void Start()

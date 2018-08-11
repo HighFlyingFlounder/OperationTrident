@@ -185,7 +185,7 @@ namespace room2Battle
                             GUIUtil.whiteColor,
                             0.5f, 0.1f, 16);
                         if (!open)
-                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按^yH^w开启/关闭探测器", mCamera, 12, 0.7f);
+                            GUIUtil.DisplaySubtitleInGivenGrammar("^w按 ^yH ^w开启/关闭探测器", mCamera, 16, 0.7f);
 
                         GUIUtil.DisplaySubtitlesInGivenGrammar(line, mCamera, 16, 0.9f, 0.1f, 1.5f);
 

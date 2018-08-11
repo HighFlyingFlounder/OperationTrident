@@ -7,6 +7,7 @@ using OperationTrident.FPS.Common;
 using OperationTrident.Common.AI;
 using System;
 using OperationTrident.Common;
+using OperationTrident.Common.UI;
 
 namespace room2Battle
 {
@@ -110,6 +111,8 @@ namespace room2Battle
                 p.Value.GetComponent<ReactiveTarget>().CanBeHurt = false;
                 p.Value.SetActive(false);
             }
+
+            GamingUIManager.Instance.HidePlayerInfoUI();
             director.Play();
         }
 
@@ -137,6 +140,7 @@ namespace room2Battle
                         p.Value.GetComponent<ReactiveTarget>().CanBeHurt = true;
                         p.Value.SetActive(true);
                     }
+                    GamingUIManager.Instance.ShowPlayerInfoUI();
 
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[4]);
                     AIController.instance.CreateAI(1, 0, "EnemyInitPos4", wanderAIAgentParams[5]);

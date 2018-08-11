@@ -152,7 +152,7 @@ public class SpaceBattleManager : MonoBehaviour
         }
         else//胜利
         {
-            GetComponent<SpaceBattlePlayerInfo>().Hide();
+            GamingUIManager.Instance.HidePlayerInfoUI();
             timeline.SetActive(true);
         }
     }

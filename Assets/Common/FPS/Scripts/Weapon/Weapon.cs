@@ -183,9 +183,9 @@ namespace OperationTrident.FPS.Weapons {
         public bool ReloadAutomatically = true;
 
         //武器当前的总弹药量
-        private int m_CurrentTotalAmmo;
+        public int m_CurrentTotalAmmo;
         //武器当前的弹药量
-        private int m_CurrentAmmo;
+        public int m_CurrentAmmo;
         #endregion
 
         #region 射击准度
@@ -516,19 +516,19 @@ namespace OperationTrident.FPS.Weapons {
             }
 
             //显示弹药量
-            if (ShowCurrentAmmo) {
-                if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile) {
-                    GUI.Label(new Rect(10, Screen.height - 60, 100, 20), "Ammo: " + m_CurrentAmmo);
-                    if (LimitedTotalAmmo) {
-                        GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: " + m_CurrentTotalAmmo);
-                    } else {
-                        GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: Infinite");
-                    }
-                }
-                else if (Type == Weapons.WeaponType.Beam) {
-                    GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
-                }   
-            }
+            //if (ShowCurrentAmmo) {
+            //    if (Type == Weapons.WeaponType.Raycast || Type == Weapons.WeaponType.Projectile) {
+            //        GUI.Label(new Rect(10, Screen.height - 60, 100, 20), "Ammo: " + m_CurrentAmmo);
+            //        if (LimitedTotalAmmo) {
+            //            GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: " + m_CurrentTotalAmmo);
+            //        } else {
+            //            GUI.Label(new Rect(10, Screen.height - 40, 400, 20), "Remain Total Ammo: Infinite");
+            //        }
+            //    }
+            //    else if (Type == Weapons.WeaponType.Beam) {
+            //        GUI.Label(new Rect(10, Screen.height - 30, 100, 20), "Heat: " + (int)(m_BeamHeat * 100) + "/" + (int)(MaxBeamHeat * 100));
+            //    }   
+            //}
         }
 
         private void OnDisable() {
