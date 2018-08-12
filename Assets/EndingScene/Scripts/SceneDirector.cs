@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using OperationTrident.Util;
+using UnityEngine.SceneManagement;
 
 namespace OperationTrident.EndingScene
 {
@@ -40,12 +41,14 @@ namespace OperationTrident.EndingScene
 
         //场景流逝总时间
         public UnityEngine.Playables.PlayableDirector m_TimeLineDirector;
+        bool playableDirectorIsPlaying = false;
         private double m_Time = 0.0f;
 
         //Timeline控制一个Camera_Directed，第三人称控制一个CameraThirdPerson
         //在Timeline里的activation track控制两个camera的enabled
         public Camera m_CamDirected;
         public Camera m_CamFree;
+        public Camera m_CamVideo;
 
         //第三人称环视的Camera信息
         public float m_MouseLookSensitivity;
@@ -232,7 +235,20 @@ namespace OperationTrident.EndingScene
             {
                 m_VideoPlayer.Play();
             }*/
-        }
+            if(!playableDirectorIsPlaying && m_VideoPlayer.isPlaying)
+            {
+                playableDirectorIsPlaying = true;
+            }
 
+            if(playableDirectorIsPlaying && !m_VideoPlayer.isPlaying)
+            {
+                ProtocolBytes protocol = new ProtocolBytes();
+                protocol.AddString("ReturnRoom");
+                NetMgr.srvConn.Send(protocol);
+
+                GameMgr.instance.nextScene = "GameHall_New";
+                SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+            }
+        }
     }
 }

@@ -87,6 +87,7 @@ namespace OperationTrident.Common.UI
             int start = 0;
             string protoName = proto.GetString(start, ref start);
             int player_num = proto.GetInt(start, ref start);
+            Debug.Log(player_num);
 
             GameMgr.instance.player_num = player_num;//该局房间总人数
             StartFight();//获得战场信息
@@ -98,6 +99,7 @@ namespace OperationTrident.Common.UI
             ProtocolBytes protocol = new ProtocolBytes();
             protocol.AddString("StartFight");
             NetMgr.srvConn.Send(protocol);
+            Debug.Log("send start fight");
             //监听
             NetMgr.srvConn.msgDist.AddListener("StartFight", RecvStartFight);
         }
@@ -105,6 +107,7 @@ namespace OperationTrident.Common.UI
         void RecvStartFight(ProtocolBase protocol)
         {
             SceneNetManager.fight_protocol = (ProtocolBytes)protocol;
+            Debug.Log("start");
             //若要游戏内的玩家不用退出至游戏大厅而是重新开始此关卡，则不应该在此取消监听
             NetMgr.srvConn.msgDist.DelListener("StartFight", RecvStartFight);
             UnityEngine.SceneManagement.SceneManager.LoadScene("Loading");
@@ -141,6 +144,11 @@ namespace OperationTrident.Common.UI
 
         void StartGameBack(ProtocolBase protocol)
         {
+            ProtocolBytes proto = (ProtocolBytes)protocol;
+            int start = 0;
+            string protoName = proto.GetString(start, ref start);
+            int ret = proto.GetInt(start, ref start);
+            Debug.Log(ret);
         }
     }
 }
