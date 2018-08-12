@@ -5,13 +5,13 @@ using UnityEngine;
 public class HintableObject : MonoBehaviour {
 
     [SerializeField]
-    private string whatToHint = "^w按^yF^w与物品交互";
+    private string whatToHint = "^w按 ^yF ^w与物品交互";
 
     [SerializeField]
     private bool usingGrammar = true;
 
     [SerializeField]
-    private int fontSize = 12;
+    private int fontSize = 16;
 
     public string WhatToHint
     {
