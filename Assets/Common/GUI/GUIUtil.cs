@@ -1705,7 +1705,7 @@ namespace OperationTrident.Util
             if (canBeStopDisplaySubtitleInGivenGrammarInSeconds)
             {
                 frameTimerDSsIGGWT += FrameTime(Timer.DSsIGGWT);
-                if (frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
+                if (displayingSubtitlesIndexDSsIGGWT < secondBetweenLine.Length && frameTimerDSsIGGWT >= secondBetweenLine[displayingSubtitlesIndexDSsIGGWT])
                 {
                     if (displayingSubtitlesIndexDSsIGGWT >= subtitles.Length - 1)
                     {
