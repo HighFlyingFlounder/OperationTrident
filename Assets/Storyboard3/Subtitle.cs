@@ -10,7 +10,7 @@ public class Subtitle : MonoBehaviour {
     public float[] secondBetweenLine;
     // Use this for initialization
     void Start () {
-        
+        GUIUtil.ResetSubtitle();
     }
 
     private void OnGUI()

@@ -37,11 +37,18 @@ namespace OperationTrident.Common.UI
         {
             if (UIStack.Count == 0)
             {
+                // 第一次进入
                 Open(firstInitUIPrefab);
             }
             else
             {
+                // 从游戏返回房间
                 ShowLast();
+
+                Debug.Log("send return room");
+                ProtocolBytes protocol = new ProtocolBytes();
+                protocol.AddString("ReturnRoom");
+                NetMgr.srvConn.Send(protocol);
             }
         }
     }

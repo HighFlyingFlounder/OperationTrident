@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameMgr : MonoBehaviour
 {
@@ -8,7 +9,9 @@ public class GameMgr : MonoBehaviour
     [HideInInspector]
     public string id = "OffLine";
 
-    public string nextScene = "StoryBoard2";//用于全局的状态，传入到AsynLoadingScene
+    [HideInInspector]
+    public string nextScene;//用于全局的状态，传入到AsynLoadingScene
+    public string defaultStartScene = "OpeningVideo"; //用于设置开始游戏后第一个场景是哪个
 
     [HideInInspector]
     public int roomID; //房间号
@@ -26,5 +29,12 @@ public class GameMgr : MonoBehaviour
     void Awake()
     {
         instance = this;
+        nextScene = defaultStartScene;
+    }
+
+    static public void ReturnRoom()
+    {
+        instance.nextScene = instance.defaultStartScene;
+        SceneManager.LoadScene("GameHall_New", LoadSceneMode.Single);
     }
 }

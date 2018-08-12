@@ -34,15 +34,16 @@ namespace OperationTrident.Common.UI
         GameObject playerInfoUIPrefab;
         GameObject playerInfoUI = null;
 
+        [SerializeField]
+        GameObject dieUIPrefab;
+        GameObject dieUI = null;
+
         void Start()
         {
-            if (playerInfoUI != null)
-                return;
-
-            playerInfoUI = Instantiate(playerInfoUIPrefab);
-            playerInfoUI.name = playerInfoUIPrefab.name;
-            DontDestroyOnLoad(playerInfoUI);
+            InitUIOnce(playerInfoUIPrefab, ref playerInfoUI);
+            InitUIOnce(dieUIPrefab, ref dieUI);
         }
+
 
         public PlayerInfoUIController GetPlayerInfoUIController()
         {
@@ -58,6 +59,17 @@ namespace OperationTrident.Common.UI
         {
             if(playerInfoUI != null)
                 playerInfoUI.SetActive(false);
+        }
+
+        public void ShowDieUI()
+        {
+            dieUI.SetActive(true);
+            dieUI.GetComponent<Animation>().Play();
+        }
+
+        public void HideDieUI()
+        {
+            dieUI.SetActive(false);
         }
     }
 }

@@ -242,12 +242,7 @@ namespace OperationTrident.EndingScene
 
             if(playableDirectorIsPlaying && !m_VideoPlayer.isPlaying)
             {
-                ProtocolBytes protocol = new ProtocolBytes();
-                protocol.AddString("ReturnRoom");
-                NetMgr.srvConn.Send(protocol);
-
-                GameMgr.instance.nextScene = "GameHall_New";
-                SceneManager.LoadScene("Loading", LoadSceneMode.Single);
+                GameMgr.ReturnRoom();
             }
         }
     }

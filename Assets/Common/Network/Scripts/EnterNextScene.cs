@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using OperationTrident.Util;
+using OperationTrident.Common.UI;
 
 public class EnterNextScene : MonoBehaviour {
     private bool arrived = false;
@@ -77,8 +78,9 @@ public class EnterNextScene : MonoBehaviour {
 
         if (isWin == 0)//失败
         {
-            Debug.Log("Room1 Fail");
-            OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+            // Debug.Log("Room1 Fail");
+            // OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+            GamingUIManager.Instance.ShowDieUI();
         }
         else//胜利
         {

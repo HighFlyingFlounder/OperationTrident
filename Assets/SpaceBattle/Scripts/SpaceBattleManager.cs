@@ -14,6 +14,8 @@ public class SpaceBattleManager : MonoBehaviour
     private GameObject[] rocks;
     public GameObject timeline;
     public Camera camera = null;
+
+    public AudioSource bgm;
     void Awake()
     {
         if (!GameMgr.instance)//GameMgr.instance没被初始化，则此时是离线状态
@@ -148,7 +150,9 @@ public class SpaceBattleManager : MonoBehaviour
         //SceneManager.LoadScene("Room1Battle", LoadSceneMode.Single);
         if (isWin == 0)//失败
         {
-            OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+            // OperationTrident.EventSystem.Messenger.Broadcast(OperationTrident.Room1.DieHandler.PLAYER_DIE);
+            GamingUIManager.Instance.ShowDieUI();
+            bgm.Stop();
         }
         else//胜利
         {

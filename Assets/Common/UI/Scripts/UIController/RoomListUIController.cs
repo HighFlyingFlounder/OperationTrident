@@ -153,8 +153,7 @@ namespace OperationTrident.Common.UI
         {
             GameObject go = Instantiate(roomInfoUIPrefab, content.transform);
             go.GetComponent<UIRoomInfo>().SetRoomInfo(roomInfo);
-            // go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfo.roomID); });
-            go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfoList.IndexOf(roomInfo)); });
+            go.GetComponent<Button>().onClick.AddListener(delegate { EnterRoom(roomInfo.roomID); });
         }
     }
 }

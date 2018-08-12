@@ -1656,6 +1656,13 @@ namespace OperationTrident.Util
         private static string[] rememberSubtitlesDSsIGGWT;
         private static int displayingSubtitlesIndexDSsIGGWT = 0;
         public static bool canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+        public static void ResetSubtitle()
+        {
+            frameTimerDSsIGGWT = 0.0f;
+            rememberSubtitlesDSsIGGWT = null;
+            displayingSubtitlesIndexDSsIGGWT = 0;
+            canBeStopDisplaySubtitlesInGivenGrammarWithTimeStamp = false;
+        }
         /// <summary>
         /// 给定每一行的时间和间隔的时间，显示指定的字幕
         /// </summary>

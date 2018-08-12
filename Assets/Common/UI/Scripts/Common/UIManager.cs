@@ -40,5 +40,17 @@ namespace OperationTrident.Common.UI
             if (UIStack.Count != 0)
                 UIStack.Peek().SetActive(false);
         }
+
+        protected void InitUIOnce(GameObject UIPrefab, ref GameObject UIInstance)
+        {
+            if (UIInstance != null)
+                return;
+
+            UIInstance = Instantiate(UIPrefab);
+            UIInstance.name = UIPrefab.name;
+            UIInstance.SetActive(false);
+            DontDestroyOnLoad(UIInstance);
+        }
+
     }
 }
