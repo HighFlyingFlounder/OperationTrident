@@ -235,14 +235,18 @@ namespace OperationTrident.EndingScene
             {
                 m_VideoPlayer.Play();
             }*/
-            if(!playableDirectorIsPlaying && m_VideoPlayer.isPlaying)
+            if (!playableDirectorIsPlaying && m_VideoPlayer.isPlaying)
             {
                 playableDirectorIsPlaying = true;
             }
 
-            if(playableDirectorIsPlaying && !m_VideoPlayer.isPlaying)
+            if (playableDirectorIsPlaying && !m_VideoPlayer.isPlaying)
             {
-                GameMgr.ReturnRoom();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+			    Application.Quit();
+#endif
             }
         }
     }

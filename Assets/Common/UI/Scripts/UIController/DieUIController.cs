@@ -18,6 +18,12 @@ namespace OperationTrident.Common.UI
                 GamingUIManager.Instance.HideDieUI();
             });
         }
+
+        new void Update()
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
     
 }
