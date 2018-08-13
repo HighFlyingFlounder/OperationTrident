@@ -8,7 +8,7 @@ namespace OperationTrident.Room1
     public class DoorScript : MonoBehaviour
     {
         // 标识三扇门的ID
-        private static int totalId = 0;
+        public static int totalId = 0;
 
         [SerializeField]
         private GameObject explosion;

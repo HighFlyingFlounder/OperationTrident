@@ -40,6 +40,7 @@ namespace OperationTrident.Room5
                 "TokamakCore", KeyCode.F, 1.0f,
                 "^w按住^yF^w拿取","^w正在拿取...");
             m_OriginPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
+            m_Time = 0;
         }
 
         // Update is called once per frame

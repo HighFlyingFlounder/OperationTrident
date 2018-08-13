@@ -88,6 +88,7 @@ namespace OperationTrident.Room1
                         hitObject.GetComponent<DoorScript>();
                     if (target1 != null)
                     {
+                        Debug.Log(target1.ThisId);
                         Messenger<int>.Broadcast(GameEvent.DOOR_OPEN, target1.ThisId);
                         return;
                     }

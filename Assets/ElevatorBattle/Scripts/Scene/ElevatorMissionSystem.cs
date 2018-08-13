@@ -66,6 +66,7 @@ namespace OperationTrident.Elevator
         // Use this for initialization
         void Start()
         {
+            GUIUtil.ResetMissionDetail();
             missionContent = String.Empty;
             missionContentsIndex = 0;
             display = false;
@@ -141,6 +142,7 @@ namespace OperationTrident.Elevator
 
 
             GUIUtil.DisplayMissionDetailDefault(missionDetail, OperationTrident.Room1.Util.GetCamera(), Color.white);
+            if(display)
             GUIUtil.DisplayMissionPoint(targetWorldPosition, Room1.Util.GetCamera(), GUIUtil.missionPointColor);
 
 

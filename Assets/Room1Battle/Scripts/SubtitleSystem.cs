@@ -63,6 +63,7 @@ namespace OperationTrident.Room1
         void Start()
         {
             subtitleSource.loop = false;
+            GUIUtil.ResetSubtitle();
         }
 
         private bool initOpenDoor = true;

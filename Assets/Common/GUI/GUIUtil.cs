@@ -1239,6 +1239,13 @@ namespace OperationTrident.Util
         private static int missionDetailIndexDMDD = 0; // 任务细节数组的索引
         private static bool canBeStopDMDD = false; // 是否可以停止
         private static float minusFactorAlphaDMDD = 0.0f; // 结束时变得透明的速度
+        public static void ResetMissionDetail()
+        {
+            frameTimerDMDD = 0.01f;
+            missionDetailIndexDMDD = 0;
+            canBeStopDMDD = false;
+            minusFactorAlphaDMDD = 0.0f;
+        }
 
         /// <summary>
         /// 显示任务时间地点等等的任务细节
@@ -1260,6 +1267,9 @@ namespace OperationTrident.Util
             float lineSubsequentlyInterval = defaultMissionDetailInterval  // 每一行出现的速度
             )
         {
+            if (camera == null)
+                return;
+
             if (canBeStopDMDD)
             {
                 if (color.a - minusFactorAlphaDMDD == 0.0f) return;
@@ -1291,12 +1301,12 @@ namespace OperationTrident.Util
                     //    defaultMissionDetailOffsetUp * camera.pixelHeight+fontSize*i),
                     //    new Vector2(missionDetails[i].Length * fontSize, fontSize)),GetDefaultTextStyle(color,fontSize,defaultAnchor)
                     //    );
-                    DisplayContentInGivenPosition(
-                        missionDetails[i],
-                        camera, defaultMissionDetailOffsetLeft,
-                        defaultMissionDetailOffsetUp + (float)fontSize * i / camera.pixelHeight,
-                        color,
-                        fontSize);
+                        DisplayContentInGivenPosition(
+                            missionDetails[i],
+                            camera, defaultMissionDetailOffsetLeft,
+                            defaultMissionDetailOffsetUp + (float)fontSize * i / camera.pixelHeight,
+                            color,
+                            fontSize);
                 }
                 DisplayContentInGivenPositionSequently(
                         missionDetails[missionDetailIndexDMDD],
@@ -1369,7 +1379,7 @@ namespace OperationTrident.Util
         {
             if (camera == null)
                 return;
-                
+
             List<ColorTempMemory> colors;
             // 先进行文法编译
             string theTrueSubtitle = SubtitleParser.ParseALine(subtitle, out colors);

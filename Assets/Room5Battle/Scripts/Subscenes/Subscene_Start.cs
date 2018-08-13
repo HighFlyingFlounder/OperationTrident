@@ -58,6 +58,8 @@ namespace OperationTrident.Room5
                 "Room5ControlPanel", KeyCode.F, 5.0f,//Camera.main
                 "^w按住^yF^w开始核心冷却程序", "^w正在启动冷却程序...");
             FadeInOutUtil.SetFadingState(5.0f, GetCameraUtil.GetCurrentCamera(), Color.black, FadeInOutUtil.FADING_STATE.FADING_IN);
+            GUIUtil.ResetMissionDetail();
+            GUIUtil.ResetSubtitle();
 
         }
 

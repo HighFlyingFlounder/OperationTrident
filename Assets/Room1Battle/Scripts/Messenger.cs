@@ -25,8 +25,13 @@ namespace OperationTrident.EventSystem
 
     static internal class MessengerInternal
     {
-        readonly public static Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
+        public static Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
         static public readonly MessengerMode DEFAULT_MODE = MessengerMode.REQUIRE_LISTENER;
+
+        static public void ResetMessenger()
+        {
+            eventTable = new Dictionary<string, Delegate>(); 
+        }
 
         static public void AddListener(string eventType, Delegate callback)
         {

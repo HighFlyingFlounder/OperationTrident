@@ -95,6 +95,11 @@ namespace room2Battle
         ///================ method  ==============================
         ///=======================================================
 
+        private void Start()
+        {
+            GUIUtil.ResetMissionDetail();
+        }
+
         public override void onSubsceneInit()
         {
             if (GameMgr.instance)

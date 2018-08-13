@@ -40,7 +40,7 @@ namespace OperationTrident.Room1
         private GameObject IDCard;
 
         // 三个门
-        public GameObject doorStart;
+        private GameObject door0;
         private GameObject door1;
         private GameObject door2;
 
@@ -52,6 +52,7 @@ namespace OperationTrident.Room1
         //[SerializeField]
         //private Vector3 DoorStartPosition; // = new Vector3(-7.04771f, 1.345f, 25.848f);
 
+        public Transform door0Transform;
         public Transform door1Transform;
         public Transform door2Transform;
 
@@ -93,6 +94,7 @@ namespace OperationTrident.Room1
 
         private void Awake()
         {
+            MessengerInternal.ResetMessenger();
             // 增加第一个key的侦听器
             Messenger<int>.AddListener(GameEvent.KEY_GOT, OnKeyGot);
             // 增加第一个door的侦听器
@@ -101,6 +103,9 @@ namespace OperationTrident.Room1
             Messenger.AddListener(GameEvent.CROPSE_TRY, OnCropseTry);
 
             Messenger.AddListener(GameEvent.ELEVATOR_OPEN, OnElevatorOpen);
+
+            DoorScript.totalId = 0;
+            KeyScript.totalId = 0;
         }
 
         private void OnElevatorOpen()
@@ -157,6 +162,7 @@ namespace OperationTrident.Room1
         // Update is called once per frame
         void Update()
         {
+            Debug.Log(door0);
             FadeInOutUtil.UpdateState();
             switch (state)
             {
@@ -245,6 +251,8 @@ namespace OperationTrident.Room1
             //doorStart.transform.localPosition = DoorStartPosition;
             //doorStart.transform.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
             //doorStart.transform.localScale = new Vector3(1.6f, 2.5f, 0.2f);
+            door0 = Instantiate(DoorPrefab) as GameObject;
+            Util.SetParent(door0, door0Transform);
 
             door1 = Instantiate(DoorPrefab) as GameObject;
             Util.SetParent(door1, door1Transform);
@@ -336,9 +344,8 @@ namespace OperationTrident.Room1
                 case 0:
                     if (state == Room1State.FindingKey1)
                     {
-                        Debug.Log("WindyIce");
-                        doorStart.GetComponent<DoorScript>().OpenAndDestroy(10.0f,DoorScript.DoorOpenDirection.ZNegative);
-                        doorStart.GetComponent<HintableObject>().DestroyThis();
+                        door0.GetComponent<DoorScript>().OpenAndDestroy(10.0f,DoorScript.DoorOpenDirection.ZNegative);
+                        door0.GetComponent<HintableObject>().DestroyThis();
                     }
                     break;
                 // 第二扇门

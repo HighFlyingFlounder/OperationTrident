@@ -29,6 +29,7 @@ namespace OperationTrident.Elevator
         void Start()
         {
             hintToDisplay = string.Empty;
+            state = false;
         }
 
         // Update is called once per frame
@@ -45,15 +46,15 @@ namespace OperationTrident.Elevator
                 {
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) <= distanceQuota)
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) <= distanceQuota)
                     {
                         HintableObject target = hitObject.GetComponent<HintableObject>();
                         if (target != null && !state)
                         {
                             toDisplayHint = true;
-                            hintToDisplay = "^w按^yF^w与物品交互";
+                            hintToDisplay = target.WhatToHint;
                             usingGrammar = true;
-                            hintFontSize = 12;
+                            hintFontSize = target.FontSize;
                             goto secondIf;
                         }
                     }
@@ -73,8 +74,8 @@ namespace OperationTrident.Elevator
                     //hit.point:射线击中的坐标
                     GameObject hitObject = hit.transform.gameObject;//获取射中的对象
                     Debug.Log("物体" + hitObject.name);
-                    Debug.Log("距离: " + Vector3.Distance(this.transform.position, hitObject.transform.position));
-                    if (Vector3.Distance(this.transform.position, hitObject.transform.position) > distanceQuota)
+                    Debug.Log("距离: " + Vector3.Distance(ray.origin, hitObject.transform.position));
+                    if (Vector3.Distance(ray.origin, hitObject.transform.position) > distanceQuota)
                     {
                         return;
                     }

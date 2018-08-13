@@ -20,34 +20,40 @@ namespace OperationTrident.Util
         public float wordAppearanceInterval = 0.1f; // 每行字一个个出现的速度
         public float lineSubsequentlyInterval = 1.236f; // 每行字一行行出现的速度
         public int fontSize = 16; // 字体大小
+        public float waitTime;
+        bool showMissionDetail = false;
 
         public Color theColor;
         // Use this for initialization
         void Start()
         {
-
+            GUIUtil.ResetMissionDetail();
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            if (waitTime > 0)
+                waitTime -= Time.deltaTime;
+            else
+                showMissionDetail = true;
         }
 
         void OnGUI()
         {
             try
             {
-                GUIUtil.DisplayMissionDetailDefault(
-                        missionDetails,
-                        Room1.Util.GetCamera()? Room1.Util.GetCamera():Camera.current,
-                        theColor,
-                        wordTransparentInterval: wordTransparentInterval,
-                        wordAppearanceInterval: wordAppearanceInterval,
-                        lineSubsequentlyInterval: lineSubsequentlyInterval,
-                        fontSize: fontSize);
+                if (showMissionDetail)
+                    GUIUtil.DisplayMissionDetailDefault(
+                            missionDetails,
+                            Room1.Util.GetCamera() ? Room1.Util.GetCamera() : Camera.current,
+                            theColor,
+                            wordTransparentInterval: wordTransparentInterval,
+                            wordAppearanceInterval: wordAppearanceInterval,
+                            lineSubsequentlyInterval: lineSubsequentlyInterval,
+                            fontSize: fontSize);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.Log("任务目标系统相机错误");
             }

@@ -9,7 +9,7 @@ namespace OperationTrident.Room1
     {
         // 标识每个钥匙的ID
         [SerializeField]
-        private static int totalId = 0;
+        public static int totalId = 0;
 
         public int ThisId { get; private set; }
         // 钥匙等关键物品的三个状态：准备（还没存在），出现，结束。

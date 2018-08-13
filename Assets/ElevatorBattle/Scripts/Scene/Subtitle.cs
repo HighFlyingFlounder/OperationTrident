@@ -14,7 +14,7 @@ namespace OperationTrident.Elevator
         // Use this for initialization
         void Start()
         {
-
+            GUIUtil.ResetSubtitle();
         }
 
         private void OnGUI()

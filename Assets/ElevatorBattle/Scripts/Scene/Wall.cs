@@ -31,6 +31,7 @@ namespace OperationTrident.Elevator
         // Use this for initialization
         void Start()
         {
+            state = false;
             child1 = GameObject.Find("wall1");
             child2 = GameObject.Find("wall2");
             child3 = GameObject.Find("wall3");
