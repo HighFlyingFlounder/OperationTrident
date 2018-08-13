@@ -15,6 +15,11 @@ namespace OperationTrident.Common.UI
 
         void Start()
         {
+            if(this.gameObject.name != GameMgr.instance.id)
+            {
+                this.enabled = false;
+                return;
+            }
             playerInfo = this.gameObject.GetComponent<IPlayerInfo>();
             if(weaponSystem != null)
                 weaponInfo = weaponSystem.GetComponent<IWeaponInfo>();
